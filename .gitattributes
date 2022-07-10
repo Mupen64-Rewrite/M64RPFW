@@ -1,0 +1,2 @@
+*.exe filter=lfs diff=lfs merge=lfs -text
+/M64RPFW.Views.Avalonia/Libraries/**/* filter=lfs diff=lfs merge=lfs -text
