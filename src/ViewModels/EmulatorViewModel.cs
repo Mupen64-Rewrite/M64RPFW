@@ -1,27 +1,48 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Media.Imaging;
+using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using M64RPFW.Models.Emulation.Core.API;
-using M64RPFW.Models.Helpers;
-using M64RPFW.UI.Other.Platform;
-using M64RPFW.UI.ViewModels.Interaction;
-using M64RPFW.ViewModels.Interfaces;
+using M64RPFWAvalonia.Models.Emulation.Core.API;
+using M64RPFWAvalonia.Properties;
+using M64RPFWAvalonia.src.Models.Interaction.FileDialog;
+using M64RPFWAvalonia.src.Models.Interaction.Interfaces;
+using M64RPFWAvalonia.src.ViewModels.Interfaces;
+using M64RPFWAvalonia.ViewModels;
+using M64RPFWAvalonia.ViewModels.Interfaces;
+using Newtonsoft.Json.Linq;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
-using System.Windows;
-using static M64RPFW.Models.Emulation.Provider.GameInfoProvider;
+using System.Threading.Tasks;
 
-namespace M64RPFW.UI.ViewModels
+namespace M64RPFWAvalonia.UI.ViewModels
 {
     public partial class EmulatorViewModel : ObservableObject
     {
-        // DI - used for adding new entries
-        private IRecentRomsProvider recentROMsInterface;
+        // DI used for adding new entries
+        private IRecentRomsProvider recentRomsProvider;
+        // DI used for file dialog parent window
+        private IGetVisualRoot getVisualRoot;
+        // DI used for drawing to skia canvas
+        private ISkiaCanvasProvider skiaCanvasProvider;
+
+        public SavestatesViewModel SavestatesViewModel { get; protected set; }
+
+        private SKBitmap? frameBuffer;
 
         [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(CloseROMCommand), nameof(ResetROMCommand), nameof(FrameAdvanceCommand), nameof(TogglePauseCommand))]
+        [NotifyCanExecuteChangedFor(nameof(CloseROMCommand), 
+            nameof(ResetROMCommand), 
+            nameof(FrameAdvanceCommand), 
+            nameof(TogglePauseCommand),
+            nameof(SaveStateCommand),
+            nameof(LoadStateCommand)
+        )]
+
         private bool isRunning;
 
         private bool isResumed = true;
@@ -32,7 +53,6 @@ namespace M64RPFW.UI.ViewModels
             {
                 if (Mupen64PlusAPI.api == null || !Mupen64PlusAPI.api.emulator_running) return;
                 SetProperty(ref isResumed, value);
-                //ICommandHelper.NotifyCanExecuteChanged(CloseROMCommand, ResetROMCommand, FrameAdvanceCommand, TogglePauseCommand);
                 Mupen64PlusAPI.api.SetPlayMode(isResumed ? Mupen64PlusTypes.PlayModes.Running : Mupen64PlusTypes.PlayModes.Paused);
             }
         }
@@ -42,10 +62,10 @@ namespace M64RPFW.UI.ViewModels
         [RelayCommand]
         private void LoadROM()
         {
-            (string ReturnedPath, bool Cancelled) status = WindowsShellWrapper.OpenFileDialogPrompt(ValidROMFileExtensions);
+            (string ReturnedPath, bool Cancelled) status = new FileDialog(getVisualRoot).OpenDialog(FileDialog.ROMFilter);
             string path = status.ReturnedPath;
             if (status.Cancelled) return;
-            recentROMsInterface.AddRecentROM(new(path));  // add recent rom here, but not in LoadROMFromPath because the latter is called by recent rom module itself
+            recentRomsProvider.AddRecentROM(new(path));  // add recent rom here, but not in LoadROMFromPath because the latter is called by recent rom module itself
             LoadROMFromPath(path);
         }
 
@@ -55,14 +75,13 @@ namespace M64RPFW.UI.ViewModels
             if (!CheckDependencyValidity()) return;
             if (!new ROMViewModel(path).IsValid)
             {
-                DialogHelper.ShowErrorDialog(Properties.Resources.InvalidROMError);
                 return;
             }
             if (IsRunning)
             {
                 Stop();
             }
-            Start(path);
+            Start(File.ReadAllBytes(path));
         }
 
         [RelayCommand(CanExecute = nameof(IsRunning))]
@@ -80,64 +99,116 @@ namespace M64RPFW.UI.ViewModels
         [RelayCommand(CanExecute = nameof(IsRunning))]
         private void FrameAdvance()
         {
-            if (Properties.Settings.Default.PauseOnFrameAdvance)
+            if (Settings.Default.PauseOnFrameAdvance)
                 IsResumed = false;
+
             Mupen64PlusAPI.api.FrameAdvance();
+        }
+        private void SetFrameBuffer(int[] data, int width, int height)
+        {
+            if (frameBuffer == null)
+            {
+                frameBuffer = new(new(width, height, SKColorType.Rgba8888, SKAlphaType.Opaque));
+            }
+
+            unsafe
+            {
+                fixed (int* pArray = data)
+                {
+                    IntPtr ptr = new(pArray);
+                    SKBitmap bmp = new(new(width, height, SKColorType.Rgba8888, SKAlphaType.Opaque));
+                    bmp.SetPixels((IntPtr)pArray);
+                    skiaCanvasProvider.Draw(SKImage.FromBitmap(bmp), new(bmp.Width, bmp.Height));
+                }
+            }
+        }
+
+        private void OnNewFrame()
+        {
+
+            if (!Mupen64PlusAPI.api.IsFrameBufferReady)
+            {
+                Debug.Print("Framebuffer is not yet ready");
+
+                var hallo = new int[800*600];
+                Array.Fill<int>(hallo, new Random().Next(0, int.MaxValue));
+
+                SetFrameBuffer(hallo, 800, 600);
+
+                return;
+            }
+
+            SetFrameBuffer(Mupen64PlusAPI.api.FrameBuffer, Mupen64PlusAPI.api.BufferWidth, Mupen64PlusAPI.api.BufferHeight);
         }
 
         [RelayCommand(CanExecute = nameof(IsRunning))]
         private void TogglePause()
         {
-            Debug.Print("A");
             IsResumed ^= true;
+        }
+
+        [RelayCommand(CanExecute = nameof(IsRunning))]
+        private void SaveState()
+        {
+            Mupen64PlusAPI.api.SaveState(SavestatesViewModel.SaveStateSlot);
+        }
+
+        [RelayCommand(CanExecute = nameof(IsRunning))]
+        private void LoadState()
+        {
+            Mupen64PlusAPI.api.LoadState(SavestatesViewModel.SaveStateSlot);
         }
 
         private bool CheckDependencyValidity()
         {
             // Oh yeah this doesnt suck at all
             List<string> missingPlugins = new();
-            bool coreLibraryExists = !DialogHelper.ShowErrorDialogIf(Properties.Resources.CoreLibraryNotFound, !File.Exists(Properties.Settings.Default.CoreLibraryPath));
-            bool videoPluginExists = File.Exists(Properties.Settings.Default.VideoPluginPath);
-            bool audioPluginExists = File.Exists(Properties.Settings.Default.AudioPluginPath);
-            bool inputPluginExists = File.Exists(Properties.Settings.Default.InputPluginPath);
-            bool rspPluginExists = File.Exists(Properties.Settings.Default.RSPPluginPath);
-            if (!videoPluginExists) missingPlugins.Add(Properties.Resources.Video);
-            if (!audioPluginExists) missingPlugins.Add(Properties.Resources.Audio);
-            if (!inputPluginExists) missingPlugins.Add(Properties.Resources.Input);
-            if (!rspPluginExists) missingPlugins.Add(Properties.Resources.RSP);
-            DialogHelper.ShowErrorDialogIf(string.Format(Properties.Resources.PluginNotFoundSeries, string.Join(", ", missingPlugins)), !videoPluginExists || !audioPluginExists || !inputPluginExists || !rspPluginExists);
+            bool coreLibraryExists = File.Exists(Settings.Default.CoreLibraryPath);
+            bool videoPluginExists = File.Exists(Settings.Default.VideoPluginPath);
+            bool audioPluginExists = File.Exists(Settings.Default.AudioPluginPath);
+            bool inputPluginExists = File.Exists(Settings.Default.InputPluginPath);
+            bool rspPluginExists = File.Exists(Settings.Default.RSPPluginPath);
+            if (!videoPluginExists) missingPlugins.Add(Resources.ResourceManager.GetString("Video"));
+            if (!audioPluginExists) missingPlugins.Add(Resources.ResourceManager.GetString("Audio"));
+            if (!inputPluginExists) missingPlugins.Add(Resources.ResourceManager.GetString("Input"));
+            if (!rspPluginExists) missingPlugins.Add(Resources.ResourceManager.GetString("RSP"));
+            //var errorStr = string.Format(Resources.PluginNotFoundSeries, string.Join(", ", missingPlugins)), !videoPluginExists || !audioPluginExists || !inputPluginExists || !rspPluginExists);
             return coreLibraryExists && videoPluginExists && audioPluginExists && inputPluginExists && rspPluginExists;
         }
 
-        public EmulatorViewModel(IRecentRomsProvider recentROMsViewModel)
+        public EmulatorViewModel(IRecentRomsProvider recentRomsProvider, IGetVisualRoot getVisualRoot, ISkiaCanvasProvider skiaCanvasProvider)
         {
-            this.recentROMsInterface = recentROMsViewModel;
+            this.recentRomsProvider = recentRomsProvider;
+            this.getVisualRoot = getVisualRoot;
+            this.skiaCanvasProvider = skiaCanvasProvider;
+            SavestatesViewModel = new();
         }
 
         #region Emulation
 
         private Thread emulatorThread;
         private DateTime emulatorThreadBeginTime, emulatorThreadEndTime;
+        private CancellationTokenSource emulatorCancellationTokenSource;
 
-        private void Start(string romPath)
+        private void Start(byte[] romBuffer)
         {
-            byte[] romBuffer = File.ReadAllBytes(romPath);
-            Size windowSize = new(800, 600);
+            emulatorCancellationTokenSource = new();
+            
             emulatorThread = new(new ParameterizedThreadStart(EmulatorThreadProc))
             {
                 Name = "tEmulatorThread"
             };
-            emulatorThread.Start(romBuffer!);
+            emulatorThread.Start((romBuffer, emulatorCancellationTokenSource));
             emulatorThreadBeginTime = DateTime.Now;
         }
 
-        private void EmulatorThreadProc(object romBuffer)
+        private void EmulatorThreadProc(object data)
         {
-            PlayProcess((byte[])romBuffer, // Unbox object to original type
-                Properties.Settings.Default.VideoPluginPath,
-                Properties.Settings.Default.AudioPluginPath,
-                Properties.Settings.Default.InputPluginPath,
-                Properties.Settings.Default.RSPPluginPath);
+            var tuple = ((byte[] romBuffer, CancellationTokenSource emulatorCancellationTokenSource))data;
+
+            PlayProcess(tuple.romBuffer, // Unbox object to original type
+                tuple.emulatorCancellationTokenSource,
+                Properties.Settings.Default);
 
             // ...
 
@@ -147,8 +218,12 @@ namespace M64RPFW.UI.ViewModels
 
         private void Stop()
         {
-            Mupen64PlusAPI.api.CloseROM();
+            emulatorCancellationTokenSource.Cancel();
+            Mupen64PlusAPI.api.Dispose();
             emulatorThread.Join();
+            // just in case
+            GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true);
+            GC.WaitForPendingFinalizers();
         }
 
         public void Reset()
@@ -156,36 +231,38 @@ namespace M64RPFW.UI.ViewModels
             Mupen64PlusAPI.api.Reset(true);
         }
 
-        private void PlayProcess(byte[] romBuffer, string videoPlugin, string audioPlugin, string inputPlugin, string rspPlugin)
+        private void PlayProcess(byte[] romBuffer, CancellationTokenSource cancellationTokenSource, Settings settings)
         {
-            Mupen64PlusAPI.api = new();
+            Mupen64PlusAPI.api = new(null);
             int frame = 0;
+
             Mupen64PlusAPI.api.FrameFinished += delegate
             {
-                Debug.Print($"Frame {frame++}");
+                OnNewFrame();
             };
 
-            Application.Current.Dispatcher.Invoke(new Action(() => {
+            Dispatcher.UIThread.Post(() =>
+            {
                 IsRunning = true;
-            }));
-            
+            }, DispatcherPriority.Normal);
+
+
 
             Mupen64PlusAPI.api.Launch(
                     romBuffer,
-                    videoPlugin,
-                    audioPlugin,
-                    inputPlugin,
-                    rspPlugin
+                    cancellationTokenSource.Token,
+                    settings
             );
 
-            Mupen64PlusAPI.api.Dispose();
+            // let the emu thread get nuked by gc and windows, do not call anything after emu stop on emu thread!
 
-            Application.Current.Dispatcher.Invoke(new Action(() => {
+            Dispatcher.UIThread.Post(() =>
+            {
                 IsRunning = false;
-            }));
+            }, DispatcherPriority.Normal);
 
-            
         }
+
 
         #endregion
 

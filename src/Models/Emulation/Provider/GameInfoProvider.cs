@@ -1,4 +1,4 @@
-﻿namespace M64RPFW.Models.Emulation.Provider
+﻿namespace M64RPFWAvalonia.Models.Emulation.Provider
 {
     public static class GameInfoProvider
     {

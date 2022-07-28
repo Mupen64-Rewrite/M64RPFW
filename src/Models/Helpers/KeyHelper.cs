@@ -1,6 +1,6 @@
-﻿using System.Windows.Input;
+﻿using Avalonia.Input;
 
-namespace M64RPFW.UI.Other.Platform
+namespace M64RPFWAvalonia.src.Models.Helpers
 {
     public static class WindowsTextHelper
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace M64RPFW.Models.Emulation.Core
+namespace M64RPFWAvalonia.Models.Emulation.Core
 {
     public class ROMException : Exception
     {

@@ -1,9 +1,9 @@
-﻿using M64RPFW.Models.Emulation.Core;
+﻿using M64RPFWAvalonia.Models.Emulation.Core;
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace M64RPFW.Models.Emulation.Helper
+namespace M64RPFWAvalonia.Models.Emulation.Helper
 {
     public static class ROMHelper
     {

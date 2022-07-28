@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-namespace M64RPFW.UI.ViewModels.Interaction
+﻿namespace M64RPFWAvalonia.UI.ViewModels.Interaction
 {
     public class StatusInformation
     {
@@ -22,7 +20,7 @@ namespace M64RPFW.UI.ViewModels.Interaction
         {
             if (!Success)
             {
-                MessageBox.Show(Message);
+                //MessageBox.Show(Message);
             }
         }
     }
