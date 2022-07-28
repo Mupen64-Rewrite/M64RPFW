@@ -1,10 +1,9 @@
-﻿using System;
+﻿using Avalonia.Data.Converters;
+using Avalonia.Input;
+using System;
 using System.Globalization;
-using System.Windows;
-using System.Windows.Data;
-using System.Windows.Input;
 
-namespace M64RPFW.UI.ViewModels.Converters
+namespace M64RPFWAvalonia.UI.ViewModels.Converters
 {
     public class StringEqualityToBooleanConverter : IValueConverter
     {
@@ -35,11 +34,6 @@ namespace M64RPFW.UI.ViewModels.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => !((bool)value);
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => !((bool)value);
-    }
-    public class BooleanToVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => (bool)value ? Visibility.Visible : Visibility.Collapsed;
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
     }
     public class IntegerToHexadecimalStringConverter : IValueConverter
     {

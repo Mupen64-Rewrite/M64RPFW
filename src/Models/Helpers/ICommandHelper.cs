@@ -1,19 +1,21 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
-namespace M64RPFW.Models.Helpers
+namespace M64RPFWAvalonia.Models.Helpers
 {
     public static class ICommandHelper
     {
         public static void NotifyCanExecuteChanged(params IRelayCommand[] commands)
         {
-            foreach (var cmd in commands)
+            foreach (IRelayCommand cmd in commands)
                 cmd.NotifyCanExecuteChanged();
+        }
+
+        public static void ExecuteIfPossible(this IRelayCommand command, object? param = null)
+        {
+            if (command.CanExecute(param))
+            {
+                command.Execute(param);
+            }
         }
     }
 }

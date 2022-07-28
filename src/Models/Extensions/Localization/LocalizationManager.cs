@@ -1,6 +1,7 @@
-﻿using System.Globalization;
+﻿using M64RPFWAvalonia.Properties;
+using System.Globalization;
 
-namespace M64RPFW.UI.ViewModels.Extensions.Localization
+namespace M64RPFWAvalonia.UI.ViewModels.Extensions.Localization
 {
     public static class LocalizationManager
     {
@@ -18,8 +19,8 @@ namespace M64RPFW.UI.ViewModels.Extensions.Localization
             System.Threading.Thread.CurrentThread.CurrentCulture =
             System.Threading.Thread.CurrentThread.CurrentUICulture =
             LocalizationSource.Instance.CurrentCulture = culture;
-            Properties.Settings.Default.Culture = cultureString;
-            Properties.Settings.Default.Save();
+            Settings.Default.Culture = cultureString;
+            Settings.Default.Save();
         }
     }
 }

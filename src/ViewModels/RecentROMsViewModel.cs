@@ -1,10 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using M64RPFW.ViewModels.Interfaces;
+using M64RPFWAvalonia.Properties;
+using M64RPFWAvalonia.ViewModels.Interfaces;
 using System.Collections.ObjectModel;
 using System.IO;
 
-namespace M64RPFW.UI.ViewModels
+namespace M64RPFWAvalonia.UI.ViewModels
 {
     public partial class RecentROMsViewModel : ObservableObject, IRecentRomsProvider
     {
@@ -31,10 +32,10 @@ namespace M64RPFW.UI.ViewModels
         private void RegenerateRecentROMPathsSetting()
         {
             // recreate recent rom list in settings
-            Properties.Settings.Default.RecentROMPaths.Clear();
+            Settings.Default.RecentROMPaths.Clear();
             foreach (ROMViewModel item in RecentROMs)
-                Properties.Settings.Default.RecentROMPaths.Add(item.Path);
-            Properties.Settings.Default.Save();
+                Settings.Default.RecentROMPaths.Add(item.Path);
+            Settings.Default.Save();
         }
 
         public ObservableCollection<ROMViewModel> GetRecentRoms()
@@ -44,12 +45,12 @@ namespace M64RPFW.UI.ViewModels
 
         public RecentROMsViewModel()
         {
-            if (Properties.Settings.Default.RecentROMPaths == null)
+            if (Settings.Default.RecentROMPaths == null)
             {
-                Properties.Settings.Default.RecentROMPaths = new();
+                Settings.Default.RecentROMPaths = new();
             }
 
-            foreach (string? recentROMPath in Properties.Settings.Default.RecentROMPaths)
+            foreach (string? recentROMPath in Settings.Default.RecentROMPaths)
             {
                 if (File.Exists(recentROMPath))
                     RecentROMs.Add(new(recentROMPath));

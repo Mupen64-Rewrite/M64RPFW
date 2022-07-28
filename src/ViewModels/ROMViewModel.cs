@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using M64RPFW.Models.Emulation.Helper;
+using M64RPFWAvalonia.Models.Emulation.Helper;
 using System;
 using System.Globalization;
 using System.IO;
 
-namespace M64RPFW.UI.ViewModels
+namespace M64RPFWAvalonia.UI.ViewModels
 {
     public partial class ROMViewModel : ObservableObject
     {

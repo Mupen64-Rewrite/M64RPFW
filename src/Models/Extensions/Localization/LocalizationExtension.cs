@@ -1,6 +1,6 @@
-﻿using System.Windows.Data;
+﻿using Avalonia.Data;
 
-namespace M64RPFW.UI.ViewModels.Extensions.Localization
+namespace M64RPFWAvalonia.UI.ViewModels.Extensions.Localization
 {
     public class LocalizationExtension : Binding
     {

@@ -1,15 +1,11 @@
-﻿using M64RPFW.UI.ViewModels.Interaction;
-using System;
+﻿using System;
 
-namespace M64RPFW.Models.Emulation.Core
+namespace M64RPFWAvalonia.Models.Emulation.Core
 {
     public class EmulatorException : Exception
     {
-        public readonly StatusInformation? AdditionalInformation;
-
-        public EmulatorException(StatusInformation additionalInformation = null)
+        public EmulatorException(string? message) : base(message)
         {
-            this.AdditionalInformation = additionalInformation;
         }
     }
 }
