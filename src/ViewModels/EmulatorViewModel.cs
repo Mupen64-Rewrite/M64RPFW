@@ -130,10 +130,10 @@ namespace M64RPFWAvalonia.UI.ViewModels
             {
                 Debug.Print("Framebuffer is not yet ready");
 
-                var hallo = new int[800*600];
-                Array.Fill<int>(hallo, new Random().Next(0, int.MaxValue));
-
-                SetFrameBuffer(hallo, 800, 600);
+                // it works yeah
+                //var hallo = new int[800*600];
+                //Array.Fill<int>(hallo, new Random().Next(0, int.MaxValue))
+                //SetFrameBuffer(hallo, 800, 600);
 
                 return;
             }
