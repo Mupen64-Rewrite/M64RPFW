@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\M64PRR\M64PRR.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Eto.Platform.Gtk" Version="2.7.0" />
+        <PackageReference Include="WaylandSharp" Version="0.2.1" />
+        <PackageReference Include="X11" Version="1.0.6" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+        <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="WaylandProtocol" />
+        <AdditionalFiles Include="Wayland\wayland.xml" WaylandProtocol="client" />
+    </ItemGroup>
+</Project>

@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M64PRR", "M64PRR\M64PRR\M64PRR.csproj", "{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M64PRR.Gtk", "M64PRR\M64PRR.Gtk\M64PRR.Gtk.csproj", "{5D3D1256-9D64-4237-800B-381820032AE3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M64PRR.Mac", "M64PRR\M64PRR.Mac\M64PRR.Mac.csproj", "{F7EFB68E-68EB-4754-A794-82739D679B14}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M64PRR.Wpf", "M64PRR\M64PRR.Wpf\M64PRR.Wpf.csproj", "{C638AA43-C7E9-4172-901C-1F4E8B468277}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D3D1256-9D64-4237-800B-381820032AE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D3D1256-9D64-4237-800B-381820032AE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D3D1256-9D64-4237-800B-381820032AE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D3D1256-9D64-4237-800B-381820032AE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7EFB68E-68EB-4754-A794-82739D679B14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7EFB68E-68EB-4754-A794-82739D679B14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7EFB68E-68EB-4754-A794-82739D679B14}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{C638AA43-C7E9-4172-901C-1F4E8B468277}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C638AA43-C7E9-4172-901C-1F4E8B468277}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
