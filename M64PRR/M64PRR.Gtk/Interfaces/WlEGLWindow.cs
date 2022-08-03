@@ -37,6 +37,10 @@ public class WlEGLWindow : IDisposable
     public WlEGLWindow(WlSurface surface, Size size)
     {
         _pointer = wl_egl_window_create(surface.RawPointer, size.Width, size.Height);
+        if (_pointer == IntPtr.Zero)
+        {
+            throw new ApplicationException("Wayland EGL window creation failed");
+        }
     }
     
     /// <summary>

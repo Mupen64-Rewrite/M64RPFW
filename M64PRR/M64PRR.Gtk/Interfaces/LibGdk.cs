@@ -66,16 +66,22 @@ public class LibGdk
 
     public static unsafe WlDisplay GdkWaylandDisplay_GetWlDisplay(Gdk.Display display)
     {
-        return new WlDisplay((_WlProxy*) gdk_wayland_display_get_wl_display(display.Handle).ToPointer());
+        var res = new WlDisplay((_WlProxy*) gdk_wayland_display_get_wl_display(display.Handle).ToPointer());
+        GC.SuppressFinalize(res);
+        return res;
     }
 
     public static unsafe WlCompositor GdkWaylandDisplay_GetWlCompositor(Gdk.Display display)
     {
-        return new WlCompositor((_WlProxy*) gdk_wayland_display_get_wl_compositor(display.Handle).ToPointer());
+        var res = new WlCompositor((_WlProxy*) gdk_wayland_display_get_wl_compositor(display.Handle).ToPointer());
+        GC.SuppressFinalize(res);
+        return res;
     }
 
     public static unsafe WlSurface GdkWaylandWindow_GetWlSurface(Gdk.Window window)
     {
-        return new WlSurface((_WlProxy*) gdk_wayland_window_get_wl_surface(window.Handle).ToPointer());
+        var res = new WlSurface((_WlProxy*) gdk_wayland_window_get_wl_surface(window.Handle).ToPointer());
+        GC.SuppressFinalize(res);
+        return res;
     }
 }
