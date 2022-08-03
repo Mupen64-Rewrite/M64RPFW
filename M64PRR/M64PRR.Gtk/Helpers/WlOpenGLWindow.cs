@@ -11,7 +11,7 @@ namespace M64PRR.Gtk.Helpers;
 /// <summary>
 /// A WL-native subwindow bound to a parent <see cref="Gdk.Window"/>.
 /// </summary>
-public class WlOpenGLWindow
+public class WlOpenGLWindow : IOpenGLWindow
 {
     private static readonly Size TempSize = new Size(640, 480);
 
@@ -53,6 +53,11 @@ public class WlOpenGLWindow
     public void SwapBuffers()
     {
         LibEGL.SwapBuffers(_eglDisplay, _eglSurface);
+    }
+
+    public void ResizeWindow(Size size)
+    {
+        _wlEGLWindow.Size = size;
     }
 
     private void InitEGL(int[] configAttrs, int[] contextAttrs)
