@@ -1,6 +1,6 @@
-// Most of this code was practically stolen from OpenTK, and so I include their license
-// here as credit to them. Thank you, fellow open source devs.
-// ====================================================================================
+// This code was taken from OpenTK with a few minor tweaks, and so I include
+// their license here as credit to them. Thank you, fellow open source devs.
+// ============================================================================
 //
 // The Open Toolkit Library License
 //
@@ -25,6 +25,7 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 //
+// ============================================================================
 
 using System;
 using System.Collections.Generic;

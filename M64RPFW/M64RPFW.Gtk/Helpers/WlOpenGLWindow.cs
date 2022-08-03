@@ -7,7 +7,6 @@ using WaylandSharp;
 
 namespace M64PRR.Gtk.Helpers;
 
-
 /// <summary>
 /// A WL-native subwindow bound to a parent <see cref="Gdk.Window"/>.
 /// </summary>
@@ -15,7 +14,7 @@ public class WlOpenGLWindow : IOpenGLWindow
 {
     private static readonly Size TempSize = new Size(640, 480);
 
-    private static readonly int[] EGLConfigAttributes = 
+    private static readonly int[] EGLConfigAttributes =
     {
         LibEGL.SURFACE_TYPE, LibEGL.WINDOW_BIT,
         LibEGL.RED_SIZE, 8,
@@ -31,17 +30,29 @@ public class WlOpenGLWindow : IOpenGLWindow
         LibEGL.CONTEXT_MINOR_VERSION_KHR, 3,
         LibEGL.NONE
     };
-    
+
     public WlOpenGLWindow(Gdk.Window parent, int[]? configAttrs = null, int[]? contextAttrs = null)
     {
         WlGlobals.Init(LibGdk.GdkWaylandDisplay_GetWlDisplay(parent.Display));
 
         _surface = WlGlobals.Compositor.CreateSurface();
-        // This is done to prevent the finalizer from deleting the parent
         WlSurface parentSurface = LibGdk.GdkWaylandWindow_GetWlSurface(parent);
 
         _subsurface = WlGlobals.Subcompositor.GetSubsurface(_surface, parentSurface);
-        
+
+        using (WlRegion opaqueRegion = WlGlobals.Compositor.CreateRegion(),
+               inputRegion = WlGlobals.Compositor.CreateRegion())
+        {
+            opaqueRegion.Add(0, 0, TempSize.Width, TempSize.Height);
+            // input region is left empty, since this surface shouldn't take input
+            
+            _surface.SetOpaqueRegion(opaqueRegion);
+            _surface.SetInputRegion(inputRegion);
+
+            opaqueRegion.Destroy();
+            inputRegion.Destroy();
+        }
+
         InitEGL(configAttrs ?? EGLConfigAttributes, contextAttrs ?? EGLContextAttributes);
     }
 
@@ -58,6 +69,11 @@ public class WlOpenGLWindow : IOpenGLWindow
     public void ResizeWindow(Size size)
     {
         _wlEGLWindow.Size = size;
+
+        WlRegion opaqueRegion = WlGlobals.Compositor.CreateRegion();
+        opaqueRegion.Add(0, 0, size.Width, size.Height);
+        _surface.SetOpaqueRegion(opaqueRegion);
+        opaqueRegion.Destroy();
     }
 
     private void InitEGL(int[] configAttrs, int[] contextAttrs)
@@ -67,12 +83,14 @@ public class WlOpenGLWindow : IOpenGLWindow
         {
             throw new ApplicationException("EGL Display creation failed");
         }
+
         if (!LibEGL.Initialize(_eglDisplay, out var vMajor, out var vMinor))
         {
             throw new ApplicationException("EGL initialization failed");
         }
+
         Console.WriteLine($"Initialized EGL {vMajor}.{vMinor}");
-        
+
         // check that KHR_create_context is supported (required for modern OpenGL
         string extensions = Marshal.PtrToStringUTF8(LibEGL.QueryString(_eglDisplay, LibEGL.EXTENSIONS))!;
         if (!extensions.Split(" ").Contains("EGL_KHR_create_context"))
@@ -85,13 +103,13 @@ public class WlOpenGLWindow : IOpenGLWindow
         {
             throw new ApplicationException("Could not find any EGL configs");
         }
-        
+
         IntPtr[] configList = new IntPtr[1];
         LibEGL.ChooseConfig(_eglDisplay, configAttrs, configList, 1, out nConfigs);
         _eglConfig = configList[0];
 
         _eglContext = LibEGL.CreateContext(_eglDisplay, _eglConfig, IntPtr.Zero, contextAttrs);
-        
+
         _wlEGLWindow = new WlEGLWindow(_surface, TempSize);
         _eglSurface = LibEGL.CreateWindowSurface(_eglDisplay, _eglConfig, _wlEGLWindow.RawPointer, IntPtr.Zero);
     }

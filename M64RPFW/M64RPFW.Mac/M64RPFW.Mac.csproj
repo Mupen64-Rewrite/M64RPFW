@@ -5,14 +5,18 @@
         <TargetFramework>net6.0</TargetFramework>
 
         <RuntimeIdentifiers>osx-x64;osx-arm64</RuntimeIdentifiers>
+
+        <Nullable>enable</Nullable>
+
+        <RootNamespace>M64PRR.Mac</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\M64PRR\M64PRR.csproj"/>
+        <ProjectReference Include="..\M64RPFW\M64RPFW.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Eto.Platform.Mac64" Version="2.7.0"/>
+        <PackageReference Include="Eto.Platform.Mac64" Version="2.7.0" />
     </ItemGroup>
 
 </Project>

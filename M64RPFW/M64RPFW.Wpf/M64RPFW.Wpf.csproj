@@ -3,14 +3,16 @@
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <TargetFramework>net6.0-windows</TargetFramework>
+        <Nullable>enable</Nullable>
+        <RootNamespace>M64PRR.Wpf</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\M64PRR\M64PRR.csproj"/>
+        <ProjectReference Include="..\M64RPFW\M64RPFW.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Eto.Platform.Wpf" Version="2.7.0"/>
+        <PackageReference Include="Eto.Platform.Wpf" Version="2.7.0" />
     </ItemGroup>
 
 </Project>

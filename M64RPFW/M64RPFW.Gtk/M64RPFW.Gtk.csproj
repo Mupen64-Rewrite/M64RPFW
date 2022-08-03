@@ -5,14 +5,17 @@
         <TargetFramework>net6.0</TargetFramework>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Nullable>enable</Nullable>
+        <RootNamespace>M64PRR.Gtk</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\M64PRR\M64PRR.csproj" />
+        <ProjectReference Include="..\M64RPFW\M64RPFW.csproj" />
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Eto.Platform.Gtk" Version="2.7.0" />
+        <PackageReference Include="GdkSharp" Version="3.24.24.38" />
+        <PackageReference Include="GtkSharp" Version="3.24.24.38" />
         <PackageReference Include="OpenTK" Version="4.7.4" />
         <PackageReference Include="WaylandSharp" Version="0.2.1" />
         <PackageReference Include="X11" Version="1.0.6" />
