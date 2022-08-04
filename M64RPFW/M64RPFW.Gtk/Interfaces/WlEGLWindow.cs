@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using WaylandSharp;
 
-namespace M64PRR.Gtk.Interfaces;
+namespace M64RPFW.Gtk.Interfaces;
 
 /// <summary>
 /// Wrapper class for wl_egl_window, which isn't a traditional Wayland type.

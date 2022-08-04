@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using WaylandSharp;
 
-namespace M64PRR.Gtk.Interfaces;
+namespace M64RPFW.Gtk.Interfaces;
 
 public class LibGdk
 {

@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace M64PRR.Gtk.Interfaces;
+namespace M64RPFW.Gtk.Interfaces;
 
 public static class LibGLib
 {

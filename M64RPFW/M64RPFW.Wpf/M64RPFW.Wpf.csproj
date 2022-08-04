@@ -4,7 +4,7 @@
         <OutputType>WinExe</OutputType>
         <TargetFramework>net6.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
-        <RootNamespace>M64PRR.Wpf</RootNamespace>
+        <RootNamespace>M64RPFW.Wpf</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

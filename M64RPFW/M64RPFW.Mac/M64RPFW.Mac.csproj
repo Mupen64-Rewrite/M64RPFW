@@ -8,7 +8,7 @@
 
         <Nullable>enable</Nullable>
 
-        <RootNamespace>M64PRR.Mac</RootNamespace>
+        <RootNamespace>M64RPFW.Mac</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

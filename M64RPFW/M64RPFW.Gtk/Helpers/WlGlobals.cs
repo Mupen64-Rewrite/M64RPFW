@@ -1,7 +1,7 @@
 using System;
 using WaylandSharp;
 
-namespace M64PRR.Gtk.Helpers;
+namespace M64RPFW.Gtk.Helpers;
 
 public static class WlGlobals
 {

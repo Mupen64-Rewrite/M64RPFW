@@ -1,8 +1,11 @@
 using Gtk;
 using M64PRR.Gtk.Helpers;
+using M64RPFW.Gtk.Helpers;
 
-namespace M64PRR.Gtk.Controls;
+namespace M64RPFW.Gtk.Controls;
 public class GtkGLSubWindow : Widget
 {
-    IOpenGLWindow
+    
+    
+    private IOpenGLWindow _glWindow;
 }
