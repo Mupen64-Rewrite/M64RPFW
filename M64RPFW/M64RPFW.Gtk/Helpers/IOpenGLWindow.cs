@@ -7,9 +7,9 @@ using static M64RPFW.Models.Emulation.Mupen64Plus.Mupen64Plus;
 
 namespace M64RPFW.Gtk.Helpers;
 
-public interface IOpenGLWindow
+public interface IOpenGLWindow : IDisposable
 {
-    public static IOpenGLWindow Create(Gdk.Window parent, Dictionary<GLAttribute, int> attrs)
+    public static IOpenGLWindow Create(Gdk.Window parent, Size size, Dictionary<GLAttribute, int> attrs)
     {
         Gdk.Display display = parent.Display;
         if (LibGdk.Gdk_IsX11Display(display))
@@ -20,12 +20,14 @@ public interface IOpenGLWindow
 
         if (LibGdk.Gdk_IsWaylandDisplay(display))
         {
-            return new WlOpenGLWindow(parent, attrs);
+            return new WlOpenGLWindow(parent, size, attrs);
         }
 
         throw new InvalidOperationException("This error should not be triggered at all");
     }
     void MakeCurrent();
     void SwapBuffers();
+    void SetPosition(Point pos);
     void ResizeWindow(Size size);
+    void SetVisible(bool visible);
 }

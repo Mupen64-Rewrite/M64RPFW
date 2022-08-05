@@ -37,7 +37,7 @@ public class WlOpenGLWindow : IOpenGLWindow
 
     private static readonly int[] EGLSurfaceAttributes = null;
 
-    public WlOpenGLWindow(Gdk.Window parent, (int[]? config, int[]? context, int[]? surface) attrs)
+    public WlOpenGLWindow(Gdk.Window parent, Size size, (int[]? config, int[]? context, int[]? surface) attrs)
     {
         WlGlobals.Init(LibGdk.GdkWaylandDisplay_GetWlDisplay(parent.Display));
 
@@ -49,7 +49,7 @@ public class WlOpenGLWindow : IOpenGLWindow
         using (WlRegion opaqueRegion = WlGlobals.Compositor.CreateRegion(),
                inputRegion = WlGlobals.Compositor.CreateRegion())
         {
-            opaqueRegion.Add(0, 0, TempSize.Width, TempSize.Height);
+            opaqueRegion.Add(0, 0, size.Width, size.Height);
             // input region is left empty, since this surface shouldn't take input
 
             _surface.SetOpaqueRegion(opaqueRegion);
@@ -60,12 +60,12 @@ public class WlOpenGLWindow : IOpenGLWindow
         }
 
         InitEGL(
-            attrs.config ?? EGLConfigAttributes,
+            size, attrs.config ?? EGLConfigAttributes, 
             attrs.context ?? EGLContextAttributes,
             attrs.surface ?? EGLSurfaceAttributes);
     }
 
-    public WlOpenGLWindow(Gdk.Window parent, Dictionary<GLAttribute, int> attrs) : this(parent, GenEGLAttrs(in attrs))
+    public WlOpenGLWindow(Gdk.Window parent, Size size, Dictionary<GLAttribute, int> attrs) : this(parent, size, GenEGLAttrs(in attrs))
     {
     }
 
@@ -173,6 +173,11 @@ public class WlOpenGLWindow : IOpenGLWindow
         LibEGL.SwapBuffers(_eglDisplay, _eglSurface);
     }
 
+    public void SetPosition(Point pos)
+    {
+        _subsurface.SetPosition(pos.X, pos.Y);
+    }
+
     public void ResizeWindow(Size size)
     {
         _wlEGLWindow.Size = size;
@@ -183,7 +188,12 @@ public class WlOpenGLWindow : IOpenGLWindow
         opaqueRegion.Destroy();
     }
 
-    private void InitEGL(int[] configAttrs, int[] contextAttrs, int[] surfaceAttrs)
+    public void SetVisible(bool visible)
+    {
+        
+    }
+
+    private void InitEGL(Size size, int[] configAttrs, int[] contextAttrs, int[] surfaceAttrs)
     {
         _eglDisplay = LibEGL.GetDisplay(_surface.RawPointer);
         if (_eglDisplay == IntPtr.Zero)
@@ -217,7 +227,7 @@ public class WlOpenGLWindow : IOpenGLWindow
 
         _eglContext = LibEGL.CreateContext(_eglDisplay, _eglConfig, IntPtr.Zero, contextAttrs);
 
-        _wlEGLWindow = new WlEGLWindow(_surface, TempSize);
+        _wlEGLWindow = new WlEGLWindow(_surface, size);
         _eglSurface = LibEGL.CreateWindowSurface(_eglDisplay, _eglConfig, _wlEGLWindow.RawPointer, surfaceAttrs);
     }
 
@@ -230,4 +240,36 @@ public class WlOpenGLWindow : IOpenGLWindow
     private IntPtr _eglConfig;
     private IntPtr _eglContext;
     private IntPtr _eglSurface;
+
+    private void ReleaseUnmanagedResources()
+    {
+        LibEGL.DestroySurface(_eglDisplay, _eglSurface);
+        LibEGL.DestroyContext(_eglDisplay, _eglContext);
+
+        _wlEGLWindow.Dispose();
+        _subsurface.Destroy();
+        _surface.Destroy();
+    }
+
+    private void Dispose(bool disposing)
+    {
+        ReleaseUnmanagedResources();
+        if (disposing)
+        {
+            _surface.Dispose();
+            _subsurface.Dispose();
+            _eglWindow.Dispose();
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~WlOpenGLWindow()
+    {
+        Dispose(false);
+    }
 }
