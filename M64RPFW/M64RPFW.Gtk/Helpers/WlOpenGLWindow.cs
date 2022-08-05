@@ -16,8 +16,6 @@ namespace M64PRR.Gtk.Helpers;
 /// </summary>
 public class WlOpenGLWindow : IOpenGLWindow
 {
-    private static readonly Size TempSize = new Size(640, 480);
-
     private static readonly int[] EGLConfigAttributes =
     {
         LibEGL.SURFACE_TYPE, LibEGL.WINDOW_BIT,
@@ -45,6 +43,8 @@ public class WlOpenGLWindow : IOpenGLWindow
         WlSurface parentSurface = LibGdk.GdkWaylandWindow_GetWlSurface(parent);
 
         _subsurface = WlGlobals.Subcompositor.GetSubsurface(_surface, parentSurface);
+        _subsurface.SetDesync();
+        _subsurface.PlaceAbove(parentSurface);
 
         using (WlRegion opaqueRegion = WlGlobals.Compositor.CreateRegion(),
                inputRegion = WlGlobals.Compositor.CreateRegion())
@@ -176,6 +176,7 @@ public class WlOpenGLWindow : IOpenGLWindow
     public void SetPosition(Point pos)
     {
         _subsurface.SetPosition(pos.X, pos.Y);
+        _surface.Commit();
     }
 
     public void ResizeWindow(Size size)
@@ -193,9 +194,14 @@ public class WlOpenGLWindow : IOpenGLWindow
         
     }
 
+    public IntPtr GetProcAddress(string symbol)
+    {
+        return LibEGL.GetProcAddress(symbol);
+    }
+
     private void InitEGL(Size size, int[] configAttrs, int[] contextAttrs, int[] surfaceAttrs)
     {
-        _eglDisplay = LibEGL.GetDisplay(_surface.RawPointer);
+        _eglDisplay = LibEGL.GetDisplay(WlGlobals.Display.RawPointer);
         if (_eglDisplay == IntPtr.Zero)
         {
             throw new ApplicationException("EGL Display creation failed");
@@ -234,8 +240,7 @@ public class WlOpenGLWindow : IOpenGLWindow
     private WlSurface _surface;
     private WlSubsurface _subsurface;
     private WlEGLWindow _wlEGLWindow;
-
-    private WlEGLWindow _eglWindow;
+    
     private IntPtr _eglDisplay;
     private IntPtr _eglConfig;
     private IntPtr _eglContext;
@@ -258,7 +263,6 @@ public class WlOpenGLWindow : IOpenGLWindow
         {
             _surface.Dispose();
             _subsurface.Dispose();
-            _eglWindow.Dispose();
         }
     }
 

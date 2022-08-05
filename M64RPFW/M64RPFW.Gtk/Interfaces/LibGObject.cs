@@ -3,9 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace M64RPFW.Gtk.Interfaces;
 
-public static class LibGLib
+public static class LibGObject
 {
-    private const string LibName = "libglib-2.0.so";
+    private const string LibName = "libgobject-2.0.so";
 
     // DLL-imported functions
     // ==========================================

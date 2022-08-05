@@ -7,7 +7,7 @@ public static class WlGlobals
 {
     public static void Init(WlDisplay display)
     {
-        if (!(_display is null))
+        if (_display is not null)
             return;
         
         _display = display;
@@ -24,6 +24,7 @@ public static class WlGlobals
                 _subcompositor = registry.Bind<WlSubcompositor>(args.Name, args.Interface, args.Version);
             }
         };
+        display.Roundtrip();
     }
 
     private static InvalidOperationException NotInitializedError()

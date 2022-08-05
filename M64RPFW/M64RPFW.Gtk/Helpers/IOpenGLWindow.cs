@@ -30,4 +30,5 @@ public interface IOpenGLWindow : IDisposable
     void SetPosition(Point pos);
     void ResizeWindow(Size size);
     void SetVisible(bool visible);
+    IntPtr GetProcAddress(string symbol);
 }

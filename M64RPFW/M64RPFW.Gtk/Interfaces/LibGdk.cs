@@ -39,7 +39,7 @@ public class LibGdk
     public static bool Gdk_IsX11Display(Gdk.Display display)
     {
         GLib.GType type = new GLib.GType(gdk_x11_display_get_type());
-        return LibGLib.GType_CheckInstanceType(display, type);
+        return LibGObject.GType_CheckInstanceType(display, type);
     }
     
     /// <summary>
@@ -50,7 +50,7 @@ public class LibGdk
     public static bool Gdk_IsWaylandDisplay(Gdk.Display display)
     {
         GLib.GType type = new GLib.GType(gdk_wayland_display_get_type());
-        return LibGLib.GType_CheckInstanceType(display, type);
+        return LibGObject.GType_CheckInstanceType(display, type);
     }
     
     /// <summary>

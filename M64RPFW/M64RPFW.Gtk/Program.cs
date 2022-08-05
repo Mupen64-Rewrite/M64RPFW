@@ -1,5 +1,6 @@
 ﻿using System;
 using Eto.Forms;
+using M64RPFW.Controls;
 
 namespace M64PRR.Gtk
 {
@@ -8,7 +9,10 @@ namespace M64PRR.Gtk
         [STAThread]
         public static void Main(string[] args)
         {
-            new Application(Eto.Platforms.Gtk).Run(new MainForm());
+            var platform = new Eto.GtkSharp.Platform();
+            platform.Add<GLSubWindow.IGLSubWindow>(() => new M64RPFW.Gtk.Controls.GLSubWindow());
+            
+            new Application(platform).Run(new MainForm());
         }
     }
 }
