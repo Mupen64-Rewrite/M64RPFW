@@ -1,8 +1,9 @@
 ﻿using System;
 using Eto.Forms;
+using M64PRR;
 using M64RPFW.Controls;
 
-namespace M64PRR.Gtk
+namespace M64RPFW.Gtk
 {
     class Program
     {

@@ -14,6 +14,9 @@ public class LibGdk
     private static extern IntPtr gdk_x11_display_get_type();
 
     [DllImport(LibName)]
+    private static extern IntPtr gdk_x11_display_get_xdisplay(IntPtr handle);
+
+    [DllImport(LibName)]
     private static extern ulong gdk_x11_window_get_xid(IntPtr handle);
 
     [DllImport(LibName)]
@@ -54,16 +57,30 @@ public class LibGdk
     }
     
     /// <summary>
-    /// Returns the <see cref="X11.Window"/> corresponding to a <see cref="Gdk.Window"/>.  
-    /// Undefined behaviour if the window 
+    /// Returns the X11 display object corresponding to a <see cref="Gdk.Display"/>
+    /// </summary>
+    /// <param name="display">A <see cref="Gdk.Display"/></param>
+    /// <returns>An opaque pointer to the display object (same as C XDisplay*)</returns>
+    public static IntPtr GdkX11Display_GetXDisplay(Gdk.Display display)
+    {
+        return gdk_x11_display_get_xdisplay(display.Handle);
+    }
+    
+    /// <summary>
+    /// Returns the <see cref="X11.Window"/> corresponding to a <see cref="Gdk.Window"/>.
     /// </summary>
     /// <param name="window">a <see cref="Gdk.Window"/></param>
-    /// <returns></returns>
+    /// <returns>A <see cref="X11.Window"/></returns>
     public static X11.Window GdkX11Window_GetXID(Gdk.Window window)
     {
         return (X11.Window) gdk_x11_window_get_xid(window.Handle);
     }
-
+    
+    /// <summary>
+    /// Returns the <see cref="WlDisplay"/> corresponding to a <see cref="Gdk.Display"/>.
+    /// </summary>
+    /// <param name="display">A <see cref="Gdk.Display"/></param>
+    /// <returns>A <see cref="WlDisplay"/></returns>
     public static unsafe WlDisplay GdkWaylandDisplay_GetWlDisplay(Gdk.Display display)
     {
         var res = new WlDisplay((_WlProxy*) gdk_wayland_display_get_wl_display(display.Handle).ToPointer());
@@ -71,13 +88,11 @@ public class LibGdk
         return res;
     }
 
-    public static unsafe WlCompositor GdkWaylandDisplay_GetWlCompositor(Gdk.Display display)
-    {
-        var res = new WlCompositor((_WlProxy*) gdk_wayland_display_get_wl_compositor(display.Handle).ToPointer());
-        GC.SuppressFinalize(res);
-        return res;
-    }
-
+    /// <summary>
+    /// Returns the <see cref="X11.Window"/> corresponding to a <see cref="Gdk.Window"/>.
+    /// </summary>
+    /// <param name="window">a <see cref="Gdk.Window"/></param>
+    /// <returns>A <see cref="X11.Window"/></returns>
     public static unsafe WlSurface GdkWaylandWindow_GetWlSurface(Gdk.Window window)
     {
         var res = new WlSurface((_WlProxy*) gdk_wayland_window_get_wl_surface(window.Handle).ToPointer());

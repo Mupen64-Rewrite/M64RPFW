@@ -1,42 +1,140 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using System.Runtime.InteropServices;
+using M64RPFW.Gtk.Interfaces;
+using X11;
+
+using static X11.Xlib;
+using static M64RPFW.Gtk.Interfaces.LibXlib;
+using static M64RPFW.Models.Emulation.Mupen64Plus.Mupen64Plus;
 
 namespace M64RPFW.Gtk.Helpers;
 
 public class X11OpenGLWindow : IOpenGLWindow
 {
-    public void Dispose()
+    private static readonly int[] EGLConfigAttributes =
     {
-        throw new NotImplementedException();
+        LibEGL.SURFACE_TYPE, LibEGL.WINDOW_BIT,
+        LibEGL.RED_SIZE, 8,
+        LibEGL.GREEN_SIZE, 8,
+        LibEGL.BLUE_SIZE, 8,
+        LibEGL.RENDERABLE_TYPE, LibEGL.OPENGL_API,
+        LibEGL.NONE
+    };
+
+    private static readonly int[] EGLContextAttributes =
+    {
+        LibEGL.CONTEXT_MAJOR_VERSION_KHR, 3,
+        LibEGL.CONTEXT_MINOR_VERSION_KHR, 3,
+        LibEGL.NONE
+    };
+
+    private static readonly int[] EGLSurfaceAttributes = null;
+    
+    public X11OpenGLWindow(Gdk.Window parent, Size size, (int[]? config, int[]? context, int[]? surface) attrs)
+    {
+        var pntWindow = LibGdk.GdkX11Window_GetXID(parent);
+        var dpy = LibGdk.GdkX11Display_GetXDisplay(parent.Display);
+
+        var rootWindow = Window.None;
+
+        var swa = new XSetWindowAttributes
+        {
+            event_mask = EventMask.ExposureMask
+        };
+
+        if (_xDisplay == IntPtr.Zero)
+        {
+            _xDisplay = dpy;
+        }
+
+        // depth = CopyFromParent (0)
+        // class = InputOutput (1)
+        // visual = CopyFromParent (0)
+        // valuemask = CWEventMask (1 << 11) or (0x0800)
+        _window = XCreateWindow(dpy, pntWindow, 
+            0, 0, (uint) size.Width, (uint) size.Height, 0, 0, 
+            1, IntPtr.Zero, 0x0800, ref swa);
+        
+        // Example I found does this instead of combining
+        // the two attributes, I have no idea why
+        var xAttrs = new XSetWindowAttributes
+        {
+            override_redirect = false
+        };
+        XChangeWindowAttributes(dpy, _window, 0x0200, ref xAttrs);
+        
+        // Ensure the child is always in front of the parent
+        XSetTransientForHint(dpy, _window, pntWindow);
+        
+        EGLHelpers.InitEGL(
+            dpy, (IntPtr) _window, 
+            ref _eglDisplay, ref _eglConfig, ref _eglContext, ref _eglSurface, attrs);
+
+        XMapWindow(dpy, _window);
+    }
+    public X11OpenGLWindow(Gdk.Window parent, Size size, Dictionary<GLAttribute, int> attrs) : this(parent, size, EGLHelpers.GenEGLAttrs(in attrs))
+    {
     }
 
     public void MakeCurrent()
     {
-        throw new NotImplementedException();
+        LibEGL.MakeCurrent(_eglDisplay, _eglSurface, _eglSurface, _eglContext);
     }
 
     public void SwapBuffers()
     {
-        throw new NotImplementedException();
+        LibEGL.SwapBuffers(_eglDisplay, _eglSurface);
     }
 
     public void SetPosition(Point pos)
     {
-        throw new NotImplementedException();
+        XMoveWindow(_xDisplay, _window, pos.X, pos.Y);
     }
 
     public void ResizeWindow(Size size)
     {
-        throw new NotImplementedException();
+        XResizeWindow(_xDisplay, _window, (uint) size.Width, (uint) size.Height);
     }
 
     public void SetVisible(bool visible)
     {
-        throw new NotImplementedException();
+        if (visible)
+            XMapWindow(_xDisplay, _window);
+        else
+            XUnmapWindow(_xDisplay, _window);
     }
 
     public IntPtr GetProcAddress(string symbol)
     {
-        throw new NotImplementedException();
+        return LibEGL.GetProcAddress(symbol);
+    }
+
+    private static IntPtr _xDisplay = IntPtr.Zero;
+
+    private Window _window;
+    
+    private IntPtr _eglDisplay;
+    private IntPtr _eglConfig;
+    private IntPtr _eglContext;
+    private IntPtr _eglSurface;
+
+    private void ReleaseUnmanagedResources()
+    {
+        XUnmapWindow(_xDisplay, _window);
+        XDestroyWindow(_xDisplay, _window);
+    }
+
+    public void Dispose()
+    {
+        ReleaseUnmanagedResources();
+        GC.SuppressFinalize(this);
+    }
+
+    ~X11OpenGLWindow()
+    {
+        ReleaseUnmanagedResources();
     }
 }

@@ -24,6 +24,8 @@ public partial class MainForm : Form
         {
             if (!_videoModeSet)
             {
+                subWindow.SetAttribute(Mupen64Plus.GLAttribute.ContextMajorVersion, 3);
+                subWindow.SetAttribute(Mupen64Plus.GLAttribute.ContextMinorVersion, 3);
                 subWindow.SetVideoMode(new System.Drawing.Size { Width = 640, Height = 480 }, 0,
                     Mupen64Plus.VideoMode.Windowed, 0);
                 _videoModeSet = true;

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using M64PRR.Gtk.Helpers;
 using M64RPFW.Gtk.Interfaces;
 using static M64RPFW.Models.Emulation.Mupen64Plus.Mupen64Plus;
 
@@ -14,8 +13,7 @@ public interface IOpenGLWindow : IDisposable
         Gdk.Display display = parent.Display;
         if (LibGdk.Gdk_IsX11Display(display))
         {
-            // TODO implement X11 windows
-            throw new NotImplementedException("X11 windows are not implemented yet");
+            return new X11OpenGLWindow(parent, size, attrs);
         }
 
         if (LibGdk.Gdk_IsWaylandDisplay(display))

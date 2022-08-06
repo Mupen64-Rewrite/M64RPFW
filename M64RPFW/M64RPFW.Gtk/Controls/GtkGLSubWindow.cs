@@ -29,6 +29,7 @@ public class GtkGLSubWindow : Widget
         _queueRealize = false;
 
         HasWindow = false;
+        SetSizeRequest(size.Width, size.Height);
     }
 
     public Error SetAttribute(GLAttribute attr, int value)
@@ -86,7 +87,7 @@ public class GtkGLSubWindow : Widget
             basePosY = Allocation.Top + (Allocation.Height - _windowSize.Height) / 2;
 
         TranslateCoordinates(Toplevel, basePosX, basePosY, out int absX, out int absY);
-        _glWindow.SetPosition(new Point(absX, absY));
+        _glWindow.SetPosition(new Point(basePosX, basePosY));
     }
 
     #region GTK virtual methods

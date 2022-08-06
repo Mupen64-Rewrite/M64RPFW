@@ -306,7 +306,7 @@ public static partial class LibEGL
 
     [DllImport(LibName, EntryPoint = "eglCreateWindowSurface")]
     public static extern EGLSurface CreateWindowSurface(EGLDisplay dpy, EGLConfig config, IntPtr win,
-        int[]? attrib_list);
+        int[] attrib_list);
 
     [DllImport(LibName, EntryPoint = "eglCreatePbufferSurface")]
     public static extern EGLSurface CreatePbufferSurface(EGLDisplay dpy, EGLConfig config, int[] attrib_list);
