@@ -5,14 +5,14 @@ namespace M64RPFW.Gtk.Helpers;
 
 public static class WlGlobals
 {
-    public static void Init(WlDisplay display)
+    public static void Init(Func<WlDisplay> display)
     {
         if (_display is not null)
             return;
         
-        _display = display;
-        WlRegistry registry = display.GetRegistry();
-        registry.Global += (sender, args) =>
+        _display = display();
+        WlRegistry registry = _display.GetRegistry();
+        registry.Global += (_, args) =>
         {
             if (args.Interface == "wl_compositor")
             {
@@ -24,7 +24,7 @@ public static class WlGlobals
                 _subcompositor = registry.Bind<WlSubcompositor>(args.Name, args.Interface, args.Version);
             }
         };
-        display.Roundtrip();
+        _display.Roundtrip();
     }
 
     private static InvalidOperationException NotInitializedError()

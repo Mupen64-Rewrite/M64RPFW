@@ -43,4 +43,9 @@ public class GLSubWindow : GtkControl<GtkGLSubWindow, M64RPFW.Controls.GLSubWind
     {
         return Control.GetProcAddress(symbol);
     }
+
+    public void CloseVideo()
+    {
+        Control.CloseVideo();
+    }
 }

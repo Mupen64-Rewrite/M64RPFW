@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using M64PRR.Models.Helpers;
 using static M64RPFW.Models.Emulation.Mupen64Plus.Mupen64Plus;
@@ -12,6 +13,10 @@ public partial class Mupen64Plus
     // Public API
     // ========================================================
 #pragma warning disable CS8618
+    /// <summary>
+    /// Initializes the Mupen64Plus bindings, loading it from the specified path.
+    /// </summary>
+    /// <param name="path">The path to <c>mupen64plus.dll</c> or equivalent</param>
     public Mupen64Plus(string path)
     {
         _libHandle = NativeLibrary.Load(path);
@@ -26,6 +31,12 @@ public partial class Mupen64Plus
             null, IntPtr.Zero, null);
         ThrowForError(err);
     }
+    
+    /// <summary>
+    /// Initializes the Mupen64Plus bindings, loading from
+    /// <c>(path to exe dir)\Libs\mupen64plus.dll</c> or equivalent.
+    /// </summary>
+    public Mupen64Plus() : this(GetExpectedLibPath()) {}
 #pragma warning restore CS8618
 
     ~Mupen64Plus()
@@ -162,7 +173,7 @@ public partial class Mupen64Plus
 
     public void Reset(bool hard = true)
     {
-        Error err = CoreDoCommand(Command.Reset, hard? 1 : 0, IntPtr.Zero);
+        Error err = CoreDoCommand(Command.Reset, hard ? 1 : 0, IntPtr.Zero);
         ThrowForError(err);
     }
 
@@ -180,6 +191,25 @@ public partial class Mupen64Plus
 
         Error err = _fnCoreOverrideVidExt(_vidextDelegates!.AsNative());
         ThrowForError(err);
+    }
+
+    // Utilities
+    // =================================
+    private static string GetExpectedLibPath()
+    {
+        var asLib = ((Func<Func<string, string>>) (() =>
+        {
+            if (OperatingSystem.IsWindows())
+                return s => $"{s}.dll";
+            if (OperatingSystem.IsLinux())
+                return s => $"{s}.so";
+            throw new NotSupportedException("Your OS is not supported");
+        }))();
+
+        string path = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location) ??
+                      throw new ApplicationException("Could not retrieve .exe path");
+
+        return Path.Join(new[] { path, "Libs", asLib("mupen64plus") });
     }
 
     private readonly IntPtr _libHandle;

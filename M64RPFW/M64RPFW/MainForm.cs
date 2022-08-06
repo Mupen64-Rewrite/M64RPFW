@@ -19,8 +19,8 @@ public partial class MainForm : Form
         Content = subWindow;
 
         // create a few commands that can be used for the menu and toolbar
-        var clickMe = new Command { MenuText = "Click Me!", ToolBarText = "Click Me!" };
-        clickMe.Executed += (sender, e) =>
+        var openVideo = new Command { MenuText = "Open video surface" };
+        openVideo.Executed += (sender, e) =>
         {
             if (!_videoModeSet)
             {
@@ -36,12 +36,15 @@ public partial class MainForm : Form
             subWindow.SwapBuffers();
         };
 
-        var quitCommand = new Command
-            { MenuText = "Quit", Shortcut = Application.Instance.CommonModifier | Keys.Q };
-        quitCommand.Executed += (sender, e) => Application.Instance.Quit();
-
-        var aboutCommand = new Command { MenuText = "About..." };
-        aboutCommand.Executed += (sender, e) => new AboutDialog().ShowDialog(this);
+        var closeVideo = new Command { MenuText = "Close video surface" };
+        closeVideo.Executed += (sender, args) =>
+        {
+            if (_videoModeSet)
+            {
+                subWindow.CloseVideo();
+                _videoModeSet = false;
+            }
+        };
 
         // create menu
         Menu = new MenuBar
@@ -49,7 +52,7 @@ public partial class MainForm : Form
             Items =
             {
                 // File submenu
-                new SubMenuItem { Text = "&File", Items = { clickMe } },
+                new SubMenuItem { Text = "&File", Items = { openVideo, closeVideo } },
                 // new SubMenuItem { Text = "&Edit", Items = { /* commands/items */ } },
                 // new SubMenuItem { Text = "&View", Items = { /* commands/items */ } },
             },
@@ -57,9 +60,7 @@ public partial class MainForm : Form
             {
                 // application (OS X) or file menu (others)
                 new ButtonMenuItem { Text = "&Preferences..." },
-            },
-            QuitItem = quitCommand,
-            AboutItem = aboutCommand
+            }
         };
     }
 

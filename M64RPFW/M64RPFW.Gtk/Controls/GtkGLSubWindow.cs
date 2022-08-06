@@ -78,6 +78,12 @@ public class GtkGLSubWindow : Widget
         return _glWindow.GetProcAddress(symbol);
     }
 
+    public void CloseVideo()
+    {
+        _glWindow?.Dispose();
+        _glWindow = null;
+    }
+
     private void InitGLWindow()
     {
         _glWindow = IOpenGLWindow.Create(Window, _windowSize, _attrMap);
@@ -122,16 +128,13 @@ public class GtkGLSubWindow : Widget
     {
         base.OnRealized();
         if (_queueRealize)
-        {
             InitGLWindow();
-        }
     }
 
     protected override void OnUnrealized()
     {
         base.OnUnrealized();
-        _glWindow?.Dispose();
-        _glWindow = null;
+        CloseVideo();
     }
 
     protected override void OnMapped()

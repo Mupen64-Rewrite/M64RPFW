@@ -17,7 +17,7 @@ public class WlOpenGLWindow : IOpenGLWindow
 
     public WlOpenGLWindow(Gdk.Window parent, Size size, (int[]? config, int[]? context, int[]? surface) attrs)
     {
-        WlGlobals.Init(LibGdk.GdkWaylandDisplay_GetWlDisplay(parent.Display));
+        WlGlobals.Init(() => LibGdk.GdkWaylandDisplay_GetWlDisplay(parent.Display));
 
         _surface = WlGlobals.Compositor.CreateSurface();
         WlSurface parentSurface = LibGdk.GdkWaylandWindow_GetWlSurface(parent);
@@ -45,6 +45,7 @@ public class WlOpenGLWindow : IOpenGLWindow
             WlGlobals.Display.RawPointer, _wlEGLWindow.RawPointer, 
             ref _eglDisplay, ref _eglConfig, ref _eglContext, ref _eglSurface, 
             attrs);
+        
     }
 
     public WlOpenGLWindow(Gdk.Window parent, Size size, Dictionary<GLAttribute, int> attrs) : this(parent, size, EGLHelpers.GenEGLAttrs(in attrs))

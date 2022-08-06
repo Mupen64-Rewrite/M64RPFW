@@ -41,6 +41,11 @@ namespace M64RPFW.Controls
         {
             return Handler.GetProcAddress(procName);
         }
+
+        public void CloseVideo()
+        {
+            Handler.CloseVideo();
+        }
         
         public interface IGLSubWindow : IHandler
         {
@@ -50,6 +55,7 @@ namespace M64RPFW.Controls
             Mupen64Plus.Error SwapBuffers();
             Mupen64Plus.Error ResizeWindow(Size size);
             IntPtr GetProcAddress(string symbol);
+            void CloseVideo();
         }
 
         
