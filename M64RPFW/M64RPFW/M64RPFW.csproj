@@ -9,12 +9,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
         <PackageReference Include="Eto.Forms" Version="2.7.0" />
         <PackageReference Include="OpenTK" Version="4.7.4" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="ViewModels" />
     </ItemGroup>
 
 </Project>

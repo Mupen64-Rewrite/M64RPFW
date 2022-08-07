@@ -12,9 +12,9 @@ public partial class MainForm : Form
 {
     public MainForm()
     {
-        Title = "My Eto Form";
+        Title = "Mupen64Plus-RR";
         MinimumSize = new Size(200, 200);
-        Content = new RecentROMPanel();
+        Content = new RecentRomView();
 
         // create a few commands that can be used for the menu and toolbar
         var testCommand = new Command { MenuText = "Test" };
@@ -34,5 +34,7 @@ public partial class MainForm : Form
                 // new SubMenuItem { Text = "&View", Items = { /* commands/items */ } },
             }
         };
+
+        ClientSize = new Size(640, 480);
     }
 }
