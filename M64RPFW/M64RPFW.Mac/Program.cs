@@ -1,5 +1,6 @@
 ﻿using System;
 using Eto.Forms;
+using M64RPFW;
 
 namespace M64PRR.Mac
 {

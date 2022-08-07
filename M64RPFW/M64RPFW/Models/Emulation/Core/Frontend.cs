@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using M64PRR.Models.Helpers;
+using M64RPFW.Models.Helpers;
 
-namespace M64RPFW.Models.Emulation.Mupen64Plus;
+namespace M64RPFW.Models.Emulation.Core;
 
 public partial class Mupen64Plus
 {
+    #region Delegates for frontend API
     // Callback types for the frontend API
     // ========================================================
 
@@ -91,6 +92,11 @@ public partial class Mupen64Plus
         }
     }
 
+    private Error CoreDoCommand(Command command, int paramInt, Delegate del)
+    {
+        IntPtr fnPtr = Marshal.GetFunctionPointerForDelegate(del);
+        return CoreDoCommand(command, paramInt, fnPtr);
+    }
     private Error CoreDoCommand<T>(Command command, int paramInt, T[] paramPtr)
     {
         var fn = Marshal.GetDelegateForFunctionPointer<DCoreDoCommand<T[]>>(_fnCoreDoCommand);
@@ -102,10 +108,14 @@ public partial class Mupen64Plus
         var fn = Marshal.GetDelegateForFunctionPointer<DCoreDoCommand_Ref<T>>(_fnCoreDoCommand);
         return fn(command, paramInt, ref paramPtr);
     }
+    
+    #endregion
+    
+    #region Video Extensions
 
     // Video extension handling
     // ========================================================
-
+    
     public interface IVideoExtension
     {
         Error Init();
@@ -127,7 +137,7 @@ public partial class Mupen64Plus
         Error SwapBuffers();
         uint GetDefaultFramebuffer();
     }
-
+    
     private class VideoExtensionDelegates
     {
         public delegate Error DVidExt_Init();
@@ -225,6 +235,22 @@ public partial class Mupen64Plus
 
     private IVideoExtension? _vidextObject;
     private VideoExtensionDelegates? _vidextDelegates;
+    
+    #endregion
+    
+    // Plugin delegates
+    // ========================================================
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    private delegate Error DPluginStartup(IntPtr library, IntPtr debugContext, DebugCallback? debugCallback);
+    
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    private delegate Error DPluginShutdown();
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    private delegate Error DPluginGetVersion(out PluginType type, out int version, out int apiVersion, out string name,
+        out int caps);
+
+    private Dictionary<PluginType, IntPtr> _pluginDict;
 
     // Frontend function members
     // ========================================================

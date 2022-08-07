@@ -3,10 +3,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using M64PRR.Models.Helpers;
-using static M64RPFW.Models.Emulation.Mupen64Plus.Mupen64Plus;
+using M64RPFW.Models.Helpers;
+using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 
-namespace M64RPFW.Models.Emulation.Mupen64Plus;
+namespace M64RPFW.Models.Emulation.Core;
+
 
 public partial class Mupen64Plus
 {
@@ -27,8 +28,11 @@ public partial class Mupen64Plus
         ResolveFrontendFunctions();
 
         Error err = _fnCoreStartup!(
-            0x020000, null, null, IntPtr.Zero,
-            null, IntPtr.Zero, null);
+            0x020000, null, null, (IntPtr)(int) PluginType.Core,
+            OnDebug, IntPtr.Zero, OnStateChange);
+        ThrowForError(err);
+
+        err = CoreDoCommand(Command.SetFrameCallback, 0, new FrameCallback(OnFrameComplete));
         ThrowForError(err);
     }
     
@@ -37,13 +41,62 @@ public partial class Mupen64Plus
     /// <c>(path to exe dir)\Libs\mupen64plus.dll</c> or equivalent.
     /// </summary>
     public Mupen64Plus() : this(GetExpectedLibPath()) {}
+
+    private void OnDebug(IntPtr context, MessageLevel level, string message)
+    {
+        var type = (PluginType) (int) context;
+
+        string typeString = type switch
+        {
+            PluginType.Core => "",
+            PluginType.Graphics => "VIDEO ",
+            PluginType.Audio => "AUDIO ",
+            PluginType.Input => "INPUT ",
+            PluginType.RSP => "RSP   ",
+            
+        };
+        
+        string levelString = level switch
+        {
+            MessageLevel.Error => "ERROR",
+            MessageLevel.Warning => "WARN ",
+            MessageLevel.Info => "INFO ",
+            MessageLevel.Status => "STAT ",
+            MessageLevel.Verbose => "TRACE"
+        };
+        
+        Console.WriteLine($"[M64+ {typeString}{levelString}] {message}");
+    }
+
+    private void OnStateChange(IntPtr context, CoreParam param, int newValue)
+    {
+        StateChanged(this, new StateChangeEventArgs { Param = param, NewValue = newValue });
+    }
+
+    private void OnFrameComplete(int frameIndex)
+    {
+        FrameComplete(this, frameIndex);
+    }
+    
 #pragma warning restore CS8618
+
+    public class StateChangeEventArgs : EventArgs
+    {
+        public CoreParam Param { get; init; }
+        public int NewValue { get; init; }
+    }
+
+    public EventHandler<StateChangeEventArgs> StateChanged;
+
+    public EventHandler<int> FrameComplete;
 
     ~Mupen64Plus()
     {
         ThrowForError(_fnCoreShutdown());
         NativeLibrary.Free(_libHandle);
     }
+
+    #region Core Commands
 
     public void OpenROM(string path)
     {
@@ -183,6 +236,8 @@ public partial class Mupen64Plus
         ThrowForError(err);
     }
 
+    #endregion
+
     public void OverrideVideoExtensions(IVideoExtension obj)
     {
         ArgumentNullException.ThrowIfNull(obj);
@@ -191,6 +246,49 @@ public partial class Mupen64Plus
 
         Error err = _fnCoreOverrideVidExt(_vidextDelegates!.AsNative());
         ThrowForError(err);
+    }
+
+    public void AttachPlugin(string path)
+    {
+        IntPtr pluginLib = NativeLibrary.Load(path);
+        // Implicitly
+        var getVersion = NativeLibHelper.GetFunction<DPluginGetVersion>(pluginLib, "PluginGetVersion");
+        Error err = getVersion(out var type, out _, out _, out _, out _);
+
+        if (!_pluginDict.TryAdd(type, pluginLib))
+        {
+            IntPtr oldLib = _pluginDict[type];
+            var oldLibGetVersion = NativeLibHelper.GetFunction<DPluginGetVersion>(pluginLib, "PluginGetVersion");
+
+            err = oldLibGetVersion(out _, out _, out _, out var oldName, out _);
+            ThrowForError(err);
+            
+            NativeLibrary.Free(pluginLib);
+            throw new InvalidOperationException(
+                $"Plugin type {type} already has a plugin registered ({oldName})");
+        }
+
+        var startup = NativeLibHelper.GetFunction<DPluginStartup>(pluginLib, "PluginStartup");
+        err = startup(_libHandle, (IntPtr) (int) type, OnDebug);
+        ThrowForError(err);
+
+        err = _fnCoreAttachPlugin(type, pluginLib);
+        ThrowForError(err);
+    }
+
+    public void DetachPlugin(PluginType type)
+    {
+        if (!_pluginDict.Remove(type, out IntPtr pluginLib))
+            throw new InvalidOperationException($"Plugin type {type} does not have a plugin registered");
+
+        Error err = _fnCoreDetachPlugin(type);
+        ThrowForError(err);
+
+        var shutdown = NativeLibHelper.GetFunction<DPluginShutdown>(pluginLib, "PluginShutdown");
+        err = shutdown();
+        ThrowForError(err);
+        
+        NativeLibrary.Free(pluginLib);
     }
 
     // Utilities

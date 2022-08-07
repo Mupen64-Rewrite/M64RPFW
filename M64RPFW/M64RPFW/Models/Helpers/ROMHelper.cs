@@ -1,6 +1,6 @@
 using System;
 
-namespace M64PRR.Models.Helpers;
+namespace M64RPFW.Models.Helpers;
 
 public static class ROMHelper
 {

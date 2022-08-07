@@ -3,7 +3,7 @@ using System.Drawing;
 using Eto;
 using Eto.Forms;
 using Eto.Threading;
-using M64RPFW.Models.Emulation.Mupen64Plus;
+using M64RPFW.Models.Emulation.Core;
 using OpenTK;
 
 namespace M64RPFW.Controls

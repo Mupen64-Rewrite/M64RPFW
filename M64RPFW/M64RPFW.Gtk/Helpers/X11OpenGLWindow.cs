@@ -8,7 +8,7 @@ using X11;
 
 using static X11.Xlib;
 using static M64RPFW.Gtk.Interfaces.LibXlib;
-using static M64RPFW.Models.Emulation.Mupen64Plus.Mupen64Plus;
+using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 
 namespace M64RPFW.Gtk.Helpers;
 

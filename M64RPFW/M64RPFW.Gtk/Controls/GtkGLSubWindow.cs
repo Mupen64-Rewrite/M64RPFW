@@ -5,11 +5,11 @@ using System.Threading;
 using Cairo;
 using Gtk;
 using M64RPFW.Gtk.Helpers;
-using M64RPFW.Models.Emulation.Mupen64Plus;
+using M64RPFW.Models.Emulation.Core;
 using Action = System.Action;
 using Point = System.Drawing.Point;
 using Rectangle = Gdk.Rectangle;
-using static M64RPFW.Models.Emulation.Mupen64Plus.Mupen64Plus;
+using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 
 namespace M64RPFW.Gtk.Controls;
 

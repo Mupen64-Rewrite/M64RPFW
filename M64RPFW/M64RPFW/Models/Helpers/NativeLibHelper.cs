@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace M64PRR.Models.Helpers;
+namespace M64RPFW.Models.Helpers;
 
 public static class NativeLibHelper
 {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace M64RPFW.Models.Emulation.Mupen64Plus;
+namespace M64RPFW.Models.Emulation.Core;
 
 public partial class Mupen64Plus
 {
@@ -106,8 +106,6 @@ public partial class Mupen64Plus
         ReadScreen,
         Reset,
         AdvanceFrame,
-        SetVICallback,
-        SetRenderCallback
     }
 
     public enum CoreParam
@@ -249,6 +247,9 @@ public partial class Mupen64Plus
         public IntPtr VidExtFuncResizeWindow;
         public IntPtr VidExtFuncGLGetDefaultFramebuffer;
     }
+    
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void FrameCallback(int index);
 
     // Custom
 

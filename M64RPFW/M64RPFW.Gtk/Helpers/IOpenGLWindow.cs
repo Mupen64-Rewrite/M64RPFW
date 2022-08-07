@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using M64RPFW.Gtk.Interfaces;
-using static M64RPFW.Models.Emulation.Mupen64Plus.Mupen64Plus;
+using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 
 namespace M64RPFW.Gtk.Helpers;
 

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using M64RPFW.Gtk.Interfaces;
 using WaylandSharp;
-using static M64RPFW.Models.Emulation.Mupen64Plus.Mupen64Plus;
+using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 
 namespace M64RPFW.Gtk.Helpers;
 

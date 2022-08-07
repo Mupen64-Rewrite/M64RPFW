@@ -2,7 +2,7 @@ using System;
 using System.Drawing;
 using Eto.Forms;
 using Eto.GtkSharp.Forms;
-using M64RPFW.Models.Emulation.Mupen64Plus;
+using M64RPFW.Models.Emulation.Core;
 
 namespace M64RPFW.Gtk.Controls;
 
