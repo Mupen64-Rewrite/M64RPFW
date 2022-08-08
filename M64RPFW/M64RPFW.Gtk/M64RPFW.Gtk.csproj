@@ -33,13 +33,13 @@
         <ItemGroup>
             <LibraryList Include="Libraries\**\*.so" />
         </ItemGroup>
-        <Copy SourceFiles="@(LibraryList)" DestinationFolder="$(OutDir)" />
+        <Copy SourceFiles="@(LibraryList)" DestinationFolder="$(OutDir)/Libraries" />
     </Target>
 
     <Target Name="CopyLibraries" AfterTargets="AfterPublish">
         <ItemGroup>
             <LibraryList Include="Libraries\**\*.so" />
         </ItemGroup>
-        <Copy SourceFiles="@(LibraryList)" DestinationFolder="$(PublishDir)" />
+        <Copy SourceFiles="@(LibraryList)" DestinationFolder="$(PublishDir)/Libraries" />
     </Target>
 </Project>

@@ -1,27 +1,26 @@
 using System;
 using Eto.Drawing;
 using Eto.Forms;
-using M64RPFW.Controls;
-using M64RPFW.Models.Emulation.Core;
+using M64RPFW.Presenters;
 using M64RPFW.Views;
-using OpenTK.Graphics.ES11;
 
 namespace M64RPFW;
 
-public partial class MainForm : Form
+public partial class MainView : Form
 {
-    public MainForm()
+    public MainView()
     {
+        Presenter = new MainPresenter(this);
+
+        RomView = new RecentRomView();
+        EmuView = new EmulatorView();
+        
         Title = "Mupen64Plus-RR";
-        MinimumSize = new Size(200, 200);
-        Content = new RecentRomView();
+        Content = RomView;
 
         // create a few commands that can be used for the menu and toolbar
         var testCommand = new Command { MenuText = "Test" };
-        testCommand.Executed += (_, _) =>
-        {
-            Console.WriteLine("Test called");
-        };
+        testCommand.Executed += (_, _) => Console.WriteLine("Test called");
 
             // create menu
         Menu = new MenuBar
@@ -37,4 +36,9 @@ public partial class MainForm : Form
 
         ClientSize = new Size(640, 480);
     }
+    
+    internal MainPresenter Presenter { get; }
+    
+    internal RecentRomView RomView { get; }
+    internal EmulatorView EmuView { get; }
 }

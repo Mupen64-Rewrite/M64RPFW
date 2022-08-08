@@ -1,11 +1,10 @@
 using System;
 using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.Input;
 using M64RPFW.Views;
 
-namespace M64RPFW.ViewModels;
+namespace M64RPFW.Presenters;
 
-internal class RecentROM
+internal class RecentRom
 {
     public string Name { get; set; }
     public string Region { get; set; }
@@ -13,18 +12,19 @@ internal class RecentROM
 
 }
 
-internal partial class RecentRomViewModel
+internal partial class RecentRomPresenter
 {
-    public RecentRomViewModel()
+    public RecentRomPresenter(RecentRomView view)
     {
-        RomObjects = new();
+        _view = view;
+        RecentRoms = new();
     }
     
-    [RelayCommand]
     public void SelectAndRunROM(int index)
     {
         Console.WriteLine("SelectAndRunROM was called");
     }
-    
-    public ObservableCollection<RecentROM> RomObjects { get; }
+
+    private RecentRomView _view;
+    public ObservableCollection<RecentRom> RecentRoms { get; }
 }

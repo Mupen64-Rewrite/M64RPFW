@@ -1,6 +1,6 @@
 using Eto.Drawing;
 using Eto.Forms;
-using M64RPFW.ViewModels;
+using M64RPFW.Presenters;
 
 namespace M64RPFW.Views;
 
@@ -8,17 +8,17 @@ internal class RecentRomView : Panel
 {
     public RecentRomView()
     {
-        _viewModel = new RecentRomViewModel();
+        _presenter = new RecentRomPresenter(this);
         {
             // TEMPORARY TEST DATA
-            _viewModel.RomObjects.Add(new RecentROM { Name = "Super Mario 64 (U) [!]", Region = "USA", Filename = "sm64-us.z64"});
-            _viewModel.RomObjects.Add(new RecentROM { Name = "Super Mario 64 (J) [!]", Region = "Japan", Filename = "sm64-jp.z64"});
+            _presenter.RecentRoms.Add(new RecentRom { Name = "Super Mario 64 (U) [!]", Region = "USA", Filename = "sm64-us.z64"});
+            _presenter.RecentRoms.Add(new RecentRom { Name = "Super Mario 64 (J) [!]", Region = "Japan", Filename = "sm64-jp.z64"});
         }
 
         RomGrid = new GridView
         {
             // Bind VM's RomObjects as backing store for GridView
-            DataStore = _viewModel.RomObjects
+            DataStore = _presenter.RecentRoms
         };
         {
             RomGrid.Columns.Add(new GridColumn
@@ -26,7 +26,7 @@ internal class RecentRomView : Panel
                 HeaderText = "Name",
                 DataCell = new TextBoxCell
                 {
-                    Binding = Binding.Property<RecentROM, string>(o => o.Name)
+                    Binding = Binding.Property<RecentRom, string>(o => o.Name)
                 },
                 Editable = false
             });
@@ -35,7 +35,7 @@ internal class RecentRomView : Panel
                 HeaderText = "Region",
                 DataCell = new TextBoxCell
                 {
-                    Binding = Binding.Property<RecentROM, string>(o => o.Region)
+                    Binding = Binding.Property<RecentRom, string>(o => o.Region)
                 },
                 Editable = false
             });
@@ -44,21 +44,18 @@ internal class RecentRomView : Panel
                 HeaderText = "Filename",
                 DataCell = new TextBoxCell
                 {
-                    Binding = Binding.Property<RecentROM, string>(o => o.Filename)
+                    Binding = Binding.Property<RecentRom, string>(o => o.Filename)
                 },
                 Editable = false
             });
         }
 
-        RomGrid.CellDoubleClick += (_, args) =>
-        {
-            _viewModel.SelectAndRunROM(args.Row);
-        };
+        RomGrid.CellDoubleClick += (_, args) => _presenter.SelectAndRunROM(args.Row);
 
         Content = RomGrid;
         Padding = Padding.Empty;
     }
 
-    private readonly RecentRomViewModel _viewModel;
+    private readonly RecentRomPresenter _presenter;
     internal readonly GridView RomGrid;
 }
