@@ -14,17 +14,21 @@ internal class RecentRom
 
 internal partial class RecentRomPresenter
 {
-    public RecentRomPresenter(RecentRomView view)
+    public RecentRomPresenter(RecentRomView view, MainPresenter parent)
     {
         _view = view;
+        _parent = parent;
         RecentRoms = new();
     }
     
     public void SelectAndRunROM(int index)
     {
         Console.WriteLine("SelectAndRunROM was called");
+        _parent.SwitchTo(MainPresenter.SubView.Emulator);
+        
     }
 
     private RecentRomView _view;
+    private MainPresenter _parent;
     public ObservableCollection<RecentRom> RecentRoms { get; }
 }

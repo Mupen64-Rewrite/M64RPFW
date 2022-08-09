@@ -4,61 +4,51 @@ using System.Runtime.InteropServices;
 
 namespace M64RPFW.Models.Emulation.Core;
 
-public partial class Mupen64Plus
+public static partial class Mupen64Plus
 {
     public enum Error
     {
         Success = 0,
-        NotInit,        /* Function is disallowed before InitMupen64Plus() is called */
-        AlreadyInit,    /* InitMupen64Plus() was called twice */
-        Incompatible,    /* API versions between components are incompatible */
-        InputAssert,    /* Invalid parameters for function call, such as ParamValue=NULL for GetCoreParameter() */
-        InputInvalid,   /* Invalid input data, such as ParamValue="maybe" for SetCoreParameter() to set a BOOL-type value */
+        NotInit, /* Function is disallowed before InitMupen64Plus() is called */
+        AlreadyInit, /* InitMupen64Plus() was called twice */
+        Incompatible, /* API versions between components are incompatible */
+        InputAssert, /* Invalid parameters for function call, such as ParamValue=NULL for GetCoreParameter() */
+        InputInvalid, /* Invalid input data, such as ParamValue="maybe" for SetCoreParameter() to set a BOOL-type value */
         InputNotFound, /* The input parameter(s) specified a particular item which was not found */
-        NoMemory,       /* Memory allocation failed */
-        Files,           /* Error opening, creating, reading, or writing to a file */
-        Internal,        /* Internal error */
-        InvalidState,   /* Current program state does not allow operation */
-        PluginFail,     /* A plugin function returned a fatal error */
-        SystemFail,     /* A system function call, such as an SDL or file operation, failed */
-        Unsupported,     /* Function call is not supported (ie, core not built with debugger) */
-        WrongType       /* A given input type parameter cannot be used for desired operation */
+        NoMemory, /* Memory allocation failed */
+        Files, /* Error opening, creating, reading, or writing to a file */
+        Internal, /* Internal error */
+        InvalidState, /* Current program state does not allow operation */
+        PluginFail, /* A plugin function returned a fatal error */
+        SystemFail, /* A system function call, such as an SDL or file operation, failed */
+        Unsupported, /* Function call is not supported (ie, core not built with debugger) */
+        WrongType /* A given input type parameter cannot be used for desired operation */
     }
-    
-    void ThrowForError(Error err)
+
+    private static void ThrowForError(Error err)
     {
+        if (err == Error.Success)
+            return;
+        string msg = _fnCoreErrorMessage(err);
         switch (err)
         {
-            case Error.Success:
-                break;
             case Error.NotInit:
-                throw new InvalidOperationException("M64+ was not initialized");
             case Error.AlreadyInit:
-                throw new InvalidOperationException("M64+ was already initialized");
-            case Error.Incompatible:
-                throw new ArgumentException("Component is incompatible with this version of M64+");
-            case Error.InputAssert:
-                throw new ArgumentException("Argument assertion failed in M64+");
-            case Error.InputInvalid:
-                throw new ArgumentException("Invalid argument to M64+ call");
-            case Error.InputNotFound:
-                throw new ArgumentException("Specified value not found in M64+");
-            case Error.NoMemory:
-                throw new OutOfMemoryException("Out-of-memory error in M64+");
-            case Error.Files:
-                throw new ApplicationException("I/O error in M64+");
-            case Error.Internal:
-                throw new ApplicationException("Internal error in M64+: This is a bug and should be reported.");
             case Error.InvalidState:
-                throw new InvalidOperationException("Current M64+ state does not allow this operation");
-            case Error.PluginFail:
-                throw new ApplicationException("Fatal error in M64+ plugin");
-            case Error.SystemFail:
-                throw new ApplicationException("Fatal error calling system function in M64+");
-            case Error.Unsupported:
-                throw new InvalidOperationException("This instance of M64+ cannot perform this operation.");
+            case Error.Incompatible:
+                throw new InvalidOperationException($"M64+: {msg}");
+            case Error.InputAssert:
+            case Error.InputInvalid:
+            case Error.InputNotFound:
             case Error.WrongType:
-                throw new ArgumentException("The specified input type cannot be used for this operation");
+                throw new ArgumentException($"M64+: {msg}");
+            case Error.PluginFail:
+            case Error.SystemFail:
+            case Error.Internal:
+            case Error.Files:
+                throw new ApplicationException($"M64+: {msg}");
+            case Error.NoMemory:
+                throw new OutOfMemoryException($"M64+: {msg}");
         }
     }
 
@@ -70,8 +60,7 @@ public partial class Mupen64Plus
         Status,
         Verbose
     }
-    
-    
+
 
     public enum PluginType
     {
@@ -146,6 +135,18 @@ public partial class Mupen64Plus
         String
     }
 
+    public static System.Type MapToSystemType(Type t)
+    {
+        return t switch
+        {
+            Type.Int => typeof(int),
+            Type.Float => typeof(float),
+            Type.Bool => typeof(bool),
+            Type.String => typeof(string), 
+            _ => throw new ArgumentException("Invalid type", nameof(t))
+        };
+    }
+
     public enum SystemType
     {
         NTSC = 0,
@@ -161,23 +162,26 @@ public partial class Mupen64Plus
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     public struct RomHeader
     {
-        public byte init_PI_BSB_DOM1_LAT_REG;  /* 0x00 */
-        public byte init_PI_BSB_DOM1_PGS_REG;  /* 0x01 */
-        public byte init_PI_BSB_DOM1_PWD_REG;  /* 0x02 */
+        public byte init_PI_BSB_DOM1_LAT_REG; /* 0x00 */
+        public byte init_PI_BSB_DOM1_PGS_REG; /* 0x01 */
+        public byte init_PI_BSB_DOM1_PWD_REG; /* 0x02 */
         public byte init_PI_BSB_DOM1_PGS_REG2; /* 0x03 */
-        public uint ClockRate;                 /* 0x04 */
-        public uint PC;                        /* 0x08 */
-        public uint Release;                   /* 0x0C */
-        public uint CRC1;                      /* 0x10 */
-        public uint CRC2;                      /* 0x14 */
+        public uint ClockRate; /* 0x04 */
+        public uint PC; /* 0x08 */
+        public uint Release; /* 0x0C */
+        public uint CRC1; /* 0x10 */
+        public uint CRC2; /* 0x14 */
+
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-        public uint[] Unknown;                 /* 0x18 */
+        public uint[] Unknown; /* 0x18 */
+
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-        public byte[] Name;                    /* 0x20 */
-        public uint unknown;                   /* 0x34 */
-        public uint Manufacturer_ID;           /* 0x38 */
-        public ushort Cartridge_ID;            /* 0x3C - Game serial number  */
-        public ushort Country_code;            /* 0x3E */
+        public byte[] Name; /* 0x20 */
+
+        public uint unknown; /* 0x34 */
+        public uint Manufacturer_ID; /* 0x38 */
+        public ushort Cartridge_ID; /* 0x3C - Game serial number  */
+        public ushort Country_code; /* 0x3E */
     }
 
 
@@ -186,15 +190,17 @@ public partial class Mupen64Plus
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
         public char[] goodname;
+
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 33)]
         public char[] MD5;
+
         public byte savetype;
-        public byte status;         // Rom status on a scale from 0-5. 
-        public byte players;        // Local players 0-4, 2/3/4 way Netplay indicated by 5/6/7. 
-        public byte rumble;         // 0 - No, 1 - Yes boolean for rumble support. 
-        public byte transferpak;    // 0 - No, 1 - Yes boolean for transfer pak support. 
-        public byte mempak;         // 0 - No, 1 - Yes boolean for memory pak support. 
-        public byte biopak;         // 0 - No, 1 - Yes boolean for bio pak support. 
+        public byte status; // Rom status on a scale from 0-5. 
+        public byte players; // Local players 0-4, 2/3/4 way Netplay indicated by 5/6/7. 
+        public byte rumble; // 0 - No, 1 - Yes boolean for rumble support. 
+        public byte transferpak; // 0 - No, 1 - Yes boolean for transfer pak support. 
+        public byte mempak; // 0 - No, 1 - Yes boolean for memory pak support. 
+        public byte biopak; // 0 - No, 1 - Yes boolean for bio pak support. 
     }
 
     public enum GLAttribute
@@ -227,7 +233,7 @@ public partial class Mupen64Plus
         public uint uiWidth;
         public uint uiHeight;
     }
-    
+
     [StructLayout(LayoutKind.Sequential)]
     public struct VideoExtensionFunctions
     {
@@ -246,8 +252,28 @@ public partial class Mupen64Plus
         public IntPtr VidExtFuncToggleFS;
         public IntPtr VidExtFuncResizeWindow;
         public IntPtr VidExtFuncGLGetDefaultFramebuffer;
+
+        public static VideoExtensionFunctions Empty =>
+            new VideoExtensionFunctions
+            {
+                Functions = 14,
+                VidExtFuncInit = IntPtr.Zero,
+                VidExtFuncQuit = IntPtr.Zero,
+                VidExtFuncListModes = IntPtr.Zero,
+                VidExtFuncListRates = IntPtr.Zero,
+                VidExtFuncSetMode = IntPtr.Zero,
+                VidExtFuncSetModeWithRate = IntPtr.Zero,
+                VidExtFuncResizeWindow = IntPtr.Zero,
+                VidExtFuncSetCaption = IntPtr.Zero,
+                VidExtFuncToggleFS = IntPtr.Zero,
+                VidExtFuncGLGetProc = IntPtr.Zero,
+                VidExtFuncGLSetAttr = IntPtr.Zero,
+                VidExtFuncGLGetAttr = IntPtr.Zero,
+                VidExtFuncGLSwapBuf = IntPtr.Zero,
+                VidExtFuncGLGetDefaultFramebuffer = IntPtr.Zero
+            };
     }
-    
+
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void FrameCallback(int index);
 
@@ -260,18 +286,21 @@ public partial class Mupen64Plus
         Running,
         Paused,
     }
+
     public enum SavestateType : int
     {
         Mupen64Plus,
         Project64Compressed,
         Project64Uncompressed,
     }
+
     public enum CoreTypes
     {
         PureInterpreter,
         CachedInterpreter,
         DynamicRecompiler,
     }
+
     public enum DisplayTypes
     {
         Windowed,

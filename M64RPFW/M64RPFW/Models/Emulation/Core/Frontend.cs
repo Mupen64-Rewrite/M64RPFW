@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using M64RPFW.Models.Helpers;
 
+using static M64RPFW.Models.Helpers.NativeLibHelper;
+
 namespace M64RPFW.Models.Emulation.Core;
 
-public partial class Mupen64Plus
+public static partial class Mupen64Plus
 {
     #region Delegates for frontend API
     // Callback types for the frontend API
@@ -32,81 +34,48 @@ public partial class Mupen64Plus
     // Delegate types for core functions
     // ========================================================
 
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [RuntimeDllImport]
+    private delegate string DCoreErrorMessage(Error code);
+
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    [RuntimeDllImport]
     private delegate Error DCoreStartup(int apiVersion, string? configPath, string? dataPath,
         IntPtr debugContext, DebugCallback? debugCallback, IntPtr stateContext, StateCallback? stateCallback);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    [RuntimeDllImport]
     private delegate Error DCoreShutdown();
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    [RuntimeDllImport]
     private delegate Error DCoreAttachPlugin(PluginType pluginType, IntPtr pluginLibHandle);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    [RuntimeDllImport]
     private delegate Error DCoreDetachPlugin(PluginType pluginType);
-
-    /// <summary>
-    /// A delegate for the M64+ function <c>CoreDoCommand</c>.
-    /// Used for passing in values through paramPtr.
-    /// </summary>
-    /// <typeparam name="TP">The type to marshal as the pointer parameter.</typeparam>
+    
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate Error DCoreDoCommand<in TP>(Command command, int paramInt, TP paramPtr);
+    [RuntimeDllImport]
+    private unsafe delegate Error DCoreDoCommand(Command cmd, int paramInt, void* paramPtr);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate Error DCoreDoCommand_Ref<TP>(Command command, int paramInt, ref TP paramPtr);
-
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    [RuntimeDllImport]
     private delegate Error DCoreOverrideVidExt(VideoExtensionFunctions videoFunctionStruct);
 
 
     // Frontend function utilities
     // ========================================================
 
-    private void ResolveFrontendFunctions()
+    private static void ResolveFrontendFunctions()
     {
-        _fnCoreStartup = NativeLibHelper.GetFunction<DCoreStartup>(_libHandle, "CoreStartup");
-        _fnCoreShutdown = NativeLibHelper.GetFunction<DCoreShutdown>(_libHandle, "CoreShutdown");
-        _fnCoreAttachPlugin = NativeLibHelper.GetFunction<DCoreAttachPlugin>(_libHandle, "CoreAttachPlugin");
-        _fnCoreDetachPlugin = NativeLibHelper.GetFunction<DCoreDetachPlugin>(_libHandle, "CoreDetachPlugin");
-        _fnCoreDoCommand = NativeLibrary.GetExport(_libHandle, "CoreDoCommand");
-        _fnCoreOverrideVidExt = NativeLibHelper.GetFunction<DCoreOverrideVidExt>(_libHandle, "CoreOverrideVidExt");
-    }
-
-    private Error CoreDoCommand(Command command, int paramInt, IntPtr paramPtr)
-    {
-        var fn = Marshal.GetDelegateForFunctionPointer<DCoreDoCommand<IntPtr>>(_fnCoreDoCommand);
-        return fn(command, paramInt, paramPtr);
-    }
-
-    private Error CoreDoCommand(Command command, int paramInt, string paramPtr)
-    {
-        IntPtr cstr = Marshal.StringToHGlobalAnsi(paramPtr);
-        try
-        {
-            return CoreDoCommand(command, paramInt, cstr);
-        }
-        finally
-        {
-            Marshal.FreeHGlobal(cstr);
-        }
-    }
-
-    private Error CoreDoCommand(Command command, int paramInt, Delegate del)
-    {
-        IntPtr fnPtr = Marshal.GetFunctionPointerForDelegate(del);
-        return CoreDoCommand(command, paramInt, fnPtr);
-    }
-    private Error CoreDoCommand<T>(Command command, int paramInt, T[] paramPtr)
-    {
-        var fn = Marshal.GetDelegateForFunctionPointer<DCoreDoCommand<T[]>>(_fnCoreDoCommand);
-        return fn(command, paramInt, paramPtr);
-    }
-
-    private Error CoreDoCommand<T>(Command command, int paramInt, ref T paramPtr)
-    {
-        var fn = Marshal.GetDelegateForFunctionPointer<DCoreDoCommand_Ref<T>>(_fnCoreDoCommand);
-        return fn(command, paramInt, ref paramPtr);
+        ResolveDelegate(_libHandle, out _fnCoreErrorMessage);
+        ResolveDelegate(_libHandle, out _fnCoreStartup);
+        ResolveDelegate(_libHandle, out _fnCoreShutdown);
+        ResolveDelegate(_libHandle, out _fnCoreAttachPlugin);
+        ResolveDelegate(_libHandle, out _fnCoreDetachPlugin);
+        ResolveDelegate(_libHandle, out _fnCoreOverrideVidExt);
+        ResolveDelegate(_libHandle, out _fnCoreDoCommand);
     }
     
     #endregion
@@ -196,7 +165,7 @@ public partial class Mupen64Plus
         {
             return new VideoExtensionFunctions
             {
-                Functions = 11,
+                Functions = 14,
                 VidExtFuncInit = Marshal.GetFunctionPointerForDelegate(InitFn),
                 VidExtFuncQuit = Marshal.GetFunctionPointerForDelegate(QuitFn),
                 VidExtFuncListModes = Marshal.GetFunctionPointerForDelegate(ListFullscreenModesFn),
@@ -232,9 +201,7 @@ public partial class Mupen64Plus
         public DVidExt_SwapBuffers SwapBuffersFn;
         public DVidExt_GetDefaultFramebuffer GetDefaultFramebufferFn;
     }
-
-    private IVideoExtension? _vidextObject;
-    private VideoExtensionDelegates? _vidextDelegates;
+    private static VideoExtensionDelegates? _vidextDelegates;
     
     #endregion
     
@@ -250,15 +217,16 @@ public partial class Mupen64Plus
     private delegate Error DPluginGetVersion(out PluginType type, out int version, out int apiVersion, out string name,
         out int caps);
 
-    private Dictionary<PluginType, IntPtr> _pluginDict;
+    private static Dictionary<PluginType, IntPtr> _pluginDict;
 
     // Frontend function members
     // ========================================================
 
-    private DCoreStartup _fnCoreStartup;
-    private DCoreShutdown _fnCoreShutdown;
-    private DCoreAttachPlugin _fnCoreAttachPlugin;
-    private DCoreDetachPlugin _fnCoreDetachPlugin;
-    private IntPtr _fnCoreDoCommand;
-    private DCoreOverrideVidExt _fnCoreOverrideVidExt;
+    private static DCoreErrorMessage _fnCoreErrorMessage;
+    private static DCoreStartup _fnCoreStartup;
+    private static DCoreShutdown _fnCoreShutdown;
+    private static DCoreAttachPlugin _fnCoreAttachPlugin;
+    private static DCoreDetachPlugin _fnCoreDetachPlugin;
+    private static DCoreDoCommand _fnCoreDoCommand;
+    private static DCoreOverrideVidExt _fnCoreOverrideVidExt;
 }

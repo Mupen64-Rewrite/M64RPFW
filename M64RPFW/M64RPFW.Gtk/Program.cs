@@ -1,6 +1,7 @@
 ﻿using System;
 using Eto.Forms;
 using M64RPFW.Controls;
+using M64RPFW.Misc;
 
 namespace M64RPFW.Gtk
 {
@@ -12,8 +13,8 @@ namespace M64RPFW.Gtk
             var platform = new Eto.GtkSharp.Platform();
             // Register our custom control
             platform.Add<GLSubWindow.IGLSubWindow>(() => new M64RPFW.Gtk.Controls.GLSubWindow());
-            
-            new Application(platform).Run(new MainView());
+
+            new M64RPFWApplication(platform).Run();
         }
     }
 }

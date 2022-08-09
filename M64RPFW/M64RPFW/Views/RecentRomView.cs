@@ -6,9 +6,9 @@ namespace M64RPFW.Views;
 
 internal class RecentRomView : Panel
 {
-    public RecentRomView()
+    public RecentRomView(MainView parent)
     {
-        _presenter = new RecentRomPresenter(this);
+        _presenter = new RecentRomPresenter(this, parent.Presenter);
         {
             // TEMPORARY TEST DATA
             _presenter.RecentRoms.Add(new RecentRom { Name = "Super Mario 64 (U) [!]", Region = "USA", Filename = "sm64-us.z64"});

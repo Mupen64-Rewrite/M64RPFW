@@ -25,20 +25,17 @@
         <AdditionalFiles Include="Interfaces\Wayland\wayland.xml" WaylandProtocol="client" />
     </ItemGroup>
     
-    <ItemGroup>
-      <Folder Include="Libraries" />
-    </ItemGroup>
-    
-    <Target Name="CopyLibraries" AfterTargets="AfterBuild">
+    <Target Name="CopyCustomLibraries" AfterTargets="AfterBuild">
         <ItemGroup>
-            <LibraryList Include="Libraries\**\*.so" />
+            <LibraryList Include="Libraries\*.so" />
         </ItemGroup>
-        <Copy SourceFiles="@(LibraryList)" DestinationFolder="$(OutDir)/Libraries" />
+        <Message Importance="high" Text="Library list: @(LibraryList)"/>
+        <Copy SourceFiles="Libraries/mupen64plus.so" DestinationFolder="$(OutDir)/Libraries" />
     </Target>
 
-    <Target Name="CopyLibraries" AfterTargets="AfterPublish">
+    <Target Name="CopyCustomLibrariesPublish" AfterTargets="AfterPublish">
         <ItemGroup>
-            <LibraryList Include="Libraries\**\*.so" />
+            <LibraryList Include="Libraries\*.so" />
         </ItemGroup>
         <Copy SourceFiles="@(LibraryList)" DestinationFolder="$(PublishDir)/Libraries" />
     </Target>

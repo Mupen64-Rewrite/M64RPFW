@@ -1,5 +1,6 @@
 using System;
 using Eto.Drawing;
+using M64RPFW.Models.Emulation.Core;
 
 namespace M64RPFW.Presenters;
 
@@ -10,21 +11,23 @@ public class MainPresenter
         _view = view;
     }
 
-    enum SubView
+    public enum SubView
     {
         RecentRom,
         Emulator
     }
 
-    private void SwitchTo(SubView view)
+    public void SwitchTo(SubView view)
     {
         switch (view)
         {
             case SubView.RecentRom:
                 _view.MinimumSize = new Size(256, 144);
                 _view.Content = _view.RomView;
+                _view.Resizable = true;
                 break;
             case SubView.Emulator:
+                _view.Content = _view.EmuView;
                 break;
         }
     }

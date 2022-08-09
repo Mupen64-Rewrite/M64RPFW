@@ -12,8 +12,8 @@ public partial class MainView : Form
     {
         Presenter = new MainPresenter(this);
 
-        RomView = new RecentRomView();
-        EmuView = new EmulatorView();
+        RomView = new RecentRomView(this);
+        EmuView = new EmulatorView(this);
         
         Title = "Mupen64Plus-RR";
         Content = RomView;

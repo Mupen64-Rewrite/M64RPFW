@@ -14,4 +14,8 @@
         <PackageReference Include="OpenTK" Version="4.7.4" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Models\Helpers\PInvoke" />
+    </ItemGroup>
+
 </Project>

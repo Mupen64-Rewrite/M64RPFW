@@ -7,9 +7,9 @@ namespace M64RPFW.Views;
 
 public class EmulatorView : Panel
 {
-    public EmulatorView()
+    public EmulatorView(MainView parent)
     {
-        _presenter = new EmulatorPresenter(this);
+        _presenter = new EmulatorPresenter(this, parent.Presenter);
         
         SubWindow = new GLSubWindow();
         Content = SubWindow;
