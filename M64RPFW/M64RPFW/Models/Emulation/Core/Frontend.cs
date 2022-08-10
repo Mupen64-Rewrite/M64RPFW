@@ -31,6 +31,18 @@ public static partial class Mupen64Plus
     /// <param name="newValue">the core parameter's new value</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void StateCallback(IntPtr context, CoreParam param, int newValue);
+    
+    /// <summary>
+    /// Responds to the emulator completing a frame.
+    /// </summary>
+    /// <param name="index">the current frame index</param>
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void FrameCallback(int index);
+
+    private static DebugCallback _debugCB;
+    private static StateCallback _stateCB;
+    private static FrameCallback _frameCB;
+    
 
     // Delegate types for core functions
     // ========================================================

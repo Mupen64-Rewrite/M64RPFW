@@ -385,9 +385,6 @@ public static partial class Mupen64Plus
         }
     }
 
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void FrameCallback(int index);
-
     // Custom
 
     public enum PlayModes : int

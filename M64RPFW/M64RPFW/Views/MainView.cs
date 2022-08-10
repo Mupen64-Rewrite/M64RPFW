@@ -37,7 +37,7 @@ public partial class MainView : Form
                 new SubMenuItem { Text = "&File", Items = { testCommand } },
                 new SubMenuItem { Text = "&Emulator", Items =
                 {
-                    new ForwardingRelayCommand(Presenter.StopCommand)
+                    new ForwardingRelayCommand(Presenter.StopCommand) { MenuText = "Stop" }
                 } },
                 // new SubMenuItem { Text = "&View", Items = { /* commands/items */ } },
             }

@@ -13,8 +13,4 @@
         <PackageReference Include="Eto.Forms" Version="2.7.0" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Models\Helpers\PInvoke" />
-    </ItemGroup>
-
 </Project>

@@ -29,7 +29,8 @@ public class VidextPresenter : IVideoExtension
         {
             _prevContent = _view.Content;
             _view.Content = _view.SubWindow;
-            _view.Resizable = false;
+            _view.ParentWindow.Resizable = false;
+            
         });
         return Error.Success;
     }
@@ -41,7 +42,11 @@ public class VidextPresenter : IVideoExtension
         {
             _view.Content = _prevContent;
             _prevContent = null;
-            _view.Resizable = true;
+            _view.ParentWindow.Resizable = true;
+            
+            // Workaround for X11. I know it looks weird, but it works.
+            _view.ParentWindow.Size += new Eto.Drawing.Size(10, 10);
+            _view.ParentWindow.Size -= new Eto.Drawing.Size(10, 10);
         });
         return Error.Success;
     }

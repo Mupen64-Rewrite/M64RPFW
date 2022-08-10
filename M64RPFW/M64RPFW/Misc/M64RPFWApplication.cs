@@ -9,6 +9,10 @@ namespace M64RPFW.Misc;
 
 public class M64RPFWApplication : Application
 {
+    static M64RPFWApplication()
+    {
+        Mupen64Plus.Startup();
+    }
     
     public M64RPFWApplication() 
     {
@@ -27,7 +31,6 @@ public class M64RPFWApplication : Application
 
     protected override void OnInitialized(EventArgs e)
     {
-        Mupen64Plus.Startup();
         UIThreadCheckMode = UIThreadCheckMode.Warning;
 
         MainForm.Visible = true;
