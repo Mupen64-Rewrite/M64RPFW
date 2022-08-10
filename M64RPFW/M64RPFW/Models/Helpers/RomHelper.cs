@@ -2,7 +2,7 @@ using System;
 
 namespace M64RPFW.Models.Helpers;
 
-public static class ROMHelper
+public static class RomHelper
 {
     public static void AdaptiveByteSwap(ref byte[] data)
     {
@@ -33,5 +33,14 @@ public static class ROMHelper
         }
 
         throw new ArgumentException($"Data is most likely not an N64 ROM. Signature was {signature:X8}");
+    }
+
+    public static uint AsBigEndian(uint x)
+    {
+        if (BitConverter.IsLittleEndian) {
+            x = (x >> 16) | (x << 16);
+            x = ((x & 0xFF00FF00) >> 8) | ((x & 0x00FF00FF) << 8);
+        }
+        return x;
     }
 }

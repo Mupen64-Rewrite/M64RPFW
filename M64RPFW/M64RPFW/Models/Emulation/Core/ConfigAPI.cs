@@ -79,7 +79,7 @@ public static partial class Mupen64Plus
         ThrowForError(err);
     }
 
-    public static unsafe void ConfigSetParameter(IntPtr section, string paramName, int paramValue)
+    public static unsafe void ConfigSetInt(IntPtr section, string paramName, int paramValue)
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
 
@@ -87,7 +87,7 @@ public static partial class Mupen64Plus
         ThrowForError(err);
     }
 
-    public static unsafe void ConfigSetParameter(IntPtr section, string paramName, float paramValue)
+    public static unsafe void ConfigSetFloat(IntPtr section, string paramName, float paramValue)
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
 
@@ -95,7 +95,7 @@ public static partial class Mupen64Plus
         ThrowForError(err);
     }
 
-    public static unsafe void ConfigSetParameter(IntPtr section, string paramName, bool paramValue)
+    public static unsafe void ConfigSetBool(IntPtr section, string paramName, bool paramValue)
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
 
@@ -105,7 +105,7 @@ public static partial class Mupen64Plus
         ThrowForError(err);
     }
 
-    public static unsafe void ConfigSetParameter(IntPtr section, string paramName, string paramValue)
+    public static unsafe void ConfigSetString(IntPtr section, string paramName, string paramValue)
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
 
@@ -179,7 +179,7 @@ public static partial class Mupen64Plus
     {
         if (ConfigGetType(section, paramName) != Type.Float)
         {
-            throw new InvalidOperationException($"Parameter {paramName} is not an int");
+            throw new InvalidOperationException($"Parameter {paramName} is not a float");
         }
 
         return _fnConfigGetParamFloat(section, paramName);
@@ -188,7 +188,7 @@ public static partial class Mupen64Plus
     {
         if (ConfigGetType(section, paramName) != Type.Bool)
         {
-            throw new InvalidOperationException($"Parameter {paramName} is not an int");
+            throw new InvalidOperationException($"Parameter {paramName} is not a bool");
         }
 
         return _fnConfigGetParamBool(section, paramName);
@@ -197,7 +197,7 @@ public static partial class Mupen64Plus
     {
         if (ConfigGetType(section, paramName) != Type.String)
         {
-            throw new InvalidOperationException($"Parameter {paramName} is not an int");
+            throw new InvalidOperationException($"Parameter {paramName} is not a string");
         }
         
         return _fnConfigGetParamString(section, paramName);

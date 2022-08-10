@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using M64RPFW.Models.Helpers;
 using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 
@@ -37,6 +38,8 @@ public static partial class Mupen64Plus
         err = _fnCoreDoCommand(Command.SetFrameCallback, 0,
             Marshal.GetFunctionPointerForDelegate(_frameCallback).ToPointer());
         ThrowForError(err);
+
+        _pluginDict = new();
     }
 
     private static FrameCallback _frameCallback;
@@ -93,12 +96,12 @@ public static partial class Mupen64Plus
 
     private static void OnStateChange(IntPtr context, CoreParam param, int newValue)
     {
-        StateChanged(null, new StateChangeEventArgs { Param = param, NewValue = newValue });
+        StateChanged?.Invoke(null, new StateChangeEventArgs { Param = param, NewValue = newValue });
     }
 
     private static void OnFrameComplete(int frameIndex)
     {
-        FrameComplete(null, frameIndex);
+        FrameComplete?.Invoke(null, frameIndex);
     }
 
 #pragma warning restore CS8618
@@ -109,24 +112,41 @@ public static partial class Mupen64Plus
         public int NewValue { get; init; }
     }
 
-    public static EventHandler<StateChangeEventArgs> StateChanged;
-    public static EventHandler<int> FrameComplete;
+    public static EventHandler<StateChangeEventArgs>? StateChanged;
+    public static EventHandler<int>? FrameComplete;
 
     #region Core Commands
 
-    public static unsafe void OpenROM(string path)
+    public static unsafe void OpenRom(string path)
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
+        ArgumentNullException.ThrowIfNull(path);
+        
         byte[] bytes = File.ReadAllBytes(path);
-        ROMHelper.AdaptiveByteSwap(ref bytes);
+        RomHelper.AdaptiveByteSwap(ref bytes);
+        
         fixed (byte* bytesPtr = bytes)
         {
-            Error err = _fnCoreDoCommand(Command.RomOpen, 0, bytesPtr);
+            Error err = _fnCoreDoCommand(Command.RomOpen, bytes.Length, bytesPtr);
+            ThrowForError(err);
+        }
+    }
+    
+    /// <summary>
+    /// Opens a ROM that is already loaded into memory. Assumes that said ROM is in the
+    /// correct byte order.
+    /// </summary>
+    /// <param name="romData">The ROM to load</param>
+    public static unsafe void OpenRomBinary(byte[] romData)
+    {
+        fixed (byte* dataPtr = romData)
+        {
+            Error err = _fnCoreDoCommand(Command.RomOpen, romData.Length, dataPtr);
             ThrowForError(err);
         }
     }
 
-    public static unsafe void CloseROM()
+    public static unsafe void CloseRom()
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
 
@@ -134,7 +154,7 @@ public static partial class Mupen64Plus
         ThrowForError(err);
     }
 
-    public static unsafe RomHeader GetROMHeader()
+    public static unsafe RomHeader GetRomHeader()
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
 
@@ -153,7 +173,7 @@ public static partial class Mupen64Plus
         }
     }
 
-    public static unsafe RomSettings GetROMSettings()
+    public static unsafe RomSettings GetRomSettings()
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
 
@@ -309,12 +329,13 @@ public static partial class Mupen64Plus
         _fnCoreOverrideVidExt(VideoExtensionFunctions.Empty);
     }
 
-    public static void AttachPlugin(string path)
+    public static unsafe void AttachPlugin(string path)
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
         IntPtr pluginLib = NativeLibrary.Load(path);
         // Implicitly
         var getVersion = NativeLibHelper.GetFunction<DPluginGetVersion>(pluginLib, "PluginGetVersion");
+        
         Error err = getVersion(out var type, out _, out _, out _, out _);
 
         if (!_pluginDict.TryAdd(type, pluginLib))
@@ -322,13 +343,19 @@ public static partial class Mupen64Plus
             IntPtr oldLib = _pluginDict[type];
             var oldLibGetVersion = NativeLibHelper.GetFunction<DPluginGetVersion>(pluginLib, "PluginGetVersion");
 
-            err = oldLibGetVersion(out _, out _, out _, out var oldName, out _);
+            err = oldLibGetVersion(out _, out _, out _, out var oldNameBytes, out _);
             ThrowForError(err);
+            
+            // Manually strlen() oldNameBytes, then convert to string
+            int oldNameLen = 0;
+            while (oldNameBytes[oldNameLen] != 0) oldNameLen++;
+            string oldName = Encoding.ASCII.GetString(oldNameBytes, oldNameLen);
 
             NativeLibrary.Free(pluginLib);
             throw new InvalidOperationException(
                 $"Plugin type {type} already has a plugin registered ({oldName})");
         }
+        
 
         var startup = NativeLibHelper.GetFunction<DPluginStartup>(pluginLib, "PluginStartup");
         err = startup(_libHandle, (IntPtr) (int) type, OnDebug);

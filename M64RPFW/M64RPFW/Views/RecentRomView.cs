@@ -1,5 +1,6 @@
 using Eto.Drawing;
 using Eto.Forms;
+using M64RPFW.Models;
 using M64RPFW.Presenters;
 
 namespace M64RPFW.Views;
@@ -8,11 +9,12 @@ internal class RecentRomView : Panel
 {
     public RecentRomView(MainView parent)
     {
-        _presenter = new RecentRomPresenter(this, parent.Presenter);
+        _presenter = new RecentRomPresenter(this, parent);
         {
             // TEMPORARY TEST DATA
-            _presenter.RecentRoms.Add(new RecentRom { Name = "Super Mario 64 (U) [!]", Region = "USA", Filename = "sm64-us.z64"});
-            _presenter.RecentRoms.Add(new RecentRom { Name = "Super Mario 64 (J) [!]", Region = "Japan", Filename = "sm64-jp.z64"});
+            _presenter.RecentRoms.Add(new RomFile("/home/jgcodes/Public/VM/ROMS/sm64-us.z64"));
+            _presenter.RecentRoms.Add(new RomFile("/home/jgcodes/Public/VM/ROMS/sm64-jp.z64"));
+            _presenter.RecentRoms.Add(new RomFile("/home/jgcodes/Public/VM/ROMS/sm64-eu.z64"));
         }
 
         RomGrid = new GridView
@@ -26,7 +28,7 @@ internal class RecentRomView : Panel
                 HeaderText = "Name",
                 DataCell = new TextBoxCell
                 {
-                    Binding = Binding.Property<RecentRom, string>(o => o.Name)
+                    Binding = Binding.Property<RomFile, string>(o => o.FriendlyName)
                 },
                 Editable = false
             });
@@ -35,7 +37,7 @@ internal class RecentRomView : Panel
                 HeaderText = "Region",
                 DataCell = new TextBoxCell
                 {
-                    Binding = Binding.Property<RecentRom, string>(o => o.Region)
+                    Binding = Binding.Property<RomFile, string>(o => o.Region.ToString())
                 },
                 Editable = false
             });
@@ -44,7 +46,7 @@ internal class RecentRomView : Panel
                 HeaderText = "Filename",
                 DataCell = new TextBoxCell
                 {
-                    Binding = Binding.Property<RecentRom, string>(o => o.Filename)
+                    Binding = Binding.Property<RomFile, string>(o => o.FileName)
                 },
                 Editable = false
             });

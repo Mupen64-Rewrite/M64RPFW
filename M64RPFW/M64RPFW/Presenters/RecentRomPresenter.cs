@@ -1,34 +1,28 @@
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
+using M64RPFW.Models;
+using M64RPFW.Models.Emulation.Core;
 using M64RPFW.Views;
 
 namespace M64RPFW.Presenters;
 
-internal class RecentRom
+internal class RecentRomPresenter
 {
-    public string Name { get; set; }
-    public string Region { get; set; }
-    public string Filename { get; set; }
-
-}
-
-internal partial class RecentRomPresenter
-{
-    public RecentRomPresenter(RecentRomView view, MainPresenter parent)
+    public RecentRomPresenter(RecentRomView view, MainView parent)
     {
         _view = view;
-        _parent = parent;
+        _parent = parent.Presenter;
+
         RecentRoms = new();
     }
     
     public void SelectAndRunROM(int index)
     {
-        Console.WriteLine("SelectAndRunROM was called");
-        _parent.SwitchTo(MainPresenter.SubView.Emulator);
-        
+        _parent.LaunchRom(RecentRoms[index]);
     }
 
     private RecentRomView _view;
     private MainPresenter _parent;
-    public ObservableCollection<RecentRom> RecentRoms { get; }
+    public ObservableCollection<RomFile> RecentRoms { get; }
 }

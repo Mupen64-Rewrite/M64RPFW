@@ -3,6 +3,7 @@ using System.ComponentModel;
 using Eto;
 using Eto.Forms;
 using M64RPFW.Models.Emulation.Core;
+using M64RPFW.Views;
 
 namespace M64RPFW.Misc;
 
@@ -41,7 +42,7 @@ public class M64RPFWApplication : Application
         if (emuState != Mupen64Plus.EmuState.Stopped)
         {
             Mupen64Plus.Stop();
-            Mupen64Plus.CloseROM();
+            Mupen64Plus.CloseRom();
             
             Mupen64Plus.DetachPlugin(Mupen64Plus.PluginType.Graphics);
             Mupen64Plus.DetachPlugin(Mupen64Plus.PluginType.Audio);

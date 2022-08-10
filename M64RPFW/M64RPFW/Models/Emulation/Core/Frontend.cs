@@ -2,14 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using M64RPFW.Models.Helpers;
-
 using static M64RPFW.Models.Helpers.NativeLibHelper;
+using IntPtr = System.IntPtr;
 
 namespace M64RPFW.Models.Emulation.Core;
 
 public static partial class Mupen64Plus
 {
     #region Delegates for frontend API
+
     // Callback types for the frontend API
     // ========================================================
 
@@ -54,7 +55,7 @@ public static partial class Mupen64Plus
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [RuntimeDllImport]
     private delegate Error DCoreDetachPlugin(PluginType pluginType);
-    
+
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [RuntimeDllImport]
     private unsafe delegate Error DCoreDoCommand(Command cmd, int paramInt, void* paramPtr);
@@ -77,20 +78,20 @@ public static partial class Mupen64Plus
         ResolveDelegate(_libHandle, out _fnCoreOverrideVidExt);
         ResolveDelegate(_libHandle, out _fnCoreDoCommand);
     }
-    
+
     #endregion
-    
+
     #region Video Extensions
 
     // Video extension handling
     // ========================================================
-    
+
     public interface IVideoExtension
     {
         Error Init();
         Error Quit();
-        Error ListFullscreenModes();
-        Error ListFullscreenRates(Size2D size);
+        (Error err, Size2D[]? modes) ListFullscreenModes(int maxLen);
+        (Error err, int[]? rates) ListFullscreenRates(Size2D size, int maxLen);
         Error SetVideoMode(int width, int height, int bitsPerPixel, VideoMode mode, VideoFlags flags);
 
         Error SetVideoModeWithRate(int width, int height, int refreshRate, int bitsPerPixel, VideoMode mode,
@@ -106,46 +107,91 @@ public static partial class Mupen64Plus
         Error SwapBuffers();
         uint GetDefaultFramebuffer();
     }
-    
+
     private class VideoExtensionDelegates
     {
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate Error DVidExt_Init();
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate Error DVidExt_Quit();
 
-        public delegate Error DVidExt_ListFullscreenModes();
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public unsafe delegate Error DVidExt_ListFullscreenModes(IntPtr sizes, int* len);
 
-        public delegate Error DVidExt_ListFullscreenRates(Size2D size);
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public unsafe delegate Error DVidExt_ListFullscreenRates(Size2D size, int* output, int* len);
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate Error DVidExt_SetVideoMode(int width, int height, int bitsPerPixel, VideoMode mode,
             VideoFlags flags);
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate Error DVidExt_SetVideoModeWithRate(int width, int height, int refreshRate, int bitsPerPixel,
             VideoMode mode,
             VideoFlags flags);
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate Error DVidExt_ResizeWindow(Size2D size);
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate Error DVidExt_SetCaption(string title);
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate Error DVidExt_ToggleFullScreen();
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate IntPtr DVidExt_GLGetProcAddress(string symbol);
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate Error DVidExt_SetAttribute(GLAttribute attr, int value);
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate Error DVidExt_GetAttribute(GLAttribute attr, out int value);
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate Error DVidExt_SwapBuffers();
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate uint DVidExt_GetDefaultFramebuffer();
 
-        public VideoExtensionDelegates(IVideoExtension vidextObj)
+        public unsafe VideoExtensionDelegates(IVideoExtension vidextObj)
         {
             InitFn = vidextObj.Init;
             QuitFn = vidextObj.Quit;
-            ListFullscreenModesFn = vidextObj.ListFullscreenModes;
-            ListFullscreenRatesFn = vidextObj.ListFullscreenRates;
+            ListFullscreenModesFn = delegate(IntPtr sizesOut, int* len)
+            {
+                (Error err, Size2D[]? modes) = vidextObj.ListFullscreenModes(*len);
+                if (err != Error.Success)
+                    return err;
+                if (modes is null)
+                    return Error.Internal;
+                
+                *len = modes.Length;
+                foreach (var size in modes)
+                {
+                    Marshal.StructureToPtr(size, sizesOut, false);
+                    sizesOut += Marshal.SizeOf<Size2D>();
+                }
+                
+                return err;
+            };
+            ListFullscreenRatesFn = delegate(Size2D size, int* output, int* len)
+            {
+                (Error err, int[]? rates) = vidextObj.ListFullscreenRates(size, *len);
+                if (err != Error.Success)
+                    return err;
+                if (rates is null)
+                    return Error.Internal;
+
+                *len = rates.Length;
+                foreach (int rate in rates)
+                {
+                    *output++ = rate;
+                }
+
+                return err;
+            };
             SetVideoModeFn = vidextObj.SetVideoMode;
 
             SetVideoModeWithRateFn = vidextObj.SetVideoModeWithRate;
@@ -161,7 +207,7 @@ public static partial class Mupen64Plus
             GetDefaultFramebufferFn = vidextObj.GetDefaultFramebuffer;
         }
 
-        public VideoExtensionFunctions AsNative() 
+        public VideoExtensionFunctions AsNative()
         {
             return new VideoExtensionFunctions
             {
@@ -201,20 +247,21 @@ public static partial class Mupen64Plus
         public DVidExt_SwapBuffers SwapBuffersFn;
         public DVidExt_GetDefaultFramebuffer GetDefaultFramebufferFn;
     }
+
     private static VideoExtensionDelegates? _vidextDelegates;
-    
+
     #endregion
-    
+
     // Plugin delegates
     // ========================================================
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate Error DPluginStartup(IntPtr library, IntPtr debugContext, DebugCallback? debugCallback);
-    
+
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate Error DPluginShutdown();
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate Error DPluginGetVersion(out PluginType type, out int version, out int apiVersion, out string name,
+    private unsafe delegate Error DPluginGetVersion(out PluginType type, out int version, out int apiVersion, out byte* name,
         out int caps);
 
     private static Dictionary<PluginType, IntPtr> _pluginDict;

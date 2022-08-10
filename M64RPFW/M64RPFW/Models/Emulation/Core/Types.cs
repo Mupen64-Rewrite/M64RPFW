@@ -188,11 +188,11 @@ public static partial class Mupen64Plus
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     public struct RomSettings
     {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-        public char[] goodname;
+        [MarshalAs(UnmanagedType.LPStr, SizeConst = 256)]
+        public string goodname;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 33)]
-        public char[] MD5;
+        public byte[] MD5;
 
         public byte savetype;
         public byte status; // Rom status on a scale from 0-5. 
