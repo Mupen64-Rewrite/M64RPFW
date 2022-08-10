@@ -27,6 +27,11 @@ public class GLSubWindow : GtkControl<GtkGLSubWindow, M64RPFW.Controls.GLSubWind
         return Control.SetAttribute(attr, value);
     }
 
+    public Mupen64Plus.Error GetAttribute(Mupen64Plus.GLAttribute attr, ref int value)
+    {
+        return Control.GetAttribute(attr, ref value);
+    }
+
     public Mupen64Plus.Error SwapBuffers()
     {
         Control.SwapBuffers();

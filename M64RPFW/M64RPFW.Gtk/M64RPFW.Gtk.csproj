@@ -29,7 +29,7 @@
         <ItemGroup>
             <LibraryList Include="Libraries\*.so" />
         </ItemGroup>
-        <Message Importance="high" Text="Library list: @(LibraryList)"/>
+        <Message Importance="high" Text="Library list: @(LibraryList)" />
         <Copy SourceFiles="Libraries/mupen64plus.so" DestinationFolder="$(OutDir)/Libraries" />
     </Target>
 

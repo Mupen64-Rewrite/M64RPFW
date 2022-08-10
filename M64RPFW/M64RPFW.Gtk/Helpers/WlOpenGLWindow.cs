@@ -67,6 +67,11 @@ public class WlOpenGLWindow : IOpenGLWindow
         _surface.Commit();
     }
 
+    public int GetAttribute(GLAttribute attr)
+    {
+        return EGLHelpers.GetConfigAttr(_eglDisplay, _eglConfig, _eglContext, _eglSurface, attr);
+    }
+
     public void ResizeWindow(Size size)
     {
         _wlEGLWindow.Size = size;

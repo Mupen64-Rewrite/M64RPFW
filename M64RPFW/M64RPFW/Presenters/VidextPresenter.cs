@@ -24,6 +24,7 @@ public class VidextPresenter : IVideoExtension
 
     public Error Init()
     {
+        Console.WriteLine("[VIDEXT] Initializing...");
         Application.Instance.Invoke(delegate
         {
             _prevContent = _view.Content;
@@ -62,7 +63,7 @@ public class VidextPresenter : IVideoExtension
 
         Application.Instance.InvokeAsync(delegate
         {
-            _view.ClientSize = new Eto.Drawing.Size(width, height);
+            _view.MinimumSize = new Eto.Drawing.Size(width, height);
         });
         return _view.SubWindow.SetVideoMode(new Size(width, height), bitsPerPixel, mode, flags);
     }
@@ -75,6 +76,10 @@ public class VidextPresenter : IVideoExtension
     public Error ResizeWindow(Size2D size)
     {
         _view.SubWindow.ResizeWindow(new Size { Width = (int) size.uiWidth, Height = (int) size.uiHeight });
+        Application.Instance.InvokeAsync(delegate
+        {
+            _view.MinimumSize = new Eto.Drawing.Size((int) size.uiWidth, (int) size.uiHeight);
+        });
         return Error.Success;
     }
 
@@ -99,11 +104,9 @@ public class VidextPresenter : IVideoExtension
         return _view.SubWindow.SetAttribute(attr, value);
     }
 
-    public Error GetAttribute(GLAttribute attr, out int value)
+    public Error GetAttribute(GLAttribute attr, ref int value)
     {
-        // TODO implement GetAttribute
-        value = 0;
-        return Error.Unsupported;
+        return _view.SubWindow.GetAttribute(attr, ref value);
     }
 
     public Error SwapBuffers()

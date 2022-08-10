@@ -4,6 +4,7 @@ using System.Threading;
 using Eto.Drawing;
 using Eto.Forms;
 using M64RPFW.Controls;
+using M64RPFW.Misc;
 using M64RPFW.Models;
 using M64RPFW.Models.Emulation.Core;
 using M64RPFW.Presenters;
@@ -12,16 +13,13 @@ namespace M64RPFW.Views;
 
 public partial class MainView : Form
 {
-    private int _running;
 
     public MainView()
     {
-        Presenter = new MainPresenter();
+        Presenter = new MainPresenter(this);
 
         RomView = new RecentRomView(this);
         SubWindow = new GLSubWindow();
-
-        _running = 0;
         
         ClientSize = new Size(640, 480);
         Title = "Mupen64Plus-RR";
@@ -37,7 +35,10 @@ public partial class MainView : Form
             {
                 // File submenu
                 new SubMenuItem { Text = "&File", Items = { testCommand } },
-                // new SubMenuItem { Text = "&Edit", Items = { /* commands/items */ } },
+                new SubMenuItem { Text = "&Emulator", Items =
+                {
+                    new ForwardingRelayCommand(Presenter.StopCommand)
+                } },
                 // new SubMenuItem { Text = "&View", Items = { /* commands/items */ } },
             }
         };

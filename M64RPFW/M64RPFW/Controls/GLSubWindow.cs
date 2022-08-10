@@ -4,7 +4,6 @@ using Eto;
 using Eto.Forms;
 using Eto.Threading;
 using M64RPFW.Models.Emulation.Core;
-using OpenTK;
 
 namespace M64RPFW.Controls
 {
@@ -13,7 +12,7 @@ namespace M64RPFW.Controls
     /// managed separately from its parent window.
     /// </summary>
     [Handler(typeof(IGLSubWindow))]
-    public class GLSubWindow : Control, IBindingsContext
+    public class GLSubWindow : Control
     {
         private new IGLSubWindow Handler => (IGLSubWindow) base.Handler;
 
@@ -28,7 +27,12 @@ namespace M64RPFW.Controls
 
         public Mupen64Plus.Error SetAttribute(Mupen64Plus.GLAttribute attr, int value)
         {
-            return Application.Instance.Invoke(() => Handler.SetAttribute(attr, value));
+            return Handler.SetAttribute(attr, value);
+        }
+
+        public Mupen64Plus.Error GetAttribute(Mupen64Plus.GLAttribute attr, ref int value)
+        {
+            return Handler.GetAttribute(attr, ref value);
         }
 
         public Mupen64Plus.Error SwapBuffers()
@@ -70,13 +74,27 @@ namespace M64RPFW.Controls
             /// </summary>
             void MakeCurrent();
             /// <summary>
-            /// Set an OpenGL attribute if the window has not been created.
+            /// Set an OpenGL attribute before the window is created.
             /// </summary>
             /// <param name="attr">The OpenGL attribute to set</param>
             /// <param name="value">the value to set it to</param>
             /// <exception cref="InvalidOperationException">if the window has been created</exception>
             /// <returns>an error code compatible with Mupen64Plus</returns>
             Mupen64Plus.Error SetAttribute(Mupen64Plus.GLAttribute attr, int value);
+            
+            /// <summary>
+            /// Get an OpenGL attribute after the window is created.
+            /// </summary>
+            /// <param name="attr">The OpenGL attribute to get</param>
+            /// <param name="value">the value of the attribute</param>
+            /// <exception cref="InvalidOperationException">if the window has not been created</exception>
+            /// <returns>an error code compatible with Mupen64Plus</returns>
+            Mupen64Plus.Error GetAttribute(Mupen64Plus.GLAttribute attr, ref int value);
+            
+            /// <summary>
+            /// Swap the buffers (i.e. update what's on screen).
+            /// </summary>
+            /// <returns>an error code compatible with Mupen64Plus</returns>
             Mupen64Plus.Error SwapBuffers();
             /// <summary>
             /// Resize the subwindow.

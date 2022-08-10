@@ -14,31 +14,11 @@ namespace M64RPFW.Gtk.Helpers;
 
 public class X11OpenGLWindow : IOpenGLWindow
 {
-    private static readonly int[] EGLConfigAttributes =
-    {
-        LibEGL.SURFACE_TYPE, LibEGL.WINDOW_BIT,
-        LibEGL.RED_SIZE, 8,
-        LibEGL.GREEN_SIZE, 8,
-        LibEGL.BLUE_SIZE, 8,
-        LibEGL.RENDERABLE_TYPE, LibEGL.OPENGL_API,
-        LibEGL.NONE
-    };
 
-    private static readonly int[] EGLContextAttributes =
-    {
-        LibEGL.CONTEXT_MAJOR_VERSION_KHR, 3,
-        LibEGL.CONTEXT_MINOR_VERSION_KHR, 3,
-        LibEGL.NONE
-    };
-
-    private static readonly int[] EGLSurfaceAttributes = null;
-    
     public X11OpenGLWindow(Gdk.Window parent, Size size, (int[]? config, int[]? context, int[]? surface) attrs)
     {
         var pntWindow = LibGdk.GdkX11Window_GetXID(parent);
         var dpy = LibGdk.GdkX11Display_GetXDisplay(parent.Display);
-
-        var rootWindow = Window.None;
 
         var swa = new XSetWindowAttributes
         {
@@ -92,6 +72,11 @@ public class X11OpenGLWindow : IOpenGLWindow
     public void SetPosition(Point pos)
     {
         XMoveWindow(_xDisplay, _window, pos.X, pos.Y);
+    }
+
+    public int GetAttribute(GLAttribute attr)
+    {
+        return EGLHelpers.GetConfigAttr(_eglDisplay, _eglConfig, _eglContext, _eglSurface, attr);
     }
 
     public void ResizeWindow(Size size)

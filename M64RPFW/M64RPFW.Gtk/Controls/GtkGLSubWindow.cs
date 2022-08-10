@@ -29,7 +29,6 @@ public class GtkGLSubWindow : Widget
         _queueRealize = false;
 
         HasWindow = false;
-        SetSizeRequest(size.Width, size.Height);
     }
 
     public Error SetAttribute(GLAttribute attr, int value)
@@ -40,6 +39,28 @@ public class GtkGLSubWindow : Widget
         return Error.Success;
     }
 
+    public Error GetAttribute(GLAttribute attr, ref int value)
+    {
+        if (_glWindow == null)
+        {
+            return Error.InvalidState;
+        }
+
+        try
+        {
+            value = _glWindow.GetAttribute(attr);
+            return Error.Success;
+        }
+        catch (NotSupportedException)
+        {
+            return Error.Unsupported;
+        }
+        catch (Exception)
+        {
+            return Error.Internal;
+        }
+    }
+
     public Error SetVideoMode(Size size, int bitsPerPixel, VideoMode screenMode)
     {
         if (screenMode != VideoMode.Windowed)
@@ -47,10 +68,7 @@ public class GtkGLSubWindow : Widget
             return Error.Unsupported;
         }
 
-        if (bitsPerPixel != 0)
-        {
-            return Error.Unsupported;
-        }
+        _windowSize = size;
 
         InitGLWindow();
 
@@ -59,12 +77,12 @@ public class GtkGLSubWindow : Widget
 
     public void MakeCurrent()
     {
-        _glWindow.MakeCurrent();
+        _glWindow?.MakeCurrent();
     }
 
     public void SwapBuffers()
     {
-        _glWindow.SwapBuffers();
+        _glWindow?.SwapBuffers();
     }
 
     public void ResizeWindow(Size size)
@@ -75,7 +93,7 @@ public class GtkGLSubWindow : Widget
 
     public IntPtr GetProcAddress(string symbol)
     {
-        return _glWindow.GetProcAddress(symbol);
+        return _glWindow!.GetProcAddress(symbol);
     }
 
     public void CloseVideo()

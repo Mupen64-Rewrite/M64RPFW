@@ -26,7 +26,6 @@ public static partial class Mupen64Plus
         Initialized = true;
 
         ResolveFrontendFunctions();
-        ResolveConfigFunctions();
 
         Error err = _fnCoreStartup(
             0x020000, null, null, (IntPtr) (int) PluginType.Core,
@@ -80,6 +79,7 @@ public static partial class Mupen64Plus
             PluginType.Audio => "AUDIO ",
             PluginType.Input => "INPUT ",
             PluginType.RSP => "RSP   ",
+            _ => "??    "
         };
 
         string levelString = level switch
@@ -88,7 +88,8 @@ public static partial class Mupen64Plus
             MessageLevel.Warning => "WARN ",
             MessageLevel.Info => "INFO ",
             MessageLevel.Status => "STAT ",
-            MessageLevel.Verbose => "TRACE"
+            MessageLevel.Verbose => "TRACE",
+            _ => "??   "
         };
 
         Console.WriteLine($"[M64+ {typeString}{levelString}] {message}");
@@ -112,8 +113,8 @@ public static partial class Mupen64Plus
         public int NewValue { get; init; }
     }
 
-    public static EventHandler<StateChangeEventArgs>? StateChanged;
-    public static EventHandler<int>? FrameComplete;
+    public static event EventHandler<StateChangeEventArgs>? StateChanged;
+    public static event EventHandler<int>? FrameComplete;
 
     #region Core Commands
 
@@ -317,15 +318,17 @@ public static partial class Mupen64Plus
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
         ArgumentNullException.ThrowIfNull(obj);
-        _vidextDelegates = new(obj);
 
-        Error err = _fnCoreOverrideVidExt(_vidextDelegates.AsNative());
+        _vidextFunctions = new VideoExtensionFunctions(obj);
+        _fnCoreOverrideVidExt(_vidextFunctions);
+        
+        Error err = Error.Success;
         ThrowForError(err);
     }
 
     public static void RemoveVideoExtension()
     {
-        _vidextDelegates = null;
+        _vidextFunctions = null;
         _fnCoreOverrideVidExt(VideoExtensionFunctions.Empty);
     }
 
@@ -395,11 +398,13 @@ public static partial class Mupen64Plus
                 return s => $"{s}.so";
             throw new NotSupportedException("Your OS is not supported");
         }))();
-
+        
         string path = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location) ??
                       throw new ApplicationException("Could not retrieve .exe path");
-
+        
         return Path.Join(new[] { path, "Libraries", asLib("mupen64plus") });
+        
+        //return "/usr/lib/libmupen64plus.so";
     }
 
     private static IntPtr _libHandle;

@@ -26,6 +26,7 @@ public interface IOpenGLWindow : IDisposable
     void MakeCurrent();
     void SwapBuffers();
     void SetPosition(Point pos);
+    int GetAttribute(GLAttribute attr);
     void ResizeWindow(Size size);
     void SetVisible(bool visible);
     IntPtr GetProcAddress(string symbol);

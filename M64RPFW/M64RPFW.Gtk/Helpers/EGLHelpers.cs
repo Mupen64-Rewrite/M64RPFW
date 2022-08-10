@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Linq;
 using M64RPFW.Gtk.Interfaces;
+using OpenTK.Graphics.OpenGL4;
 using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 
 namespace M64RPFW.Gtk.Helpers;
@@ -30,7 +31,7 @@ public static class EGLHelpers
     {
         LibEGL.NONE
     };
-    
+
     public static (int[] config, int[] context, int[] surface) GenEGLAttrs(in Dictionary<GLAttribute, int> attrs)
     {
         List<int> configAttrs = new(), contextAttrs = new(), surfaceAttrs = new();
@@ -139,18 +140,20 @@ public static class EGLHelpers
         attrs.config ??= DefaultConfigAttributes;
         attrs.context ??= DefaultContextAttributes;
         attrs.surface ??= DefaultSurfaceAttributes;
-        
+
         eglDisplay = LibEGL.GetDisplay(nativeDisplay);
         if (eglDisplay == IntPtr.Zero)
         {
             throw new ApplicationException("EGL Display creation failed");
         }
+
         if (!LibEGL.Initialize(eglDisplay, out var vMajor, out var vMinor))
         {
             throw new ApplicationException("EGL initialization failed");
         }
+
         LibEGL.BindAPI(RenderApi.GL);
-        
+
         // This extension is used to bind OpenGL 3.0+ from EGL 1.4 (EGL 1.5 supports this as a core feature)
         string extensions = Marshal.PtrToStringUTF8(LibEGL.QueryString(eglDisplay, LibEGL.EXTENSIONS))!;
         if (!extensions.Split(" ").Contains("EGL_KHR_create_context"))
@@ -163,12 +166,80 @@ public static class EGLHelpers
         {
             throw new ApplicationException("Could not find any EGL configs");
         }
-        
+
         IntPtr[] configList = new IntPtr[1];
         LibEGL.ChooseConfig(eglDisplay, attrs.config, configList, 1, out nConfigs);
         eglConfig = configList[0];
 
         eglContext = LibEGL.CreateContext(eglDisplay, eglConfig, IntPtr.Zero, attrs.context);
         eglSurface = LibEGL.CreateWindowSurface(eglDisplay, eglConfig, nativeSurface, attrs.surface);
+    }
+
+    public static int GetConfigAttr(IntPtr display, IntPtr config, IntPtr context, IntPtr surface, GLAttribute attr)
+    {
+        switch (attr)
+        {
+            case GLAttribute.DoubleBuffer:
+            {
+                LibEGL.GetConfigAttrib(display, config, LibEGL.RENDER_BUFFER, out int res);
+                switch (res)
+                {
+                    case LibEGL.BACK_BUFFER:
+                        return 1;
+                    case LibEGL.SINGLE_BUFFER:
+                        return 0;
+                }
+
+                break;
+            }
+            case GLAttribute.BufferSize:
+            {
+                LibEGL.GetConfigAttrib(display, config, LibEGL.BUFFER_SIZE, out int res);
+                return res;
+            }
+            case GLAttribute.RedSize:
+            {
+                LibEGL.GetConfigAttrib(display, config, LibEGL.RED_SIZE, out int res);
+                return res;
+            }
+            case GLAttribute.GreenSize:
+            {
+                LibEGL.GetConfigAttrib(display, config, LibEGL.GREEN_SIZE, out int res);
+                return res;
+            }
+            case GLAttribute.BlueSize:
+            {
+                LibEGL.GetConfigAttrib(display, config, LibEGL.BLUE_SIZE, out int res);
+                return res;
+            }
+            case GLAttribute.AlphaSize:
+            {
+                LibEGL.GetConfigAttrib(display, config, LibEGL.ALPHA_SIZE, out int res);
+                return res;
+            }
+            case GLAttribute.SwapControl:
+            {
+                LibEGL.GetConfigAttrib(display, config, LibEGL.MIN_SWAP_INTERVAL, out int res);
+                return res;
+            }
+            case GLAttribute.MultisampleBuffers:
+            {
+                LibEGL.GetConfigAttrib(display, config, LibEGL.SAMPLE_BUFFERS, out int res);
+                return res;
+            }
+            case GLAttribute.MultisampleSamples:
+            {
+                LibEGL.GetConfigAttrib(display, config, LibEGL.SAMPLES, out int res);
+                return res;
+            }
+            case GLAttribute.ContextMajorVersion:
+            case GLAttribute.ContextMinorVersion:
+            case GLAttribute.ContextProfileMask:
+            {
+                throw new NotSupportedException("Querying context attributes is unsupported");
+            }
+        }
+
+        throw new ApplicationException("Get");
     }
 }
