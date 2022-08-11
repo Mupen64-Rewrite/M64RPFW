@@ -1,11 +1,9 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using M64RPFW.Models.Helpers;
-using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 
 namespace M64RPFW.Models.Emulation.Core;
 
@@ -123,17 +121,17 @@ public static partial class Mupen64Plus
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
         ArgumentNullException.ThrowIfNull(path);
-        
+
         byte[] bytes = File.ReadAllBytes(path);
         RomHelper.AdaptiveByteSwap(ref bytes);
-        
+
         fixed (byte* bytesPtr = bytes)
         {
             Error err = _fnCoreDoCommand(Command.RomOpen, bytes.Length, bytesPtr);
             ThrowForError(err);
         }
     }
-    
+
     /// <summary>
     /// Opens a ROM that is already loaded into memory. Assumes that said ROM is in the
     /// correct byte order.
@@ -148,6 +146,9 @@ public static partial class Mupen64Plus
         }
     }
 
+    /// <summary>
+    /// Close the currently open ROM.
+    /// </summary>
     public static unsafe void CloseRom()
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
@@ -156,6 +157,10 @@ public static partial class Mupen64Plus
         ThrowForError(err);
     }
 
+    /// <summary>
+    /// Get the ROM header of the currently open ROM.
+    /// </summary>
+    /// <returns>the ROM header of the currently open ROM</returns>
     public static unsafe RomHeader GetRomHeader()
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
@@ -175,6 +180,11 @@ public static partial class Mupen64Plus
         }
     }
 
+    /// <summary>
+    /// Get the ROM "settings" (internal M64+ data) for the currently
+    /// open ROM.
+    /// </summary>
+    /// <returns>The ROM settings for the currently open ROM</returns>
     public static unsafe RomSettings GetRomSettings()
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
@@ -194,6 +204,9 @@ public static partial class Mupen64Plus
         }
     }
 
+    /// <summary>
+    /// Run the current ROM in this thread. This function blocks until the emulator is stopped.
+    /// </summary>
     public static unsafe void Execute()
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
@@ -201,6 +214,9 @@ public static partial class Mupen64Plus
         ThrowForError(err);
     }
 
+    /// <summary>
+    /// Stops the emulator. The emulator must not be stopped.
+    /// </summary>
     public static unsafe void Stop()
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
@@ -208,6 +224,9 @@ public static partial class Mupen64Plus
         ThrowForError(err);
     }
 
+    /// <summary>
+    /// Pauses the emulator. The emulator must be running.
+    /// </summary>
     public static unsafe void Pause()
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
@@ -215,6 +234,9 @@ public static partial class Mupen64Plus
         ThrowForError(err);
     }
 
+    /// <summary>
+    /// Resumes the emulator. The emulator must be paused.
+    /// </summary>
     public static unsafe void Resume()
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
@@ -222,6 +244,11 @@ public static partial class Mupen64Plus
         ThrowForError(err);
     }
 
+    /// <summary>
+    /// Gets one of the emulator parameters.
+    /// </summary>
+    /// <param name="param">the parameter to query</param>
+    /// <returns>the parameter's value</returns>
     public static unsafe int CoreStateQuery(CoreParam param)
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
@@ -232,6 +259,11 @@ public static partial class Mupen64Plus
         return res;
     }
 
+    /// <summary>
+    /// Sets one of the emulator parameters.
+    /// </summary>
+    /// <param name="param">the parameter to set</param>
+    /// <param name="value">the value to set to the parameter</param>
     public static unsafe void CoreStateSet(CoreParam param, int value)
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
@@ -239,6 +271,10 @@ public static partial class Mupen64Plus
         ThrowForError(err);
     }
 
+    /// <summary>
+    /// Loads the emulator's state from a file.
+    /// </summary>
+    /// <param name="path">path to the file</param>
     public static unsafe void LoadStateFromFile(string path)
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
@@ -256,6 +292,9 @@ public static partial class Mupen64Plus
         }
     }
 
+    /// <summary>
+    /// Loads the emulator's state in the current slot.
+    /// </summary>
     public static unsafe void LoadStateFromCurrentSlot()
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
@@ -263,6 +302,11 @@ public static partial class Mupen64Plus
         ThrowForError(err);
     }
 
+    /// <summary>
+    /// Saves the emulator's state as a file.
+    /// </summary>
+    /// <param name="path">The path to save the savestate</param>
+    /// <param name="type"></param>
     public static unsafe void SaveStateToFile(string path, SavestateType type = SavestateType.Mupen64Plus)
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
@@ -281,6 +325,9 @@ public static partial class Mupen64Plus
         }
     }
 
+    /// <summary>
+    /// Saves the emulator's state to the current slot.
+    /// </summary>
     public static unsafe void SaveStateToCurrentSlot()
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
@@ -288,6 +335,12 @@ public static partial class Mupen64Plus
         ThrowForError(err);
     }
 
+    /// <summary>
+    /// Sets the current savestate slot of the emulator.
+    /// The slot indices range between 0-9 (inclusive).
+    /// </summary>
+    /// <param name="slot">the savestate slot to use</param>
+    /// <exception cref="ArgumentOutOfRangeException">If <paramref name="slot"/> is not between 0 and 9</exception>
     public static unsafe void SetSavestateSlot(int slot)
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
@@ -297,6 +350,10 @@ public static partial class Mupen64Plus
         ThrowForError(err);
     }
 
+    /// <summary>
+    /// Resets the emulator.
+    /// </summary>
+    /// <param name="hard">If true, performs a hard reset. Otherwise, performs a soft reset.</param>
     public static unsafe void Reset(bool hard = true)
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
@@ -304,6 +361,9 @@ public static partial class Mupen64Plus
         ThrowForError(err);
     }
 
+    /// <summary>
+    /// Advances the emulator by a single frame.
+    /// </summary>
     public static unsafe void AdvanceFrame()
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
@@ -315,31 +375,49 @@ public static partial class Mupen64Plus
 
     #region Miscellaneous core functions
 
+    /// <summary>
+    /// Overrides the core's video extension API.
+    /// </summary>
+    /// <param name="obj">An object implementing the Video Extension API.</param>
     public static void OverrideVideoExtension(IVideoExtension obj)
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
         ArgumentNullException.ThrowIfNull(obj);
 
         _vidextFunctions = new VideoExtensionFunctions(obj);
-        _fnCoreOverrideVidExt(_vidextFunctions);
-        
-        Error err = Error.Success;
+
+        Error err = _fnCoreOverrideVidExt(_vidextFunctions);
         ThrowForError(err);
     }
 
+    /// <summary>
+    /// Clears any active override on the core's video extension API.
+    /// </summary>
     public static void RemoveVideoExtension()
     {
         _vidextFunctions = null;
         _fnCoreOverrideVidExt(VideoExtensionFunctions.Empty);
     }
 
+    /// <summary>
+    /// Attaches a plugin to the core.
+    /// Mupen64Plus demands that they are attached in the following order:
+    /// <list type="number">
+    ///     <item>Graphics</item>
+    ///     <item>Audio</item>
+    ///     <item>Input</item>
+    ///     <item>RSP</item>
+    /// </list>
+    /// </summary>
+    /// <param name="path">Path to the plugin's .so file</param>
+    /// <exception cref="InvalidOperationException">If the located plugin's type already has an attached plugin</exception>
     public static unsafe void AttachPlugin(string path)
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
         IntPtr pluginLib = NativeLibrary.Load(path);
         // Implicitly
         var getVersion = NativeLibHelper.GetFunction<DPluginGetVersion>(pluginLib, "PluginGetVersion");
-        
+
         Error err = getVersion(out var type, out _, out _, out _, out _);
 
         if (!_pluginDict.TryAdd(type, pluginLib))
@@ -349,7 +427,7 @@ public static partial class Mupen64Plus
 
             err = oldLibGetVersion(out _, out _, out _, out var oldNameBytes, out _);
             ThrowForError(err);
-            
+
             // Manually strlen() oldNameBytes, then convert to string
             int oldNameLen = 0;
             while (oldNameBytes[oldNameLen] != 0) oldNameLen++;
@@ -359,7 +437,7 @@ public static partial class Mupen64Plus
             throw new InvalidOperationException(
                 $"Plugin type {type} already has a plugin registered ({oldName})");
         }
-        
+
 
         var startup = NativeLibHelper.GetFunction<DPluginStartup>(pluginLib, "PluginStartup");
         err = startup(_libHandle, (IntPtr) (int) type, OnDebug);
@@ -369,6 +447,11 @@ public static partial class Mupen64Plus
         ThrowForError(err);
     }
 
+    /// <summary>
+    /// Detaches a plugin from the core. Unlike <see cref="AttachPlugin"/>, does not mandate
+    /// any sort of order.
+    /// </summary>
+    /// <param name="type">The plugin type to detach</param>
     public static void DetachPlugin(PluginType type)
     {
         ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
@@ -399,12 +482,12 @@ public static partial class Mupen64Plus
                 return s => $"{s}.so";
             throw new NotSupportedException("Your OS is not supported");
         }))();
-        
+
         string path = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location) ??
                       throw new ApplicationException("Could not retrieve .exe path");
-        
+
         return Path.Join(new[] { path, "Libraries", asLib("mupen64plus") });
-        
+
         //return "/usr/lib/libmupen64plus.so";
     }
 

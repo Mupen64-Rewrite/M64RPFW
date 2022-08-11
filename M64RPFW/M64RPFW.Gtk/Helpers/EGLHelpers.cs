@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Linq;
 using M64RPFW.Gtk.Interfaces;
-using OpenTK.Graphics.OpenGL4;
 using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 
 namespace M64RPFW.Gtk.Helpers;

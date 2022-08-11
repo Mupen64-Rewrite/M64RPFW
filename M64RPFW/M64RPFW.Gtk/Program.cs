@@ -1,8 +1,6 @@
 ﻿using System;
-using Eto.Forms;
 using M64RPFW.Controls;
 using M64RPFW.Misc;
-using M64RPFW.Models.Emulation.Core;
 
 namespace M64RPFW.Gtk
 {

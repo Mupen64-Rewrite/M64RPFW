@@ -2,7 +2,6 @@ using System;
 using System.Drawing;
 using Eto;
 using Eto.Forms;
-using Eto.Threading;
 using M64RPFW.Models.Emulation.Core;
 
 namespace M64RPFW.Controls

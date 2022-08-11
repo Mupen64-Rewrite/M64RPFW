@@ -4,9 +4,13 @@ using Eto.Forms;
 
 namespace M64RPFW.Misc;
 
-public class ForwardingRelayCommand : Command
+/// <summary>
+/// A <see cref="Command"/> wrapping an <see cref="IRelayCommand"/>.
+/// Made to ease writing something closer to MVVM-style commands.
+/// </summary>
+public class RelayWrapperCommand : Command
 {
-    public ForwardingRelayCommand(IRelayCommand command)
+    public RelayWrapperCommand(IRelayCommand command)
     {
         _command = command;
         Executed += (_, _) => _command.Execute(null);
@@ -15,5 +19,5 @@ public class ForwardingRelayCommand : Command
 
     public override bool Enabled => _command.CanExecute(null);
 
-    private IRelayCommand _command;
+    private readonly IRelayCommand _command;
 }

@@ -1,8 +1,10 @@
 using System;
-using System.IO;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 using CommunityToolkit.Mvvm.Input;
-using Eto.Drawing;
+using Eto.Forms;
 using M64RPFW.Models;
 using M64RPFW.Models.Emulation.Core;
 using M64RPFW.Views;
@@ -11,13 +13,56 @@ namespace M64RPFW.Presenters;
 
 internal partial class MainPresenter
 {
+    /// <summary>
+    /// List of properties dependent on emulator state.
+    /// </summary>
+    private static readonly string[] StateProperties;
+
+    static MainPresenter()
+    {
+        StateProperties = new[]
+        {
+            nameof(IsRunning),
+            nameof(IsPaused),
+            nameof(IsStopped),
+            nameof(IsStopped)
+        };
+    }
+
     public MainPresenter(MainView view)
     {
+        _view = view;
+
         _emuThread = null;
 
         _vidextOverriden = false;
         _vidext = new VidextPresenter(view);
+
+        Mupen64Plus.StateChanged += delegate(object? _, Mupen64Plus.StateChangeEventArgs args)
+        {
+            if (args.Param == Mupen64Plus.CoreParam.EmuState)
+            {
+                EmuStateChanged?.Invoke(this, EventArgs.Empty);
+            }
+        };
+
+        EmuStateChanged += (_, _) =>
+        {
+            OpenRomCommand.NotifyCanExecuteChanged();
+            CloseRomCommand.NotifyCanExecuteChanged();
+            ResetCommand.NotifyCanExecuteChanged();
+        };
+        
     }
+
+    #region Emulator launcher
+
+    private MainView _view;
+
+    private Thread? _emuThread;
+
+    private bool _vidextOverriden;
+    private VidextPresenter _vidext;
 
     private void EmulatorThreadRun(object? param)
     {
@@ -38,15 +83,9 @@ internal partial class MainPresenter
         Mupen64Plus.DetachPlugin(Mupen64Plus.PluginType.Audio);
         Mupen64Plus.DetachPlugin(Mupen64Plus.PluginType.Input);
         Mupen64Plus.DetachPlugin(Mupen64Plus.PluginType.RSP);
-        
-        Mupen64Plus.StateChanged += delegate(object? sender, Mupen64Plus.StateChangeEventArgs args)
-        {
-            if (args.Param == Mupen64Plus.CoreParam.EmuState)
-                NotifyRunning();
-        };
     }
 
-    public void LaunchRom(RomFile rom)
+    internal void LaunchRom(RomFile rom)
     {
         if (!_vidextOverriden)
         {
@@ -61,28 +100,72 @@ internal partial class MainPresenter
         }
     }
 
+    #endregion
+
     private Mupen64Plus.EmuState State =>
         (Mupen64Plus.EmuState) Mupen64Plus.CoreStateQuery(Mupen64Plus.CoreParam.EmuState);
 
-    private bool IsRunning => State == Mupen64Plus.EmuState.Running;
+    public bool IsRunning => State == Mupen64Plus.EmuState.Running;
+    public bool IsPaused => State == Mupen64Plus.EmuState.Paused;
+    public bool IsStopped => State == Mupen64Plus.EmuState.Stopped;
     public bool IsNotStopped => State != Mupen64Plus.EmuState.Stopped;
 
-    /// <summary>
-    /// Notifies all commands dependent on the emulator's state.
-    /// </summary>
-    private void NotifyRunning()
+    public event EventHandler EmuStateChanged; 
+
+    #region File menu
+
+    [RelayCommand(CanExecute = nameof(IsStopped))]
+    public void OpenRom()
     {
-        StopCommand.NotifyCanExecuteChanged();
+        FileFilter romFilter = new FileFilter("ROM Files", ".z64", ".n64", ".v64");
+        OpenFileDialog fileDialog = new OpenFileDialog
+        {
+            MultiSelect = false,
+            Filters = { romFilter }
+        };
+        var result = fileDialog.ShowDialog(_view);
+        if (result is DialogResult.Cancel)
+            return;
+
+        LaunchRom(new RomFile(fileDialog.Filenames.First()));
     }
 
     [RelayCommand(CanExecute = nameof(IsNotStopped))]
-    public void Stop()
+    public void CloseRom()
     {
         Mupen64Plus.Stop();
     }
 
-    private Thread? _emuThread;
+    [RelayCommand(CanExecute = nameof(IsNotStopped))]
+    public void Reset()
+    {
+        Mupen64Plus.Reset();
+    }
 
-    private bool _vidextOverriden;
-    private VidextPresenter _vidext;
+    #endregion
+
+    #region Emulation menu
+    
+    public bool PauseState
+    {
+        get => IsPaused;
+        set
+        {
+            if (value)
+                Mupen64Plus.Pause();
+            else
+                Mupen64Plus.Resume();
+        }
+    }
+    
+    [RelayCommand(CanExecute = nameof(IsNotStopped))]
+    public void FrameAdvance()
+    {
+        if (IsRunning)
+            Mupen64Plus.Pause();
+        Mupen64Plus.AdvanceFrame();
+    }
+    
+    
+    #endregion
 }

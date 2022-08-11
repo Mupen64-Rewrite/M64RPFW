@@ -11,6 +11,9 @@ public class M64RPFWApplication : Application
 {
     static M64RPFWApplication()
     {
+        // Static constructor is run before *any*
+        // instance constructor, so I can init
+        // Mupen64Plus before doing anything
         Mupen64Plus.Startup();
     }
     

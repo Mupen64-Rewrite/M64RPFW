@@ -1,12 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Threading;
-using Cairo;
 using Gtk;
 using M64RPFW.Gtk.Helpers;
-using M64RPFW.Models.Emulation.Core;
-using Action = System.Action;
 using Point = System.Drawing.Point;
 using Rectangle = Gdk.Rectangle;
 using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
