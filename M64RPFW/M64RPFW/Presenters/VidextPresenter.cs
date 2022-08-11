@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Threading;
 using Eto.Forms;
 using M64RPFW.Views;
 using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
@@ -20,6 +21,12 @@ public class VidextPresenter : IVideoExtension
     private MainView _view;
     private Control? _prevContent;
 
+    private int _closingFlag = 0;
+    internal void NotifyClosing()
+    {
+        Interlocked.Exchange(ref _closingFlag, 1);
+    }
+
     #region Video Extension API
 
     public Error Init()
@@ -37,17 +44,21 @@ public class VidextPresenter : IVideoExtension
 
     public Error Quit()
     {
-        _view.SubWindow.CloseVideo();
-        Application.Instance.Invoke(delegate
+        Console.WriteLine($"Closing flag: {_closingFlag == 1}");
+        if (_closingFlag == 0)
         {
-            _view.Content = _prevContent;
-            _prevContent = null;
-            _view.ParentWindow.Resizable = true;
-            
-            // Workaround for X11. I know it looks weird, but it works.
-            _view.ParentWindow.Size += new Eto.Drawing.Size(10, 10);
-            _view.ParentWindow.Size -= new Eto.Drawing.Size(10, 10);
-        });
+            _view.SubWindow.CloseVideo();
+            Application.Instance.Invoke(delegate
+            {
+                _view.Content = _prevContent;
+                _prevContent = null;
+                _view.ParentWindow.Resizable = true;
+
+                // Workaround for X11. I know it looks weird, but it works.
+                _view.ParentWindow.Size += new Eto.Drawing.Size(10, 10);
+                _view.ParentWindow.Size -= new Eto.Drawing.Size(10, 10);
+            });
+        }
         return Error.Success;
     }
 

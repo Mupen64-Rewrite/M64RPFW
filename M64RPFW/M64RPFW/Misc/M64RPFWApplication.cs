@@ -15,6 +15,11 @@ public class M64RPFWApplication : Application
         // instance constructor, so I can init
         // Mupen64Plus before doing anything
         Mupen64Plus.Startup();
+
+        AppDomain.CurrentDomain.ProcessExit += (_, _) =>
+        {
+            Mupen64Plus.Shutdown();
+        };
     }
     
     public M64RPFWApplication() 
@@ -41,7 +46,7 @@ public class M64RPFWApplication : Application
 
     protected override void OnTerminating(CancelEventArgs e)
     {
-        Mupen64Plus.Shutdown();
+        
     }
     
     

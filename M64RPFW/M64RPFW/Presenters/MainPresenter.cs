@@ -52,7 +52,21 @@ internal partial class MainPresenter
             CloseRomCommand.NotifyCanExecuteChanged();
             ResetCommand.NotifyCanExecuteChanged();
         };
-        
+
+        _view.Closing += (_, _) =>
+        {
+            _vidext.NotifyClosing();
+            if (IsNotStopped)
+                CloseRom();
+            Console.WriteLine($"Is visible: {_view.Visible}");
+        };
+        _view.Closed += (_, _) =>
+        {
+            if (_emuThread is null)
+                return;
+            if (_emuThread.IsAlive)
+                _emuThread.Join();
+        };
     }
 
     #region Emulator launcher
@@ -66,23 +80,31 @@ internal partial class MainPresenter
 
     private void EmulatorThreadRun(object? param)
     {
-        RomFile rom = (RomFile) param!;
+        try
+        {
+            RomFile rom = (RomFile) param!;
 
-        rom.LoadThisRom();
+            rom.LoadThisRom();
 
-        Mupen64Plus.AttachPlugin("/usr/lib/mupen64plus/mupen64plus-video-rice.so");
-        Mupen64Plus.AttachPlugin("/usr/lib/mupen64plus/mupen64plus-audio-sdl.so");
-        Mupen64Plus.AttachPlugin("/usr/lib/mupen64plus/mupen64plus-input-sdl.so");
-        Mupen64Plus.AttachPlugin("/usr/lib/mupen64plus/mupen64plus-rsp-hle.so");
+            Mupen64Plus.AttachPlugin("/usr/lib/mupen64plus/mupen64plus-video-rice.so");
+            Mupen64Plus.AttachPlugin("/usr/lib/mupen64plus/mupen64plus-audio-sdl.so");
+            Mupen64Plus.AttachPlugin("/usr/lib/mupen64plus/mupen64plus-input-sdl.so");
+            Mupen64Plus.AttachPlugin("/usr/lib/mupen64plus/mupen64plus-rsp-hle.so");
 
-        Mupen64Plus.Execute();
-
-        Mupen64Plus.CloseRom();
-
-        Mupen64Plus.DetachPlugin(Mupen64Plus.PluginType.Graphics);
-        Mupen64Plus.DetachPlugin(Mupen64Plus.PluginType.Audio);
-        Mupen64Plus.DetachPlugin(Mupen64Plus.PluginType.Input);
-        Mupen64Plus.DetachPlugin(Mupen64Plus.PluginType.RSP);
+            Mupen64Plus.Execute();
+        }
+        finally
+        {
+            if (!IsStopped)
+                Mupen64Plus.Stop();
+            
+            Mupen64Plus.DetachPlugin(Mupen64Plus.PluginType.Graphics);
+            Mupen64Plus.DetachPlugin(Mupen64Plus.PluginType.Audio);
+            Mupen64Plus.DetachPlugin(Mupen64Plus.PluginType.Input);
+            Mupen64Plus.DetachPlugin(Mupen64Plus.PluginType.RSP);
+        
+            Mupen64Plus.CloseRom();
+        }
     }
 
     internal void LaunchRom(RomFile rom)
@@ -98,6 +120,12 @@ internal partial class MainPresenter
             _emuThread = new Thread(EmulatorThreadRun);
             _emuThread.Start(rom);
         }
+    }
+
+    public void AwaitThreadFinish()
+    {
+        if (_emuThread is { IsAlive: true })
+            _emuThread.Join();
     }
 
     #endregion
