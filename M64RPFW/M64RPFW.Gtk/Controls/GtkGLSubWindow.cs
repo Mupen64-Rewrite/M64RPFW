@@ -101,12 +101,9 @@ public class GtkGLSubWindow : Widget
     private void InitGLWindow()
     {
         _glWindow = IOpenGLWindow.Create(Window, _windowSize, _attrMap);
-        Console.WriteLine($"Allocation top-left: ({Allocation.X}, {Allocation.Y})");
 
         int basePosX = Allocation.Left + (Allocation.Width - _windowSize.Width) / 2,
             basePosY = Allocation.Top + (Allocation.Height - _windowSize.Height) / 2;
-
-        TranslateCoordinates(Toplevel, basePosX, basePosY, out int absX, out int absY);
         _glWindow.SetPosition(new Point(basePosX, basePosY));
     }
 
@@ -126,7 +123,6 @@ public class GtkGLSubWindow : Widget
     {
         if (_glWindow != null)
         {
-            Console.WriteLine($"Allocation rect: {allocation}");
             Point pos = new Point
             {
                 X = allocation.X + (allocation.Width - _windowSize.Width) / 2,

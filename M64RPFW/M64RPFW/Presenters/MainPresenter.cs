@@ -58,7 +58,6 @@ internal partial class MainPresenter
             _vidext.NotifyClosing();
             if (IsNotStopped)
                 CloseRom();
-            Console.WriteLine($"Is visible: {_view.Visible}");
         };
         _view.Closed += (_, _) =>
         {

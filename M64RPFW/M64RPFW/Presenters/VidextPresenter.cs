@@ -36,8 +36,6 @@ public class VidextPresenter : IVideoExtension
         {
             _prevContent = _view.Content;
             _view.Content = _view.SubWindow;
-            _view.ParentWindow.Resizable = false;
-            
         });
         return Error.Success;
     }
@@ -53,6 +51,7 @@ public class VidextPresenter : IVideoExtension
                 _view.Content = _prevContent;
                 _prevContent = null;
                 _view.ParentWindow.Resizable = true;
+                _view.MinimumSize = new Eto.Drawing.Size(256, 144);
 
                 // Workaround for X11. I know it looks weird, but it works.
                 _view.ParentWindow.Size += new Eto.Drawing.Size(10, 10);
@@ -79,7 +78,12 @@ public class VidextPresenter : IVideoExtension
 
         Application.Instance.InvokeAsync(delegate
         {
-            _view.MinimumSize = new Eto.Drawing.Size(width, height);
+            _view.ClientSize = new Eto.Drawing.Size(width, height);
+            
+            // Minimum size caps the real size, so we need to know how much
+            // the decorations contribute to size (fixed amount)
+            var sizeDiff = _view.Size - _view.ClientSize;
+            _view.MinimumSize = new Eto.Drawing.Size(width, height) + sizeDiff;
         });
         return _view.SubWindow.SetVideoMode(new Size(width, height), bitsPerPixel, mode, flags);
     }
