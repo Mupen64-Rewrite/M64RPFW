@@ -37,10 +37,12 @@ public static partial class Mupen64Plus
     /// <param name="index">the current frame index</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void FrameCallback(int index);
-
-    private static DebugCallback _debugCB;
-    private static StateCallback _stateCB;
-    private static FrameCallback _frameCB;
+    
+    #pragma warning disable CS8618
+    private static DebugCallback _debugCallback;
+    private static StateCallback _stateCallback;
+    private static FrameCallback _frameCallback;
+    #pragma warning restore CS8618
     
 
     // Delegate types for core functions

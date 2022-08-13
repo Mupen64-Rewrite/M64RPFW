@@ -25,18 +25,18 @@ public static partial class Mupen64Plus
 
         ResolveFrontendFunctions();
 
-        _debugCB = OnDebug;
-        _stateCB = OnStateChange;
+        _debugCallback = OnDebug;
+        _stateCallback = OnStateChange;
 
         Error err = _fnCoreStartup(
             0x020000, null, null, (IntPtr) (int) PluginType.Core,
-            _debugCB, IntPtr.Zero, _stateCB);
+            _debugCallback, IntPtr.Zero, _stateCallback);
         ThrowForError(err);
 
 
-        _frameCB = OnFrameComplete;
+        _frameCallback = OnFrameComplete;
         err = _fnCoreDoCommand(Command.SetFrameCallback, 0,
-            Marshal.GetFunctionPointerForDelegate(_frameCB).ToPointer());
+            Marshal.GetFunctionPointerForDelegate(_frameCallback).ToPointer());
         ThrowForError(err);
 
         _pluginDict = new();

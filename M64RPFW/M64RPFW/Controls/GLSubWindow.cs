@@ -56,6 +56,11 @@ namespace M64RPFW.Controls
         
         /// <summary>
         /// Handler interface for the GLSubWindow widget.
+        ///
+        /// <para>
+        /// The child window should be centered within its allocated area, if possible.
+        /// If its allocated area is too small, the result is undefined.
+        /// </para>
         /// </summary>
         public interface IGLSubWindow : IHandler
         {

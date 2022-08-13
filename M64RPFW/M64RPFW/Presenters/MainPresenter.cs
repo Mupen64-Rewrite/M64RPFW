@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -7,6 +8,7 @@ using CommunityToolkit.Mvvm.Input;
 using Eto.Forms;
 using M64RPFW.Models;
 using M64RPFW.Models.Emulation.Core;
+using M64RPFW.Models.Settings;
 using M64RPFW.Views;
 
 namespace M64RPFW.Presenters;
@@ -85,10 +87,10 @@ internal partial class MainPresenter
 
             rom.LoadThisRom();
 
-            Mupen64Plus.AttachPlugin("/usr/lib/mupen64plus/mupen64plus-video-rice.so");
-            Mupen64Plus.AttachPlugin("/usr/lib/mupen64plus/mupen64plus-audio-sdl.so");
-            Mupen64Plus.AttachPlugin("/usr/lib/mupen64plus/mupen64plus-input-sdl.so");
-            Mupen64Plus.AttachPlugin("/usr/lib/mupen64plus/mupen64plus-rsp-hle.so");
+            Mupen64Plus.AttachPlugin(Path.Join(Settings.Model.Plugins.SearchDir, Settings.Model.Plugins.Video));
+            Mupen64Plus.AttachPlugin(Path.Join(Settings.Model.Plugins.SearchDir, Settings.Model.Plugins.Audio));
+            Mupen64Plus.AttachPlugin(Path.Join(Settings.Model.Plugins.SearchDir, Settings.Model.Plugins.Input));
+            Mupen64Plus.AttachPlugin(Path.Join(Settings.Model.Plugins.SearchDir, Settings.Model.Plugins.RSP));
 
             Mupen64Plus.Execute();
         }

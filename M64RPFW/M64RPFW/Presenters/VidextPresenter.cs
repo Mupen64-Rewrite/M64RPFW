@@ -1,7 +1,7 @@
 using System;
-using System.Drawing;
 using System.Threading;
 using Eto.Forms;
+using Eto.Drawing;
 using M64RPFW.Views;
 using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 
@@ -20,11 +20,18 @@ public class VidextPresenter : IVideoExtension
 
     private MainView _view;
     private Control? _prevContent;
+    private Size _decoSize;
+    private Size _windowSize;
 
     private int _closingFlag = 0;
     internal void NotifyClosing()
     {
         Interlocked.Exchange(ref _closingFlag, 1);
+    }
+
+    private void OnSizeChanged(object? sender, EventArgs args)
+    {
+        _view.MinimumSize = _view.Size - _view.ClientSize + _windowSize;
     }
 
     #region Video Extension API
@@ -36,6 +43,7 @@ public class VidextPresenter : IVideoExtension
         {
             _prevContent = _view.Content;
             _view.Content = _view.SubWindow;
+            _decoSize = _view.Size - _view.ClientSize;
         });
         return Error.Success;
     }
@@ -51,11 +59,13 @@ public class VidextPresenter : IVideoExtension
                 _view.Content = _prevContent;
                 _prevContent = null;
                 _view.ParentWindow.Resizable = true;
-                _view.MinimumSize = new Eto.Drawing.Size(256, 144);
+                _view.MinimumSize = new Size(256, 144);
+
+                _view.SizeChanged -= OnSizeChanged;
 
                 // Workaround for X11. I know it looks weird, but it works.
-                _view.ParentWindow.Size += new Eto.Drawing.Size(10, 10);
-                _view.ParentWindow.Size -= new Eto.Drawing.Size(10, 10);
+                _view.ParentWindow.Size += new Size(10, 10);
+                _view.ParentWindow.Size -= new Size(10, 10);
             });
         }
         return Error.Success;
@@ -76,16 +86,18 @@ public class VidextPresenter : IVideoExtension
         if (mode == VideoMode.Fullscreen)
             return Error.Unsupported;
 
+        _windowSize = new Size(width, height);
+        
         Application.Instance.InvokeAsync(delegate
         {
-            _view.ClientSize = new Eto.Drawing.Size(width, height);
+            _view.ClientSize = _windowSize;
             
             // Minimum size caps the real size, so we need to know how much
             // the decorations contribute to size (fixed amount)
-            var sizeDiff = _view.Size - _view.ClientSize;
-            _view.MinimumSize = new Eto.Drawing.Size(width, height) + sizeDiff;
+            _view.MinimumSize = _view.Size - _view.ClientSize + _windowSize;
+            _view.SizeChanged += OnSizeChanged;
         });
-        return _view.SubWindow.SetVideoMode(new Size(width, height), bitsPerPixel, mode, flags);
+        return _view.SubWindow.SetVideoMode(new System.Drawing.Size(width, height), bitsPerPixel, mode, flags);
     }
 
     public Error SetVideoModeWithRate(int width, int height, int refreshRate, int bitsPerPixel, VideoMode mode, VideoFlags flags)
@@ -95,10 +107,10 @@ public class VidextPresenter : IVideoExtension
 
     public Error ResizeWindow(Size2D size)
     {
-        _view.SubWindow.ResizeWindow(new Size { Width = (int) size.uiWidth, Height = (int) size.uiHeight });
+        _view.SubWindow.ResizeWindow(new System.Drawing.Size { Width = (int) size.uiWidth, Height = (int) size.uiHeight });
         Application.Instance.InvokeAsync(delegate
         {
-            _view.MinimumSize = new Eto.Drawing.Size((int) size.uiWidth, (int) size.uiHeight);
+            _view.MinimumSize = new Size((int) size.uiWidth, (int) size.uiHeight);
         });
         return Error.Success;
     }
