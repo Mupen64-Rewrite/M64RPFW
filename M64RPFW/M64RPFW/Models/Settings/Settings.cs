@@ -17,7 +17,7 @@ public static class Settings
             File.Create(path).Dispose();
         }
 
-        Model = Toml.ToModel<SettingsModel>(File.ReadAllText(path, Encoding.UTF8));
+        Model = Toml.ToModel<RPFWSettings>(File.ReadAllText(path, Encoding.UTF8));
 
         AppDomain.CurrentDomain.ProcessExit += (_, _) =>
         {
@@ -25,7 +25,7 @@ public static class Settings
         };
     }
     
-    public static SettingsModel Model { get; }
+    public static RPFWSettings Model { get; }
     
     /// <summary>
     /// Does the exact same thing as Mupen64Plus's <c>ConfigGetUserConfigPath().</c>

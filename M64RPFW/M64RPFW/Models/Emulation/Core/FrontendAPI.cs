@@ -13,16 +13,9 @@ public static partial class Mupen64Plus
     // Public API
     // ========================================================
 #pragma warning disable CS8618
-    /// <summary>
-    /// Initializes the Mupen64Plus bindings, loading it from the specified path.
-    /// </summary>
-    /// <param name="path">The path to <c>mupen64plus.dll</c> or equivalent</param>
-    public static unsafe void Startup(string path)
+    static unsafe Mupen64Plus()
     {
-        if (Initialized)
-            throw new InvalidOperationException("Mupen64Plus.Startup() was already called");
-        _libHandle = NativeLibrary.Load(path);
-        Initialized = true;
+        _libHandle = NativeLibrary.Load(GetExpectedLibPath());
 
         ResolveFrontendFunctions();
         ResolveConfigFunctions();
@@ -42,31 +35,19 @@ public static partial class Mupen64Plus
         ThrowForError(err);
 
         _pluginDict = new();
+
+        AppDomain.CurrentDomain.ProcessExit += (_, _) =>
+        {
+            // ReSharper disable once VariableHidesOuterVariable
+            Error err = _fnCoreShutdown!();
+            ThrowForError(err);
+            
+            NativeLibrary.Free(_libHandle);
+        };
     }
-
-    /// <summary>
-    /// Initializes the Mupen64Plus bindings, loading from
-    /// <c>(path to exe dir)\Libs\mupen64plus.dll</c> or equivalent.
-    /// </summary>
-    public static void Startup()
-    {
-        Startup(GetExpectedLibPath());
-    }
-
-    public static void Shutdown()
-    {
-        Initialized = false;
-
-        Error err = _fnCoreShutdown();
-        ThrowForError(err);
-    }
-
-    public static bool Initialized { get; private set; }
 
     private static void ThrowIfNotInited([CallerMemberName] string name = "")
     {
-        if (!Initialized)
-            throw new InvalidOperationException($"Cannot access {name}() before calling Mupen64Plus.Startup()");
     }
 
     private static void OnDebug(IntPtr context, MessageLevel level, string message)
@@ -121,7 +102,7 @@ public static partial class Mupen64Plus
 
     public static unsafe void OpenRom(string path)
     {
-        ThrowIfNotInited();
+        
         ArgumentNullException.ThrowIfNull(path);
 
         byte[] bytes = File.ReadAllBytes(path);
@@ -153,7 +134,7 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void CloseRom()
     {
-        ThrowIfNotInited();
+        
 
         Error err = _fnCoreDoCommand(Command.RomClose, 0, null);
         ThrowForError(err);
@@ -165,7 +146,7 @@ public static partial class Mupen64Plus
     /// <returns>the ROM header of the currently open ROM</returns>
     public static unsafe RomHeader GetRomHeader()
     {
-        ThrowIfNotInited();
+        
 
         int size = Marshal.SizeOf<RomHeader>();
         IntPtr alloc = Marshal.AllocHGlobal(size);
@@ -189,7 +170,7 @@ public static partial class Mupen64Plus
     /// <returns>The ROM settings for the currently open ROM</returns>
     public static unsafe RomSettings GetRomSettings()
     {
-        ThrowIfNotInited();
+        
 
         int size = Marshal.SizeOf<RomSettings>();
         IntPtr alloc = Marshal.AllocHGlobal(size);
@@ -211,7 +192,7 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void Execute()
     {
-        ThrowIfNotInited();
+        
         Error err = _fnCoreDoCommand(Command.Execute, 0, null);
         ThrowForError(err);
     }
@@ -221,7 +202,7 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void Stop()
     {
-        ThrowIfNotInited();
+        
         Error err = _fnCoreDoCommand(Command.Stop, 0, null);
         ThrowForError(err);
     }
@@ -231,7 +212,7 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void Pause()
     {
-        ThrowIfNotInited();
+        
         Error err = _fnCoreDoCommand(Command.Pause, 0, null);
         ThrowForError(err);
     }
@@ -241,7 +222,7 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void Resume()
     {
-        ThrowIfNotInited();
+        
         Error err = _fnCoreDoCommand(Command.Resume, 0, null);
         ThrowForError(err);
     }
@@ -253,7 +234,7 @@ public static partial class Mupen64Plus
     /// <returns>the parameter's value</returns>
     public static unsafe int CoreStateQuery(CoreParam param)
     {
-        ThrowIfNotInited();
+        
         int res = 0;
         Error err = _fnCoreDoCommand(Command.CoreStateQuery, (int) param, &res);
         ThrowForError(err);
@@ -268,7 +249,7 @@ public static partial class Mupen64Plus
     /// <param name="value">the value to set to the parameter</param>
     public static unsafe void CoreStateSet(CoreParam param, int value)
     {
-        ThrowIfNotInited();
+        
         Error err = _fnCoreDoCommand(Command.CoreStateSet, (int) param, &value);
         ThrowForError(err);
     }
@@ -279,7 +260,7 @@ public static partial class Mupen64Plus
     /// <param name="path">path to the file</param>
     public static unsafe void LoadStateFromFile(string path)
     {
-        ThrowIfNotInited();
+        
         ArgumentNullException.ThrowIfNull(path);
 
         IntPtr alloc = Marshal.StringToHGlobalAnsi(path);
@@ -299,7 +280,7 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void LoadStateFromCurrentSlot()
     {
-        ThrowIfNotInited();
+        
         Error err = _fnCoreDoCommand(Command.StateLoad, 0, null);
         ThrowForError(err);
     }
@@ -311,7 +292,7 @@ public static partial class Mupen64Plus
     /// <param name="type"></param>
     public static unsafe void SaveStateToFile(string path, SavestateType type = SavestateType.Mupen64Plus)
     {
-        ThrowIfNotInited();
+        
         ArgumentNullException.ThrowIfNull(path);
 
         string fullPath = Path.GetFullPath(path);
@@ -332,7 +313,7 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void SaveStateToCurrentSlot()
     {
-        ThrowIfNotInited();
+        
         Error err = _fnCoreDoCommand(Command.StateSave, 0, null);
         ThrowForError(err);
     }
@@ -345,7 +326,7 @@ public static partial class Mupen64Plus
     /// <exception cref="ArgumentOutOfRangeException">If <paramref name="slot"/> is not between 0 and 9</exception>
     public static unsafe void SetSavestateSlot(int slot)
     {
-        ThrowIfNotInited();
+        
         if (slot < 0 || slot > 9)
             throw new ArgumentOutOfRangeException(nameof(slot), "Savestate slots range from 0-9 (inclusive)");
         Error err = _fnCoreDoCommand(Command.StateSetSlot, slot, null);
@@ -358,7 +339,7 @@ public static partial class Mupen64Plus
     /// <param name="hard">If true, performs a hard reset. Otherwise, performs a soft reset.</param>
     public static unsafe void Reset(bool hard = true)
     {
-        ThrowIfNotInited();
+        
         Error err = _fnCoreDoCommand(Command.Reset, hard ? 1 : 0, null);
         ThrowForError(err);
     }
@@ -368,7 +349,7 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void AdvanceFrame()
     {
-        ThrowIfNotInited();
+        
         Error err = _fnCoreDoCommand(Command.AdvanceFrame, 0, null);
         ThrowForError(err);
     }
@@ -383,7 +364,7 @@ public static partial class Mupen64Plus
     /// <param name="obj">An object implementing the Video Extension API.</param>
     public static void OverrideVideoExtension(IVideoExtension obj)
     {
-        ThrowIfNotInited();
+        
         ArgumentNullException.ThrowIfNull(obj);
 
         _vidextFunctions = new VideoExtensionFunctions(obj);
@@ -415,12 +396,13 @@ public static partial class Mupen64Plus
     /// <exception cref="InvalidOperationException">If the located plugin's type already has an attached plugin</exception>
     public static unsafe void AttachPlugin(string path)
     {
-        ThrowIfNotInited();
+        
         IntPtr pluginLib = NativeLibrary.Load(path);
         // Implicitly
         var getVersion = NativeLibHelper.GetFunction<DPluginGetVersion>(pluginLib, "PluginGetVersion");
 
         Error err = getVersion(out var type, out _, out _, out _, out _);
+        ThrowForError(err);
 
         if (!_pluginDict.TryAdd(type, pluginLib))
         {
@@ -456,8 +438,8 @@ public static partial class Mupen64Plus
     /// <param name="type">The plugin type to detach</param>
     public static void DetachPlugin(PluginType type)
     {
-        ThrowIfNotInited();
-        _pluginDict.Remove(type, out IntPtr pluginLib);
+        
+        _pluginDict.Remove(type, out var pluginLib);
 
         Error err = _fnCoreDetachPlugin(type);
         ThrowForError(err);

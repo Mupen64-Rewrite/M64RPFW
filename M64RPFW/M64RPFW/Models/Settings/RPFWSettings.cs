@@ -11,12 +11,12 @@ namespace M64RPFW.Models.Settings;
 /// <summary>
 /// TOML config file model.
 /// </summary>
-public class SettingsModel : ITomlMetadataProvider
+public class RPFWSettings : ITomlMetadataProvider
 {
     // Required to maintain comments/whitespace
     TomlPropertiesMetadata? ITomlMetadataProvider.PropertiesMetadata { get; set; }
 
-    public SettingsModel()
+    public RPFWSettings()
     {
         Plugins = new PluginsSection();
         RecentRoms = new List<string>();

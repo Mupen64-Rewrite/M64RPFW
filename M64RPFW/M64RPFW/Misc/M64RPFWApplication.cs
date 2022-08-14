@@ -9,18 +9,6 @@ namespace M64RPFW.Misc;
 
 public class M64RPFWApplication : Application
 {
-    static M64RPFWApplication()
-    {
-        // Static constructor is run before *any*
-        // instance constructor, so I can init
-        // Mupen64Plus before doing anything
-        Mupen64Plus.Startup();
-
-        AppDomain.CurrentDomain.ProcessExit += (_, _) =>
-        {
-            Mupen64Plus.Shutdown();
-        };
-    }
     
     public M64RPFWApplication() 
     {
