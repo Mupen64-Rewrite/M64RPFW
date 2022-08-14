@@ -197,4 +197,11 @@ internal partial class MainPresenter
     
     
     #endregion
+    
+    [RelayCommand]
+    public void ShowSettings()
+    {
+        var dialog = new SettingsView();
+        dialog.ShowModal();
+    }
 }

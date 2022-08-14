@@ -77,21 +77,6 @@ public static partial class Mupen64Plus
     [RuntimeDllImport]
     private delegate Error DCoreOverrideVidExt(VideoExtensionFunctions videoFunctionStruct);
 
-
-    // Frontend function utilities
-    // ========================================================
-
-    private static void ResolveFrontendFunctions()
-    {
-        ResolveDelegate(_libHandle, out _fnCoreErrorMessage);
-        ResolveDelegate(_libHandle, out _fnCoreStartup);
-        ResolveDelegate(_libHandle, out _fnCoreShutdown);
-        ResolveDelegate(_libHandle, out _fnCoreAttachPlugin);
-        ResolveDelegate(_libHandle, out _fnCoreDetachPlugin);
-        ResolveDelegate(_libHandle, out _fnCoreOverrideVidExt);
-        ResolveDelegate(_libHandle, out _fnCoreDoCommand);
-    }
-
     #endregion
 
     #region Video Extensions
@@ -139,6 +124,20 @@ public static partial class Mupen64Plus
     
 #pragma warning disable CS8618
     private static Dictionary<PluginType, IntPtr> _pluginDict;
+    
+    // Frontend function utilities
+    // ========================================================
+
+    private static void ResolveFrontendFunctions()
+    {
+        ResolveDelegate(_libHandle, out _fnCoreErrorMessage);
+        ResolveDelegate(_libHandle, out _fnCoreStartup);
+        ResolveDelegate(_libHandle, out _fnCoreShutdown);
+        ResolveDelegate(_libHandle, out _fnCoreAttachPlugin);
+        ResolveDelegate(_libHandle, out _fnCoreDetachPlugin);
+        ResolveDelegate(_libHandle, out _fnCoreOverrideVidExt);
+        ResolveDelegate(_libHandle, out _fnCoreDoCommand);
+    }
 
     // Frontend function members
     // ========================================================

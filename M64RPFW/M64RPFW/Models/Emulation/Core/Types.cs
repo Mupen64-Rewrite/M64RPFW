@@ -134,6 +134,19 @@ public static partial class Mupen64Plus
         String
     }
 
+    public static Type GetType<T>()
+    {
+        if (typeof(T) == typeof(int))
+            return Type.Int;
+        if (typeof(T) == typeof(float))
+            return Type.Float;
+        if (typeof(T) == typeof(bool))
+            return Type.Bool;
+        if (typeof(T) == typeof(string))
+            return Type.String;
+        throw new ArgumentException("Invalid type");
+    }
+
     public static System.Type MapToSystemType(Type t)
     {
         return t switch

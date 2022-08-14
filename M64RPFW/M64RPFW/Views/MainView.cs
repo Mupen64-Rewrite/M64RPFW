@@ -5,6 +5,7 @@ using Eto.Forms;
 using M64RPFW.Controls;
 using M64RPFW.Misc;
 using M64RPFW.Presenters;
+// ReSharper disable VariableHidesOuterVariable
 
 namespace M64RPFW.Views;
 
@@ -46,8 +47,11 @@ public partial class MainView : Form
                         {
                             MenuText = "Reset ROM"
                         },
-                        new SeparatorMenuItem()
-                        // Insert settings menu here
+                        new SeparatorMenuItem(),
+                        new RelayWrapperCommand(Presenter.ShowSettingsCommand)
+                        {
+                            MenuText = "Settings..."
+                        }
                     }
                 },
                 new SubMenuItem
@@ -57,16 +61,14 @@ public partial class MainView : Form
                         FormCommandHelper.DoPostInit(new CheckCommand
                         {
                             MenuText = "Pause/Resume"
-                        }, c =>
+                        }, command =>
                         {
-                            // There are no declarative bindings like Avalonia, so I need to do this.
-                            
                             // init bindings
-                            var checkedBinding = c.Bind(new PropertyBinding<bool>("Checked"), Presenter,
-                                new PropertyBinding<bool>("PauseState"));
-                            var enabledBinding = c.Bind(new PropertyBinding<bool>("Enabled"), Presenter,
-                                new PropertyBinding<bool>("IsNotStopped"));
-                            
+                            var checkedBinding = command.BindDataContext(
+                                c => c.Checked, (MainPresenter p) => p.PauseState);
+                            var enabledBinding = command.BindDataContext(
+                                c => c.Enabled, (MainPresenter p) => p.IsNotStopped);
+
                             // Update them when the emulator state changes
                             Presenter.EmuStateChanged += (_, _) =>
                             {
@@ -79,8 +81,7 @@ public partial class MainView : Form
                             MenuText = "Frame Advance"
                         }
                     }
-                },
-                // new SubMenuItem { Text = "&View", Items = { /* commands/items */ } },
+                }
             }
         };
 
@@ -88,7 +89,7 @@ public partial class MainView : Form
     }
 
     internal MainPresenter Presenter { get; }
-    
+
     // Components
     internal RecentRomView RomView { get; }
     internal GLSubWindow SubWindow { get; }

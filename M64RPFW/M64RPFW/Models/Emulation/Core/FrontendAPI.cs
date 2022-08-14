@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using M64RPFW.Models.Helpers;
@@ -24,6 +25,7 @@ public static partial class Mupen64Plus
         Initialized = true;
 
         ResolveFrontendFunctions();
+        ResolveConfigFunctions();
 
         _debugCallback = OnDebug;
         _stateCallback = OnStateChange;
@@ -61,7 +63,7 @@ public static partial class Mupen64Plus
 
     public static bool Initialized { get; private set; }
 
-    private static void ThrowIfNotInited(string name)
+    private static void ThrowIfNotInited([CallerMemberName] string name = "")
     {
         if (!Initialized)
             throw new InvalidOperationException($"Cannot access {name}() before calling Mupen64Plus.Startup()");
@@ -119,7 +121,7 @@ public static partial class Mupen64Plus
 
     public static unsafe void OpenRom(string path)
     {
-        ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
+        ThrowIfNotInited();
         ArgumentNullException.ThrowIfNull(path);
 
         byte[] bytes = File.ReadAllBytes(path);
@@ -151,7 +153,7 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void CloseRom()
     {
-        ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
+        ThrowIfNotInited();
 
         Error err = _fnCoreDoCommand(Command.RomClose, 0, null);
         ThrowForError(err);
@@ -163,7 +165,7 @@ public static partial class Mupen64Plus
     /// <returns>the ROM header of the currently open ROM</returns>
     public static unsafe RomHeader GetRomHeader()
     {
-        ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
+        ThrowIfNotInited();
 
         int size = Marshal.SizeOf<RomHeader>();
         IntPtr alloc = Marshal.AllocHGlobal(size);
@@ -187,7 +189,7 @@ public static partial class Mupen64Plus
     /// <returns>The ROM settings for the currently open ROM</returns>
     public static unsafe RomSettings GetRomSettings()
     {
-        ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
+        ThrowIfNotInited();
 
         int size = Marshal.SizeOf<RomSettings>();
         IntPtr alloc = Marshal.AllocHGlobal(size);
@@ -209,7 +211,7 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void Execute()
     {
-        ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
+        ThrowIfNotInited();
         Error err = _fnCoreDoCommand(Command.Execute, 0, null);
         ThrowForError(err);
     }
@@ -219,7 +221,7 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void Stop()
     {
-        ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
+        ThrowIfNotInited();
         Error err = _fnCoreDoCommand(Command.Stop, 0, null);
         ThrowForError(err);
     }
@@ -229,7 +231,7 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void Pause()
     {
-        ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
+        ThrowIfNotInited();
         Error err = _fnCoreDoCommand(Command.Pause, 0, null);
         ThrowForError(err);
     }
@@ -239,7 +241,7 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void Resume()
     {
-        ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
+        ThrowIfNotInited();
         Error err = _fnCoreDoCommand(Command.Resume, 0, null);
         ThrowForError(err);
     }
@@ -251,7 +253,7 @@ public static partial class Mupen64Plus
     /// <returns>the parameter's value</returns>
     public static unsafe int CoreStateQuery(CoreParam param)
     {
-        ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
+        ThrowIfNotInited();
         int res = 0;
         Error err = _fnCoreDoCommand(Command.CoreStateQuery, (int) param, &res);
         ThrowForError(err);
@@ -266,7 +268,7 @@ public static partial class Mupen64Plus
     /// <param name="value">the value to set to the parameter</param>
     public static unsafe void CoreStateSet(CoreParam param, int value)
     {
-        ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
+        ThrowIfNotInited();
         Error err = _fnCoreDoCommand(Command.CoreStateSet, (int) param, &value);
         ThrowForError(err);
     }
@@ -277,7 +279,7 @@ public static partial class Mupen64Plus
     /// <param name="path">path to the file</param>
     public static unsafe void LoadStateFromFile(string path)
     {
-        ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
+        ThrowIfNotInited();
         ArgumentNullException.ThrowIfNull(path);
 
         IntPtr alloc = Marshal.StringToHGlobalAnsi(path);
@@ -297,7 +299,7 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void LoadStateFromCurrentSlot()
     {
-        ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
+        ThrowIfNotInited();
         Error err = _fnCoreDoCommand(Command.StateLoad, 0, null);
         ThrowForError(err);
     }
@@ -309,7 +311,7 @@ public static partial class Mupen64Plus
     /// <param name="type"></param>
     public static unsafe void SaveStateToFile(string path, SavestateType type = SavestateType.Mupen64Plus)
     {
-        ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
+        ThrowIfNotInited();
         ArgumentNullException.ThrowIfNull(path);
 
         string fullPath = Path.GetFullPath(path);
@@ -330,7 +332,7 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void SaveStateToCurrentSlot()
     {
-        ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
+        ThrowIfNotInited();
         Error err = _fnCoreDoCommand(Command.StateSave, 0, null);
         ThrowForError(err);
     }
@@ -343,7 +345,7 @@ public static partial class Mupen64Plus
     /// <exception cref="ArgumentOutOfRangeException">If <paramref name="slot"/> is not between 0 and 9</exception>
     public static unsafe void SetSavestateSlot(int slot)
     {
-        ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
+        ThrowIfNotInited();
         if (slot < 0 || slot > 9)
             throw new ArgumentOutOfRangeException(nameof(slot), "Savestate slots range from 0-9 (inclusive)");
         Error err = _fnCoreDoCommand(Command.StateSetSlot, slot, null);
@@ -356,7 +358,7 @@ public static partial class Mupen64Plus
     /// <param name="hard">If true, performs a hard reset. Otherwise, performs a soft reset.</param>
     public static unsafe void Reset(bool hard = true)
     {
-        ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
+        ThrowIfNotInited();
         Error err = _fnCoreDoCommand(Command.Reset, hard ? 1 : 0, null);
         ThrowForError(err);
     }
@@ -366,7 +368,7 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void AdvanceFrame()
     {
-        ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
+        ThrowIfNotInited();
         Error err = _fnCoreDoCommand(Command.AdvanceFrame, 0, null);
         ThrowForError(err);
     }
@@ -381,7 +383,7 @@ public static partial class Mupen64Plus
     /// <param name="obj">An object implementing the Video Extension API.</param>
     public static void OverrideVideoExtension(IVideoExtension obj)
     {
-        ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
+        ThrowIfNotInited();
         ArgumentNullException.ThrowIfNull(obj);
 
         _vidextFunctions = new VideoExtensionFunctions(obj);
@@ -413,7 +415,7 @@ public static partial class Mupen64Plus
     /// <exception cref="InvalidOperationException">If the located plugin's type already has an attached plugin</exception>
     public static unsafe void AttachPlugin(string path)
     {
-        ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
+        ThrowIfNotInited();
         IntPtr pluginLib = NativeLibrary.Load(path);
         // Implicitly
         var getVersion = NativeLibHelper.GetFunction<DPluginGetVersion>(pluginLib, "PluginGetVersion");
@@ -454,7 +456,7 @@ public static partial class Mupen64Plus
     /// <param name="type">The plugin type to detach</param>
     public static void DetachPlugin(PluginType type)
     {
-        ThrowIfNotInited(MethodBase.GetCurrentMethod()!.Name);
+        ThrowIfNotInited();
         _pluginDict.Remove(type, out IntPtr pluginLib);
 
         Error err = _fnCoreDetachPlugin(type);
