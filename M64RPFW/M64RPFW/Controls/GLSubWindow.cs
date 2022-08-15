@@ -65,7 +65,7 @@ namespace M64RPFW.Controls
         public interface IGLSubWindow : IHandler
         {
             /// <summary>
-            /// (Re)create the OpenGL subwindow.
+            /// Create the OpenGL subwindow.
             /// </summary>
             /// <param name="size">size of the window</param>
             /// <param name="bitsPerPixel">Number of bits per pixel. Not exactly useful.</param>

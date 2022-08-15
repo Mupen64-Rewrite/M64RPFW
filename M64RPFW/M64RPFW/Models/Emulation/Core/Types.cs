@@ -165,7 +165,8 @@ public static partial class Mupen64Plus
         PAL,
         MPAL
     }
-
+    
+    [Flags]
     public enum VideoFlags
     {
         SupportResizing = 1

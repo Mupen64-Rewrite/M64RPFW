@@ -38,6 +38,8 @@ public static partial class Mupen64Plus
 
         AppDomain.CurrentDomain.ProcessExit += (_, _) =>
         {
+            ConfigSaveFile();
+            
             // ReSharper disable once VariableHidesOuterVariable
             Error err = _fnCoreShutdown!();
             ThrowForError(err);

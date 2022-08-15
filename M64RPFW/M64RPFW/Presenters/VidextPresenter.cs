@@ -62,10 +62,6 @@ public class VidextPresenter : IVideoExtension
                 _view.MinimumSize = new Size(256, 144);
 
                 _view.SizeChanged -= OnSizeChanged;
-
-                // Workaround for X11. I know it looks weird, but it works.
-                _view.ParentWindow.Size += new Size(10, 10);
-                _view.ParentWindow.Size -= new Size(10, 10);
             });
         }
         return Error.Success;

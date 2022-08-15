@@ -35,22 +35,26 @@ public partial class MainView : Form
                 {
                     Text = "&File", Items =
                     {
-                        new RelayWrapperCommand(Presenter.OpenRomCommand)
+                        new ButtonMenuItem
                         {
-                            MenuText = "Load ROM..."
+                            Text = "Load ROM...",
+                            Command = Presenter.OpenRomCommand
                         },
-                        new RelayWrapperCommand(Presenter.CloseRomCommand)
+                        new ButtonMenuItem
                         {
-                            MenuText = "Close ROM"
+                            Text = "Close ROM",
+                            Command = Presenter.CloseRomCommand
                         },
-                        new RelayWrapperCommand(Presenter.ResetCommand)
+                        new ButtonMenuItem
                         {
-                            MenuText = "Reset ROM"
+                            Text = "Reset ROM",
+                            Command = Presenter.ResetCommand
                         },
                         new SeparatorMenuItem(),
-                        new RelayWrapperCommand(Presenter.ShowSettingsCommand)
+                        new ButtonMenuItem
                         {
-                            MenuText = "Settings..."
+                            Text = "Settings",
+                            Command = Presenter.ShowSettingsCommand
                         }
                     }
                 },
@@ -60,7 +64,8 @@ public partial class MainView : Form
                     {
                         FormCommandHelper.DoPostInit(new CheckCommand
                         {
-                            MenuText = "Pause/Resume"
+                            MenuText = "Pause/Resume",
+                            DataContext = Presenter
                         }, command =>
                         {
                             // init bindings
@@ -76,9 +81,19 @@ public partial class MainView : Form
                                 enabledBinding.Update();
                             };
                         }),
-                        new RelayWrapperCommand(Presenter.FrameAdvanceCommand)
+                        new ButtonMenuItem
                         {
-                            MenuText = "Frame Advance"
+                            Text = "Frame Advance",
+                            Command = Presenter.FrameAdvanceCommand
+                        },
+                        new SeparatorMenuItem(),
+                        new SubMenuItem
+                        {
+                            Text = "Save slots",
+                            Items =
+                            {
+                                
+                            }
                         }
                     }
                 }

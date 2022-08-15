@@ -44,6 +44,7 @@ internal partial class MainPresenter
         {
             if (args.Param == Mupen64Plus.CoreParam.EmuState)
             {
+                
                 EmuStateChanged?.Invoke(this, EventArgs.Empty);
             }
         };
@@ -53,6 +54,7 @@ internal partial class MainPresenter
             OpenRomCommand.NotifyCanExecuteChanged();
             CloseRomCommand.NotifyCanExecuteChanged();
             ResetCommand.NotifyCanExecuteChanged();
+            FrameAdvanceCommand.NotifyCanExecuteChanged();
         };
 
         _view.Closing += (_, _) =>
@@ -87,10 +89,10 @@ internal partial class MainPresenter
 
             rom.LoadThisRom();
 
-            Mupen64Plus.AttachPlugin(Path.Join(Settings.Model.Plugins.SearchDir, Settings.Model.Plugins.Video));
-            Mupen64Plus.AttachPlugin(Path.Join(Settings.Model.Plugins.SearchDir, Settings.Model.Plugins.Audio));
-            Mupen64Plus.AttachPlugin(Path.Join(Settings.Model.Plugins.SearchDir, Settings.Model.Plugins.Input));
-            Mupen64Plus.AttachPlugin(Path.Join(Settings.Model.Plugins.SearchDir, Settings.Model.Plugins.RSP));
+            Mupen64Plus.AttachPlugin(Path.Join(Settings.RPFW.Plugins.SearchDir, Settings.RPFW.Plugins.Video));
+            Mupen64Plus.AttachPlugin(Path.Join(Settings.RPFW.Plugins.SearchDir, Settings.RPFW.Plugins.Audio));
+            Mupen64Plus.AttachPlugin(Path.Join(Settings.RPFW.Plugins.SearchDir, Settings.RPFW.Plugins.Input));
+            Mupen64Plus.AttachPlugin(Path.Join(Settings.RPFW.Plugins.SearchDir, Settings.RPFW.Plugins.RSP));
 
             Mupen64Plus.Execute();
         }
@@ -170,6 +172,13 @@ internal partial class MainPresenter
     {
         Mupen64Plus.Reset();
     }
+    
+    [RelayCommand(CanExecute = nameof(IsStopped))]
+    public void ShowSettings()
+    {
+        var dialog = new SettingsView();
+        dialog.ShowModal();
+    }
 
     #endregion
 
@@ -198,10 +207,5 @@ internal partial class MainPresenter
     
     #endregion
     
-    [RelayCommand]
-    public void ShowSettings()
-    {
-        var dialog = new SettingsView();
-        dialog.ShowModal();
-    }
+    
 }

@@ -17,15 +17,18 @@ public static class Settings
             File.Create(path).Dispose();
         }
 
-        Model = Toml.ToModel<RPFWSettings>(File.ReadAllText(path, Encoding.UTF8));
+        RPFW = Toml.ToModel<RPFWSettings>(File.ReadAllText(path, Encoding.UTF8));
 
         AppDomain.CurrentDomain.ProcessExit += (_, _) =>
         {
-            File.WriteAllText(path, Toml.FromModel(Model), Encoding.UTF8);
+            File.WriteAllText(path, Toml.FromModel(RPFW), Encoding.UTF8);
         };
+
+        Core = new CoreSettings();
     }
     
-    public static RPFWSettings Model { get; }
+    public static RPFWSettings RPFW { get; }
+    public static CoreSettings Core { get; }
     
     /// <summary>
     /// Does the exact same thing as Mupen64Plus's <c>ConfigGetUserConfigPath().</c>
