@@ -3,6 +3,7 @@ using System.ComponentModel;
 using Eto;
 using Eto.Forms;
 using M64RPFW.Models.Emulation.Core;
+using M64RPFW.Models.Settings;
 using M64RPFW.Views;
 
 namespace M64RPFW.Misc;
@@ -28,6 +29,7 @@ public class M64RPFWApplication : Application
     protected override void OnInitialized(EventArgs e)
     {
         UIThreadCheckMode = UIThreadCheckMode.Warning;
+        Settings.Init();
 
         MainForm.Visible = true;
     }

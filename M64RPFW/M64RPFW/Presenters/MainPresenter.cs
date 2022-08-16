@@ -44,7 +44,6 @@ internal partial class MainPresenter
         {
             if (args.Param == Mupen64Plus.CoreParam.EmuState)
             {
-                
                 EmuStateChanged?.Invoke(this, EventArgs.Empty);
             }
         };
@@ -55,6 +54,8 @@ internal partial class MainPresenter
             CloseRomCommand.NotifyCanExecuteChanged();
             ResetCommand.NotifyCanExecuteChanged();
             FrameAdvanceCommand.NotifyCanExecuteChanged();
+            PauseStateCommand.UpdateValue();
+            PauseStateCommand.UpdateCanExecute();
         };
 
         _view.Closing += (_, _) =>
@@ -89,10 +90,10 @@ internal partial class MainPresenter
 
             rom.LoadThisRom();
 
-            Mupen64Plus.AttachPlugin(Path.Join(Settings.RPFW.Plugins.SearchDir, Settings.RPFW.Plugins.Video));
-            Mupen64Plus.AttachPlugin(Path.Join(Settings.RPFW.Plugins.SearchDir, Settings.RPFW.Plugins.Audio));
-            Mupen64Plus.AttachPlugin(Path.Join(Settings.RPFW.Plugins.SearchDir, Settings.RPFW.Plugins.Input));
-            Mupen64Plus.AttachPlugin(Path.Join(Settings.RPFW.Plugins.SearchDir, Settings.RPFW.Plugins.RSP));
+            Mupen64Plus.AttachPlugin(Settings.RPFW.Plugins.Video);
+            Mupen64Plus.AttachPlugin(Settings.RPFW.Plugins.Audio);
+            Mupen64Plus.AttachPlugin(Settings.RPFW.Plugins.Input);
+            Mupen64Plus.AttachPlugin(Settings.RPFW.Plugins.RSP);
 
             Mupen64Plus.Execute();
         }
@@ -100,12 +101,12 @@ internal partial class MainPresenter
         {
             if (!IsStopped)
                 Mupen64Plus.Stop();
-            
+
             Mupen64Plus.DetachPlugin(Mupen64Plus.PluginType.Graphics);
             Mupen64Plus.DetachPlugin(Mupen64Plus.PluginType.Audio);
             Mupen64Plus.DetachPlugin(Mupen64Plus.PluginType.Input);
             Mupen64Plus.DetachPlugin(Mupen64Plus.PluginType.RSP);
-        
+
             Mupen64Plus.CloseRom();
         }
     }
@@ -141,7 +142,7 @@ internal partial class MainPresenter
     public bool IsStopped => State == Mupen64Plus.EmuState.Stopped;
     public bool IsNotStopped => State != Mupen64Plus.EmuState.Stopped;
 
-    public event EventHandler EmuStateChanged; 
+    public event EventHandler EmuStateChanged;
 
     #region File menu
 
@@ -172,7 +173,7 @@ internal partial class MainPresenter
     {
         Mupen64Plus.Reset();
     }
-    
+
     [RelayCommand(CanExecute = nameof(IsStopped))]
     public void ShowSettings()
     {
@@ -195,7 +196,17 @@ internal partial class MainPresenter
                 Mupen64Plus.Resume();
         }
     }
-    
+
+    #region PauseState custom command
+    // I should write a source generator so it doesn't look so ugly
+
+    private RelayValueCommand<bool>? _pauseStateCommand;
+
+    public RelayValueCommand<bool> PauseStateCommand => _pauseStateCommand ??=
+        new RelayValueCommand<bool>(() => PauseState, value => PauseState = value, () => {}, () => IsNotStopped);
+
+    #endregion
+
     [RelayCommand(CanExecute = nameof(IsNotStopped))]
     public void FrameAdvance()
     {
@@ -203,9 +214,6 @@ internal partial class MainPresenter
             Mupen64Plus.Pause();
         Mupen64Plus.AdvanceFrame();
     }
-    
-    
+
     #endregion
-    
-    
 }

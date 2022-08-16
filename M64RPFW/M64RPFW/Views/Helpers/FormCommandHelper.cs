@@ -1,7 +1,6 @@
 using System;
-using Eto.Forms;
 
-namespace M64RPFW.Misc;
+namespace M64RPFW.Views.Helpers;
 
 public static class FormCommandHelper
 {

@@ -25,10 +25,19 @@ public static class Settings
         };
 
         Core = new CoreSettings();
+        VideoGeneral = new VideoGeneralSettings();
     }
     
+    /// <summary>
+    /// Does absolutely nothing except ensure
+    /// that the static constructor is called.
+    /// </summary>
+    public static void Init() {}
+    
     public static RPFWSettings RPFW { get; }
+    
     public static CoreSettings Core { get; }
+    public static VideoGeneralSettings VideoGeneral { get; }
     
     /// <summary>
     /// Does the exact same thing as Mupen64Plus's <c>ConfigGetUserConfigPath().</c>

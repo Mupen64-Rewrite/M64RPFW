@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
+using M64RPFW.Controls;
 using M64RPFW.Models.Settings;
 using M64RPFW.Presenters;
-using static M64RPFW.Misc.FormCommandHelper;
+using static M64RPFW.Views.Helpers.FormCommandHelper;
 
 namespace M64RPFW.Views;
 
@@ -14,7 +15,9 @@ public class SettingsView : Dialog
     public SettingsView()
     {
         Title = "Settings";
-        ClientSize = new Size(360, 480);
+        Resizable = true;
+            
+
         DataContext = new SettingsPresenter(this);
         Content = new TabControl
         {
@@ -41,7 +44,6 @@ public class SettingsView : Dialog
                                         Spacing = new Size(0, 5),
                                         ItemTextBinding = new DelegateBinding<object, string>(index =>
                                         {
-                                            Console.WriteLine($"Called text binding: {(int) index}");
                                             return (int) index switch
                                             {
                                                 0 => "Pure Interpreter",
@@ -52,7 +54,6 @@ public class SettingsView : Dialog
                                         }),
                                         ItemToolTipBinding = new DelegateBinding<object, string>(index =>
                                         {
-                                            Console.WriteLine($"Called tooltip binding: {(int) index}");
                                             return (int) index switch
                                             {
                                                 0 => "Directly interprets MIPS machine code. (most reliable)",
@@ -119,24 +120,55 @@ public class SettingsView : Dialog
                             {
                                 new GroupBox
                                 {
-                                    Text = "Plugin dir",
+                                    Text = "Video plugin",
                                     Padding = new Padding(5),
-                                    Content = new StackLayout
+                                    Content = DoPostInit(new CustomFilePicker
                                     {
-                                        Orientation = Orientation.Horizontal,
-                                        Items =
-                                        {
-                                            new StackLayoutItem(new TextBox
-                                            {
-                                                PlaceholderText = "File path...",
-                                                
-                                            }, expand: true),
-                                            new StackLayoutItem(new Button
-                                            {
-                                                Text = "Browse",
-                                            }, expand: false)
-                                        }
-                                    }
+                                        Filters = { SettingsPresenter.PluginFilter }
+                                    }, picker =>
+                                    {
+                                        picker.CurrentPathBinding.Bind(Settings.RPFW.Plugins,
+                                            settings => settings.Video);
+                                    })
+                                },
+                                new GroupBox
+                                {
+                                    Text = "Audio plugin",
+                                    Padding = new Padding(5),
+                                    Content = DoPostInit(new CustomFilePicker
+                                    {
+                                        Filters = { SettingsPresenter.PluginFilter }
+                                    }, picker =>
+                                    {
+                                        picker.CurrentPathBinding.Bind(Settings.RPFW.Plugins,
+                                            settings => settings.Audio);
+                                    })
+                                },
+                                new GroupBox
+                                {
+                                    Text = "Input plugin",
+                                    Padding = new Padding(5),
+                                    Content = DoPostInit(new CustomFilePicker
+                                    {
+                                        Filters = { SettingsPresenter.PluginFilter }
+                                    }, picker =>
+                                    {
+                                        picker.CurrentPathBinding.Bind(Settings.RPFW.Plugins,
+                                            settings => settings.Input);
+                                    })
+                                },
+                                new GroupBox
+                                {
+                                    Text = "RSP plugin",
+                                    Padding = new Padding(5),
+                                    Content = DoPostInit(new CustomFilePicker
+                                    {
+                                        Filters = { SettingsPresenter.PluginFilter }
+                                    }, picker =>
+                                    {
+                                        picker.CurrentPathBinding.Bind(Settings.RPFW.Plugins,
+                                            settings => settings.RSP);
+                                    })
                                 }
                             }
                         }, layout =>
@@ -149,4 +181,6 @@ public class SettingsView : Dialog
             }
         };
     }
+
+    private SettingsPresenter Presenter => (SettingsPresenter) DataContext;
 }

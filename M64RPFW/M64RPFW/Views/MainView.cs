@@ -62,39 +62,18 @@ public partial class MainView : Form
                 {
                     Text = "&Emulation", Items =
                     {
-                        FormCommandHelper.DoPostInit(new CheckCommand
+                        new CheckMenuItem
                         {
-                            MenuText = "Pause/Resume",
-                            DataContext = Presenter
-                        }, command =>
-                        {
-                            // init bindings
-                            var checkedBinding = command.BindDataContext(
-                                c => c.Checked, (MainPresenter p) => p.PauseState);
-                            var enabledBinding = command.BindDataContext(
-                                c => c.Enabled, (MainPresenter p) => p.IsNotStopped);
-
-                            // Update them when the emulator state changes
-                            Presenter.EmuStateChanged += (_, _) =>
-                            {
-                                checkedBinding.Update();
-                                enabledBinding.Update();
-                            };
-                        }),
+                            Text = "Pause/Resume",
+                            Command = Presenter.PauseStateCommand
+                        },
                         new ButtonMenuItem
                         {
                             Text = "Frame Advance",
                             Command = Presenter.FrameAdvanceCommand
                         },
                         new SeparatorMenuItem(),
-                        new SubMenuItem
-                        {
-                            Text = "Save slots",
-                            Items =
-                            {
-                                
-                            }
-                        }
+                        new RadioMenuItem(),
                     }
                 }
             }
