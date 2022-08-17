@@ -12,7 +12,7 @@ public static partial class Mupen64Plus
 {
     // Public API
     // ========================================================
-#pragma warning disable CS8618
+#pragma warning disable CS8618 CS8602
     static unsafe Mupen64Plus()
     {
         _libHandle = NativeLibrary.Load(GetExpectedLibPath());

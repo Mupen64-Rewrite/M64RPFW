@@ -15,21 +15,6 @@ namespace M64RPFW.Presenters;
 
 internal partial class MainPresenter
 {
-    /// <summary>
-    /// List of properties dependent on emulator state.
-    /// </summary>
-    private static readonly string[] StateProperties;
-
-    static MainPresenter()
-    {
-        StateProperties = new[]
-        {
-            nameof(IsRunning),
-            nameof(IsPaused),
-            nameof(IsStopped),
-            nameof(IsStopped)
-        };
-    }
 
     public MainPresenter(MainView view)
     {
@@ -71,6 +56,11 @@ internal partial class MainPresenter
             if (_emuThread.IsAlive)
                 _emuThread.Join();
         };
+    }
+
+    internal void PostInit()
+    {
+        
     }
 
     #region Emulator launcher
@@ -123,6 +113,13 @@ internal partial class MainPresenter
         {
             _emuThread = new Thread(EmulatorThreadRun);
             _emuThread.Start(rom);
+            
+            // Set the savestate slot to be correct.
+            var emulationMenu = (SubMenuItem) _view.Menu.Items[1];
+            var savestateMenu = (SubMenuItem) emulationMenu.Items.First(item => item.ID == "save-slot-menu");
+
+            int slot = Mupen64Plus.CoreStateQuery(Mupen64Plus.CoreParam.SavestateSlot);
+            ((RadioMenuItem) savestateMenu.Items[slot]).Checked = true;
         }
     }
 
@@ -213,6 +210,58 @@ internal partial class MainPresenter
         if (IsRunning)
             Mupen64Plus.Pause();
         Mupen64Plus.AdvanceFrame();
+    }
+    
+    [RelayCommand(CanExecute = nameof(IsNotStopped))]
+    public void LoadSlot()
+    {
+        Mupen64Plus.LoadStateFromCurrentSlot();
+    }
+
+    [RelayCommand(CanExecute = nameof(IsNotStopped))]
+    public void LoadSavestateFile()
+    {
+        OpenFileDialog fileDialog = new OpenFileDialog
+        {
+            Filters = { "Savestates|.st;.savestate;.pj" },
+            MultiSelect = false
+        };
+        var result = fileDialog.ShowDialog(_view);
+        if (result == DialogResult.Cancel)
+            return;
+        
+        Mupen64Plus.LoadStateFromFile(fileDialog.FileName);
+    }
+
+    [RelayCommand(CanExecute = nameof(IsNotStopped))]
+    public void SaveSlot()
+    {
+        Mupen64Plus.SaveStateToCurrentSlot();
+    }
+    
+    [RelayCommand(CanExecute = nameof(IsNotStopped))]
+    public void SaveSavestateFile()
+    {
+        SaveFileDialog fileDialog = new SaveFileDialog
+        {
+            Filters =
+            {
+                "M64+ Savestate|.st",
+                "PJ64 Savestate|.pj",
+                "PJ64 Savestate (uncompressed)|.pj"
+            }
+        };
+        var result = fileDialog.ShowDialog(_view);
+        if (result == DialogResult.Cancel)
+            return;
+        
+        Mupen64Plus.SaveStateToFile(fileDialog.FileName, (Mupen64Plus.SavestateType) fileDialog.CurrentFilterIndex);
+    }
+
+    [RelayCommand(CanExecute = nameof(IsNotStopped))]
+    public void SetSavestateSlot(int slot)
+    {
+        Mupen64Plus.SetSavestateSlot(slot);
     }
 
     #endregion

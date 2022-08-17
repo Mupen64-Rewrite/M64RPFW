@@ -34,6 +34,7 @@ public static class NativeLibHelper
     /// Resolve a delegate tagged with <see cref="RuntimeDllImportAttribute"/>.
     /// </summary>
     /// <param name="lib">the library to resolve symbols from</param>
+    /// <param name="del">the delegate to set</param>
     /// <typeparam name="T">the delegate to resolve to</typeparam>
     /// <returns>the delegate</returns>
     /// <exception cref="ArgumentException">If the delegate type is not tagged correctly</exception>

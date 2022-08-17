@@ -94,6 +94,13 @@ public static partial class Mupen64Plus
         ReadScreen,
         Reset,
         AdvanceFrame,
+        SetMediaLoader,
+        NetplayInit,
+        NetplayControlPlayer,
+        NetplayGetVersion,
+        NetplayClose,
+        PifOpen,
+        RomSetSettings
     }
 
     public enum CoreParam

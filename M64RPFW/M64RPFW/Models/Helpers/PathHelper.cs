@@ -9,7 +9,7 @@ public static class PathHelper
     {
         try
         {
-            new FileInfo(path);
+            var fileInfo = new FileInfo(path);
         }
         catch (ArgumentException)
         {

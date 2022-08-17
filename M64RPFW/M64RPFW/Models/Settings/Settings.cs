@@ -14,6 +14,7 @@ public static class Settings
         Console.WriteLine($"Config path: {path}");
         if (!File.Exists(path))
         {
+            // Simply create an empty file
             File.Create(path).Dispose();
         }
 

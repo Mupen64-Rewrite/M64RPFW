@@ -113,7 +113,8 @@ public class VidextPresenter : IVideoExtension
 
     public Error SetCaption(string title)
     {
-        _view.Title = $"M64RPFW: {title}";
+        // They can't get the title back, so we can just
+        // pretend we set the title. Not like we care here.
         return Error.Success;
     }
 
