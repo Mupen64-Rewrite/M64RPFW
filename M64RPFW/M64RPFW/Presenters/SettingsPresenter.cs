@@ -1,11 +1,12 @@
 using System;
 using System.Runtime.InteropServices;
 using Eto.Forms;
+using M64RPFW.Models.Settings;
 using M64RPFW.Views;
 
 namespace M64RPFW.Presenters;
 
-public class SettingsPresenter
+internal class SettingsPresenter
 {
     static SettingsPresenter()
     {
@@ -28,6 +29,10 @@ public class SettingsPresenter
     public SettingsPresenter(SettingsView view)
     {
         _view = view;
+        _view.Closed += (_, _) =>
+        {
+            Settings.EnsureSaved();
+        };
     }
 
     private readonly SettingsView _view;

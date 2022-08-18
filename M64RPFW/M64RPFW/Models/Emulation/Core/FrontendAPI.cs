@@ -351,8 +351,19 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void AdvanceFrame()
     {
-        
         Error err = _fnCoreDoCommand(Command.AdvanceFrame, 0, null);
+        ThrowForError(err);
+    }
+
+    public static unsafe void SendSDLKeyDown(uint combined)
+    {
+        Error err = _fnCoreDoCommand(Command.SendSDLKeyDown, (int) combined, null);
+        ThrowForError(err);
+    }
+    
+    public static unsafe void SendSDLKeyUp(uint combined)
+    {
+        Error err = _fnCoreDoCommand(Command.SendSDLKeyUp, (int) combined, null);
         ThrowForError(err);
     }
 

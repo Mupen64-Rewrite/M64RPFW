@@ -1,15 +1,34 @@
 using System;
 using M64RPFW.Models.Emulation.Core;
+// ReSharper disable UnusedMember.Global
 
 namespace M64RPFW.Models.Settings;
 
 public class CoreSettings
 {
+    static CoreSettings()
+    {
+        ClearCoreEvents();
+    }
     private const string SECTION_NAME = "Core";
     
     public CoreSettings()
     {
         _handle = Mupen64Plus.ConfigOpenSection(SECTION_NAME);
+    }
+
+    private static void ClearCoreEvents()
+    {
+        const string eventsSection = "CoreEvents";
+        
+        IntPtr handle = Mupen64Plus.ConfigOpenSection(eventsSection);
+
+        foreach (var (name, _) in Mupen64Plus.ConfigListParameters(handle))
+        {
+            if (name != "Version")
+                Mupen64Plus.ConfigSetString(handle, name, "");
+        }
+        Mupen64Plus.ConfigSaveSection(eventsSection);
     }
     
     public enum EmulatorType

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using M64RPFW.Models.Emulation.Core;
 using Tomlyn;
 
 namespace M64RPFW.Models.Settings;
@@ -34,6 +35,14 @@ public static class Settings
     /// that the static constructor is called.
     /// </summary>
     public static void Init() {}
+
+    public static void EnsureSaved()
+    {
+        string path = Path.Join(GetUserConfigPath(), "RPFW.toml");
+        File.WriteAllText(path, Toml.FromModel(RPFW), Encoding.UTF8);
+        
+        Mupen64Plus.ConfigSaveFile();
+    }
     
     public static RPFWSettings RPFW { get; }
     

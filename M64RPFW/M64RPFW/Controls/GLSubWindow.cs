@@ -3,6 +3,7 @@ using System.Drawing;
 using Eto;
 using Eto.Forms;
 using M64RPFW.Models.Emulation.Core;
+using M64RPFW.Presenters.Helpers;
 
 namespace M64RPFW.Controls
 {
@@ -13,6 +14,11 @@ namespace M64RPFW.Controls
     [Handler(typeof(IGLSubWindow))]
     public class GLSubWindow : Control
     {
+        public GLSubWindow()
+        {
+            
+        }
+        
         private new IGLSubWindow Handler => (IGLSubWindow) base.Handler;
 
         public Mupen64Plus.Error SetVideoMode(Size size, int bitsPerPixel, Mupen64Plus.VideoMode videoMode, Mupen64Plus.VideoFlags flags)

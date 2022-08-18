@@ -11,11 +11,13 @@
     <ItemGroup>
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
         <PackageReference Include="Eto.Forms" Version="2.7.0" />
+        <PackageReference Include="GdkSharp" Version="3.24.24.38" />
+        <PackageReference Include="GtkSharp" Version="3.24.24.38" />
+        <PackageReference Include="sdl2.nuget" Version="2.0.22" />
         <PackageReference Include="Tomlyn" Version="0.15.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controls\Models" />
       <Folder Include="Resources" />
     </ItemGroup>
 
