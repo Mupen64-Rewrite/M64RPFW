@@ -192,7 +192,6 @@ public class SDLKeyConverter
                 break;
             }
         }
-        Console.WriteLine($"{args.KeyEventType}: {_currentMods:X}, {GetScanCode(args.Key)}");
 
         return ((uint) _currentMods << 16) | (uint) GetScanCode(args.Key);
     }

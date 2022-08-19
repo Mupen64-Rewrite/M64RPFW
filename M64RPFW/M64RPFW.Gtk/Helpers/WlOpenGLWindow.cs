@@ -15,10 +15,10 @@ public class WlOpenGLWindow : IOpenGLWindow
 
     public WlOpenGLWindow(Gdk.Window parent, Size size, (int[]? config, int[]? context, int[]? surface) attrs)
     {
-        WlGlobals.Init(() => LibGdk.GdkWaylandDisplay_GetWlDisplay(parent.Display));
+        WlGlobals.Init(() => parent.Display.GetWlDisplay());
 
         _surface = WlGlobals.Compositor.CreateSurface();
-        WlSurface parentSurface = LibGdk.GdkWaylandWindow_GetWlSurface(parent);
+        WlSurface parentSurface = parent.GetWlSurface();
 
         _subsurface = WlGlobals.Subcompositor.GetSubsurface(_surface, parentSurface);
         _subsurface.SetDesync();

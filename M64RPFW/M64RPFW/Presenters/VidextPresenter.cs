@@ -41,11 +41,13 @@ internal class VidextPresenter : IVideoExtension
     private void OnKeyDown(object? sender, KeyEventArgs args)
     {
         SendSDLKeyDown(_keyConv.ProcessKeyEvent(args));
+        args.Handled = true;
     }
     
     private void OnKeyUp(object? sender, KeyEventArgs args)
     {
         SendSDLKeyUp(_keyConv.ProcessKeyEvent(args));
+        args.Handled = true;
     }
     
     #region Video Extension API
@@ -60,7 +62,8 @@ internal class VidextPresenter : IVideoExtension
             _decoSize = _view.Size - _view.ClientSize;
 
             _view.SizeChanged += OnSizeChanged;
-            ViewInitHelpers.RegisterWindowKeyHandlers(_view.ParentWindow, OnKeyDown, OnKeyUp);
+            _view.KeyDown += OnKeyDown;
+            _view.KeyUp += OnKeyUp;
         });
         return Error.Success;
     }
@@ -79,8 +82,8 @@ internal class VidextPresenter : IVideoExtension
                 _view.MinimumSize = new Size(256, 144);
 
                 _view.SizeChanged -= OnSizeChanged;
-                _view.SubWindow.KeyDown -= OnKeyDown;
-                _view.SubWindow.KeyUp -= OnKeyUp;
+                _view.KeyDown -= OnKeyDown;
+                _view.KeyUp -= OnKeyUp;
             });
         }
         return Error.Success;

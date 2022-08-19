@@ -11,12 +11,12 @@ public interface IOpenGLWindow : IDisposable
     public static IOpenGLWindow Create(Gdk.Window parent, Size size, Dictionary<GLAttribute, int> attrs)
     {
         Gdk.Display display = parent.Display;
-        if (LibGdk.Gdk_IsX11Display(display))
+        if (display.IsX11Display())
         {
             return new X11OpenGLWindow(parent, size, attrs);
         }
 
-        if (LibGdk.Gdk_IsWaylandDisplay(display))
+        if (display.IsWaylandDisplay())
         {
             return new WlOpenGLWindow(parent, size, attrs);
         }

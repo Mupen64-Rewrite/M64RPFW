@@ -15,8 +15,8 @@ public class X11OpenGLWindow : IOpenGLWindow
 
     public X11OpenGLWindow(Gdk.Window parent, Size size, (int[]? config, int[]? context, int[]? surface) attrs)
     {
-        var pntWindow = LibGdk.GdkX11Window_GetXID(parent);
-        var dpy = LibGdk.GdkX11Display_GetXDisplay(parent.Display);
+        var pntWindow = parent.GetXID();
+        var dpy = parent.Display.GetXDisplay();
 
         var swa = new XSetWindowAttributes
         {
@@ -44,8 +44,8 @@ public class X11OpenGLWindow : IOpenGLWindow
         };
         XChangeWindowAttributes(dpy, _window, 0x0200, ref xAttrs);
         
-        // Ensure the child is always in front of the parent
-        XSetTransientForHint(dpy, _window, pntWindow);
+        // Ensure the child is input-transparent
+        
         
         EGLHelpers.InitEGL(
             dpy, (IntPtr) _window, 

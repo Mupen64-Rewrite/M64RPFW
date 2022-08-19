@@ -25,6 +25,7 @@ public class GtkGLSubWindow : Widget
         _queueRealize = false;
 
         HasWindow = false;
+        CanFocus = false;
     }
 
     public Error SetAttribute(GLAttribute attr, int value)
