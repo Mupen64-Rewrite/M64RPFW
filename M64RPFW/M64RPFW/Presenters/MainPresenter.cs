@@ -51,16 +51,12 @@ internal partial class MainPresenter
         };
         _view.Closed += (_, _) =>
         {
-            if (_emuThread is null)
-                return;
-            if (_emuThread.IsAlive)
-                _emuThread.Join();
+            AwaitThreadFinish();
         };
     }
 
     internal void PostInit()
     {
-        
     }
 
     #region Emulator launcher
@@ -156,7 +152,10 @@ internal partial class MainPresenter
         if (result is DialogResult.Cancel)
             return;
 
-        LaunchRom(new RomFile(fileDialog.Filenames.First()));
+        var rom = new RomFile(fileDialog.FileName);
+        _view.RomView.Presenter.RecentRoms.Add(rom);
+
+        LaunchRom(rom);
     }
 
     [RelayCommand(CanExecute = nameof(IsNotStopped))]

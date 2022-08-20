@@ -12,12 +12,6 @@ internal class RecentRomView : Panel
     public RecentRomView(MainView parent)
     {
         DataContext = new RecentRomPresenter(this, parent);
-        {
-            // TEMPORARY TEST DATA
-            Presenter.RecentRoms.Add(new RomFile("/home/jgcodes/Public/VM/ROMS/sm64-us.z64"));
-            Presenter.RecentRoms.Add(new RomFile("/home/jgcodes/Public/VM/ROMS/sm64-jp.z64"));
-            Presenter.RecentRoms.Add(new RomFile("/home/jgcodes/Public/VM/ROMS/sm64-eu.z64"));
-        }
 
         Content = DoPostInit(new GridView
         {
@@ -60,5 +54,5 @@ internal class RecentRomView : Panel
         Padding = Padding.Empty;
     }
 
-    private RecentRomPresenter Presenter => (RecentRomPresenter) DataContext;
+    internal RecentRomPresenter Presenter => (RecentRomPresenter) DataContext;
 }

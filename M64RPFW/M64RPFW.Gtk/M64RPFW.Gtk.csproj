@@ -30,7 +30,7 @@
             <LibraryList Include="Libraries\*.so" />
         </ItemGroup>
         <Message Importance="high" Text="Library list: @(LibraryList)" />
-        <Copy SourceFiles="Libraries/mupen64plus.so" DestinationFolder="$(OutDir)/Libraries" />
+        <Copy SourceFiles="@(LibraryList)" DestinationFolder="$(OutDir)/Libraries" />
     </Target>
 
     <Target Name="CopyCustomLibrariesPublish" AfterTargets="AfterPublish">

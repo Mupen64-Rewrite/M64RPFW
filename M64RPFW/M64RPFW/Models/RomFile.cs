@@ -62,7 +62,7 @@ public class RomFile
     public byte Version => _data[0x3F];
     public string FileName => Path.GetFileName(_path);
     
-    private readonly string _path;
+    internal readonly string _path;
     private readonly byte[] _data;
     
     
