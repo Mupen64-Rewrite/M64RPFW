@@ -174,25 +174,19 @@ public class SDLKeyConverter
     
     public uint ProcessKeyEvent(KeyEventArgs args)
     {
-        switch (args.KeyEventType)
+        SDL_Keymod mod = GetKeyMod(args.Key);
+        if (mod != SDL_Keymod.KMOD_NONE)
         {
-            case KeyEventType.KeyDown:
-            {
-                // track modifiers manually, as SDL is picky about them
-                SDL_Keymod mod = GetKeyMod(args.Key);
-                if (mod != SDL_Keymod.KMOD_NONE)
-                    _currentMods |= mod;
-                break;
-            }
-            case KeyEventType.KeyUp:
-            {
-                SDL_Keymod mod = GetKeyMod(args.Key);
-                if (mod != SDL_Keymod.KMOD_NONE)
-                    _currentMods &= ~mod;
-                break;
-            }
+            if (args.KeyEventType == KeyEventType.KeyDown)
+                _currentMods |= mod;
+            else
+                _currentMods &= ~mod;
         }
 
-        return ((uint) _currentMods << 16) | (uint) GetScanCode(args.Key);
+        SDL_Scancode code = GetScanCode(args.Key);
+        
+        // ideally we can just pass modifiers to the input plugin
+        // but mupen64plus-input-sdl does *not* seem to like it
+        return (uint) code | ((uint) (mod != SDL_Keymod.KMOD_NONE ? 0 : _currentMods) << 16);
     }
 }
