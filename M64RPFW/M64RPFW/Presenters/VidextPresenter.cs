@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using Eto.Forms;
 using Eto.Drawing;
+using M64RPFW.Interfaces;
 using M64RPFW.Models.Emulation.Core;
 using M64RPFW.Presenters.Helpers;
 using M64RPFW.Views;
