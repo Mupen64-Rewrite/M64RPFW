@@ -36,7 +36,12 @@ internal class VidextPresenter : IVideoExtension
 
     private void OnSizeChanged(object? sender, EventArgs args)
     {
+        // Minimum size caps the ACTUAL size, not the client size
+        // so we get the size of the trim (real size - client size)
+        // before adding it to our fixed cap
         _view.MinimumSize = _view.Size - _view.ClientSize + _windowSize;
+        // In the future this could potentially hook into M64+ resize
+        // functionality.
     }
 
     private void OnKeyDown(object? sender, KeyEventArgs args)

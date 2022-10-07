@@ -67,6 +67,9 @@ namespace M64RPFW.Controls
         /// The child window should be centered within its allocated area, if possible.
         /// If its allocated area is too small, the result is undefined.
         /// </para>
+        /// <para>
+        /// In addition, the child window should be transparent to input.
+        /// </para>
         /// </summary>
         public interface IGLSubWindow : IHandler
         {
@@ -123,7 +126,5 @@ namespace M64RPFW.Controls
             /// </summary>
             void CloseVideo();
         }
-
-        
     }
 }
