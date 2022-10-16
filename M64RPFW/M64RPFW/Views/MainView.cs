@@ -13,6 +13,7 @@ namespace M64RPFW.Views;
 
 public partial class MainView : Form
 {
+    #pragma warning disable CS8618
     public MainView()
     {
         DataContext = new MainPresenter(this);
@@ -181,7 +182,7 @@ public partial class MainView : Form
         
         Presenter.PostInit();
     }
-
+    #pragma warning restore
     internal MainPresenter Presenter => (MainPresenter) DataContext;
 
     // Components
