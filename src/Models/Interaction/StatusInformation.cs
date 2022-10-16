@@ -10,7 +10,7 @@ namespace M64RPFW.UI.ViewModels.Interaction
         public StatusInformation(string? message)
         {
             Success = false;
-            this.Message = message;
+            Message = message;
         }
 
         public StatusInformation()

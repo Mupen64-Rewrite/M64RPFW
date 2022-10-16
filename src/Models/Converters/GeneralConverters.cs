@@ -8,7 +8,7 @@ namespace M64RPFW.UI.ViewModels.Converters
 {
     public class StringEqualityToBooleanConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => ((string)(value)).Equals((string)parameter);
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => ((string)value).Equals((string)parameter);
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
     }
     public class IntegerEqualityToBooleanConverter : IValueConverter
@@ -33,8 +33,8 @@ namespace M64RPFW.UI.ViewModels.Converters
     }
     public class InvertBooleanConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => !((bool)value);
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => !((bool)value);
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => !(bool)value;
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => !(bool)value;
     }
     public class BooleanToVisibilityConverter : IValueConverter
     {
@@ -43,12 +43,12 @@ namespace M64RPFW.UI.ViewModels.Converters
     }
     public class IntegerToHexadecimalStringConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => $"0x{((int)value):X}";
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => $"0x{(int)value:X}";
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
     }
     public class UnsignedIntegerToHexadecimalStringConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => $"0x{((uint)value):X}";
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => $"0x{(uint)value:X}";
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
     }
 

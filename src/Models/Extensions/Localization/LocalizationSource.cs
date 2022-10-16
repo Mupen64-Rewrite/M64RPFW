@@ -11,17 +11,17 @@ namespace M64RPFW.UI.ViewModels.Extensions.Localization
         private readonly System.Resources.ResourceManager resManager = Properties.Resources.ResourceManager;
         private CultureInfo currentCulture;
 
-        public string this[string key] => this.resManager.GetString(key, this.currentCulture);
+        public string this[string key] => resManager.GetString(key, currentCulture);
 
         public CultureInfo CurrentCulture
         {
-            get => this.currentCulture;
+            get => currentCulture;
             set
             {
-                if (this.currentCulture != value)
+                if (currentCulture != value)
                 {
-                    this.currentCulture = value;
-                    PropertyChangedEventHandler @event = this.PropertyChanged;
+                    currentCulture = value;
+                    PropertyChangedEventHandler @event = PropertyChanged;
                     @event?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
                 }
             }

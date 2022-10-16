@@ -12,7 +12,7 @@ namespace M64RPFW.Models.Helpers
     {
         public static void NotifyCanExecuteChanged(params IRelayCommand[] commands)
         {
-            foreach (var cmd in commands)
+            foreach (IRelayCommand cmd in commands)
                 cmd.NotifyCanExecuteChanged();
         }
     }

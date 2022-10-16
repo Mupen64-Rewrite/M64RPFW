@@ -207,7 +207,7 @@ namespace M64RPFW.Models.Emulation.Core.API
             public delegate* unmanaged[Cdecl]<char*, m64p_error> VidExtFuncSetCaption;
             public delegate* unmanaged[Cdecl]<m64p_error> VidExtFuncToggleFS;
             public delegate* unmanaged[Cdecl]<int, int, m64p_error> VidExtFuncResizeWindow;
-            public delegate* unmanaged[Cdecl]<UInt32> VidExtFuncGLGetDefaultFramebuffer;
+            public delegate* unmanaged[Cdecl]<uint> VidExtFuncGLGetDefaultFramebuffer;
         }
 
 

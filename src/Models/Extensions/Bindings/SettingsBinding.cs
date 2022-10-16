@@ -16,8 +16,8 @@ namespace M64RPFW.UI.ViewModels.Extensions.Bindings
 
         private void Initialize()
         {
-            this.Source = Properties.Settings.Default;
-            this.Mode = BindingMode.OneWay;
+            Source = Properties.Settings.Default;
+            Mode = BindingMode.OneWay;
         }
     }
 }

@@ -27,8 +27,8 @@ namespace M64RPFW.UI.ViewModels
         // this sucks ass, but we have to deal with this until settings rewrite
         private void SetSettingsProperty(string virtualArguments, Type targetType)
         {
-            var vParams = SettingsVirtualArgumentHelper.ParseVirtualArgument(virtualArguments);
-            var prop = Properties.Settings.Default.GetType().GetProperty(vParams[0]);
+            string[] vParams = SettingsVirtualArgumentHelper.ParseVirtualArgument(virtualArguments);
+            System.Reflection.PropertyInfo? prop = Properties.Settings.Default.GetType().GetProperty(vParams[0]);
 
             object? tValue = null;
 

@@ -21,7 +21,7 @@ namespace M64RPFW.Views
         {
             InitializeComponent();
             mainViewModel = new();
-            this.DataContext = mainViewModel;
+            DataContext = mainViewModel;
 
             DialogHelper.CurrentSnackbar = Main_Snackbar;
             ThemeHelper.SetTheme(Properties.Settings.Default.Theme);

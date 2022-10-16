@@ -6,13 +6,13 @@ namespace M64RPFW.UI.ViewModels.Extensions.Localization
     {
         public LocalizationExtension(string name) : base("[" + name + "]")
         {
-            this.Mode = BindingMode.OneWay;
-            this.Source = LocalizationSource.Instance;
+            Mode = BindingMode.OneWay;
+            Source = LocalizationSource.Instance;
         }
         public LocalizationExtension()
         {
-            this.Mode = BindingMode.OneWay;
-            this.Source = LocalizationSource.Instance;
+            Mode = BindingMode.OneWay;
+            Source = LocalizationSource.Instance;
         }
     }
 }

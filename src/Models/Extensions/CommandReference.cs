@@ -42,9 +42,9 @@ namespace M64RPFW.UI.ViewModels.Extensions
 
         private static void OnCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var commandReference = d as CommandReference;
-            var oldCommand = e.OldValue as RelayCommand;
-            var newCommand = e.NewValue as RelayCommand;
+            CommandReference? commandReference = d as CommandReference;
+            RelayCommand? oldCommand = e.OldValue as RelayCommand;
+            RelayCommand? newCommand = e.NewValue as RelayCommand;
 
             if (oldCommand != null)
             {

@@ -18,9 +18,9 @@ namespace M64RPFW.UI.ViewModels
         public string InternalName => ROMHelper.GetInternalName(IsBigEndian, RawData);
         public string FriendlyName => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(InternalName.ToLowerInvariant());
         public bool IsValid => RawData.Length >= 0x0FFF && ROMHelper.HasValidHeader(IsBigEndian, RawData);
-        public uint PrimaryCRC => BitConverter.ToUInt32(new ArraySegment<byte>(rawData, 0x0010, sizeof(UInt32)).ToArray());
-        public uint SecondaryCRC => BitConverter.ToUInt32(new ArraySegment<byte>(rawData, 0x0014, sizeof(UInt32)).ToArray());
-        public uint MediaFormat => BitConverter.ToUInt32(new ArraySegment<byte>(rawData, 0x0038, sizeof(UInt32)).ToArray());
+        public uint PrimaryCRC => BitConverter.ToUInt32(new ArraySegment<byte>(rawData, 0x0010, sizeof(uint)).ToArray());
+        public uint SecondaryCRC => BitConverter.ToUInt32(new ArraySegment<byte>(rawData, 0x0014, sizeof(uint)).ToArray());
+        public uint MediaFormat => BitConverter.ToUInt32(new ArraySegment<byte>(rawData, 0x0038, sizeof(uint)).ToArray());
         public byte CountryCode => rawData[0x003E];
         public byte Version => rawData[0x003F];
 

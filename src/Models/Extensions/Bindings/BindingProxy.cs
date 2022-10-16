@@ -15,7 +15,7 @@ namespace M64RPFW.UI.ViewModels.Extensions.Bindings
 
         public object Data
         {
-            get { return (object)GetValue(DataProperty); }
+            get { return GetValue(DataProperty); }
             set { SetValue(DataProperty, value); }
         }
 
