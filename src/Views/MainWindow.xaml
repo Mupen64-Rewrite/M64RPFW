@@ -10,10 +10,12 @@
         xmlns:loc="clr-namespace:M64RPFW.UI.ViewModels.Extensions.Localization"
         xmlns:ext="clr-namespace:M64RPFW.UI.ViewModels.Extensions"
         xmlns:bindings="clr-namespace:M64RPFW.UI.ViewModels.Extensions.Bindings"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
         mc:Ignorable="d"
-        Title="{loc:Localization AppName}" Height="450" Width="800" UseLayoutRounding="True"
+        Title="{loc:Localization AppName}" 
+        Width="800"
+        Height="450"
+        UseLayoutRounding="True"
         Closing="Window_Closing">
 
     <Window.Resources>
@@ -24,23 +26,20 @@
     </Window.Resources>
 
     <Window.InputBindings>
-        <KeyBinding Key="P" Command="{StaticResource TogglePauseCommandReference}" />
-        <KeyBinding Key="Oem5" Command="{StaticResource FrameAdvanceCommandReference}" />
-        <KeyBinding Key="OemBackslash" Command="{StaticResource FrameAdvanceCommandReference}" />
-        <KeyBinding Key="S" Modifiers="Ctrl" Command="{StaticResource ShowSettingsWindowCommandReference}" />
+        <KeyBinding x:Name="TogglePauseInputBinding" Key="P" Command="{StaticResource TogglePauseCommandReference}" />
+        <KeyBinding x:Name="FrameAdvanceInputBinding" Key="OemBackslash" Command="{StaticResource FrameAdvanceCommandReference}" />
+        <KeyBinding x:Name="FrameAdvanceInputBinding2" Key="Oem5" Command="{StaticResource FrameAdvanceCommandReference}" />
+        <KeyBinding x:Name="ShowSettingsInputBinding" Key="S" Modifiers="Ctrl" Command="{StaticResource ShowSettingsWindowCommandReference}" />
     </Window.InputBindings>
 
-    <materialDesign:DialogHost
-        Identifier="RootDialog"
-        DialogTheme="Inherit"
-        SnackbarMessageQueue="{Binding ElementName=Main_Snackbar, Path=MessageQueue}"
+    <Grid
         HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid>
             <DockPanel LastChildFill="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <Menu IsMainMenu="True" Height="48" DockPanel.Dock="Top" VerticalAlignment="Stretch">
                     <MenuItem Header="{loc:Localization File}">
-                        <MenuItem Header="{loc:Localization LoadROM}" Command="{Binding EmulatorViewModel.LoadROMCommand, IsAsync=True}" IsEnabled="{Binding EmulatorViewModel.IsRunning, Converter={StaticResource InvertBooleanConverter}}" Icon="{materialDesign:PackIcon Kind=Folder}"/>
-                        <MenuItem Header="Recent ROMs" Icon="{materialDesign:PackIcon Kind=FolderClock}" ItemsSource="{Binding RecentROMsViewModel.RecentROMs, UpdateSourceTrigger=PropertyChanged}" UsesItemContainerTemplate="True">
+                        <MenuItem Header="{loc:Localization LoadROM}" Command="{Binding EmulatorViewModel.LoadROMCommand, IsAsync=True}" IsEnabled="{Binding EmulatorViewModel.IsRunning, Converter={StaticResource InvertBooleanConverter}}"/>
+                        <MenuItem Header="Recent ROMs" ItemsSource="{Binding RecentROMsViewModel.RecentROMs, UpdateSourceTrigger=PropertyChanged}" UsesItemContainerTemplate="True">
                             <MenuItem.Resources>
 
                                 <!--  x:Key vs DataType menuitem issue here: https://github.com/dotnet/wpf/issues/2404  -->
@@ -48,18 +47,16 @@
                                     <MenuItem
                                 Command="{Binding ElementName=Main_Window, Path=DataContext.EmulatorViewModel.LoadROMFromPathCommand}"
                                 CommandParameter="{Binding Path}"
-                                Header="{Binding FriendlyName}">
+                                Header="{Binding}">
                                         <MenuItem.ContextMenu>
                                             <ContextMenu>
                                                 <MenuItem Header="{loc:Localization Remove}" 
                                                           Command="{Binding Source={StaticResource MainViewModelProxy}, Path=Data.RecentROMsViewModel.RemoveRecentROMCommand}" 
-                                                          CommandParameter="{Binding}" 
-                                                          Icon="{materialDesign:PackIcon Kind=Garbage}"/>
+                                                          CommandParameter="{Binding}"/>
                                                 <Separator/>
                                                 <MenuItem Header="{loc:Localization Inspect}" 
                                                           Command="{Binding Source={StaticResource MainViewModelProxy}, Path=Data.ShowROMInspectionWindowCommand}"
-                                                          CommandParameter="{Binding}"
-                                                          Icon="{materialDesign:PackIcon Kind=Magnify}"/>
+                                                          CommandParameter="{Binding}"/>
                                             </ContextMenu>
                                         </MenuItem.ContextMenu>
                                     </MenuItem>
@@ -67,44 +64,34 @@
 
                             </MenuItem.Resources>
                         </MenuItem>
-                        <MenuItem Header="{loc:Localization CloseROM}" Command="{Binding EmulatorViewModel.CloseROMCommand}" IsEnabled="{Binding EmulatorViewModel.IsRunning}" Icon="{materialDesign:PackIcon Kind=Close}"/>
-                        <MenuItem Header="{loc:Localization ResetROM}" Command="{Binding EmulatorViewModel.ResetROMCommand}" IsEnabled="{Binding EmulatorViewModel.IsRunning}" Icon="{materialDesign:PackIcon Kind=Restart}"/>
+                        <MenuItem Header="{loc:Localization CloseROM}" Command="{Binding EmulatorViewModel.CloseROMCommand}" IsEnabled="{Binding EmulatorViewModel.IsRunning}" />
+                        <MenuItem Header="{loc:Localization ResetROM}" Command="{Binding EmulatorViewModel.ResetROMCommand}" IsEnabled="{Binding EmulatorViewModel.IsRunning}"/>
                         <Separator/>
-                        <MenuItem Header="{loc:Localization Exit}" Command="{Binding ExitAppCommand}" Icon="{materialDesign:PackIcon Kind=ExitToApp}"/>
+                        <MenuItem Header="{loc:Localization Exit}" Command="{Binding ExitAppCommand}"/>
                     </MenuItem>
                     <MenuItem Header="Run" IsEnabled="{Binding EmulatorViewModel.IsRunning}">
-                        <MenuItem Header="{loc:Localization Pause}" IsCheckable="True" IsChecked="{Binding EmulatorViewModel.IsResumed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputGestureText="{bindings:SettingsBinding PauseHotKeyCode, Mode=OneWay, Converter={StaticResource KeyToStringConverter}}"/>
+                        <MenuItem Header="{loc:Localization Pause}" IsCheckable="True" IsChecked="{Binding EmulatorViewModel.IsResumed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputGestureText="{Binding ElementName=TogglePauseInputBinding, Converter={StaticResource KeyBindingToStringConverter}}"/>
                         <Separator/>
-                        <MenuItem Header="{loc:Localization FrameAdvance}" Command="{Binding EmulatorViewModel.FrameAdvanceCommand}" InputGestureText="{bindings:SettingsBinding FrameAdvanceHotKeyCode, Mode=OneWay, Converter={StaticResource KeyToStringConverter}}"/>
+                        <MenuItem Header="{loc:Localization FrameAdvance}" Command="{Binding EmulatorViewModel.FrameAdvanceCommand}" InputGestureText="{Binding ElementName=FrameAdvanceInputBinding, Converter={StaticResource KeyBindingToStringConverter}}"/>
                     </MenuItem>
                     <MenuItem Header="{loc:Localization Options}">
-                        <MenuItem Header="{loc:Localization PluginSettings}" Icon="{materialDesign:PackIcon Kind=Plug}">
-                            <MenuItem Header="{loc:Localization Video}" Icon="{materialDesign:PackIcon Kind=Monitor}" Command="{Binding ShowVideoPluginConfigurationWindowCommand}"/>
-                            <MenuItem Header="{loc:Localization Audio}" Icon="{materialDesign:PackIcon Kind=Speaker}" Command="{Binding ShowAudioPluginConfigurationWindowCommand}"/>
-                            <MenuItem Header="{loc:Localization Input}" Icon="{materialDesign:PackIcon Kind=Controller}" Command="{Binding ShowInputPluginConfigurationWindowCommand}"/>
-                            <MenuItem Header="{loc:Localization RSP}" Icon="{materialDesign:PackIcon Kind=Chip}" Command="{Binding ShowRSPPluginConfigurationWindowCommand}"/>
+                        <MenuItem Header="{loc:Localization PluginSettings}">
+                            <MenuItem Header="{loc:Localization Video}" Command="{Binding ShowVideoPluginConfigurationWindowCommand}"/>
+                            <MenuItem Header="{loc:Localization Audio}" Command="{Binding ShowAudioPluginConfigurationWindowCommand}"/>
+                            <MenuItem Header="{loc:Localization Input}" Command="{Binding ShowInputPluginConfigurationWindowCommand}"/>
+                            <MenuItem Header="{loc:Localization RSP}" Command="{Binding ShowRSPPluginConfigurationWindowCommand}"/>
                         </MenuItem>
                         <Separator/>
-                        <MenuItem x:Name="ShowToolbar_MenuItem" Header="{loc:Localization ShowToolbar}" IsCheckable="True" IsChecked="{bindings:SettingsBinding ShowToolbar, Mode=TwoWay}"/>
                         <MenuItem x:Name="ShowStatusbar_MenuItem" Header="{loc:Localization ShowStatusbar}" IsCheckable="True" IsChecked="{bindings:SettingsBinding ShowStatusbar, Mode=TwoWay}"/>
                         <Separator/>
-                        <MenuItem Header="{loc:Localization ProgramSettings}" Command="{Binding ShowSettingsWindowCommand}" Icon="{materialDesign:PackIcon Kind=Settings}"/>
+                        <MenuItem Header="{loc:Localization ProgramSettings}" Command="{Binding ShowSettingsWindowCommand}" InputGestureText="{Binding ElementName=ShowSettingsInputBinding, Converter={StaticResource KeyBindingToStringConverter}}"/>
                     </MenuItem>
                 </Menu>
-
-                <ToolBar Visibility="{Binding ElementName=ShowToolbar_MenuItem, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" DockPanel.Dock="Top" ToolBarTray.IsLocked="True" ToolBar.OverflowMode="Never">
-                    <ToggleButton x:Name="Play_ToggleButton" 
-                              Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" 
-                              Content="{materialDesign:PackIcon Kind=Play}"
-                              IsChecked="{Binding EmulatorViewModel.IsResumed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5 5 5 5"/>
-                    <Separator LayoutTransform="{StaticResource VerticalRotateTransform}"/>
-                    <Button Style="{StaticResource MaterialDesignIconButton}" Content="{materialDesign:PackIcon Kind=FrameForward}" Command="{Binding EmulatorViewModel.FrameAdvanceCommand}" IsEnabled="{Binding EmulatorViewModel.IsRunning}"/>
-                </ToolBar>
-
+                
                 <StatusBar HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Visibility="{Binding ElementName=ShowStatusbar_MenuItem, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" DockPanel.Dock="Bottom">
                     <StackPanel Orientation="Horizontal" Margin="0 5 0 5">
                         <StackPanel.Resources>
-                            <Style TargetType="Separator" BasedOn="{StaticResource MaterialDesignSeparator}">
+                            <Style TargetType="Separator">
                                 <Setter Property="LayoutTransform" Value="{StaticResource VerticalRotateTransform}"/>
                                 <Setter Property="Margin" Value="5 0 5 0"/>
                             </Style>
@@ -118,8 +105,6 @@
                 <glWpfControl:GLWpfControl x:Name="Main_OpenGLControl" Render="Main_OpenGLControl_Render"/>
                 <!-- DockPanel layout trick: Place this as last element to fill parent -->
             </DockPanel>
-
-            <materialDesign:Snackbar x:Name="Main_Snackbar" MessageQueue="{materialDesign:MessageQueue}" />
         </Grid>
-    </materialDesign:DialogHost>
+    </Grid>
 </Window>

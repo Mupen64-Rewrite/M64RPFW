@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using M64RPFW.ViewModels.Interfaces;
+using M64RPFW.src.Interfaces;
 using System.Collections.ObjectModel;
 using System.IO;
 

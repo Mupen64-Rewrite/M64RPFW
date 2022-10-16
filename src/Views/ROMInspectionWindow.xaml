@@ -8,34 +8,64 @@
         xmlns:loc="clr-namespace:M64RPFW.UI.ViewModels.Extensions.Localization"
         xmlns:ext="clr-namespace:M64RPFW.UI.ViewModels.Extensions"
         xmlns:bindings="clr-namespace:M64RPFW.UI.ViewModels.Extensions.Bindings"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         d:DataContext="{d:DesignInstance Type=viewmodels:ROMViewModel}"
         mc:Ignorable="d"
-        Title="{loc:Localization Inspect}" SizeToContent="WidthAndHeight">
-    <materialDesign:ColorZone HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <UniformGrid Columns="2" Rows="14" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="20">
+        Title="{loc:Localization Inspect}" 
+        SizeToContent="WidthAndHeight"
+        ResizeMode="NoResize">
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-            <TextBlock    Text="{loc:Localization BigEndian}" Style="{StaticResource MaterialDesignHeadline6TextBlock}" VerticalAlignment="Center" TextAlignment="Center"/>
-            <ToggleButton IsChecked="{Binding IsBigEndian, Mode=OneWay}" IsEnabled="False"/>
+            <Grid.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="HorizontalAlignment" Value="Left"/>
+                    <Setter Property="Margin" Value="10, 2, 2, 2"/>
+                </Style>
+
+                <Style TargetType="ToggleButton">
+                    <Setter Property="IsEnabled" Value="False"/>
+                </Style>
+                <Style TargetType="TextBox">
+                    <Setter Property="IsEnabled" Value="False"/>
+                </Style>
+            </Grid.Resources>
             
-            <TextBlock Text="{loc:Localization PrimaryCRC}" Style="{StaticResource MaterialDesignHeadline6TextBlock}" VerticalAlignment="Center" TextAlignment="Center"/>
-            <TextBlock Text="{Binding PrimaryCRC, Converter={StaticResource UnsignedIntegerToHexadecimalStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
+            <TextBlock    Grid.Row="0" Grid.Column="0" Text="{loc:Localization BigEndian}" VerticalAlignment="Center" TextAlignment="Center"/>
+            <ToggleButton Grid.Row="0" Grid.Column="1" IsChecked="{Binding IsBigEndian, Mode=OneWay}"/>
+            
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Localization PrimaryCRC}" VerticalAlignment="Center" TextAlignment="Center"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding PrimaryCRC, Converter={StaticResource UnsignedIntegerToHexadecimalStringConverter}, Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Center"/>
 
-            <TextBlock Text="{loc:Localization SecondaryCRC}" Style="{StaticResource MaterialDesignHeadline6TextBlock}" VerticalAlignment="Center" TextAlignment="Center"/>
-            <TextBlock Text="{Binding SecondaryCRC, Converter={StaticResource UnsignedIntegerToHexadecimalStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="{loc:Localization SecondaryCRC}" VerticalAlignment="Center" TextAlignment="Center"/>
+            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SecondaryCRC, Converter={StaticResource UnsignedIntegerToHexadecimalStringConverter}, Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Center"/>
 
-            <TextBlock Text="{loc:Localization InternalName}" Style="{StaticResource MaterialDesignHeadline6TextBlock}" VerticalAlignment="Center" TextAlignment="Center"/>
-            <TextBlock Text="{Binding InternalName}" VerticalAlignment="Center" TextAlignment="Center"/>
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="{loc:Localization InternalName}" VerticalAlignment="Center" TextAlignment="Center"/>
+            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding InternalName, Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Center"/>
 
-            <TextBlock Text="{loc:Localization MediaFormat}" Style="{StaticResource MaterialDesignHeadline6TextBlock}" VerticalAlignment="Center" TextAlignment="Center"/>
-            <TextBlock Text="{Binding MediaFormat, Converter={StaticResource UnsignedIntegerToHexadecimalStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="{loc:Localization MediaFormat}" VerticalAlignment="Center" TextAlignment="Center"/>
+            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding MediaFormat, Converter={StaticResource UnsignedIntegerToHexadecimalStringConverter}, Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Center"/>
 
-            <TextBlock Text="{loc:Localization CountryCode}" Style="{StaticResource MaterialDesignHeadline6TextBlock}" VerticalAlignment="Center" TextAlignment="Center"/>
-            <TextBlock Text="{Binding CountryCode}" VerticalAlignment="Center" TextAlignment="Center"/>
+            <TextBlock Grid.Row="5" Grid.Column="0" Text="{loc:Localization CountryCode}" VerticalAlignment="Center" TextAlignment="Center"/>
+            <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding CountryCode, Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Center"/>
 
-            <TextBlock Text="{loc:Localization Version}" Style="{StaticResource MaterialDesignHeadline6TextBlock}" VerticalAlignment="Center" TextAlignment="Center"/>
-            <TextBlock Text="{Binding Version}" VerticalAlignment="Center" TextAlignment="Center"/>
+            <TextBlock Grid.Row="6" Grid.Column="0" Text="{loc:Localization Version}" VerticalAlignment="Center" TextAlignment="Center"/>
+            <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Version, Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Center"/>
 
-        </UniformGrid>
-    </materialDesign:ColorZone>
+        </Grid>
+    </Grid>
 </Window>

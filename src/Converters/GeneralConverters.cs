@@ -26,11 +26,6 @@ namespace M64RPFW.UI.ViewModels.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => (double)value * (double)parameter;
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
     }
-    public class KeyToStringConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => ((Key)value).ToString();
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
-    }
     public class InvertBooleanConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => !(bool)value;
@@ -49,6 +44,23 @@ namespace M64RPFW.UI.ViewModels.Converters
     public class UnsignedIntegerToHexadecimalStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => $"0x{(uint)value:X}";
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
+    }
+
+    public class KeyBindingToStringConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var kb = (KeyBinding)value;
+            if (kb.Modifiers == ModifierKeys.None)
+            {
+                return $"{kb.Key}";
+            }
+            else
+            {
+                return $"{kb.Modifiers}+{kb.Key}";
+            }
+        } 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
     }
 

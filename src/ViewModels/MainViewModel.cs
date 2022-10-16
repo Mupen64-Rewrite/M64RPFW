@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using M64RPFW.src.Containers;
 using M64RPFW.UI.ViewModels.Extensions.Localization;
 using M64RPFW.UI.Views;
 using M64RPFW.UI.Views.Plugins;
@@ -10,8 +11,10 @@ using System.Windows.Input;
 
 namespace M64RPFW.UI.ViewModels
 {
-    public partial class MainViewModel : ObservableObject
+    internal partial class MainViewModel : ObservableObject
     {
+        private readonly GeneralDependencyContainer generalDependencyContainer;
+
         public EmulatorViewModel EmulatorViewModel { get; private set; }
         public SavestatesViewModel SavestatesViewModel { get; private set; }
         public RecentROMsViewModel RecentROMsViewModel { get; private set; }
@@ -19,19 +22,26 @@ namespace M64RPFW.UI.ViewModels
         [ObservableProperty]
         private ObservableCollection<ROMViewModel> recentROMs = new();
 
-        public MainViewModel()
+        public MainViewModel(GeneralDependencyContainer generalDependencyContainer)
         {
+            this.generalDependencyContainer = generalDependencyContainer;
+
             LocalizationManager.SetCulture(Properties.Settings.Default.Culture);
+
             RecentROMsViewModel = new();
-            EmulatorViewModel = new(RecentROMsViewModel);
+
+            generalDependencyContainer.RecentRomsProvider = RecentROMsViewModel;
+
+            EmulatorViewModel = new(generalDependencyContainer);
             SavestatesViewModel = new();
+
         }
 
         [RelayCommand]
-        private void ExitApp() => Application.Current.MainWindow.Close();
+        private void ExitApp() => generalDependencyContainer.WindowClosingProvider.Close();
 
         [RelayCommand]
-        private void ShowSettingsWindow() => new SettingsWindow() { DataContext = new SettingsViewModel() }.ShowDialog();
+        private void ShowSettingsWindow() => new SettingsWindow() { DataContext = new SettingsViewModel(generalDependencyContainer) }.ShowDialog();
 
         [RelayCommand]
         private void ShowVideoPluginConfigurationWindow() => new VideoPluginConfigurationWindow() { DataContext = null }.ShowDialog();

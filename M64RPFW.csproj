@@ -10,16 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="src\Models\Manager\**" />
     <Compile Remove="src\ViewModels\Behaviours\**" />
     <Compile Remove="src\ViewModels\Plugins\**" />
-    <EmbeddedResource Remove="src\Models\Manager\**" />
     <EmbeddedResource Remove="src\ViewModels\Behaviours\**" />
     <EmbeddedResource Remove="src\ViewModels\Plugins\**" />
-    <None Remove="src\Models\Manager\**" />
     <None Remove="src\ViewModels\Behaviours\**" />
     <None Remove="src\ViewModels\Plugins\**" />
-    <Page Remove="src\Models\Manager\**" />
     <Page Remove="src\ViewModels\Behaviours\**" />
     <Page Remove="src\ViewModels\Plugins\**" />
   </ItemGroup>
@@ -32,7 +28,6 @@
     <PackageReference Include="CalcBinding" Version="2.5.2" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
     <PackageReference Include="LambdaConverters" Version="4.0.0" />
-    <PackageReference Include="MaterialDesignThemes" Version="4.7.0-ci333" />
     <PackageReference Include="OpenTK.GLWpfControl" Version="4.2.2" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0-rc.2.22472.3" />
     <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
@@ -40,6 +35,10 @@
 
   <ItemGroup>
     <Page Include="App.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\M64RPFW.Core\M64RPFW.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -112,6 +111,10 @@
     <None Update="zlib.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="src\ViewModels\Interfaces\" />
   </ItemGroup>
 
 </Project>

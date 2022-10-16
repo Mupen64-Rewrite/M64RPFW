@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using M64RPFW.Models.Emulation.Helper;
+using M64RPFW.Core.Emulation.ROM;
+using M64RPFW.src.Helpers;
 using System;
 using System.Globalization;
 using System.IO;
@@ -8,35 +9,40 @@ namespace M64RPFW.UI.ViewModels
 {
     public partial class ROMViewModel : ObservableObject
     {
-        [ObservableProperty]
-        private string path;
+        private ROM rom;
 
-        [ObservableProperty]
-        private byte[] rawData;
+        public string Path
+        {
+            get => rom.Path; set => SetProperty(ref rom.Path, value);
+        }
 
-        public bool IsBigEndian => RawData[0] == 0x80;
-        public string InternalName => ROMHelper.GetInternalName(IsBigEndian, RawData);
-        public string FriendlyName => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(InternalName.ToLowerInvariant());
-        public bool IsValid => RawData.Length >= 0x0FFF && ROMHelper.HasValidHeader(IsBigEndian, RawData);
-        public uint PrimaryCRC => BitConverter.ToUInt32(new ArraySegment<byte>(rawData, 0x0010, sizeof(uint)).ToArray());
-        public uint SecondaryCRC => BitConverter.ToUInt32(new ArraySegment<byte>(rawData, 0x0014, sizeof(uint)).ToArray());
-        public uint MediaFormat => BitConverter.ToUInt32(new ArraySegment<byte>(rawData, 0x0038, sizeof(uint)).ToArray());
-        public byte CountryCode => rawData[0x003E];
-        public byte Version => rawData[0x003F];
+        public bool IsValid => rom.IsValid;
+        public bool IsBigEndian => rom.IsBigEndian;
+        public string FriendlyName => rom.FriendlyName;
+        public uint PrimaryCRC => rom.PrimaryCRC;
+        public uint SecondaryCRC => rom.SecondaryCRC;
+        public uint MediaFormat => rom.MediaFormat;
+        public byte CountryCode => rom.CountryCode;
+        public byte Version => rom.Version;
+
 
         public ROMViewModel(string _path)
         {
-            Path = _path;
-            RawData = File.ReadAllBytes(Path);
+            rom = new(_path, File.ReadAllBytes(_path));
 
-            if (!IsBigEndian)
+            if (!rom.IsBigEndian)
             {
                 // byteswap to avoid display issues
                 // e.g.: Usep Ramir O64 -> Super Mario 64 
-                ROMHelper.Byteswap(ref rawData);
+                ROMHelper.Byteswap(ref rom.RawData);
             }
 
             OnPropertyChanged(); // notify due to byteswap
+        }
+
+        public override string ToString()
+        {
+            return rom.FriendlyName;
         }
     }
 }

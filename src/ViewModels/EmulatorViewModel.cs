@@ -2,24 +2,21 @@
 using CommunityToolkit.Mvvm.Input;
 using M64RPFW.Models.Emulation.Core.API;
 using M64RPFW.Models.Helpers;
+using M64RPFW.src.Containers;
+using M64RPFW.src.Interfaces;
 using M64RPFW.src.Models.Emulation.Core.API;
-using M64RPFW.UI.Other.Platform;
-using M64RPFW.UI.ViewModels.Interaction;
-using M64RPFW.ViewModels.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows;
-using static M64RPFW.Models.Emulation.Provider.GameInfoProvider;
 
 namespace M64RPFW.UI.ViewModels
 {
-    public partial class EmulatorViewModel : ObservableObject
+    internal partial class EmulatorViewModel : ObservableObject
     {
-        // DI - used for adding new entries
-        private IRecentRomsProvider recentROMsInterface;
+        private readonly GeneralDependencyContainer generalDependencyContainer;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(CloseROMCommand), nameof(ResetROMCommand), nameof(FrameAdvanceCommand), nameof(TogglePauseCommand))]
@@ -33,7 +30,6 @@ namespace M64RPFW.UI.ViewModels
             {
                 if (Mupen64PlusAPI.Instance == null || !Mupen64PlusAPI.Instance.emulator_running) return;
                 SetProperty(ref isResumed, value);
-                //ICommandHelper.NotifyCanExecuteChanged(CloseROMCommand, ResetROMCommand, FrameAdvanceCommand, TogglePauseCommand);
                 Mupen64PlusAPI.Instance.SetPlayMode(isResumed ? Mupen64PlusTypes.PlayModes.Running : Mupen64PlusTypes.PlayModes.Paused);
             }
         }
@@ -43,10 +39,9 @@ namespace M64RPFW.UI.ViewModels
         [RelayCommand]
         private void LoadROM()
         {
-            (string ReturnedPath, bool Cancelled) status = WindowsShellWrapper.OpenFileDialogPrompt(ValidROMFileExtensions);
-            string path = status.ReturnedPath;
-            if (status.Cancelled) return;
-            LoadROMFromPath(path);
+            var (ReturnedPath, Cancelled) = generalDependencyContainer.FileDialogProvider.OpenFileDialogPrompt(generalDependencyContainer.RomFileExtensionsConfigurationProvider.ROMFileExtensionsConfiguration.FileExtensions);
+            if (Cancelled) return;
+            LoadROMFromPath(ReturnedPath);
         }
 
         [RelayCommand]
@@ -58,11 +53,11 @@ namespace M64RPFW.UI.ViewModels
 
             if (!new ROMViewModel(path).IsValid)
             {
-                DialogHelper.ShowErrorDialog(Properties.Resources.InvalidROMError);
+                generalDependencyContainer.DialogProvider.ShowErrorDialog(Properties.Resources.InvalidROMError);
                 return;
             }
 
-            recentROMsInterface.AddRecentROM(rom);  // add recent rom here, but not in LoadROMFromPath because the latter is called by recent rom module itself
+            generalDependencyContainer.RecentRomsProvider.AddRecentROM(rom);  // add recent rom here, but not in LoadROMFromPath because the latter is called by recent rom module itself
 
             if (IsRunning)
             {
@@ -102,7 +97,14 @@ namespace M64RPFW.UI.ViewModels
         {
             // Oh yeah this doesnt suck at all
             List<string> missingPlugins = new();
-            bool coreLibraryExists = !DialogHelper.ShowErrorDialogIf(Properties.Resources.CoreLibraryNotFound, !File.Exists(Properties.Settings.Default.CoreLibraryPath));
+
+            bool coreLibraryExists = File.Exists(Properties.Settings.Default.CoreLibraryPath);
+
+            if (!coreLibraryExists)
+            {
+                generalDependencyContainer.DialogProvider.ShowErrorDialog(Properties.Resources.CoreLibraryNotFound);
+            }
+
             bool videoPluginExists = File.Exists(Properties.Settings.Default.VideoPluginPath);
             bool audioPluginExists = File.Exists(Properties.Settings.Default.AudioPluginPath);
             bool inputPluginExists = File.Exists(Properties.Settings.Default.InputPluginPath);
@@ -111,13 +113,18 @@ namespace M64RPFW.UI.ViewModels
             if (!audioPluginExists) missingPlugins.Add(Properties.Resources.Audio);
             if (!inputPluginExists) missingPlugins.Add(Properties.Resources.Input);
             if (!rspPluginExists) missingPlugins.Add(Properties.Resources.RSP);
-            DialogHelper.ShowErrorDialogIf(string.Format(Properties.Resources.PluginNotFoundSeries, string.Join(", ", missingPlugins)), !videoPluginExists || !audioPluginExists || !inputPluginExists || !rspPluginExists);
+
+            if (!videoPluginExists || !audioPluginExists || !inputPluginExists || !rspPluginExists)
+            {
+                generalDependencyContainer.DialogProvider.ShowErrorDialog(string.Format(Properties.Resources.PluginNotFoundSeries, string.Join(", ", missingPlugins)));
+            }
+
             return coreLibraryExists && videoPluginExists && audioPluginExists && inputPluginExists && rspPluginExists;
         }
 
-        public EmulatorViewModel(IRecentRomsProvider recentROMsViewModel)
+        internal EmulatorViewModel(GeneralDependencyContainer generalDependencyContainer)
         {
-            recentROMsInterface = recentROMsViewModel;
+            this.generalDependencyContainer = generalDependencyContainer;
         }
 
         #region Emulation
@@ -150,6 +157,7 @@ namespace M64RPFW.UI.ViewModels
 
             emulatorThread.Start(new Mupen64PlusLaunchParameters(File.ReadAllBytes(romPath),
                                                                  config,
+                                                                 Properties.Settings.Default.DefaultSlot,
                                                                  Properties.Settings.Default.VideoPluginPath,
                                                                  Properties.Settings.Default.AudioPluginPath,
                                                                  Properties.Settings.Default.InputPluginPath,

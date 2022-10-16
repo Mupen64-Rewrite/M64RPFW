@@ -1,9 +1,10 @@
-﻿using M64RPFW.Models.Emulation.Core;
+﻿using M64RPFW.Core.Emulation.Exceptions;
+using M64RPFW.Models.Emulation.Core;
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace M64RPFW.Models.Emulation.Helper
+namespace M64RPFW.src.Helpers
 {
     public static class ROMHelper
     {
@@ -30,8 +31,8 @@ namespace M64RPFW.Models.Emulation.Helper
             for (int i = 0; i < rom.Length / 2; i++)
             {
                 byte tmp = rom[i * 2];
-                rom[i * 2] = rom[(i * 2) + 1];
-                rom[(i * 2) + 1] = tmp;
+                rom[i * 2] = rom[i * 2 + 1];
+                rom[i * 2 + 1] = tmp;
             }
         }
 

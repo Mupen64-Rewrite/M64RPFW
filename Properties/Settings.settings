@@ -65,15 +65,6 @@
     <Setting Name="PauseOnFrameAdvance" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="ConsiderKeyRepeat" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="PauseHotKeyCode" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">59</Value>
-    </Setting>
-    <Setting Name="FrameAdvanceHotKeyCode" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">150</Value>
-    </Setting>
     <Setting Name="Theme" Type="System.String" Scope="User">
       <Value Profile="(Default)">Light</Value>
     </Setting>

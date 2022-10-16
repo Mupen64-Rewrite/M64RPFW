@@ -12,7 +12,7 @@ namespace M64RPFW.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.1.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.3.0.0")]
     public sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -271,42 +271,6 @@ namespace M64RPFW.Properties {
             }
             set {
                 this["PauseOnFrameAdvance"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool ConsiderKeyRepeat {
-            get {
-                return ((bool)(this["ConsiderKeyRepeat"]));
-            }
-            set {
-                this["ConsiderKeyRepeat"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("59")]
-        public int PauseHotKeyCode {
-            get {
-                return ((int)(this["PauseHotKeyCode"]));
-            }
-            set {
-                this["PauseHotKeyCode"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("150")]
-        public int FrameAdvanceHotKeyCode {
-            get {
-                return ((int)(this["FrameAdvanceHotKeyCode"]));
-            }
-            set {
-                this["FrameAdvanceHotKeyCode"] = value;
             }
         }
         

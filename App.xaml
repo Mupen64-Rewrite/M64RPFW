@@ -3,16 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:M64RPFW"
              xmlns:conv="clr-namespace:M64RPFW.UI.ViewModels.Converters"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              StartupUri="src/Views/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="DeepPurple" SecondaryColor="DeepPurple" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                <!--<materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="DeepPurple" SecondaryColor="DeepPurple" />-->
+                <!--<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />-->
             </ResourceDictionary.MergedDictionaries>
             <conv:StringEqualityToBooleanConverter x:Key="StringEqualityToBooleanConverter"/>
-            <conv:KeyToStringConverter x:Key="KeyToStringConverter"/>
+            <conv:KeyBindingToStringConverter x:Key="KeyBindingToStringConverter"/>
             <conv:IntegerEqualityToBooleanConverter x:Key="IntegerEqualityToBooleanConverter"/>
             <conv:InvertBooleanConverter x:Key="InvertBooleanConverter"/>
             <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>

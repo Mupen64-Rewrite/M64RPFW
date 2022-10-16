@@ -1,4 +1,4 @@
-﻿namespace M64RPFW.Models
+﻿namespace M64RPFW.src.Helpers
 {
     public static class SettingsVirtualArgumentHelper
     {
