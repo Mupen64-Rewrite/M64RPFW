@@ -21,7 +21,7 @@
 
     <Target Name="CopyCustomLibraries" AfterTargets="AfterBuild">
         <ItemGroup>
-            <LibraryList Include="Libraries\*.so" />
+            <LibraryList Include="Libraries\*.dylib" />
         </ItemGroup>
         <Message Importance="high" Text="Library list: @(LibraryList)" />
         <Copy SourceFiles="@(LibraryList)" DestinationFolder="$(OutDir)/Libraries" />
@@ -29,7 +29,7 @@
 
     <Target Name="CopyCustomLibrariesPublish" AfterTargets="AfterPublish">
         <ItemGroup>
-            <LibraryList Include="Libraries\*.so" />
+            <LibraryList Include="Libraries\*.dylib" />
         </ItemGroup>
         <Copy SourceFiles="@(LibraryList)" DestinationFolder="$(PublishDir)/Libraries" />
     </Target>
