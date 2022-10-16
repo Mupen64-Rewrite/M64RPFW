@@ -20,6 +20,11 @@ namespace M64RPFW.UI.ViewModels
 
         public void AddRecentROM(ROMViewModel rom)
         {
+            // check for duplicates
+
+            if (recentROMs.Contains(rom))
+                return;
+
             foreach (ROMViewModel item in RecentROMs)
                 if (item.Path.Equals(rom.Path)) return;
 

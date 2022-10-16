@@ -1,4 +1,6 @@
-﻿using System;
+﻿using M64RPFW.src.Models.Emulation.Core.API;
+using M64RPFW.src.Models.Emulation.Core.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -12,15 +14,14 @@ namespace M64RPFW.Models.Emulation.Core.API
 {
     public class Mupen64PlusAPI : IDisposable
     {
-        public static Mupen64PlusAPI api;
+        public static Mupen64PlusAPI Instance;
 
-        private bool disposed = false;
-
-        AutoResetEvent m64pFrameComplete = new(false);
-        ManualResetEvent m64pStartupComplete = new(false);
+        #region P/Invoke
 
         [DllImport("kernel32.dll")]
         public static extern IntPtr GetProcAddress(IntPtr hModule, string procedureName);
+
+        #endregion
 
         #region Delegates
 
@@ -393,13 +394,18 @@ namespace M64RPFW.Models.Emulation.Core.API
 
         #endregion
 
+        private bool disposed = false;
+
+        AutoResetEvent m64pFrameComplete = new(false);
+        ManualResetEvent m64pStartupComplete = new(false);
+
         private Task m64pEmulator;
 
         public static int[] FrameBuffer { get; private set; } = new int[2];
         public static int BufferWidth { get; private set; }
         public static int BufferHeight { get; private set; }
         public IntPtr CoreDll { get; private set; }
-        private IntPtr videoPluginTmp;
+
         public volatile bool emulator_running;
 
         public Mupen64PlusAPI()
@@ -470,87 +476,60 @@ namespace M64RPFW.Models.Emulation.Core.API
             }
         }
 
-
-        public void SetIntegerSetting(string section, int value, string entryName)
+        public void SetSetting<T>(Mupen64PlusConfigEntry<T> configEntry)
         {
             IntPtr _section = IntPtr.Zero;
-            m64pConfigOpenSection(section, ref _section);
-            int tmp = value;
-            SetIntegerSetting(_section, value, entryName);
-        }
-        public void SetBooleanSetting(string section, bool value, string entryName)
-        {
-            IntPtr _section = IntPtr.Zero;
-            m64pConfigOpenSection(section, ref _section);
-            SetBooleanSetting(_section, value, entryName);
-        }
-        public void SetIntegerSetting(IntPtr section, int value, string entryName)
-        {
-            int tmp = value;
-            m64pConfigSetParameterInt(section, entryName, m64p_type.M64TYPE_INT, ref tmp);
+            m64pConfigOpenSection(configEntry.Section, ref _section);
+
+            if (configEntry.Value is int intValue)
+            {
+                m64pConfigSetParameterInt(_section, configEntry.Name, m64p_type.M64TYPE_INT, ref intValue);
+            }else if(configEntry.Value is bool boolValue)
+            {
+                m64pConfigSetParameterBool(_section, configEntry.Name, m64p_type.M64TYPE_BOOL, ref boolValue);
+            }
+            else if (configEntry.Value is string stringValue)
+            {
+                m64pConfigSetParameterStr(_section, configEntry.Name, m64p_type.M64TYPE_STRING, new StringBuilder(stringValue));
+            }
+            else
+            {
+                throw new UnresolvableConfigEntryTypeException($"Type {configEntry.Value.GetType()} could not be resolved to a type accepted by m64p+");
+            }
+
             m64pConfigSaveFile();
         }
-        public void SetBooleanSetting(IntPtr section, bool value, string entryName)
+
+        public void ApplyConfig(Mupen64PlusConfig config)
         {
-            bool tmp = value;
-            m64pConfigSetParameterBool(section, entryName, m64p_type.M64TYPE_BOOL, ref tmp);
-            m64pConfigSaveFile();
-        }
-        public void ApplyConfig()
-        {
-            IntPtr core_section = IntPtr.Zero;
-            m64pConfigOpenSection("Core", ref core_section);
+            foreach (var item in config.GetType().GetFields(System.Reflection.BindingFlags.Public))
+            {
 
-            SetIntegerSetting(core_section, Properties.Settings.Default.CoreType, "R4300Emulator");
-            SetBooleanSetting(core_section, !Properties.Settings.Default.CompiledJump, "NoCompiledJump");
-            SetBooleanSetting(core_section, !Properties.Settings.Default.ExtraMemory, "DisableExtraMem");
-            SetBooleanSetting(core_section, Properties.Settings.Default.DelaySpecialInterrupt, "DelaySI");
-            SetIntegerSetting(core_section, Properties.Settings.Default.CyclesPerOp, "CountPerOp");
-            SetBooleanSetting(core_section, !Properties.Settings.Default.SpecialRecompilation, "DisableSpecRecomp");
-            SetBooleanSetting(core_section, Properties.Settings.Default.RandomizeInterrupt, "RandomizeInterrupt");
+            }
 
-            IntPtr video_section = IntPtr.Zero;
-            m64pConfigOpenSection("Video-General", ref video_section);
-
-            SetIntegerSetting(video_section, 800, "ScreenWidth");
-            SetIntegerSetting(video_section, 600, "ScreenHeight");
-            SetIntegerSetting(video_section, Properties.Settings.Default.DisplayType, "Fullscreen");
-            SetBooleanSetting(video_section, Properties.Settings.Default.VerticalSynchronization, "VerticalSync");
-            SetBooleanSetting(video_section, Properties.Settings.Default.OnScreenDisplay, "OnScreenDisplay");
-
-            // predefined
-            IntPtr video_rice_section = IntPtr.Zero;
-            m64pConfigOpenSection("Video-Rice", ref video_rice_section);
-
-            SetIntegerSetting(video_rice_section, 4, "ScreenUpdateSetting");
-            SetIntegerSetting(video_rice_section, 2, "Mipmapping");
-            SetIntegerSetting(video_rice_section, 16, "OpenGLDepthBufferSetting");
-            SetBooleanSetting(video_rice_section, true, "AccurateTextureMapping");
-            SetBooleanSetting(video_rice_section, true, "UseDefaultHacks");
-            SetBooleanSetting(video_rice_section, true, "ShowFPS");
-            SetIntegerSetting(video_rice_section, -1, "VIWidth");
-            SetIntegerSetting(video_rice_section, -1, "VIHeight");
+            SetSetting(new Mupen64PlusConfigEntry<int>("Video-Rice", "ScreenUpdateSetting", 4));
+            SetSetting(new Mupen64PlusConfigEntry<int>("Video-Rice", "Mipmapping", 2));
+            SetSetting(new Mupen64PlusConfigEntry<int>("Video-Rice", "OpenGLDepthBufferSetting", 16));
+            SetSetting(new Mupen64PlusConfigEntry<bool>("Video-Rice", "AccurateTextureMapping", true));
+            SetSetting(new Mupen64PlusConfigEntry<bool>("Video-Rice", "UseDefaultHacks", true));
+            SetSetting(new Mupen64PlusConfigEntry<bool>("Video-Rice", "ShowFPS", true));
+            SetSetting(new Mupen64PlusConfigEntry<int>("Video-Rice", "VIWidth", -1));
+            SetSetting(new Mupen64PlusConfigEntry<int>("Video-Rice", "VIHeight", -1));
 
             m64pConfigSaveFile();
         }
 
         /// <summary>
-        /// Initiate
+        /// Launch
         /// </summary>
-        public bool init = true;
-        private unsafe void Initiate(byte[] romBuffer, string videoPlugin, string audioPlugin, string inputPlugin, string rspPlugin)
+        public void Launch(Mupen64PlusLaunchParameters launchParameters)
         {
+            if (emulator_running) throw new EmulatorAlreadyRunningException();
 
-            if (emulator_running) return; // Umm no lol?
-
-
+            disposed = false;
 
             CoreDll = NativeLibrary.Load("mupen64plus.dll");
 
-
-            init = true;
-
-            videoPluginTmp = NativeLibrary.Load(videoPlugin);
 
             ConnectFunctionPointers();
 
@@ -566,20 +545,22 @@ namespace M64RPFW.Models.Emulation.Core.API
 
             result = m64pCoreDoCommandPtr(m64p_command.M64CMD_STATE_SET_SLOT, Properties.Settings.Default.DefaultSlot, IntPtr.Zero);
 
-            ApplyConfig();
+            ApplyConfig(launchParameters.Config);
 
-            result = m64pCoreDoCommandByteArray(m64p_command.M64CMD_ROM_OPEN, romBuffer.Length, romBuffer);
+            result = m64pCoreDoCommandByteArray(m64p_command.M64CMD_ROM_OPEN, launchParameters.Rom.Length, launchParameters.Rom);
             int sizeHeader = Marshal.SizeOf(typeof(m64p_rom_header));
             m64p_rom_header header = new();
             result = m64pCoreDoCommandROMHeader(m64p_command.M64CMD_ROM_GET_HEADER, sizeHeader, ref header);
-            //int sizeSettings = Marshal.SizeOf(typeof(m64p_rom_settings));
-            //result = m64pCoreDoCommandROMSettings(m64p_command.M64CMD_ROM_GET_SETTINGS, _rom_settings, ref sizeSettings);
-            // this line ^^^ has an internal bug and corrupts memory
 
-            AttachPlugin(m64p_plugin_type.M64PLUGIN_GFX, videoPluginTmp);
-            AttachPlugin(m64p_plugin_type.M64PLUGIN_AUDIO, audioPlugin);
-            AttachPlugin(m64p_plugin_type.M64PLUGIN_INPUT, inputPlugin);
-            AttachPlugin(m64p_plugin_type.M64PLUGIN_RSP, rspPlugin);
+            AttachPlugin(m64p_plugin_type.M64PLUGIN_GFX, launchParameters.VideoPluginPath);
+            AttachPlugin(m64p_plugin_type.M64PLUGIN_AUDIO, launchParameters.AudioPluginPath);
+            AttachPlugin(m64p_plugin_type.M64PLUGIN_INPUT, launchParameters.InputPluginPath);
+            AttachPlugin(m64p_plugin_type.M64PLUGIN_RSP, launchParameters.RSPPluginPath);
+
+            GFXReadScreen2 = GetTypedDelegate<ReadScreen2>(plugins[m64p_plugin_type.M64PLUGIN_GFX].Handle, "ReadScreen2");
+            GFXReadScreen2Res = GetTypedDelegate<ReadScreen2Res>(plugins[m64p_plugin_type.M64PLUGIN_GFX].Handle, "ReadScreen2");
+            IntPtr funcPtr = GetProcAddress(plugins[m64p_plugin_type.M64PLUGIN_GFX].Handle, "GetScreenTextureID");
+            if (funcPtr != IntPtr.Zero) GFXGetScreenTextureID = (GetScreenTextureID)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(GetScreenTextureID));
 
             m64pFrameCallback = new FrameCallback(FireFrameFinishedEvent);
             result = m64pCoreDoCommandFrameCallback(m64p_command.M64CMD_SET_FRAME_CALLBACK, 0, m64pFrameCallback);
@@ -588,14 +569,6 @@ namespace M64RPFW.Models.Emulation.Core.API
             m64pRenderCallback = new RenderCallback(FireRenderEvent);
             result = m64pCoreDoCommandRenderCallback(m64p_command.M64CMD_SET_RENDER_CALLBACK, 0, m64pRenderCallback);
 
-        }
-
-        /// <summary>
-        /// Launch
-        /// </summary>
-        public void Launch(byte[] romBuffer, string videoPlugin, string audioPlugin, string inputPlugin, string rspPlugin)
-        {
-            Initiate(romBuffer, videoPlugin, audioPlugin, inputPlugin, rspPlugin);
             ExecuteEmulator();
         }
 
@@ -620,16 +593,13 @@ namespace M64RPFW.Models.Emulation.Core.API
         /// </summary>
         private void ExecuteEmulator()
         {
-            if (init == true) // Error Check
-            {
-                emulator_running = true;
-                StartupCallback cb = new(() => m64pStartupComplete.Set());
-                m64pCoreDoCommandPtr(m64p_command.M64CMD_EXECUTE, 0, Marshal.GetFunctionPointerForDelegate(cb));
-                emulator_running = false;
-                // TODO:
-                // BUG:
-                // the auto-created Rice video window does something weird and causes any subsequent child window to freeze up main message pump
-            }
+            emulator_running = true;
+            StartupCallback cb = new(() => m64pStartupComplete.Set());
+            m64pCoreDoCommandPtr(m64p_command.M64CMD_EXECUTE, 0, Marshal.GetFunctionPointerForDelegate(cb));
+            emulator_running = false;
+            // TODO:
+            // BUG:
+            // the auto-created Rice video window does something weird and causes any subsequent child window to freeze up main message pump
         }
 
         #region Interaction Functions
@@ -727,11 +697,6 @@ namespace M64RPFW.Models.Emulation.Core.API
                     m64p_command.M64CMD_CORE_STATE_SET,
                     m64p_core_param.M64CORE_VIDEO_MODE,
                     ref dummy);
-        }
-
-        public void CloseROM()
-        {
-            Stop();
         }
 
         public int GetMemorySize(N64_MEMORY id)
@@ -853,11 +818,6 @@ namespace M64RPFW.Models.Emulation.Core.API
             m64pConfigSetPlugins = (ConfigSetPlugins)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "ConfigSetParameter"), typeof(ConfigSetPlugins));
             m64pDebugMemGetPointer = (DebugMemGetPointer)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "DebugMemGetPointer"), typeof(DebugMemGetPointer));
 
-            GFXReadScreen2 = GetTypedDelegate<ReadScreen2>(videoPluginTmp, "ReadScreen2");
-            GFXReadScreen2Res = GetTypedDelegate<ReadScreen2Res>(videoPluginTmp, "ReadScreen2");
-            IntPtr funcPtr = GetProcAddress(videoPluginTmp, "GetScreenTextureID");
-            if (funcPtr != IntPtr.Zero) GFXGetScreenTextureID = (GetScreenTextureID)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(GetScreenTextureID));
-
         }
 
 
@@ -900,7 +860,7 @@ namespace M64RPFW.Models.Emulation.Core.API
         #region Other
         public void Dispose()
         {
-            if (init && !disposed)
+            if (!disposed)
             {
                 // do cleanup ig
                 // lol?
@@ -920,56 +880,42 @@ namespace M64RPFW.Models.Emulation.Core.API
                 m64pCoreShutdown();
 
                 NativeLibrary.Free(CoreDll);
+
+                disposed = true;
             }
         }
 
-        struct AttachedPlugin
+        internal struct AttachedPlugin
         {
-            public PluginStartup dllStartup;
-            public PluginShutdown dllShutdown;
-            public IntPtr dllHandle;
+            internal PluginStartup StartupDelegate;
+            internal PluginShutdown ShutdownDelegate;
+            internal IntPtr Handle;
         }
 
         private Dictionary<m64p_plugin_type, AttachedPlugin> plugins = new();
 
-        public IntPtr AttachPlugin(m64p_plugin_type type, string PluginName)
+        public IntPtr AttachPlugin(m64p_plugin_type type, string libraryPath)
         {
             if (plugins.ContainsKey(type))
-                DetachPlugin(type);
+            {
+                throw new PluginAlreadyAttachedException($"Plugin of type {type} is already attached");
+            }
 
             AttachedPlugin plugin;
-            plugin.dllHandle = NativeLibrary.Load(PluginName);
+            plugin.Handle = NativeLibrary.Load(libraryPath);
 
-            plugin.dllStartup = (PluginStartup)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(plugin.dllHandle, "PluginStartup"), typeof(PluginStartup));
-            plugin.dllShutdown = (PluginShutdown)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(plugin.dllHandle, "PluginShutdown"), typeof(PluginShutdown));
-            plugin.dllStartup(CoreDll, null, null);
+            plugin.StartupDelegate = (PluginStartup)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(plugin.Handle, "PluginStartup"), typeof(PluginStartup));
+            plugin.ShutdownDelegate = (PluginShutdown)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(plugin.Handle, "PluginShutdown"), typeof(PluginShutdown));
+            plugin.StartupDelegate(CoreDll, null, null);
 
-            m64p_error result = m64pCoreAttachPlugin(type, plugin.dllHandle);
-            if (result != m64p_error.M64ERR_SUCCESS)
+            if (m64pCoreAttachPlugin(type, plugin.Handle) != m64p_error.M64ERR_SUCCESS)
             {
-                NativeLibrary.Free(plugin.dllHandle);
-                init = false;
-                throw new EmulatorException(new(string.Format(Properties.Resources.PluginNotFoundTemplate, type.ToString())));
+                NativeLibrary.Free(plugin.Handle);
+                throw new PluginAttachException($"Plugin of type {type} failed to attached");
             }
 
             plugins.Add(type, plugin);
-            return plugin.dllHandle;
-        }
-        public void AttachPlugin(m64p_plugin_type type, IntPtr lib)
-        {
-            AttachedPlugin plugin = new() { dllHandle = lib };
-
-            plugin.dllStartup = (PluginStartup)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(plugin.dllHandle, "PluginStartup"), typeof(PluginStartup));
-            plugin.dllShutdown = (PluginShutdown)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(plugin.dllHandle, "PluginShutdown"), typeof(PluginShutdown));
-            plugin.dllStartup(CoreDll, null, null);
-
-            m64p_error result = m64pCoreAttachPlugin(type, plugin.dllHandle);
-            if (result != m64p_error.M64ERR_SUCCESS)
-            {
-                init = false;
-                throw new EmulatorException(new(string.Format(Properties.Resources.PluginNotFoundTemplate, type.ToString())));
-            }
-            plugins.Add(type, plugin);
+            return plugin.Handle;
         }
 
         public void DetachPlugin(m64p_plugin_type type)
@@ -978,10 +924,13 @@ namespace M64RPFW.Models.Emulation.Core.API
             {
                 AttachedPlugin plugin = plugins[type];
                 m64pCoreDetachPlugin(type);
-                plugin.dllShutdown();
-                NativeLibrary.Free(plugin.dllHandle);
+                plugin.ShutdownDelegate();
+                NativeLibrary.Free(plugin.Handle);
                 plugins.Remove(type);
-                Debug.Print($"Shutdown {type}");
+            }
+            else
+            {
+                throw new PluginDetachedException($"Plugin of type {type} is not attached");
             }
         }
 
