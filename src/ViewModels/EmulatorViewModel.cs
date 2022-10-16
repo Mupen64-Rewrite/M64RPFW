@@ -188,7 +188,7 @@ namespace M64RPFW.UI.ViewModels
 
             emulatorThreadEndTime = DateTime.Now;
 
-            Debug.Print($"Emulator thread exited after {emulatorThreadEndTime - emulatorThreadBeginTime}");
+            Debug.Print($"Emulator thread exited after {(emulatorThreadEndTime - emulatorThreadBeginTime)}");
         }
 
         private void Stop()
