@@ -1,10 +1,12 @@
-﻿using M64RPFW.Properties;
+﻿using CommunityToolkit.Mvvm.Input;
+using M64RPFW.Properties;
 using M64RPFW.src.Configurations;
 using M64RPFW.src.Containers;
 using M64RPFW.src.Interfaces;
 using M64RPFW.src.Themes;
 using M64RPFW.UI.ViewModels;
 using M64RPFW.UI.ViewModels.Extensions.Localization;
+using M64RPFW.UI.Views;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using ModernWpf;
 using OpenTK.Graphics.OpenGL4;
@@ -13,6 +15,7 @@ using System.Globalization;
 using System.Resources;
 using System.Threading;
 using System.Windows;
+using System.Windows.Media;
 
 namespace M64RPFW.Views
 {
@@ -25,7 +28,6 @@ namespace M64RPFW.Views
         private readonly GeneralDependencyContainer generalDependencyContainer;
 
         SavestateBoundsConfiguration ISavestateBoundsConfigurationProvider.SavestateBoundsConfiguration => new();
-
         ROMFileExtensionsConfiguration IRomFileExtensionsConfigurationProvider.ROMFileExtensionsConfiguration => new();
 
 
@@ -62,7 +64,7 @@ namespace M64RPFW.Views
 
         private void Main_OpenGLControl_Render(TimeSpan obj)
         {
-            GL.ClearColor(1f, 1f, 1f, 0f);
+            GL.ClearColor((this.Background as SolidColorBrush).Color.R, (this.Background as SolidColorBrush).Color.G, (this.Background as SolidColorBrush).Color.B, 1f);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
 
@@ -72,7 +74,7 @@ namespace M64RPFW.Views
             string list = string.Empty;
             for (int i = 0; i < validExtensions.Length; i++)
                 list += $"*.{validExtensions[i]};";
-            dialog.Filters.Add(new("Supported files", list));
+            dialog.Filters.Add(new((this as ILocalizationManager).GetString("SupportedFileFormats"), list));
             dialog.EnsureFileExists = dialog.EnsurePathExists = true;
             CommonFileDialogResult result = dialog.ShowDialog();
             if (result == CommonFileDialogResult.Ok) return (dialog.FileName, false);
@@ -85,13 +87,13 @@ namespace M64RPFW.Views
             string list = string.Empty;
             for (int i = 0; i < validExtensions.Length; i++)
                 list += $"*.{validExtensions[i]};";
-            dialog.Filters.Add(new("Supported files", list));
+            dialog.Filters.Add(new((this as ILocalizationManager).GetString("SupportedFileFormats"), list));
             CommonFileDialogResult result = dialog.ShowDialog();
             if (result == CommonFileDialogResult.Ok) return (dialog.FileName, false);
             return (string.Empty, true);
 
         }
-
+        
         public void ShowErrorDialog(string message)
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
@@ -139,6 +141,12 @@ namespace M64RPFW.Views
         public string GetString(string key)
         {
             return Properties.Resources.ResourceManager.GetString(key) ?? "?";
+        }
+
+        [RelayCommand]
+        private void ShowSettingsWindow()
+        {
+            new SettingsWindow() { DataContext = new SettingsViewModel(generalDependencyContainer) }.ShowDialog();
         }
     }
 }

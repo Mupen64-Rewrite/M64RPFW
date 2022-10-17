@@ -266,4 +266,7 @@
   <data name="Core" xml:space="preserve">
     <value>Core</value>
   </data>
+  <data name="SupportedFileFormats" xml:space="preserve">
+    <value>Supported file formats</value>
+  </data>
 </root>

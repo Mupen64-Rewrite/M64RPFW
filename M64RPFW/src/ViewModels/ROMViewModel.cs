@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using M64RPFW.Core.Emulation.ROM;
 using M64RPFW.src.Helpers;
+using M64RPFW.UI.Views;
 using System;
 using System.Globalization;
 using System.IO;
@@ -18,6 +20,7 @@ namespace M64RPFW.UI.ViewModels
 
         public bool IsValid => rom.IsValid;
         public bool IsBigEndian => rom.IsBigEndian;
+        public string InternalName => rom.InternalName;
         public string FriendlyName => rom.FriendlyName;
         public uint PrimaryCRC => rom.PrimaryCRC;
         public uint SecondaryCRC => rom.SecondaryCRC;
@@ -44,5 +47,8 @@ namespace M64RPFW.UI.ViewModels
         {
             return rom.FriendlyName;
         }
+
+        [RelayCommand]
+        private void ShowInspectionWindow(ROMViewModel rom) => new ROMInspectionWindow() { DataContext = this }.Show();
     }
 }

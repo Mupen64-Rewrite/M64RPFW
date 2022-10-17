@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:M64RPFW.Views" 
+        xmlns:ucs="clr-namespace:M64RPFW.src.Views.User_Controls" 
         xmlns:viewmodels="clr-namespace:M64RPFW.UI.ViewModels"
         xmlns:loc="clr-namespace:M64RPFW.UI.ViewModels.Extensions.Localization"
         xmlns:ext="clr-namespace:M64RPFW.UI.ViewModels.Extensions"
@@ -12,14 +13,14 @@
         xmlns:properties="clr-namespace:M64RPFW.Properties"
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
         mc:Ignorable="d"
         Closing="Window_Closing"
         WindowStartupLocation="CenterScreen"
-        Title="SettingsWindow" 
         Width="300"
         Height="500" 
         ResizeMode="NoResize"
-        xmlns:ui="http://schemas.modernwpf.com/2019"
+        ui:TitleBar.ExtendViewIntoTitleBar="False"
         ui:WindowHelper.UseModernWindowStyle="True">
 
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -27,64 +28,57 @@
 
 
             <TabControl TabStripPlacement="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                
-                <TabItem>
-                    <TabItem.Header>
-                        <iconPacks:Material Kind="Chip" Width="30"/>
-                    </TabItem.Header>
-                    <GroupBox Header="{loc:Localization Core}" Margin="{StaticResource SettingsContentMargin}">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <StackPanel Orientation="Vertical">
-                                <RadioButton GroupName="Test1" Content="{loc:Localization PureInterpreter}" IsChecked="{bindings:SettingsBinding CoreType, Converter={StaticResource IntegerEqualityToBooleanConverter}, ConverterParameter={ext:Int32 0}, Mode=OneWay}" Command="{Binding SetSettingsPropertyIntegerCommand}" CommandParameter="(CoreType, 0)"/>
-                                <RadioButton GroupName="Test1" Content="{loc:Localization CachedInterpreter}" IsChecked="{bindings:SettingsBinding CoreType, Converter={StaticResource IntegerEqualityToBooleanConverter}, ConverterParameter={ext:Int32 1}, Mode=OneWay}" Command="{Binding SetSettingsPropertyIntegerCommand}" CommandParameter="(CoreType, 1)"/>
-                                <RadioButton GroupName="Test1" Content="{loc:Localization DynamicRecompiler}" IsChecked="{bindings:SettingsBinding CoreType, Converter={StaticResource IntegerEqualityToBooleanConverter}, ConverterParameter={ext:Int32 2}, Mode=OneWay}" Command="{Binding SetSettingsPropertyIntegerCommand}" CommandParameter="(CoreType, 2)"/>
-                            </StackPanel>
-                        </Grid>
-                    </GroupBox>
-                </TabItem>
-
-                <TabItem>
-                    <TabItem.Header>
-                        <iconPacks:Material Kind="Translate" Width="30"/>
-                    </TabItem.Header>
-                    <GroupBox Header="{loc:Localization Language}" Margin="{StaticResource SettingsContentMargin}">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <StackPanel Orientation="Vertical">
-
-                                <RadioButton Content="English" Command="{Binding SetCultureCommand}" CommandParameter="en-US" IsChecked="{bindings:SettingsBinding Path=Culture, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=en-US, Mode=OneWay}" />
-                                <RadioButton Content="Deutsch" Command="{Binding SetCultureCommand}" CommandParameter="de-DE" IsChecked="{bindings:SettingsBinding Path=Culture, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=de-DE, Mode=OneWay}" />
-                            </StackPanel>
-                        </Grid>
-                    </GroupBox>
-                </TabItem>
-
-                <TabItem>
-                    <TabItem.Header>
-                        <iconPacks:Material Kind="ThemeLightDark" Width="30"/>
-                    </TabItem.Header>
-                    <GroupBox Header="{loc:Localization Theme}" Margin="{StaticResource SettingsContentMargin}">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <StackPanel Orientation="Vertical">
-
-                                <RadioButton Content="{loc:Localization Light}" Command="{Binding SetThemeCommand}" CommandParameter="Light" IsChecked="{bindings:SettingsBinding Path=Theme, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}" />
-                                <RadioButton Content="{loc:Localization Dark}" Command="{Binding SetThemeCommand}" CommandParameter="Dark" IsChecked="{bindings:SettingsBinding Path=Theme, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}" />
-                            </StackPanel>
-                        </Grid>
-                    </GroupBox>
-                </TabItem>
-                
+                <TabControl.Items>
+                    <TabItem Header="{iconPacks:Material Kind=Chip, Width={StaticResource SmallIconSize}}">
+                        <ucs:SettingsTab Header="{loc:Localization Core}">
+                            <ucs:SettingsTab.Content>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Orientation="Vertical">
+                                        <RadioButton Content="{loc:Localization PureInterpreter}" IsChecked="{bindings:SettingsBinding CoreType, Converter={StaticResource IntegerEqualityToBooleanConverter}, ConverterParameter={ext:Int32 0}, Mode=OneWay}" Command="{Binding SetSettingsPropertyIntegerCommand}" CommandParameter="(CoreType, 0)"/>
+                                        <RadioButton Content="{loc:Localization CachedInterpreter}" IsChecked="{bindings:SettingsBinding CoreType, Converter={StaticResource IntegerEqualityToBooleanConverter}, ConverterParameter={ext:Int32 1}, Mode=OneWay}" Command="{Binding SetSettingsPropertyIntegerCommand}" CommandParameter="(CoreType, 1)"/>
+                                        <RadioButton Content="{loc:Localization DynamicRecompiler}" IsChecked="{bindings:SettingsBinding CoreType, Converter={StaticResource IntegerEqualityToBooleanConverter}, ConverterParameter={ext:Int32 2}, Mode=OneWay}" Command="{Binding SetSettingsPropertyIntegerCommand}" CommandParameter="(CoreType, 2)"/>
+                                    </StackPanel>
+                                </Grid>
+                            </ucs:SettingsTab.Content>
+                        </ucs:SettingsTab>
+                    </TabItem>
+                    <TabItem Header="{iconPacks:Material Kind=Translate, Width={StaticResource SmallIconSize}}">
+                        <ucs:SettingsTab Header="{loc:Localization Language}">
+                            <ucs:SettingsTab.Content>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Orientation="Vertical">
+                                        <RadioButton Content="English" Command="{Binding SetCultureCommand}" CommandParameter="en-US" IsChecked="{bindings:SettingsBinding Path=Culture, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=en-US, Mode=OneWay}" />
+                                        <RadioButton Content="Deutsch" Command="{Binding SetCultureCommand}" CommandParameter="de-DE" IsChecked="{bindings:SettingsBinding Path=Culture, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=de-DE, Mode=OneWay}" />
+                                    </StackPanel>
+                                </Grid>
+                            </ucs:SettingsTab.Content>
+                        </ucs:SettingsTab>
+                    </TabItem>
+                    <TabItem Header="{iconPacks:Material Kind=WeatherSunny, Width={StaticResource SmallIconSize}}">
+                        <ucs:SettingsTab Header="{loc:Localization Theme}">
+                            <ucs:SettingsTab.Content>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Orientation="Vertical">
+                                        <RadioButton Content="{loc:Localization Light}" Command="{Binding SetThemeCommand}" CommandParameter="Light" IsChecked="{bindings:SettingsBinding Path=Theme, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}" />
+                                        <RadioButton Content="{loc:Localization Dark}" Command="{Binding SetThemeCommand}" CommandParameter="Dark" IsChecked="{bindings:SettingsBinding Path=Theme, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}" />
+                                    </StackPanel>
+                                </Grid>
+                            </ucs:SettingsTab.Content>
+                        </ucs:SettingsTab>
+                    </TabItem>
+                </TabControl.Items>
             </TabControl>
         </Grid>
     </Grid>

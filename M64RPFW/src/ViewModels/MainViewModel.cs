@@ -38,20 +38,6 @@ namespace M64RPFW.UI.ViewModels
         [RelayCommand]
         private void ExitApp() => generalDependencyContainer.WindowClosingProvider.Close();
 
-        [RelayCommand]
-        private void ShowSettingsWindow() => new SettingsWindow() { DataContext = new SettingsViewModel(generalDependencyContainer) }.ShowDialog();
-
-        [RelayCommand]
-        private void ShowVideoPluginConfigurationWindow() => new VideoPluginConfigurationWindow() { DataContext = null }.ShowDialog();
-        [RelayCommand]
-        private void ShowAudioPluginConfigurationWindow() => new AudioPluginConfigurationWindow() { DataContext = null }.ShowDialog();
-        [RelayCommand]
-        private void ShowInputPluginConfigurationWindow() => new InputPluginConfigurationWindow() { DataContext = null }.ShowDialog();
-        [RelayCommand]
-        private void ShowRSPPluginConfigurationWindow() => new RSPPluginConfigurationWindow() { DataContext = null }.ShowDialog();
-        [RelayCommand]
-        private void ShowROMInspectionWindow(ROMViewModel rom) => new ROMInspectionWindow() { DataContext = rom }.Show();
-
 
     }
 }

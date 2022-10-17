@@ -8,13 +8,15 @@
         xmlns:loc="clr-namespace:M64RPFW.UI.ViewModels.Extensions.Localization"
         xmlns:ext="clr-namespace:M64RPFW.UI.ViewModels.Extensions"
         xmlns:bindings="clr-namespace:M64RPFW.UI.ViewModels.Extensions.Bindings"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
         d:DataContext="{d:DesignInstance Type=viewmodels:ROMViewModel}"
         mc:Ignorable="d"
-        Title="{loc:Localization Inspect}" 
-        SizeToContent="WidthAndHeight"
-        ResizeMode="NoResize">
-    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="20">
+        Width="280"
+        Height="300"
+        ResizeMode="NoResize"
+        ui:WindowHelper.UseModernWindowStyle="True">
+    <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="{StaticResource MediumContentMargin}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -31,41 +33,27 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Grid.Resources>
-                <Style TargetType="TextBlock">
-                    <Setter Property="HorizontalAlignment" Value="Left"/>
-                    <Setter Property="Margin" Value="10, 2, 2, 2"/>
-                </Style>
+            <TextBlock    Grid.Row="0" Grid.Column="0" Margin="{StaticResource SmallItemMargin}" Text="{loc:Localization BigEndian}" VerticalAlignment="Center" TextAlignment="Left"/>
+            <ui:ToggleSwitch Grid.Row="0" Grid.Column="1" Margin="{StaticResource SmallItemMargin}" IsOn="{Binding IsBigEndian, Mode=OneWay}" OffContent="" OnContent="" IsEnabled="False" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-                <Style TargetType="ToggleButton">
-                    <Setter Property="IsEnabled" Value="False"/>
-                </Style>
-                <Style TargetType="TextBox">
-                    <Setter Property="IsEnabled" Value="False"/>
-                </Style>
-            </Grid.Resources>
-            
-            <TextBlock    Grid.Row="0" Grid.Column="0" Text="{loc:Localization BigEndian}" VerticalAlignment="Center" TextAlignment="Center"/>
-            <ToggleButton Grid.Row="0" Grid.Column="1" IsChecked="{Binding IsBigEndian, Mode=OneWay}"/>
-            
-            <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Localization PrimaryCRC}" VerticalAlignment="Center" TextAlignment="Center"/>
-            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding PrimaryCRC, Converter={StaticResource UnsignedIntegerToHexadecimalStringConverter}, Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Center"/>
+            <TextBlock Grid.Row="1" Grid.Column="0" Margin="{StaticResource SmallItemMargin}" Text="{loc:Localization PrimaryCRC}" VerticalAlignment="Center" TextAlignment="Left"/>
+            <TextBox Grid.Row="1" Grid.Column="1"  Margin="{StaticResource SmallItemMargin}" IsReadOnly="True" Text="{Binding PrimaryCRC, Converter={StaticResource UnsignedIntegerToHexadecimalStringConverter}, Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Left"/>
 
-            <TextBlock Grid.Row="2" Grid.Column="0" Text="{loc:Localization SecondaryCRC}" VerticalAlignment="Center" TextAlignment="Center"/>
-            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SecondaryCRC, Converter={StaticResource UnsignedIntegerToHexadecimalStringConverter}, Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Center"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Margin="{StaticResource SmallItemMargin}" Text="{loc:Localization SecondaryCRC}" VerticalAlignment="Center" TextAlignment="Left"/>
+            <TextBox Grid.Row="2" Grid.Column="1"  Margin="{StaticResource SmallItemMargin}" IsReadOnly="True" Text="{Binding SecondaryCRC, Converter={StaticResource UnsignedIntegerToHexadecimalStringConverter}, Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Left"/>
 
-            <TextBlock Grid.Row="3" Grid.Column="0" Text="{loc:Localization InternalName}" VerticalAlignment="Center" TextAlignment="Center"/>
-            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding InternalName, Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Center"/>
+            <TextBlock Grid.Row="3" Grid.Column="0" Margin="{StaticResource SmallItemMargin}" Text="{loc:Localization InternalName}" VerticalAlignment="Center" TextAlignment="Left"/>
+            <TextBox Grid.Row="3" Grid.Column="1"  Margin="{StaticResource SmallItemMargin}" IsReadOnly="True" Text="{Binding InternalName, Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Left"/>
 
-            <TextBlock Grid.Row="4" Grid.Column="0" Text="{loc:Localization MediaFormat}" VerticalAlignment="Center" TextAlignment="Center"/>
-            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding MediaFormat, Converter={StaticResource UnsignedIntegerToHexadecimalStringConverter}, Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Center"/>
+            <TextBlock Grid.Row="4" Grid.Column="0" Margin="{StaticResource SmallItemMargin}" Text="{loc:Localization MediaFormat}" VerticalAlignment="Center" TextAlignment="Left"/>
+            <TextBox Grid.Row="4" Grid.Column="1"  Margin="{StaticResource SmallItemMargin}" IsReadOnly="True" Text="{Binding MediaFormat, Converter={StaticResource UnsignedIntegerToHexadecimalStringConverter}, Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Left"/>
 
-            <TextBlock Grid.Row="5" Grid.Column="0" Text="{loc:Localization CountryCode}" VerticalAlignment="Center" TextAlignment="Center"/>
-            <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding CountryCode, Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Center"/>
+            <TextBlock Grid.Row="5" Grid.Column="0" Margin="{StaticResource SmallItemMargin}" Text="{loc:Localization CountryCode}" VerticalAlignment="Center" TextAlignment="Left"/>
+            <TextBox Grid.Row="5" Grid.Column="1"  Margin="{StaticResource SmallItemMargin}" IsReadOnly="True" Text="{Binding CountryCode, Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Left"/>
 
-            <TextBlock Grid.Row="6" Grid.Column="0" Text="{loc:Localization Version}" VerticalAlignment="Center" TextAlignment="Center"/>
-            <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Version, Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Center"/>
+            <TextBlock Grid.Row="6" Grid.Column="0" Margin="{StaticResource SmallItemMargin}" Text="{loc:Localization Version}" VerticalAlignment="Center" TextAlignment="Left"/>
+            <TextBox Grid.Row="6" Grid.Column="1"  Margin="{StaticResource SmallItemMargin}" IsReadOnly="True" Text="{Binding Version, Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Left"/>
 
         </Grid>
-    </Grid>
+    </ScrollViewer>
 </Window>

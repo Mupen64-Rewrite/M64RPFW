@@ -1,6 +1,9 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
 
-    <Thickness x:Key="SettingsContentMargin">10</Thickness>
+    <Thickness x:Key="MediumContentMargin">10</Thickness>
+    <Thickness x:Key="SmallItemMargin">0 2 0 0</Thickness>
+    <system:Double x:Key="SmallIconSize">30</system:Double>
     
 </ResourceDictionary>

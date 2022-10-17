@@ -1,5 +1,5 @@
 ﻿<Window x:Class="M64RPFW.Views.MainWindow"
-        x:Name="Main_Window"
+        x:Name="root"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -23,7 +23,7 @@
         <bindings:BindingProxy x:Key="MainViewModelProxy" Data="{Binding}"/>
         <ext:CommandReference x:Key="TogglePauseCommandReference" Command="{Binding EmulatorViewModel.TogglePauseCommand}"/>
         <ext:CommandReference x:Key="FrameAdvanceCommandReference" Command="{Binding EmulatorViewModel.FrameAdvanceCommand}"/>
-        <ext:CommandReference x:Key="ShowSettingsWindowCommandReference" Command="{Binding ShowSettingsWindowCommand}"/>
+        <ext:CommandReference x:Key="ShowSettingsWindowCommandReference" Command="{Binding ShowSettingsWindowCommand, ElementName=root}"/>
     </Window.Resources>
 
     <Window.InputBindings>
@@ -56,8 +56,7 @@
                                                           CommandParameter="{Binding}"/>
                                                 <Separator/>
                                                 <MenuItem Header="{loc:Localization Inspect}" 
-                                                          Command="{Binding Source={StaticResource MainViewModelProxy}, Path=Data.ShowROMInspectionWindowCommand}"
-                                                          CommandParameter="{Binding}"/>
+                                                          Command="{Binding ShowInspectionWindowCommand}"/>
                                             </ContextMenu>
                                         </MenuItem.ContextMenu>
                                     </MenuItem>
@@ -77,15 +76,15 @@
                     </MenuItem>
                     <MenuItem Header="{loc:Localization Options}">
                         <MenuItem Header="{loc:Localization PluginSettings}">
-                            <MenuItem Header="{loc:Localization Video}" Command="{Binding ShowVideoPluginConfigurationWindowCommand}"/>
-                            <MenuItem Header="{loc:Localization Audio}" Command="{Binding ShowAudioPluginConfigurationWindowCommand}"/>
-                            <MenuItem Header="{loc:Localization Input}" Command="{Binding ShowInputPluginConfigurationWindowCommand}"/>
-                            <MenuItem Header="{loc:Localization RSP}" Command="{Binding ShowRSPPluginConfigurationWindowCommand}"/>
+                            <MenuItem Header="{loc:Localization Video}" />
+                            <MenuItem Header="{loc:Localization Audio}" />
+                            <MenuItem Header="{loc:Localization Input}" />
+                            <MenuItem Header="{loc:Localization RSP}" />
                         </MenuItem>
                         <Separator/>
                         <MenuItem x:Name="ShowStatusbar_MenuItem" Header="{loc:Localization ShowStatusbar}" IsCheckable="True" IsChecked="{bindings:SettingsBinding ShowStatusbar, Mode=TwoWay}"/>
                         <Separator/>
-                        <MenuItem Header="{loc:Localization ProgramSettings}" Command="{Binding ShowSettingsWindowCommand}" InputGestureText="{Binding ElementName=ShowSettingsInputBinding, Converter={StaticResource KeyBindingToStringConverter}}"/>
+                        <MenuItem Header="{loc:Localization ProgramSettings}" Command="{Binding ShowSettingsWindowCommand, ElementName=root}" InputGestureText="{Binding ElementName=ShowSettingsInputBinding, Converter={StaticResource KeyBindingToStringConverter}}"/>
                     </MenuItem>
                 </Menu>
                 
