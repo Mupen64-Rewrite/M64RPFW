@@ -158,6 +158,7 @@ namespace M64RPFW.UI.ViewModels
             emulatorThread.Start(new Mupen64PlusLaunchParameters(File.ReadAllBytes(romPath),
                                                                  config,
                                                                  Properties.Settings.Default.DefaultSlot,
+                                                                 Properties.Settings.Default.CoreLibraryPath,
                                                                  Properties.Settings.Default.VideoPluginPath,
                                                                  Properties.Settings.Default.AudioPluginPath,
                                                                  Properties.Settings.Default.InputPluginPath,

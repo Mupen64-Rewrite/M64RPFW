@@ -528,7 +528,7 @@ namespace M64RPFW.Models.Emulation.Core.API
 
             disposed = false;
 
-            CoreDll = NativeLibrary.Load("mupen64plus.dll");
+            CoreDll = NativeLibrary.Load(launchParameters.CoreLibraryPath);
 
 
             ConnectFunctionPointers();
