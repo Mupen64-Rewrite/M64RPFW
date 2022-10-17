@@ -145,7 +145,7 @@ namespace M64RPFW.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("m64p/mupen64plus-video-glide64mk2.dll")]
+        [global::System.Configuration.DefaultSettingValueAttribute("m64p/mupen64plus-video-rice.dll")]
         public string VideoPluginPath {
             get {
                 return ((string)(this["VideoPluginPath"]));

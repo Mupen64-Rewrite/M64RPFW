@@ -33,7 +33,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="VideoPluginPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">m64p/mupen64plus-video-glide64mk2.dll</Value>
+      <Value Profile="(Default)">m64p/mupen64plus-video-rice.dll</Value>
     </Setting>
     <Setting Name="AudioPluginPath" Type="System.String" Scope="User">
       <Value Profile="(Default)">m64p/mupen64plus-audio-sdl.dll</Value>

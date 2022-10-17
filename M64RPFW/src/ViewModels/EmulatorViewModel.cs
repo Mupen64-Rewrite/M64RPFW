@@ -28,7 +28,7 @@ namespace M64RPFW.UI.ViewModels
             get => isResumed;
             set
             {
-                if (Mupen64PlusAPI.Instance == null || !Mupen64PlusAPI.Instance.emulator_running) return;
+                if (Mupen64PlusAPI.Instance == null || !Mupen64PlusAPI.Instance.IsEmulatorRunning) return;
                 SetProperty(ref isResumed, value);
                 Mupen64PlusAPI.Instance.SetPlayMode(isResumed ? Mupen64PlusTypes.PlayModes.Running : Mupen64PlusTypes.PlayModes.Paused);
             }
@@ -174,7 +174,7 @@ namespace M64RPFW.UI.ViewModels
             Mupen64PlusAPI.Instance = new();
 
             int frame = 0;
-            Mupen64PlusAPI.Instance.FrameFinished += delegate
+            Mupen64PlusAPI.Instance.OnFrameFinished += delegate
             {
                 Debug.Print($"Frame {frame++}");
             };

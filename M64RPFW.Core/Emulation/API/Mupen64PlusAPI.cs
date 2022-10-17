@@ -393,86 +393,87 @@ namespace M64RPFW.Models.Emulation.Core.API
 
         #endregion
 
+        #region Events
+
+        public event Action OnFrameFinished;
+        public event Action OnVIInterrupt;
+        public event Action OnRender;
+
+        #endregion
+
         private bool disposed = false;
-
-        AutoResetEvent m64pFrameComplete = new(false);
-        ManualResetEvent m64pStartupComplete = new(false);
-
+        private ManualResetEvent m64pStartupComplete = new(false);
         private Task m64pEmulator;
+        private volatile bool emulator_running;
+        public bool IsEmulatorRunning => emulator_running;
 
-        public static int[] FrameBuffer { get; private set; } = new int[2];
+        public static int[] FrameBuffer { get; private set; }
         public static int BufferWidth { get; private set; }
         public static int BufferHeight { get; private set; }
         public IntPtr CoreDll { get; private set; }
 
-        public volatile bool emulator_running;
 
         public Mupen64PlusAPI()
         {
         }
 
+        private void GetScreenDimensions(out int width, out int height)
+        {
+            int w = 0, h = 0;
+            GFXReadScreen2Res(IntPtr.Zero, ref w, ref h, 0);
+            width = w;
+            height = h;
+        }
+
         private void UpdateFramebuffer()
         {
-            int width = 0;
-            int height = 0;
-            GetScreenDimensions(ref width, ref height);
-            if (width != BufferWidth || height != BufferHeight)
+            GetScreenDimensions(out int newWidth, out int newHeight);
+            if (newWidth != BufferWidth || newHeight != BufferHeight)
             {
-                SetBufferSize(width, height);
+                BufferWidth = newWidth;
+                BufferHeight = newHeight;
+                FrameBuffer = new int[BufferWidth * BufferHeight];
             }
-            int[] frameBuffer = FrameBuffer;
-            CopyFrameBuffer(ref frameBuffer, ref width, ref height);
-            FrameBuffer = frameBuffer;
 
-        }
-
-        public void GetScreenDimensions(ref int width, ref int height)
-        {
-            GFXReadScreen2Res(IntPtr.Zero, ref width, ref height, 0);
-        }
-        private void SetBufferSize(int width, int height)
-        {
-            BufferWidth = width;
-            BufferHeight = height;
             if (FrameBuffer == null)
-                FrameBuffer = new int[width * height];
-            else
             {
-                int[] frameBuffer = FrameBuffer;
-                Array.Resize(ref frameBuffer, width * height);
-                FrameBuffer = frameBuffer;
+                // HACK: i dont know
+                BufferWidth = 2;
+                BufferHeight = 2;
+                FrameBuffer = new int[BufferWidth * BufferHeight];
             }
+
+            int[] frameBuffer = FrameBuffer;
+            CopyFrameBuffer(ref frameBuffer, BufferWidth, BufferHeight);
+            FrameBuffer = frameBuffer;
         }
 
-        public void CopyFrameBuffer(ref int[] buffer, ref int width, ref int height)
+        public void CopyFrameBuffer(ref int[] buffer, int width, int height)
         {
-            if (buffer == null)
-                buffer = new int[width * height];
-
             GFXReadScreen2(buffer, ref width, ref height, 0);
 
-            int fromindex = width * (height - 1) * 4;
-            int toindex = 0;
+            //int fromindex = width * (height - 1) * 4;
+            //int toindex = 0;
 
-            for (int j = 0; j < height; j++)
-            {
-                Buffer.BlockCopy(buffer, fromindex, buffer, toindex, width * 4);
-                fromindex -= width * 4;
-                toindex += width * 4;
-            }
+            //for (int j = 0; j < height; j++)
+            //{
+            //    Buffer.BlockCopy(buffer, fromindex, buffer, toindex, width * 4);
+            //    fromindex -= width * 4;
+            //    toindex += width * 4;
+            //}
 
             // opaque
-            unsafe
-            {
-                fixed (int* ptr = &buffer[0])
-                {
-                    int l = buffer.Length;
-                    for (int i = 0; i < l; i++)
-                    {
-                        //ptr[i] |= unchecked((int)0xff000000);
-                    }
-                }
-            }
+            //unsafe
+            //{
+            //    fixed (int* ptr = &buffer[0])
+            //    {
+            //        int l = buffer.Length;
+            //        for (int i = 0; i < l; i++)
+            //        {
+            //            //ptr[i] |= unchecked((int)0xff000000);
+            //        }
+            //    }
+            //}
         }
 
         public void SetSetting(Mupen64PlusConfigEntry configEntry)
@@ -530,7 +531,6 @@ namespace M64RPFW.Models.Emulation.Core.API
 
             CoreDll = NativeLibrary.Load(launchParameters.CoreLibraryPath);
 
-
             ConnectFunctionPointers();
 
             m64p_error result = m64pCoreStartup(
@@ -562,29 +562,24 @@ namespace M64RPFW.Models.Emulation.Core.API
             IntPtr funcPtr = GetProcAddress(plugins[m64p_plugin_type.M64PLUGIN_GFX].Handle, "GetScreenTextureID");
             if (funcPtr != IntPtr.Zero) GFXGetScreenTextureID = (GetScreenTextureID)Marshal.GetDelegateForFunctionPointer(funcPtr, typeof(GetScreenTextureID));
 
-            m64pFrameCallback = new FrameCallback(FireFrameFinishedEvent);
+            m64pFrameCallback = new FrameCallback(delegate
+            {
+                OnFrameFinished?.Invoke();
+                UpdateFramebuffer();
+            });
             result = m64pCoreDoCommandFrameCallback(m64p_command.M64CMD_SET_FRAME_CALLBACK, 0, m64pFrameCallback);
-            m64pVICallback = new VICallback(FireVIEvent);
+            m64pVICallback = new VICallback(delegate
+            {
+                OnVIInterrupt?.Invoke();
+            });
             result = m64pCoreDoCommandVICallback(m64p_command.M64CMD_SET_VI_CALLBACK, 0, m64pVICallback);
-            m64pRenderCallback = new RenderCallback(FireRenderEvent);
+            m64pRenderCallback = new RenderCallback(delegate
+            {
+                OnRender?.Invoke();
+            });
             result = m64pCoreDoCommandRenderCallback(m64p_command.M64CMD_SET_RENDER_CALLBACK, 0, m64pRenderCallback);
 
             ExecuteEmulator();
-        }
-
-
-
-
-        /// <summary>
-        /// Starts executing the emulator asynchronously
-        /// Waits until the emulator booted up and than returns
-        /// </summary>
-        public void AsyncExecuteEmulator()
-        {
-            m64pEmulator.Start();
-
-            // Wait for the core to boot up
-            m64pStartupComplete.WaitOne();
         }
 
         /// <summary>
@@ -822,40 +817,7 @@ namespace M64RPFW.Models.Emulation.Core.API
 
 
 
-        #region Events
-
-
-        public event Action FrameFinished;
-        public event Action VInterrupt;
-        public event Action BeforeRender;
-
-        private void FireFrameFinishedEvent()
-        {
-            FrameFinished?.Invoke();
-            UpdateFramebuffer();
-            // refresh framebuffer on new frame
-            // TODO: is this sane and accounts for st load?
-        }
-
-        private void FireVIEvent()
-        {
-            if (VInterrupt != null)
-                VInterrupt();
-            m64pFrameComplete.Set();
-        }
-
-        private void FireRenderEvent()
-        {
-            if (BeforeRender != null)
-                BeforeRender();
-        }
-
-        private void CompletedFrameCallback()
-        {
-            m64pFrameComplete.Set();
-        }
-
-        #endregion
+        
 
         #region Other
         public void Dispose()
@@ -911,7 +873,7 @@ namespace M64RPFW.Models.Emulation.Core.API
             if (m64pCoreAttachPlugin(type, plugin.Handle) != m64p_error.M64ERR_SUCCESS)
             {
                 NativeLibrary.Free(plugin.Handle);
-                throw new PluginAttachException($"Plugin of type {type} failed to attached");
+                throw new PluginAttachException($"Plugin of type {type} failed to attach");
             }
 
             plugins.Add(type, plugin);
