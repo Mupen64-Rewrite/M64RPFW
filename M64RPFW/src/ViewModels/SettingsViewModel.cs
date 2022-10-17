@@ -55,7 +55,7 @@ namespace M64RPFW.UI.ViewModels
         }
 
         [RelayCommand]
-        private void SetCulture(string cultureString) => LocalizationManager.SetCulture(cultureString);
+        private void SetCulture(string cultureString) => generalDependencyContainer.LocalizationProvider.SetLocale(cultureString);
         [RelayCommand]
         private void SetTheme(string themeString) => generalDependencyContainer.ThemeManager.SetTheme(themeString);
 

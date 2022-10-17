@@ -53,7 +53,7 @@ namespace M64RPFW.UI.ViewModels
 
             if (!new ROMViewModel(path).IsValid)
             {
-                generalDependencyContainer.DialogProvider.ShowErrorDialog(Properties.Resources.InvalidROMError);
+                generalDependencyContainer.DialogProvider.ShowErrorDialog(generalDependencyContainer.LocalizationProvider.GetString("ROMInexistent"));
                 return;
             }
 
@@ -97,22 +97,22 @@ namespace M64RPFW.UI.ViewModels
         {
             // Oh yeah this doesnt suck at all
             List<string> missingPlugins = new();
-
-            bool coreLibraryExists = File.Exists(Properties.Settings.Default.CoreLibraryPath);
+            
+            bool coreLibraryExists = File.Exists(generalDependencyContainer.SettingsManager.GetSettings().CoreLibraryPath);
 
             if (!coreLibraryExists)
             {
-                generalDependencyContainer.DialogProvider.ShowErrorDialog(Properties.Resources.CoreLibraryNotFound);
+                generalDependencyContainer.DialogProvider.ShowErrorDialog(generalDependencyContainer.LocalizationProvider.GetString("CoreLibraryNotFound"));
             }
 
-            bool videoPluginExists = File.Exists(Properties.Settings.Default.VideoPluginPath);
-            bool audioPluginExists = File.Exists(Properties.Settings.Default.AudioPluginPath);
-            bool inputPluginExists = File.Exists(Properties.Settings.Default.InputPluginPath);
-            bool rspPluginExists = File.Exists(Properties.Settings.Default.RSPPluginPath);
-            if (!videoPluginExists) missingPlugins.Add(Properties.Resources.Video);
-            if (!audioPluginExists) missingPlugins.Add(Properties.Resources.Audio);
-            if (!inputPluginExists) missingPlugins.Add(Properties.Resources.Input);
-            if (!rspPluginExists) missingPlugins.Add(Properties.Resources.RSP);
+            bool videoPluginExists = File.Exists(generalDependencyContainer.SettingsManager.GetSettings().VideoPluginPath);
+            bool audioPluginExists = File.Exists(generalDependencyContainer.SettingsManager.GetSettings().AudioPluginPath);
+            bool inputPluginExists = File.Exists(generalDependencyContainer.SettingsManager.GetSettings().InputPluginPath);
+            bool rspPluginExists = File.Exists(generalDependencyContainer.SettingsManager.GetSettings().RSPPluginPath);
+            if (!videoPluginExists) missingPlugins.Add(generalDependencyContainer.LocalizationProvider.GetString("Video"));
+            if (!audioPluginExists) missingPlugins.Add(generalDependencyContainer.LocalizationProvider.GetString("Audio"));
+            if (!inputPluginExists) missingPlugins.Add(generalDependencyContainer.LocalizationProvider.GetString("Input"));
+            if (!rspPluginExists) missingPlugins.Add(generalDependencyContainer.LocalizationProvider.GetString("RSP"));
 
             if (!videoPluginExists || !audioPluginExists || !inputPluginExists || !rspPluginExists)
             {
@@ -142,27 +142,27 @@ namespace M64RPFW.UI.ViewModels
 
             Mupen64PlusConfig config = new();
 
-            config.CoreType.Value = Properties.Settings.Default.CoreType;
-            config.NoCompiledJump.Value = !Properties.Settings.Default.CompiledJump;
-            config.DisableExtraMemory.Value = !Properties.Settings.Default.ExtraMemory;
-            config.DelaySpecialInterrupt.Value = !Properties.Settings.Default.DelaySpecialInterrupt;
-            config.CyclesPerOp.Value = Properties.Settings.Default.CyclesPerOp;
-            config.DisableSpecialRecompilation.Value = !Properties.Settings.Default.SpecialRecompilation;
-            config.RandomizeInterrupt.Value = Properties.Settings.Default.RandomizeInterrupt;
+            config.CoreType.Value = generalDependencyContainer.SettingsManager.GetSettings().CoreType;
+            config.NoCompiledJump.Value = !generalDependencyContainer.SettingsManager.GetSettings().CompiledJump;
+            config.DisableExtraMemory.Value = !generalDependencyContainer.SettingsManager.GetSettings().ExtraMemory;
+            config.DelaySpecialInterrupt.Value = !generalDependencyContainer.SettingsManager.GetSettings().DelaySpecialInterrupt;
+            config.CyclesPerOp.Value = generalDependencyContainer.SettingsManager.GetSettings().CyclesPerOp;
+            config.DisableSpecialRecompilation.Value = !generalDependencyContainer.SettingsManager.GetSettings().SpecialRecompilation;
+            config.RandomizeInterrupt.Value = generalDependencyContainer.SettingsManager.GetSettings().RandomizeInterrupt;
 
             config.ScreenWidth.Value = 800;
             config.ScreenHeight.Value = 600;
-            config.VerticalSynchronization.Value = Properties.Settings.Default.VerticalSynchronization;
-            config.OnScreenDisplay.Value = Properties.Settings.Default.OnScreenDisplay;
+            config.VerticalSynchronization.Value = generalDependencyContainer.SettingsManager.GetSettings().VerticalSynchronization;
+            config.OnScreenDisplay.Value = generalDependencyContainer.SettingsManager.GetSettings().OnScreenDisplay;
 
             emulatorThread.Start(new Mupen64PlusLaunchParameters(File.ReadAllBytes(romPath),
                                                                  config,
-                                                                 Properties.Settings.Default.DefaultSlot,
-                                                                 Properties.Settings.Default.CoreLibraryPath,
-                                                                 Properties.Settings.Default.VideoPluginPath,
-                                                                 Properties.Settings.Default.AudioPluginPath,
-                                                                 Properties.Settings.Default.InputPluginPath,
-                                                                 Properties.Settings.Default.RSPPluginPath));
+                                                                 generalDependencyContainer.SettingsManager.GetSettings().DefaultSlot,
+                                                                 generalDependencyContainer.SettingsManager.GetSettings().CoreLibraryPath,
+                                                                 generalDependencyContainer.SettingsManager.GetSettings().VideoPluginPath,
+                                                                 generalDependencyContainer.SettingsManager.GetSettings().AudioPluginPath,
+                                                                 generalDependencyContainer.SettingsManager.GetSettings().InputPluginPath,
+                                                                 generalDependencyContainer.SettingsManager.GetSettings().RSPPluginPath));
 
             emulatorThreadBeginTime = DateTime.Now;
         }

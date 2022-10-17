@@ -15,7 +15,8 @@
         Title="{loc:Localization AppName}" 
         Width="800"
         Height="450"
-        UseLayoutRounding="True"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        ui:WindowHelper.UseModernWindowStyle="True"
         Closing="Window_Closing">
 
     <Window.Resources>
@@ -36,7 +37,7 @@
         HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid>
             <DockPanel LastChildFill="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <Menu IsMainMenu="True" Height="20" DockPanel.Dock="Top" VerticalAlignment="Stretch">
+                <Menu IsMainMenu="True" Height="40" DockPanel.Dock="Top" VerticalAlignment="Stretch">
                     <MenuItem Header="{loc:Localization File}">
                         <MenuItem Header="{loc:Localization LoadROM}" Command="{Binding EmulatorViewModel.LoadROMCommand, IsAsync=True}" IsEnabled="{Binding EmulatorViewModel.IsRunning, Converter={StaticResource InvertBooleanConverter}}"/>
                         <MenuItem Header="Recent ROMs" ItemsSource="{Binding RecentROMsViewModel.RecentROMs, UpdateSourceTrigger=PropertyChanged}" UsesItemContainerTemplate="True">
@@ -88,7 +89,7 @@
                     </MenuItem>
                 </Menu>
                 
-                <StatusBar Height="20" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Visibility="{Binding ElementName=ShowStatusbar_MenuItem, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" DockPanel.Dock="Bottom">
+                <StatusBar Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Visibility="{Binding ElementName=ShowStatusbar_MenuItem, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" DockPanel.Dock="Bottom">
                     <StackPanel Orientation="Horizontal" Margin="0 0 0 0">
                         <StackPanel.Resources>
                             <Style TargetType="Separator">

@@ -11,15 +11,16 @@
         xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
         xmlns:properties="clr-namespace:M64RPFW.Properties"
         xmlns:system="clr-namespace:System;assembly=mscorlib"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"
         Closing="Window_Closing"
-        WindowStartupLocation="CenterOwner"
-        Title="SettingsWindow" Height="450" Width="800">
-    <Window.Resources>
-        <Style TargetType="RadioButton">
-            <Setter Property="Margin" Value="0 2 0 2"/>
-        </Style>
-    </Window.Resources>
+        WindowStartupLocation="CenterScreen"
+        Title="SettingsWindow" 
+        Width="300"
+        Height="500" 
+        ResizeMode="NoResize"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        ui:WindowHelper.UseModernWindowStyle="True">
 
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -29,58 +30,61 @@
                 
                 <TabItem>
                     <TabItem.Header>
-                        <Viewbox StretchDirection="DownOnly">
-                            <StackPanel Orientation="Horizontal">
-                                <Rectangle Fill="Red" Width="48" Height="48"/>
-                                <TextBlock Text="{loc:Localization CPU}" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="28" Margin="10 0 0 0"/>
-                            </StackPanel>
-                        </Viewbox>
+                        <iconPacks:Material Kind="Chip" Width="30"/>
                     </TabItem.Header>
-                    <Grid Margin="20">
-                        <UniformGrid Columns="2">
-                            <Rectangle Fill="Red" Width="48" Height="48" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <RadioButton Content="{loc:Localization PureInterpreter}" IsChecked="{bindings:SettingsBinding CoreType, Converter={StaticResource IntegerEqualityToBooleanConverter}, ConverterParameter={ext:Int32 0}, Mode=OneWay}" Command="{Binding SetSettingsPropertyIntegerCommand}" CommandParameter="(CoreType, 0)" HorizontalAlignment="Stretch"/>
-                                <RadioButton Content="{loc:Localization CachedInterpreter}" IsChecked="{bindings:SettingsBinding CoreType, Converter={StaticResource IntegerEqualityToBooleanConverter}, ConverterParameter={ext:Int32 1}, Mode=OneWay}" Command="{Binding SetSettingsPropertyIntegerCommand}" CommandParameter="(CoreType, 1)" HorizontalAlignment="Stretch"/>
-                                <RadioButton Content="{loc:Localization DynamicRecompiler}" IsChecked="{bindings:SettingsBinding CoreType, Converter={StaticResource IntegerEqualityToBooleanConverter}, ConverterParameter={ext:Int32 2}, Mode=OneWay}" Command="{Binding SetSettingsPropertyIntegerCommand}" CommandParameter="(CoreType, 2)" HorizontalAlignment="Stretch"/>
+                    <GroupBox Header="{loc:Localization Core}" Margin="{StaticResource SettingsContentMargin}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Orientation="Vertical">
+                                <RadioButton GroupName="Test1" Content="{loc:Localization PureInterpreter}" IsChecked="{bindings:SettingsBinding CoreType, Converter={StaticResource IntegerEqualityToBooleanConverter}, ConverterParameter={ext:Int32 0}, Mode=OneWay}" Command="{Binding SetSettingsPropertyIntegerCommand}" CommandParameter="(CoreType, 0)"/>
+                                <RadioButton GroupName="Test1" Content="{loc:Localization CachedInterpreter}" IsChecked="{bindings:SettingsBinding CoreType, Converter={StaticResource IntegerEqualityToBooleanConverter}, ConverterParameter={ext:Int32 1}, Mode=OneWay}" Command="{Binding SetSettingsPropertyIntegerCommand}" CommandParameter="(CoreType, 1)"/>
+                                <RadioButton GroupName="Test1" Content="{loc:Localization DynamicRecompiler}" IsChecked="{bindings:SettingsBinding CoreType, Converter={StaticResource IntegerEqualityToBooleanConverter}, ConverterParameter={ext:Int32 2}, Mode=OneWay}" Command="{Binding SetSettingsPropertyIntegerCommand}" CommandParameter="(CoreType, 2)"/>
                             </StackPanel>
-                        </UniformGrid>
-                    </Grid>
+                        </Grid>
+                    </GroupBox>
                 </TabItem>
-                
+
                 <TabItem>
                     <TabItem.Header>
-                        <Viewbox StretchDirection="DownOnly">
-                            <StackPanel Orientation="Horizontal">
-                                <Rectangle Fill="Red" Width="48" Height="48"/>
-                                <TextBlock Text="{loc:Localization Language}" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="28" Margin="10 0 0 0"/>
-                            </StackPanel>
-                        </Viewbox>
+                        <iconPacks:Material Kind="Translate" Width="30"/>
                     </TabItem.Header>
-                    <Grid Margin="20">
-                        <StackPanel Margin="20">
-                            <RadioButton Content="English" Command="{Binding SetCultureCommand}" CommandParameter="en-US" IsChecked="{bindings:SettingsBinding Path=Culture, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=en-US, Mode=OneWay}" HorizontalAlignment="Stretch" />
-                            <RadioButton Content="Deutsch" Command="{Binding SetCultureCommand}" CommandParameter="de-DE" IsChecked="{bindings:SettingsBinding Path=Culture, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=de-DE, Mode=OneWay}" HorizontalAlignment="Stretch" />
-                        </StackPanel>
-                    </Grid>
+                    <GroupBox Header="{loc:Localization Language}" Margin="{StaticResource SettingsContentMargin}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Orientation="Vertical">
+
+                                <RadioButton Content="English" Command="{Binding SetCultureCommand}" CommandParameter="en-US" IsChecked="{bindings:SettingsBinding Path=Culture, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=en-US, Mode=OneWay}" />
+                                <RadioButton Content="Deutsch" Command="{Binding SetCultureCommand}" CommandParameter="de-DE" IsChecked="{bindings:SettingsBinding Path=Culture, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=de-DE, Mode=OneWay}" />
+                            </StackPanel>
+                        </Grid>
+                    </GroupBox>
                 </TabItem>
-                
+
                 <TabItem>
                     <TabItem.Header>
-                        <Viewbox StretchDirection="DownOnly">
-                            <StackPanel Orientation="Horizontal">
-                                <Rectangle Fill="Red" Width="48" Height="48"/>
-                                <TextBlock Text="{loc:Localization Theme}" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="28" Margin="10 0 0 0"/>
-                            </StackPanel>
-                        </Viewbox>
+                        <iconPacks:Material Kind="ThemeLightDark" Width="30"/>
                     </TabItem.Header>
-                    <Grid Margin="20">
-                        <StackPanel Margin="20">
-                            <RadioButton Content="{loc:Localization Light}" Command="{Binding SetThemeCommand}" CommandParameter="Light" IsChecked="{bindings:SettingsBinding Path=Theme, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}" HorizontalAlignment="Stretch" />
-                            <RadioButton Content="{loc:Localization Dark}" Command="{Binding SetThemeCommand}" CommandParameter="Dark" IsChecked="{bindings:SettingsBinding Path=Theme, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}" HorizontalAlignment="Stretch" />
-                        </StackPanel>
-                    </Grid>
+                    <GroupBox Header="{loc:Localization Theme}" Margin="{StaticResource SettingsContentMargin}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Orientation="Vertical">
+
+                                <RadioButton Content="{loc:Localization Light}" Command="{Binding SetThemeCommand}" CommandParameter="Light" IsChecked="{bindings:SettingsBinding Path=Theme, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}" />
+                                <RadioButton Content="{loc:Localization Dark}" Command="{Binding SetThemeCommand}" CommandParameter="Dark" IsChecked="{bindings:SettingsBinding Path=Theme, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}" />
+                            </StackPanel>
+                        </Grid>
+                    </GroupBox>
                 </TabItem>
+                
             </TabControl>
         </Grid>
     </Grid>

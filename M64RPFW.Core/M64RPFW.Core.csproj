@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Emulation\API\Mupen64PlusAPI.cs~RF6bdd57.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Emulation\Helpers\" />
   </ItemGroup>
 

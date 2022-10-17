@@ -9,7 +9,7 @@ namespace M64RPFW.src.Containers
 {
     internal class GeneralDependencyContainer
     {
-        public GeneralDependencyContainer(IDialogProvider dialogProvider, IFileDialogProvider fileDialogProvider, IRecentRomsProvider recentRomsProvider, IRomFileExtensionsConfigurationProvider romFileExtensionsConfigurationProvider, ISavestateBoundsConfigurationProvider savestateBoundsConfigurationProvider, IThemeManager themeManager, IWindowClosingProvider windowClosingProvider)
+        public GeneralDependencyContainer(IDialogProvider dialogProvider, IFileDialogProvider fileDialogProvider, IRecentRomsProvider recentRomsProvider, IRomFileExtensionsConfigurationProvider romFileExtensionsConfigurationProvider, ISavestateBoundsConfigurationProvider savestateBoundsConfigurationProvider, IThemeManager themeManager, IWindowClosingProvider windowClosingProvider, ISettingsProvider settingsManager, ILocalizationManager localizationProvider)
         {
             DialogProvider = dialogProvider;
             FileDialogProvider = fileDialogProvider;
@@ -18,6 +18,8 @@ namespace M64RPFW.src.Containers
             SavestateBoundsConfigurationProvider = savestateBoundsConfigurationProvider;
             ThemeManager = themeManager;
             WindowClosingProvider = windowClosingProvider;
+            SettingsManager = settingsManager;
+            LocalizationProvider = localizationProvider;
         }
 
         internal IDialogProvider DialogProvider { get; set; }
@@ -27,6 +29,8 @@ namespace M64RPFW.src.Containers
         internal ISavestateBoundsConfigurationProvider SavestateBoundsConfigurationProvider { get; set; }
         internal IThemeManager ThemeManager { get; set; }
         internal IWindowClosingProvider WindowClosingProvider { get; set; }
+        internal ISettingsProvider SettingsManager { get; set; }
+        internal ILocalizationManager LocalizationProvider { get; set; }
 
     }
 }

@@ -26,9 +26,7 @@ namespace M64RPFW.UI.ViewModels
         {
             this.generalDependencyContainer = generalDependencyContainer;
 
-            LocalizationManager.SetCulture(Properties.Settings.Default.Culture);
-
-            RecentROMsViewModel = new();
+            RecentROMsViewModel = new(generalDependencyContainer);
 
             generalDependencyContainer.RecentRomsProvider = RecentROMsViewModel;
 

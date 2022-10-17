@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using M64RPFW.src.Containers;
 using M64RPFW.src.Interfaces;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -8,6 +9,8 @@ namespace M64RPFW.UI.ViewModels
 {
     public partial class RecentROMsViewModel : ObservableObject, IRecentRomsProvider
     {
+        private readonly GeneralDependencyContainer generalDependencyContainer;
+
         [ObservableProperty]
         private ObservableCollection<ROMViewModel> recentROMs = new();
 
@@ -36,10 +39,11 @@ namespace M64RPFW.UI.ViewModels
         private void RegenerateRecentROMPathsSetting()
         {
             // recreate recent rom list in settings
-            Properties.Settings.Default.RecentROMPaths.Clear();
+
+            generalDependencyContainer.SettingsManager.GetSettings().RecentROMPaths.Clear();
             foreach (ROMViewModel item in RecentROMs)
-                Properties.Settings.Default.RecentROMPaths.Add(item.Path);
-            Properties.Settings.Default.Save();
+                generalDependencyContainer.SettingsManager.GetSettings().RecentROMPaths.Add(item.Path);
+            generalDependencyContainer.SettingsManager.GetSettings().Save();
         }
 
         public ObservableCollection<ROMViewModel> GetRecentRoms()
@@ -47,14 +51,16 @@ namespace M64RPFW.UI.ViewModels
             return RecentROMs;
         }
 
-        public RecentROMsViewModel()
+        internal RecentROMsViewModel(GeneralDependencyContainer generalDependencyContainer)
         {
-            if (Properties.Settings.Default.RecentROMPaths == null)
+            this.generalDependencyContainer = generalDependencyContainer;
+            
+            if (generalDependencyContainer.SettingsManager.GetSettings().RecentROMPaths == null)
             {
-                Properties.Settings.Default.RecentROMPaths = new();
+                generalDependencyContainer.SettingsManager.GetSettings().RecentROMPaths = new();
             }
 
-            foreach (string? recentROMPath in Properties.Settings.Default.RecentROMPaths)
+            foreach (string? recentROMPath in generalDependencyContainer.SettingsManager.GetSettings().RecentROMPaths)
             {
                 if (File.Exists(recentROMPath))
                     RecentROMs.Add(new(recentROMPath));

@@ -3,12 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:M64RPFW"
              xmlns:conv="clr-namespace:M64RPFW.UI.ViewModels.Converters"
+             xmlns:styling="clr-namespace:M64RPFW;assembly=M64RPFW.Styling"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
              StartupUri="src/Views/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <!--<materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="DeepPurple" SecondaryColor="DeepPurple" />-->
-                <!--<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />-->
+                <ui:ThemeResources RequestedTheme="Dark"/>
+                <ui:XamlControlsResources/>
+                <ResourceDictionary Source="pack://application:,,,/M64RPFW.Styling;component/Resources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <conv:StringEqualityToBooleanConverter x:Key="StringEqualityToBooleanConverter"/>
             <conv:KeyBindingToStringConverter x:Key="KeyBindingToStringConverter"/>

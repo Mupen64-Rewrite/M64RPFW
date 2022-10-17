@@ -1,22 +1,25 @@
-﻿using M64RPFW.src.Configurations;
+﻿using M64RPFW.Properties;
+using M64RPFW.src.Configurations;
 using M64RPFW.src.Containers;
 using M64RPFW.src.Interfaces;
 using M64RPFW.src.Themes;
 using M64RPFW.UI.ViewModels;
+using M64RPFW.UI.ViewModels.Extensions.Localization;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using ModernWpf;
 using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
 using System;
+using System.Globalization;
+using System.Resources;
 using System.Threading;
 using System.Windows;
-using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 
 namespace M64RPFW.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, IFileDialogProvider, IDialogProvider, IRomFileExtensionsConfigurationProvider, ISavestateBoundsConfigurationProvider, IThemeManager, IWindowClosingProvider
+    public partial class MainWindow : Window, IFileDialogProvider, IDialogProvider, IRomFileExtensionsConfigurationProvider, ISavestateBoundsConfigurationProvider, IThemeManager, IWindowClosingProvider, ILocalizationManager, ISettingsProvider
     {
         private readonly MainViewModel mainViewModel;
         private readonly GeneralDependencyContainer generalDependencyContainer;
@@ -30,6 +33,8 @@ namespace M64RPFW.Views
         {
             InitializeComponent();
 
+            (this as ILocalizationManager).SetLocale((string)(this as ISettingsProvider).GetSettings().Culture);
+
             generalDependencyContainer = new GeneralDependencyContainer(
                 this,
                 this,
@@ -37,6 +42,8 @@ namespace M64RPFW.Views
                 this,
                 this,
                 this,
+                this, 
+                this, 
                 this);
 
             mainViewModel = new(generalDependencyContainer);
@@ -55,7 +62,7 @@ namespace M64RPFW.Views
 
         private void Main_OpenGLControl_Render(TimeSpan obj)
         {
-            GL.ClearColor(1f, 0f, 0f, 1f);
+            GL.ClearColor(1f, 1f, 1f, 0f);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
 
@@ -89,19 +96,49 @@ namespace M64RPFW.Views
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                MessageBox.Show(message, Properties.Resources.Error);
+                MessageBox.Show(message, (this as ILocalizationManager).GetString("Error"));
             }));
         }
 
         Themes IThemeManager.GetTheme()
         {
-            return (Themes)Enum.Parse(typeof(Themes), Properties.Settings.Default.Theme);
+            return (Themes)Enum.Parse(typeof(Themes), (this as ISettingsProvider).GetSettings().Theme);
         }
 
         void IThemeManager.SetTheme(string themeName)
         {
+            if (themeName.Equals("Light"))
+            {
+                ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
+            }
+            else if (themeName.Equals("Dark"))
+            {
+                ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
+            }
             Properties.Settings.Default.Theme = themeName;
             Properties.Settings.Default.Save();
+        }
+
+        public void SetLocale(string localeKey)
+        {
+            CultureInfo culture = CultureInfo.GetCultureInfo(localeKey);
+            Thread.CurrentThread.CurrentCulture =
+            Thread.CurrentThread.CurrentUICulture =
+            LocalizationSource.Instance.CurrentCulture = culture;
+            Properties.Settings.Default.Culture = localeKey;
+            Properties.Settings.Default.Save();
+        }
+
+        
+
+        Settings ISettingsProvider.GetSettings()
+        {
+            return Properties.Settings.Default;
+        }
+
+        public string GetString(string key)
+        {
+            return Properties.Resources.ResourceManager.GetString(key) ?? "?";
         }
     }
 }

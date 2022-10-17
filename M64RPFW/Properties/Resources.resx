@@ -125,9 +125,6 @@
     <value>GUI</value>
     <comment>@Invariant</comment>
   </data>
-  <data name="SingularGameLimit" xml:space="preserve">
-    <value>Can't host multiple emulators simultaneously.</value>
-  </data>
   <data name="CannotStopUnstartedGame" xml:space="preserve">
     <value>Cannot terminate an inexistent emulator.</value>
   </data>
@@ -199,10 +196,6 @@
   <data name="Inspect" xml:space="preserve">
     <value>Inspect</value>
   </data>
-  <data name="SPECIAL_FallbackLocalizationText" xml:space="preserve">
-    <value>ERROR LOADING TEXT</value>
-    <comment>@Invariant</comment>
-  </data>
   <data name="Pause" xml:space="preserve">
     <value>Pause</value>
   </data>
@@ -269,5 +262,8 @@
   </data>
   <data name="Plugins" xml:space="preserve">
     <value>Plugins</value>
+  </data>
+  <data name="Core" xml:space="preserve">
+    <value>Core</value>
   </data>
 </root>
