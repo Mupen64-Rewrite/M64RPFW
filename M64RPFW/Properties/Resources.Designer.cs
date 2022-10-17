@@ -340,6 +340,15 @@ namespace M64RPFW.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Plugins.
+        /// </summary>
+        public static string Plugins {
+            get {
+                return ResourceManager.GetString("Plugins", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Plugin settings.
         /// </summary>
         public static string PluginSettings {
@@ -399,6 +408,15 @@ namespace M64RPFW.Properties {
         public static string ResetROM {
             get {
                 return ResourceManager.GetString("ResetROM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The ROM does not exist.
+        /// </summary>
+        public static string ROMInexistent {
+            get {
+                return ResourceManager.GetString("ROMInexistent", resourceCulture);
             }
         }
         

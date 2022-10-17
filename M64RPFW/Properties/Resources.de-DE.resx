@@ -117,151 +117,133 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Mupen64Plus" xml:space="preserve">
-    <value>Mupen64Plus</value>
-    <comment>@Invariant</comment>
-  </data>
-  <data name="GUI" xml:space="preserve">
-    <value>GUI</value>
-    <comment>@Invariant</comment>
-  </data>
   <data name="SingularGameLimit" xml:space="preserve">
-    <value>Can't host multiple emulators simultaneously.</value>
+    <value>Kann nicht mehrere Spielinstanzen gleichzeitig betreiben.</value>
   </data>
   <data name="CannotStopUnstartedGame" xml:space="preserve">
-    <value>Cannot terminate an inexistent emulator.</value>
+    <value>Es kann kein nichtexistenter Emulator beendet werden.</value>
   </data>
   <data name="File" xml:space="preserve">
-    <value>File</value>
+    <value>Datei</value>
   </data>
   <data name="LoadROM" xml:space="preserve">
-    <value>Load ROM</value>
+    <value>Lade ROM</value>
   </data>
   <data name="CloseROM" xml:space="preserve">
-    <value>Close ROM</value>
+    <value>Schließe ROM</value>
   </data>
   <data name="ResetROM" xml:space="preserve">
-    <value>Reset ROM</value>
+    <value>Starte ROM neu</value>
   </data>
   <data name="Exit" xml:space="preserve">
-    <value>Exit</value>
+    <value>Schließen</value>
   </data>
   <data name="Options" xml:space="preserve">
-    <value>Options</value>
+    <value>Einstellungen</value>
   </data>
   <data name="PluginSettings" xml:space="preserve">
-    <value>Plugin settings</value>
+    <value>Plugineinstellungen</value>
   </data>
   <data name="ShowToolbar" xml:space="preserve">
-    <value>Show Toolbar</value>
+    <value>Zeige Werkzeugleiste</value>
   </data>
   <data name="ShowStatusbar" xml:space="preserve">
-    <value>Show Statusbar</value>
+    <value>Zeige Statusleiste</value>
   </data>
   <data name="ProgramSettings" xml:space="preserve">
-    <value>Program settings</value>
+    <value>Programmeinstellungen</value>
   </data>
-  <data name="Video" xml:space="preserve">
-    <value>Video</value>
+  <data name="CoreLibraryNotFound" xml:space="preserve">
+    <value>Die Kernfunktionsbibliothek wurde nicht gefunden.</value>
+  </data>
+  <data name="PluginNotFoundTemplate" xml:space="preserve">
+    <value>Die {0}-Funktionsbibliothek wurde nicht gefunden.</value>
+  </data>
+  <data name="Input" xml:space="preserve">
+    <value>Eingabe</value>
   </data>
   <data name="Audio" xml:space="preserve">
     <value>Audio</value>
   </data>
-  <data name="Input" xml:space="preserve">
-    <value>Input</value>
-  </data>
-  <data name="RSP" xml:space="preserve">
-    <value>RSP</value>
-    <comment>@Invariant</comment>
-  </data>
-  <data name="OK" xml:space="preserve">
-    <value>OK</value>
-    <comment>@Invariant</comment>
-  </data>
-  <data name="CoreLibraryNotFound" xml:space="preserve">
-    <value>The core library was not found.</value>
-  </data>
-  <data name="PluginNotFoundTemplate" xml:space="preserve">
-    <value>The {0} plugin library was not found.</value>
+  <data name="Video" xml:space="preserve">
+    <value>Grafik</value>
   </data>
   <data name="Error" xml:space="preserve">
-    <value>Error</value>
+    <value>Fehler</value>
   </data>
   <data name="PluginNotFoundSeries" xml:space="preserve">
-    <value>The following plugins are missing: {0}.</value>
+    <value>Die folgenden Plug-ins fehlen: {0}.</value>
   </data>
   <data name="Clear" xml:space="preserve">
-    <value>Clear</value>
-  </data>
-  <data name="Remove" xml:space="preserve">
-    <value>Remove</value>
+    <value>Löschen</value>
   </data>
   <data name="Inspect" xml:space="preserve">
-    <value>Inspect</value>
+    <value>Inspizieren</value>
   </data>
-  <data name="SPECIAL_FallbackLocalizationText" xml:space="preserve">
-    <value>ERROR LOADING TEXT</value>
-    <comment>@Invariant</comment>
-  </data>
-  <data name="Pause" xml:space="preserve">
-    <value>Pause</value>
+  <data name="Remove" xml:space="preserve">
+    <value>Entfernen</value>
   </data>
   <data name="FrameAdvance" xml:space="preserve">
-    <value>Frame Advance</value>
+    <value>Bild voranschreiten</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Pausieren</value>
   </data>
   <data name="PureInterpreter" xml:space="preserve">
-    <value>Pure Interpreter</value>
-  </data>
-  <data name="CachedInterpreter" xml:space="preserve">
-    <value>Cached Interpreter</value>
+    <value>Einfacher Interpreter</value>
   </data>
   <data name="DynamicRecompiler" xml:space="preserve">
-    <value>Dynamic Recompiler</value>
+    <value>Dynamischer Recompiler</value>
+  </data>
+  <data name="CachedInterpreter" xml:space="preserve">
+    <value>Gepufferter Interpretierer</value>
   </data>
   <data name="Dark" xml:space="preserve">
-    <value>Dark</value>
+    <value>Dunkel</value>
   </data>
   <data name="Light" xml:space="preserve">
-    <value>Light</value>
+    <value>Hell</value>
   </data>
   <data name="CPU" xml:space="preserve">
     <value>CPU</value>
   </data>
   <data name="Language" xml:space="preserve">
-    <value>Language</value>
+    <value>Sprache</value>
   </data>
   <data name="Theme" xml:space="preserve">
-    <value>Theme</value>
+    <value>Farbschema</value>
   </data>
   <data name="BigEndian" xml:space="preserve">
-    <value>Big Endian</value>
+    <value>Big-Endian</value>
   </data>
   <data name="PrimaryCRC" xml:space="preserve">
-    <value>Primary CRC</value>
+    <value>Primärer CRC</value>
   </data>
   <data name="SecondaryCRC" xml:space="preserve">
-    <value>Secondary CRC</value>
+    <value>Sekundärer CRC</value>
   </data>
   <data name="InternalName" xml:space="preserve">
-    <value>Internal Name</value>
+    <value>Interner Name</value>
   </data>
   <data name="MediaFormat" xml:space="preserve">
-    <value>Media Format</value>
+    <value>Medienformat</value>
   </data>
   <data name="CountryCode" xml:space="preserve">
-    <value>Country Code</value>
+    <value>Landescode</value>
   </data>
   <data name="Version" xml:space="preserve">
     <value>Version</value>
   </data>
   <data name="InvalidROMError" xml:space="preserve">
-    <value>The provided ROM is invalid</value>
+    <value>Der ROM ist ungültig</value>
   </data>
   <data name="RawData" xml:space="preserve">
-    <value>Raw Data</value>
+    <value>Rohdaten</value>
   </data>
-  <data name="AppName" xml:space="preserve">
-    <value>M64RPFW</value>
-    <comment>@Invariant</comment>
+  <data name="ROMInexistent" xml:space="preserve">
+    <value>Der ROM existiert nicht</value>
+  </data>
+  <data name="Plugins" xml:space="preserve">
+    <value>Plugins</value>
   </data>
 </root>
