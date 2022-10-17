@@ -13,7 +13,7 @@ namespace M64RPFW.Models.Emulation.Core.API
 {
     public class Mupen64PlusAPI : IDisposable
     {
-        public static Mupen64PlusAPI Instance;
+        public static Mupen64PlusAPI Instance { get; private set; }
 
         #region P/Invoke
 
@@ -401,20 +401,27 @@ namespace M64RPFW.Models.Emulation.Core.API
 
         #endregion
 
+        #region Private Fields
+
         private bool disposed = false;
         private ManualResetEvent m64pStartupComplete = new(false);
         private Task m64pEmulator;
         private volatile bool emulator_running;
-        public bool IsEmulatorRunning => emulator_running;
+        private IntPtr coreDll;
 
+        #endregion
+
+        #region Properties
+        public bool IsEmulatorRunning => emulator_running;
         public static int[] FrameBuffer { get; private set; }
         public static int BufferWidth { get; private set; }
         public static int BufferHeight { get; private set; }
-        public IntPtr CoreDll { get; private set; }
 
+        #endregion
 
-        public Mupen64PlusAPI()
+        public static void Create()
         {
+            Mupen64PlusAPI.Instance = new();
         }
 
         private void GetScreenDimensions(out int width, out int height)
@@ -508,14 +515,14 @@ namespace M64RPFW.Models.Emulation.Core.API
                 SetSetting((Mupen64PlusConfigEntry)item.GetValue(config));
             }
 
-            SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "ScreenUpdateSetting", 4));
-            SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "Mipmapping", 2));
-            SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "OpenGLDepthBufferSetting", 16));
-            SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "AccurateTextureMapping", true));
-            SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "UseDefaultHacks", true));
-            SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "ShowFPS", true));
-            SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "VIWidth", -1));
-            SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "VIHeight", -1));
+            //SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "ScreenUpdateSetting", 4));
+            //SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "Mipmapping", 2));
+            //SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "OpenGLDepthBufferSetting", 16));
+            //SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "AccurateTextureMapping", true));
+            //SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "UseDefaultHacks", true));
+            //SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "ShowFPS", true));
+            //SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "VIWidth", 800));
+            //SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "VIHeight", 600));
 
             m64pConfigSaveFile();
         }
@@ -529,19 +536,21 @@ namespace M64RPFW.Models.Emulation.Core.API
 
             disposed = false;
 
-            CoreDll = NativeLibrary.Load(launchParameters.CoreLibraryPath);
+            coreDll = NativeLibrary.Load(launchParameters.CoreLibraryPath);
 
             ConnectFunctionPointers();
 
             m64p_error result = m64pCoreStartup(
-                0x20001,    // API Version
-                "Config/", // Make sure this path is set, Default ""
-                "",         // Data Path ""
-                "Core",     // Context 
-                null,       // DebugCallback 
-                "",         // Context2 
-                IntPtr.Zero // StateCallback
+                0x20001,   
+                "Config/", 
+                "",        
+                "Core",    
+                null,      
+                "",        
+                IntPtr.Zero
             );
+
+            
 
             result = m64pCoreDoCommandPtr(m64p_command.M64CMD_STATE_SET_SLOT, launchParameters.InitialSlot, IntPtr.Zero);
 
@@ -568,16 +577,25 @@ namespace M64RPFW.Models.Emulation.Core.API
                 UpdateFramebuffer();
             });
             result = m64pCoreDoCommandFrameCallback(m64p_command.M64CMD_SET_FRAME_CALLBACK, 0, m64pFrameCallback);
+
             m64pVICallback = new VICallback(delegate
             {
                 OnVIInterrupt?.Invoke();
             });
             result = m64pCoreDoCommandVICallback(m64p_command.M64CMD_SET_VI_CALLBACK, 0, m64pVICallback);
+
             m64pRenderCallback = new RenderCallback(delegate
             {
                 OnRender?.Invoke();
             });
             result = m64pCoreDoCommandRenderCallback(m64p_command.M64CMD_SET_RENDER_CALLBACK, 0, m64pRenderCallback);
+
+            int enc = ((int)(launchParameters.Config.ScreenWidth.Value) << 16) + (int)(launchParameters.Config.ScreenHeight.Value);
+            result = m64pCoreDoCommandCoreStateSet(
+                    m64p_command.M64CMD_CORE_STATE_SET,
+                    m64p_core_param.M64CORE_VIDEO_SIZE,
+                    ref enc
+                );
 
             ExecuteEmulator();
         }
@@ -781,37 +799,37 @@ namespace M64RPFW.Models.Emulation.Core.API
         /// </summary>
         private void ConnectFunctionPointers()
         {
-            m64pCoreStartup = (CoreStartup)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "CoreStartup"), typeof(CoreStartup));
-            m64pCoreShutdown = (CoreShutdown)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "CoreShutdown"), typeof(CoreShutdown));
-            m64pCoreDoCommandByteArray = (CoreDoCommandByteArray)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "CoreDoCommand"), typeof(CoreDoCommandByteArray));
-            m64pCoreDoCommandPtr = (CoreDoCommandPtr)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "CoreDoCommand"), typeof(CoreDoCommandPtr));
+            m64pCoreStartup = (CoreStartup)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreStartup"), typeof(CoreStartup));
+            m64pCoreShutdown = (CoreShutdown)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreShutdown"), typeof(CoreShutdown));
+            m64pCoreDoCommandByteArray = (CoreDoCommandByteArray)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDoCommand"), typeof(CoreDoCommandByteArray));
+            m64pCoreDoCommandPtr = (CoreDoCommandPtr)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDoCommand"), typeof(CoreDoCommandPtr));
             // Custom
-            m64pCoreDoCommandRefPtr = (CoreDoCommandRefPtr)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "CoreDoCommand"), typeof(CoreDoCommandRefPtr));
-            m64pCoreDoCommandStr = (CoreDoCommandStr)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "CoreDoCommand"), typeof(CoreDoCommandStr));
-            m64pCoreDoCommandROMHeader = (CoreDoCommandROMHeader)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "CoreDoCommand"), typeof(CoreDoCommandROMHeader));
-            m64pCoreDoCommandROMSettings = (CoreDoCommandROMSettings)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "CoreDoCommand"), typeof(CoreDoCommandROMSettings));
-            m64pCoreDoCommandCoreStateSet = (CoreDoCommandCoreStateSet)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "CoreDoCommand"), typeof(CoreDoCommandCoreStateSet));
-            m64pCoreDoCommandCoreStateVideoMode = (CoreDoCommandCoreStateSetVideoMode)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "CoreDoCommand"), typeof(CoreDoCommandCoreStateSetVideoMode));
-            m64pCoreDoCommandCoreStateSetRef = (CoreDoCommandCoreStateSetRef)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "CoreDoCommand"), typeof(CoreDoCommandCoreStateSetRef));
-            m64pCoreDoCommandCoreStateQuery = (CoreDoCommandCoreStateQuery)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "CoreDoCommand"), typeof(CoreDoCommandCoreStateQuery));
-            m64pConfigSetDefaultFloat = (ConfigSetDefaultFloat)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "ConfigSetDefaultFloat"), typeof(ConfigSetDefaultFloat));
-            m64pConfigSetDefaultString = (ConfigSetDefaultString)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "ConfigSetDefaultString"), typeof(ConfigSetDefaultString));
-            m64pConfigSaveFile = (ConfigSaveFile)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "ConfigSaveFile"), typeof(ConfigSaveFile));
-            m64pCoreAddCheat = (CoreAddCheat)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "CoreAddCheat"), typeof(CoreAddCheat));
+            m64pCoreDoCommandRefPtr = (CoreDoCommandRefPtr)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDoCommand"), typeof(CoreDoCommandRefPtr));
+            m64pCoreDoCommandStr = (CoreDoCommandStr)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDoCommand"), typeof(CoreDoCommandStr));
+            m64pCoreDoCommandROMHeader = (CoreDoCommandROMHeader)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDoCommand"), typeof(CoreDoCommandROMHeader));
+            m64pCoreDoCommandROMSettings = (CoreDoCommandROMSettings)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDoCommand"), typeof(CoreDoCommandROMSettings));
+            m64pCoreDoCommandCoreStateSet = (CoreDoCommandCoreStateSet)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDoCommand"), typeof(CoreDoCommandCoreStateSet));
+            m64pCoreDoCommandCoreStateVideoMode = (CoreDoCommandCoreStateSetVideoMode)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDoCommand"), typeof(CoreDoCommandCoreStateSetVideoMode));
+            m64pCoreDoCommandCoreStateSetRef = (CoreDoCommandCoreStateSetRef)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDoCommand"), typeof(CoreDoCommandCoreStateSetRef));
+            m64pCoreDoCommandCoreStateQuery = (CoreDoCommandCoreStateQuery)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDoCommand"), typeof(CoreDoCommandCoreStateQuery));
+            m64pConfigSetDefaultFloat = (ConfigSetDefaultFloat)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "ConfigSetDefaultFloat"), typeof(ConfigSetDefaultFloat));
+            m64pConfigSetDefaultString = (ConfigSetDefaultString)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "ConfigSetDefaultString"), typeof(ConfigSetDefaultString));
+            m64pConfigSaveFile = (ConfigSaveFile)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "ConfigSaveFile"), typeof(ConfigSaveFile));
+            m64pCoreAddCheat = (CoreAddCheat)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreAddCheat"), typeof(CoreAddCheat));
             // End Custom
-            m64pCoreDoCommandRefInt = (CoreDoCommandRefInt)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "CoreDoCommand"), typeof(CoreDoCommandRefInt));
-            m64pCoreDoCommandFrameCallback = (CoreDoCommandFrameCallback)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "CoreDoCommand"), typeof(CoreDoCommandFrameCallback));
-            m64pCoreDoCommandVICallback = (CoreDoCommandVICallback)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "CoreDoCommand"), typeof(CoreDoCommandVICallback));
-            m64pCoreDoCommandRenderCallback = (CoreDoCommandRenderCallback)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "CoreDoCommand"), typeof(CoreDoCommandRenderCallback));
-            m64pCoreAttachPlugin = (CoreAttachPlugin)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "CoreAttachPlugin"), typeof(CoreAttachPlugin));
-            m64pCoreDetachPlugin = (CoreDetachPlugin)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "CoreDetachPlugin"), typeof(CoreDetachPlugin));
-            m64pConfigOpenSection = (ConfigOpenSection)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "ConfigOpenSection"), typeof(ConfigOpenSection));
-            m64pConfigSetParameterStr = (ConfigSetParameterStr)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "ConfigSetParameter"), typeof(ConfigSetParameterStr));
-            m64pConfigSetParameterInt = (ConfigSetParameterInt)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "ConfigSetParameter"), typeof(ConfigSetParameterInt));
-            m64pConfigSetParameterBool = (ConfigSetParameterBool)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "ConfigSetParameter"), typeof(ConfigSetParameterBool));
+            m64pCoreDoCommandRefInt = (CoreDoCommandRefInt)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDoCommand"), typeof(CoreDoCommandRefInt));
+            m64pCoreDoCommandFrameCallback = (CoreDoCommandFrameCallback)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDoCommand"), typeof(CoreDoCommandFrameCallback));
+            m64pCoreDoCommandVICallback = (CoreDoCommandVICallback)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDoCommand"), typeof(CoreDoCommandVICallback));
+            m64pCoreDoCommandRenderCallback = (CoreDoCommandRenderCallback)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDoCommand"), typeof(CoreDoCommandRenderCallback));
+            m64pCoreAttachPlugin = (CoreAttachPlugin)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreAttachPlugin"), typeof(CoreAttachPlugin));
+            m64pCoreDetachPlugin = (CoreDetachPlugin)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDetachPlugin"), typeof(CoreDetachPlugin));
+            m64pConfigOpenSection = (ConfigOpenSection)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "ConfigOpenSection"), typeof(ConfigOpenSection));
+            m64pConfigSetParameterStr = (ConfigSetParameterStr)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "ConfigSetParameter"), typeof(ConfigSetParameterStr));
+            m64pConfigSetParameterInt = (ConfigSetParameterInt)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "ConfigSetParameter"), typeof(ConfigSetParameterInt));
+            m64pConfigSetParameterBool = (ConfigSetParameterBool)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "ConfigSetParameter"), typeof(ConfigSetParameterBool));
 
-            m64pConfigSetPlugins = (ConfigSetPlugins)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "ConfigSetParameter"), typeof(ConfigSetPlugins));
-            m64pDebugMemGetPointer = (DebugMemGetPointer)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(CoreDll, "DebugMemGetPointer"), typeof(DebugMemGetPointer));
+            m64pConfigSetPlugins = (ConfigSetPlugins)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "ConfigSetParameter"), typeof(ConfigSetPlugins));
+            m64pDebugMemGetPointer = (DebugMemGetPointer)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "DebugMemGetPointer"), typeof(DebugMemGetPointer));
 
         }
 
@@ -841,7 +859,7 @@ namespace M64RPFW.Models.Emulation.Core.API
 
                 m64pCoreShutdown();
 
-                NativeLibrary.Free(CoreDll);
+                NativeLibrary.Free(coreDll);
 
                 disposed = true;
             }
@@ -868,7 +886,7 @@ namespace M64RPFW.Models.Emulation.Core.API
 
             plugin.StartupDelegate = (PluginStartup)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(plugin.Handle, "PluginStartup"), typeof(PluginStartup));
             plugin.ShutdownDelegate = (PluginShutdown)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(plugin.Handle, "PluginShutdown"), typeof(PluginShutdown));
-            plugin.StartupDelegate(CoreDll, null, null);
+            plugin.StartupDelegate(coreDll, null, null);
 
             if (m64pCoreAttachPlugin(type, plugin.Handle) != m64p_error.M64ERR_SUCCESS)
             {

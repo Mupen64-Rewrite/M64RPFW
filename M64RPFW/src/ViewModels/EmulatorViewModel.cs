@@ -171,7 +171,7 @@ namespace M64RPFW.UI.ViewModels
         {
             Mupen64PlusLaunchParameters mupen64PlusLaunchParameters = (Mupen64PlusLaunchParameters)@params;
 
-            Mupen64PlusAPI.Instance = new();
+            Mupen64PlusAPI.Create();
 
             int frame = 0;
             Mupen64PlusAPI.Instance.OnFrameFinished += delegate

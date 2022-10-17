@@ -36,7 +36,7 @@
         HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid>
             <DockPanel LastChildFill="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <Menu IsMainMenu="True" Height="48" DockPanel.Dock="Top" VerticalAlignment="Stretch">
+                <Menu IsMainMenu="True" Height="20" DockPanel.Dock="Top" VerticalAlignment="Stretch">
                     <MenuItem Header="{loc:Localization File}">
                         <MenuItem Header="{loc:Localization LoadROM}" Command="{Binding EmulatorViewModel.LoadROMCommand, IsAsync=True}" IsEnabled="{Binding EmulatorViewModel.IsRunning, Converter={StaticResource InvertBooleanConverter}}"/>
                         <MenuItem Header="Recent ROMs" ItemsSource="{Binding RecentROMsViewModel.RecentROMs, UpdateSourceTrigger=PropertyChanged}" UsesItemContainerTemplate="True">
@@ -88,8 +88,8 @@
                     </MenuItem>
                 </Menu>
                 
-                <StatusBar HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Visibility="{Binding ElementName=ShowStatusbar_MenuItem, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" DockPanel.Dock="Bottom">
-                    <StackPanel Orientation="Horizontal" Margin="0 5 0 5">
+                <StatusBar Height="20" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Visibility="{Binding ElementName=ShowStatusbar_MenuItem, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" DockPanel.Dock="Bottom">
+                    <StackPanel Orientation="Horizontal" Margin="0 0 0 0">
                         <StackPanel.Resources>
                             <Style TargetType="Separator">
                                 <Setter Property="LayoutTransform" Value="{StaticResource VerticalRotateTransform}"/>
