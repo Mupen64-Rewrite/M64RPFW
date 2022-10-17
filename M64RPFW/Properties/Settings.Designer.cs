@@ -13,7 +13,7 @@ namespace M64RPFW.Properties {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.3.0.0")]
-    public sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
         
@@ -145,7 +145,7 @@ namespace M64RPFW.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("mupen64plus-video-rice.dll")]
+        [global::System.Configuration.DefaultSettingValueAttribute("m64p/mupen64plus-video-glide64mk2.dll")]
         public string VideoPluginPath {
             get {
                 return ((string)(this["VideoPluginPath"]));
@@ -157,7 +157,7 @@ namespace M64RPFW.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("mupen64plus-audio-sdl.dll")]
+        [global::System.Configuration.DefaultSettingValueAttribute("m64p/mupen64plus-audio-sdl.dll")]
         public string AudioPluginPath {
             get {
                 return ((string)(this["AudioPluginPath"]));
@@ -169,7 +169,7 @@ namespace M64RPFW.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("mupen64plus-input-sdl.dll")]
+        [global::System.Configuration.DefaultSettingValueAttribute("m64p/mupen64plus-input-sdl.dll")]
         public string InputPluginPath {
             get {
                 return ((string)(this["InputPluginPath"]));
@@ -181,7 +181,7 @@ namespace M64RPFW.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("mupen64plus-rsp-hle.dll")]
+        [global::System.Configuration.DefaultSettingValueAttribute("m64p/mupen64plus-rsp-hle.dll")]
         public string RSPPluginPath {
             get {
                 return ((string)(this["RSPPluginPath"]));
@@ -240,7 +240,7 @@ namespace M64RPFW.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("mupen64plus.dll")]
+        [global::System.Configuration.DefaultSettingValueAttribute("m64p/mupen64plus.dll")]
         public string CoreLibraryPath {
             get {
                 return ((string)(this["CoreLibraryPath"]));

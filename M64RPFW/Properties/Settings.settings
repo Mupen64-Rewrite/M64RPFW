@@ -33,16 +33,16 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="VideoPluginPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">mupen64plus-video-rice.dll</Value>
+      <Value Profile="(Default)">m64p/mupen64plus-video-glide64mk2.dll</Value>
     </Setting>
     <Setting Name="AudioPluginPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">mupen64plus-audio-sdl.dll</Value>
+      <Value Profile="(Default)">m64p/mupen64plus-audio-sdl.dll</Value>
     </Setting>
     <Setting Name="InputPluginPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">mupen64plus-input-sdl.dll</Value>
+      <Value Profile="(Default)">m64p/mupen64plus-input-sdl.dll</Value>
     </Setting>
     <Setting Name="RSPPluginPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">mupen64plus-rsp-hle.dll</Value>
+      <Value Profile="(Default)">m64p/mupen64plus-rsp-hle.dll</Value>
     </Setting>
     <Setting Name="Culture" Type="System.String" Scope="User">
       <Value Profile="(Default)">en-US</Value>
@@ -57,7 +57,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="CoreLibraryPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">mupen64plus.dll</Value>
+      <Value Profile="(Default)">m64p/mupen64plus.dll</Value>
     </Setting>
     <Setting Name="DefaultSlot" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
