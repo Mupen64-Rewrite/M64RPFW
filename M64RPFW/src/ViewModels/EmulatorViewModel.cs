@@ -1,16 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using M64RPFW.Models.Emulation.Core.API;
-using M64RPFW.Models.Helpers;
 using M64RPFW.src.Containers;
-using M64RPFW.src.Interfaces;
 using M64RPFW.src.Models.Emulation.Core.API;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using System.Windows;
 
 namespace M64RPFW.UI.ViewModels
 {
@@ -39,7 +36,7 @@ namespace M64RPFW.UI.ViewModels
         [RelayCommand]
         private void LoadROM()
         {
-            var (ReturnedPath, Cancelled) = generalDependencyContainer.FileDialogProvider.OpenFileDialogPrompt(generalDependencyContainer.RomFileExtensionsConfigurationProvider.ROMFileExtensionsConfiguration.FileExtensions);
+            (string ReturnedPath, bool Cancelled) = generalDependencyContainer.FileDialogProvider.OpenFileDialogPrompt(generalDependencyContainer.RomFileExtensionsConfigurationProvider.ROMFileExtensionsConfiguration.FileExtensions);
             if (Cancelled) return;
             LoadROMFromPath(ReturnedPath);
         }
@@ -98,7 +95,7 @@ namespace M64RPFW.UI.ViewModels
             // TODO: clean this up
 
             List<string> missingPlugins = new();
-            
+
             bool coreLibraryExists = File.Exists(generalDependencyContainer.SettingsManager.GetSettings().CoreLibraryPath);
 
             if (!Path.GetExtension(generalDependencyContainer.SettingsManager.GetSettings().CoreLibraryPath).Equals(".dll", StringComparison.InvariantCultureIgnoreCase))
@@ -120,7 +117,7 @@ namespace M64RPFW.UI.ViewModels
             if (!inputPluginExists) missingPlugins.Add(generalDependencyContainer.LocalizationProvider.GetString("Input"));
             if (!rspPluginExists) missingPlugins.Add(generalDependencyContainer.LocalizationProvider.GetString("RSP"));
 
-            if (!videoPluginExists || !audioPluginExists || !inputPluginExists || !rspPluginExists && coreLibraryExists)
+            if (!videoPluginExists || !audioPluginExists || !inputPluginExists || (!rspPluginExists && coreLibraryExists))
             {
                 generalDependencyContainer.DialogProvider.ShowErrorDialog(string.Format(Properties.Resources.PluginNotFoundSeries, string.Join(", ", missingPlugins)));
             }
@@ -140,7 +137,6 @@ namespace M64RPFW.UI.ViewModels
 
         private void Start(string romPath)
         {
-            Size windowSize = new(800, 600);
             emulatorThread = new(new ParameterizedThreadStart(EmulatorThreadProc))
             {
                 Name = "tEmulatorThread"
@@ -180,30 +176,34 @@ namespace M64RPFW.UI.ViewModels
             Mupen64PlusAPI.Create();
 
             int frame = 0;
-            Mupen64PlusAPI.Instance.OnFrameFinished += delegate
+
+            Mupen64PlusAPI.Instance.OnFrameBufferCreated += delegate
             {
-                Debug.Print($"Frame {frame++}");
+                generalDependencyContainer.DrawingSurfaceProvider.Create(Mupen64PlusAPI.Instance.BufferWidth, Mupen64PlusAPI.Instance.BufferHeight);
+            };
+            Mupen64PlusAPI.Instance.OnFrameBufferUpdate += delegate
+            {
+                generalDependencyContainer.DrawingSurfaceProvider.Draw(Mupen64PlusAPI.Instance.FrameBuffer, Mupen64PlusAPI.Instance.BufferWidth, Mupen64PlusAPI.Instance.BufferHeight);
             };
 
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+            generalDependencyContainer.UIThreadDispatcherProvider.Execute(delegate
             {
                 IsRunning = true;
-            }));
-
+            });
 
             Mupen64PlusAPI.Instance.Launch(mupen64PlusLaunchParameters);
 
             Mupen64PlusAPI.Instance.Dispose();
 
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+            generalDependencyContainer.UIThreadDispatcherProvider.Execute(delegate
             {
                 IsRunning = false;
-            }));
+            });
 
 
             emulatorThreadEndTime = DateTime.Now;
 
-            Debug.Print($"Emulator thread exited after {(emulatorThreadEndTime - emulatorThreadBeginTime)}");
+            Debug.Print($"Emulator thread exited after {emulatorThreadEndTime - emulatorThreadBeginTime}");
         }
 
         private void Stop()

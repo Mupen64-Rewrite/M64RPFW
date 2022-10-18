@@ -1,13 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using M64RPFW.src.Containers;
-using M64RPFW.UI.ViewModels.Extensions.Localization;
-using M64RPFW.UI.Views;
-using M64RPFW.UI.Views.Plugins;
 using M64RPFW.ViewModels;
 using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Input;
 
 namespace M64RPFW.UI.ViewModels
 {

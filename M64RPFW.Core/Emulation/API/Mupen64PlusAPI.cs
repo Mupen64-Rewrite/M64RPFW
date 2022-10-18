@@ -399,6 +399,9 @@ namespace M64RPFW.Models.Emulation.Core.API
         public event Action OnVIInterrupt;
         public event Action OnRender;
 
+        public event Action OnFrameBufferCreated;
+        public event Action OnFrameBufferUpdate;
+
         #endregion
 
         #region Private Fields
@@ -413,9 +416,10 @@ namespace M64RPFW.Models.Emulation.Core.API
 
         #region Properties
         public bool IsEmulatorRunning => emulator_running;
-        public static int[] FrameBuffer { get; private set; }
-        public static int BufferWidth { get; private set; }
-        public static int BufferHeight { get; private set; }
+        public bool IsFrameBufferInitialized => FrameBuffer != null && BufferWidth != 0 && BufferHeight != 0;
+        public int[] FrameBuffer { get; private set; }
+        public int BufferWidth { get; private set; }
+        public int BufferHeight { get; private set; }
 
         #endregion
 
@@ -432,22 +436,30 @@ namespace M64RPFW.Models.Emulation.Core.API
             height = h;
         }
 
+        private void AllocateFrameBuffer(int width, int height)
+        {
+            BufferWidth = width;
+            BufferHeight = height;
+            FrameBuffer = new int[BufferWidth * BufferHeight];
+
+            if (IsFrameBufferInitialized) // sometimes it randomly returns 0,0
+            {
+                OnFrameBufferCreated?.Invoke();
+            }
+        }
+
         private void UpdateFramebuffer()
         {
             GetScreenDimensions(out int newWidth, out int newHeight);
             if (newWidth != BufferWidth || newHeight != BufferHeight)
             {
-                BufferWidth = newWidth;
-                BufferHeight = newHeight;
-                FrameBuffer = new int[BufferWidth * BufferHeight];
+                AllocateFrameBuffer(newWidth, newHeight);
             }
 
             if (FrameBuffer == null)
             {
-                // HACK: i dont know
-                BufferWidth = 2;
-                BufferHeight = 2;
-                FrameBuffer = new int[BufferWidth * BufferHeight];
+                // ??? something's wrong
+                AllocateFrameBuffer(2, 2);
             }
 
             int[] frameBuffer = FrameBuffer;
@@ -515,15 +527,6 @@ namespace M64RPFW.Models.Emulation.Core.API
                 SetSetting((Mupen64PlusConfigEntry)item.GetValue(config));
             }
 
-            //SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "ScreenUpdateSetting", 4));
-            //SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "Mipmapping", 2));
-            //SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "OpenGLDepthBufferSetting", 16));
-            //SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "AccurateTextureMapping", true));
-            //SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "UseDefaultHacks", true));
-            //SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "ShowFPS", true));
-            //SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "VIWidth", 800));
-            //SetSetting(new Mupen64PlusConfigEntry("Video-Rice", "VIHeight", 600));
-
             m64pConfigSaveFile();
         }
 
@@ -541,16 +544,16 @@ namespace M64RPFW.Models.Emulation.Core.API
             ConnectFunctionPointers();
 
             m64p_error result = m64pCoreStartup(
-                0x20001,   
-                "Config/", 
-                "",        
-                "Core",    
-                null,      
-                "",        
+                0x20001,
+                "Config/",
+                "",
+                "Core",
+                null,
+                "",
                 IntPtr.Zero
             );
 
-            
+
 
             result = m64pCoreDoCommandPtr(m64p_command.M64CMD_STATE_SET_SLOT, launchParameters.InitialSlot, IntPtr.Zero);
 
@@ -573,8 +576,12 @@ namespace M64RPFW.Models.Emulation.Core.API
 
             m64pFrameCallback = new FrameCallback(delegate
             {
-                OnFrameFinished?.Invoke();
                 UpdateFramebuffer();
+                OnFrameFinished?.Invoke();
+                if (IsFrameBufferInitialized)
+                {
+                    OnFrameBufferUpdate?.Invoke();
+                }
             });
             result = m64pCoreDoCommandFrameCallback(m64p_command.M64CMD_SET_FRAME_CALLBACK, 0, m64pFrameCallback);
 
@@ -590,7 +597,7 @@ namespace M64RPFW.Models.Emulation.Core.API
             });
             result = m64pCoreDoCommandRenderCallback(m64p_command.M64CMD_SET_RENDER_CALLBACK, 0, m64pRenderCallback);
 
-            int enc = ((int)(launchParameters.Config.ScreenWidth.Value) << 16) + (int)(launchParameters.Config.ScreenHeight.Value);
+            int enc = ((int)launchParameters.Config.ScreenWidth.Value << 16) + (int)launchParameters.Config.ScreenHeight.Value;
             result = m64pCoreDoCommandCoreStateSet(
                     m64p_command.M64CMD_CORE_STATE_SET,
                     m64p_core_param.M64CORE_VIDEO_SIZE,
@@ -835,7 +842,7 @@ namespace M64RPFW.Models.Emulation.Core.API
 
 
 
-        
+
 
         #region Other
         public void Dispose()

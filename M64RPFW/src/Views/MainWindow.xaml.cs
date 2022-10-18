@@ -9,20 +9,33 @@ using M64RPFW.UI.ViewModels.Extensions.Localization;
 using M64RPFW.UI.Views;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using ModernWpf;
-using OpenTK.Graphics.OpenGL4;
 using System;
+using System.Collections;
+using System.Drawing;
 using System.Globalization;
 using System.Resources;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
 
 namespace M64RPFW.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, IFileDialogProvider, IDialogProvider, IRomFileExtensionsConfigurationProvider, ISavestateBoundsConfigurationProvider, IThemeManager, IWindowClosingProvider, ILocalizationManager, ISettingsProvider
+    public partial class MainWindow : Window, IFileDialogProvider, 
+        IDialogProvider, 
+        IRomFileExtensionsConfigurationProvider, 
+        ISavestateBoundsConfigurationProvider, 
+        IThemeManager, 
+        IWindowClosingProvider, 
+        ILocalizationManager, 
+        ISettingsProvider, 
+        IDrawingSurfaceProvider, 
+        IUIThreadDispatcherProvider
     {
         private readonly MainViewModel mainViewModel;
         private readonly GeneralDependencyContainer generalDependencyContainer;
@@ -31,12 +44,15 @@ namespace M64RPFW.Views
         SavestateBoundsConfiguration ISavestateBoundsConfigurationProvider.SavestateBoundsConfiguration => new();
         ROMFileExtensionsConfiguration IRomFileExtensionsConfigurationProvider.ROMFileExtensionsConfiguration => new();
 
+        bool IDrawingSurfaceProvider.IsCreated => writeableBitmap != null;
+
+        private WriteableBitmap writeableBitmap;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            (this as ILocalizationManager).SetLocale((string)(this as ISettingsProvider).GetSettings().Culture);
+            (this as ILocalizationManager).SetLocale((this as ISettingsProvider).GetSettings().Culture);
 
             generalDependencyContainer = new GeneralDependencyContainer(
                 this,
@@ -45,8 +61,10 @@ namespace M64RPFW.Views
                 this,
                 this,
                 this,
-                this, 
-                this, 
+                this,
+                this,
+                this,
+                this,
                 this);
 
             mainViewModel = new(generalDependencyContainer);
@@ -55,18 +73,11 @@ namespace M64RPFW.Views
 
             (this as IThemeManager).SetTheme(Properties.Settings.Default.Theme);
 
-            Main_OpenGLControl.Start(new() { MajorVersion = 4, MinorVersion = 2 });
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Properties.Settings.Default.Save();
-        }
-
-        private void Main_OpenGLControl_Render(TimeSpan obj)
-        {
-            GL.ClearColor((this.Background as SolidColorBrush).Color.R, (this.Background as SolidColorBrush).Color.G, (this.Background as SolidColorBrush).Color.B, 1f);
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
 
         public (string ReturnedPath, bool Cancelled) OpenFileDialogPrompt(string[] validExtensions)
@@ -94,7 +105,7 @@ namespace M64RPFW.Views
             return (string.Empty, true);
 
         }
-        
+
         public void ShowErrorDialog(string message)
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
@@ -132,7 +143,7 @@ namespace M64RPFW.Views
             Properties.Settings.Default.Save();
         }
 
-        
+
 
         Settings ISettingsProvider.GetSettings()
         {
@@ -154,6 +165,28 @@ namespace M64RPFW.Views
             settingsWindow = new SettingsWindow() { DataContext = new SettingsViewModel(generalDependencyContainer) };
             settingsWindow.ShowDialog();
             settingsWindow = null; // this is okay, because ShowDialog() blocks
+        }
+
+        void IDrawingSurfaceProvider.Create(int width, int height)
+        {
+            Application.Current.Dispatcher.Invoke(delegate
+            {
+                writeableBitmap = new(width, height, VisualTreeHelper.GetDpi(this).PixelsPerInchX, VisualTreeHelper.GetDpi(this).PixelsPerInchY, PixelFormats.Bgra32, null);
+                Main_Image.Source = writeableBitmap;
+            });
+        }
+
+        void IDrawingSurfaceProvider.Draw(Array buffer, int width, int height)
+        {
+            Application.Current.Dispatcher.Invoke(delegate
+            {
+                writeableBitmap.WritePixels(new(0, 0, width, height), buffer, width * sizeof(int), 0);
+            });
+        }
+
+        void IUIThreadDispatcherProvider.Execute(Action action)
+        {
+            Application.Current.Dispatcher.Invoke(action);
         }
     }
 }

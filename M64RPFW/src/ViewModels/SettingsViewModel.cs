@@ -61,7 +61,7 @@ namespace M64RPFW.UI.ViewModels
 
         private bool ShowFileDialogAndPickLibraryPath(out string path)
         {
-            var ret = generalDependencyContainer.FileDialogProvider.OpenFileDialogPrompt(new[] { "dll" });
+            (string ReturnedPath, bool Cancelled) ret = generalDependencyContainer.FileDialogProvider.OpenFileDialogPrompt(new[] { "dll" });
             path = ret.ReturnedPath;
             return !ret.Cancelled;
         }
@@ -69,7 +69,7 @@ namespace M64RPFW.UI.ViewModels
         [RelayCommand]
         private void BrowseCoreLibraryPath()
         {
-            if (ShowFileDialogAndPickLibraryPath(out var path))
+            if (ShowFileDialogAndPickLibraryPath(out string? path))
             {
                 generalDependencyContainer.SettingsManager.GetSettings().CoreLibraryPath = path;
             }
@@ -79,25 +79,25 @@ namespace M64RPFW.UI.ViewModels
         [RelayCommand]
         private void BrowseVideoPluginPath()
         {
-            if (ShowFileDialogAndPickLibraryPath(out var path))
+            if (ShowFileDialogAndPickLibraryPath(out string? path))
                 generalDependencyContainer.SettingsManager.GetSettings().VideoPluginPath = path;
         }
         [RelayCommand]
         private void BrowseAudioPluginPath()
         {
-            if (ShowFileDialogAndPickLibraryPath(out var path))
+            if (ShowFileDialogAndPickLibraryPath(out string? path))
                 generalDependencyContainer.SettingsManager.GetSettings().AudioPluginPath = path;
         }
         [RelayCommand]
         private void BrowseInputPluginPath()
         {
-            if (ShowFileDialogAndPickLibraryPath(out var path))
+            if (ShowFileDialogAndPickLibraryPath(out string? path))
                 generalDependencyContainer.SettingsManager.GetSettings().InputPluginPath = path;
         }
         [RelayCommand]
         private void BrowseRSPPluginPath()
         {
-            if (ShowFileDialogAndPickLibraryPath(out var path))
+            if (ShowFileDialogAndPickLibraryPath(out string? path))
                 generalDependencyContainer.SettingsManager.GetSettings().RSPPluginPath = path;
         }
     }

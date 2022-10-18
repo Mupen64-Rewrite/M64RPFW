@@ -24,13 +24,13 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="DisplayType" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="VerticalSynchronization" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="OnScreenDisplay" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="VideoPluginPath" Type="System.String" Scope="User">
       <Value Profile="(Default)">m64p/mupen64plus-video-rice.dll</Value>

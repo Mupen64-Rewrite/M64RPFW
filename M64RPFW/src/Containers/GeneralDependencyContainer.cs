@@ -9,7 +9,7 @@ namespace M64RPFW.src.Containers
 {
     internal class GeneralDependencyContainer
     {
-        public GeneralDependencyContainer(IDialogProvider dialogProvider, IFileDialogProvider fileDialogProvider, IRecentRomsProvider recentRomsProvider, IRomFileExtensionsConfigurationProvider romFileExtensionsConfigurationProvider, ISavestateBoundsConfigurationProvider savestateBoundsConfigurationProvider, IThemeManager themeManager, IWindowClosingProvider windowClosingProvider, ISettingsProvider settingsManager, ILocalizationManager localizationProvider)
+        public GeneralDependencyContainer(IDialogProvider dialogProvider, IFileDialogProvider fileDialogProvider, IRecentRomsProvider recentRomsProvider, IRomFileExtensionsConfigurationProvider romFileExtensionsConfigurationProvider, ISavestateBoundsConfigurationProvider savestateBoundsConfigurationProvider, IThemeManager themeManager, IWindowClosingProvider windowClosingProvider, ISettingsProvider settingsManager, ILocalizationManager localizationProvider, IDrawingSurfaceProvider drawingSurfaceProvider, IUIThreadDispatcherProvider uIThreadDispatcherProvider)
         {
             DialogProvider = dialogProvider;
             FileDialogProvider = fileDialogProvider;
@@ -20,6 +20,8 @@ namespace M64RPFW.src.Containers
             WindowClosingProvider = windowClosingProvider;
             SettingsManager = settingsManager;
             LocalizationProvider = localizationProvider;
+            DrawingSurfaceProvider = drawingSurfaceProvider;
+            UIThreadDispatcherProvider = uIThreadDispatcherProvider;
         }
 
         internal IDialogProvider DialogProvider { get; set; }
@@ -31,6 +33,7 @@ namespace M64RPFW.src.Containers
         internal IWindowClosingProvider WindowClosingProvider { get; set; }
         internal ISettingsProvider SettingsManager { get; set; }
         internal ILocalizationManager LocalizationProvider { get; set; }
-
+        internal IDrawingSurfaceProvider DrawingSurfaceProvider { get; set; }
+        internal IUIThreadDispatcherProvider UIThreadDispatcherProvider { get; set; }
     }
 }

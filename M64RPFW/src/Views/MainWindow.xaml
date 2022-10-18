@@ -4,7 +4,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:glWpfControl="clr-namespace:OpenTK.Wpf;assembly=GLWpfControl"
         xmlns:local="clr-namespace:M64RPFW.Views" 
         xmlns:viewmodels="clr-namespace:M64RPFW.UI.ViewModels"
         xmlns:loc="clr-namespace:M64RPFW.UI.ViewModels.Extensions.Localization"
@@ -46,7 +45,7 @@
                                 <!--  x:Key vs DataType menuitem issue here: https://github.com/dotnet/wpf/issues/2404  -->
                                 <ItemContainerTemplate x:Key="{ItemContainerTemplateKey {x:Type viewmodels:ROMViewModel}}">
                                     <MenuItem
-                                Command="{Binding ElementName=Main_Window, Path=DataContext.EmulatorViewModel.LoadROMFromPathCommand}"
+                                Command="{Binding ElementName=root, Path=DataContext.EmulatorViewModel.LoadROMFromPathCommand}"
                                 CommandParameter="{Binding Path}"
                                 Header="{Binding}">
                                         <MenuItem.ContextMenu>
@@ -70,7 +69,7 @@
                         <MenuItem Header="{loc:Localization Exit}" Command="{Binding ExitAppCommand}"/>
                     </MenuItem>
                     <MenuItem Header="Run" IsEnabled="{Binding EmulatorViewModel.IsRunning}">
-                        <MenuItem Header="{loc:Localization Pause}" IsCheckable="True" IsChecked="{Binding EmulatorViewModel.IsResumed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" InputGestureText="{Binding ElementName=TogglePauseInputBinding, Converter={StaticResource KeyBindingToStringConverter}}"/>
+                        <MenuItem Header="{loc:Localization Pause}" IsCheckable="True" IsChecked="{Binding EmulatorViewModel.IsResumed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvertBooleanConverter}}" InputGestureText="{Binding ElementName=TogglePauseInputBinding, Converter={StaticResource KeyBindingToStringConverter}}"/>
                         <Separator/>
                         <MenuItem Header="{loc:Localization FrameAdvance}" Command="{Binding EmulatorViewModel.FrameAdvanceCommand}" InputGestureText="{Binding ElementName=FrameAdvanceInputBinding, Converter={StaticResource KeyBindingToStringConverter}}"/>
                     </MenuItem>
@@ -102,7 +101,7 @@
                     </StackPanel>
                 </StatusBar>
 
-                <glWpfControl:GLWpfControl x:Name="Main_OpenGLControl" Render="Main_OpenGLControl_Render"/>
+                <Image x:Name="Main_Image"/>
                 <!-- DockPanel layout trick: Place this as last element to fill parent -->
             </DockPanel>
         </Grid>

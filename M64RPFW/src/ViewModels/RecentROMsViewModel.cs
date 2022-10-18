@@ -54,7 +54,7 @@ namespace M64RPFW.UI.ViewModels
         internal RecentROMsViewModel(GeneralDependencyContainer generalDependencyContainer)
         {
             this.generalDependencyContainer = generalDependencyContainer;
-            
+
             if (generalDependencyContainer.SettingsManager.GetSettings().RecentROMPaths == null)
             {
                 generalDependencyContainer.SettingsManager.GetSettings().RecentROMPaths = new();

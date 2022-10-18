@@ -3,8 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using M64RPFW.Core.Emulation.ROM;
 using M64RPFW.src.Helpers;
 using M64RPFW.UI.Views;
-using System;
-using System.Globalization;
 using System.IO;
 
 namespace M64RPFW.UI.ViewModels

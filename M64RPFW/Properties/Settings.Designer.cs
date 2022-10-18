@@ -109,7 +109,7 @@ namespace M64RPFW.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int DisplayType {
             get {
                 return ((int)(this["DisplayType"]));
@@ -133,7 +133,7 @@ namespace M64RPFW.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool OnScreenDisplay {
             get {
                 return ((bool)(this["OnScreenDisplay"]));

@@ -31,8 +31,8 @@ namespace M64RPFW.src.Helpers
             for (int i = 0; i < rom.Length / 2; i++)
             {
                 byte tmp = rom[i * 2];
-                rom[i * 2] = rom[i * 2 + 1];
-                rom[i * 2 + 1] = tmp;
+                rom[i * 2] = rom[(i * 2) + 1];
+                rom[(i * 2) + 1] = tmp;
             }
         }
 

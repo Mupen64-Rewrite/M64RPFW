@@ -51,7 +51,7 @@ namespace M64RPFW.UI.ViewModels.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var kb = (KeyBinding)value;
+            KeyBinding kb = (KeyBinding)value;
             if (kb.Modifiers == ModifierKeys.None)
             {
                 return $"{kb.Key}";
@@ -60,7 +60,7 @@ namespace M64RPFW.UI.ViewModels.Converters
             {
                 return $"{kb.Modifiers}+{kb.Key}";
             }
-        } 
+        }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
     }
 
