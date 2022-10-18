@@ -6,6 +6,8 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Nullable>enable</Nullable>
         <RootNamespace>M64RPFW.Gtk</RootNamespace>
+        <Configurations>Release;Debug</Configurations>
+        <Platforms>Linux;Windows</Platforms>
     </PropertyGroup>
 
     <ItemGroup>

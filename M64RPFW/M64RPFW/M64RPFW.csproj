@@ -6,6 +6,8 @@
         <LangVersion>10</LangVersion>
         <Nullable>enable</Nullable>
         <RootNamespace>M64RPFW</RootNamespace>
+        <Configurations>Release;Debug</Configurations>
+        <Platforms>Linux;Windows</Platforms>
     </PropertyGroup>
 
     <ItemGroup>

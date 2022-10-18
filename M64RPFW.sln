@@ -10,22 +10,27 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M64RPFW.Wpf", "M64RPFW\M64R
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
+		Release|Linux = Release|Linux
+		Release|Windows = Release|Windows
+		Debug|Windows = Debug|Windows
+		Debug|Linux = Debug|Linux
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5D3D1256-9D64-4237-800B-381820032AE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5D3D1256-9D64-4237-800B-381820032AE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5D3D1256-9D64-4237-800B-381820032AE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5D3D1256-9D64-4237-800B-381820032AE3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F7EFB68E-68EB-4754-A794-82739D679B14}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F7EFB68E-68EB-4754-A794-82739D679B14}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F7EFB68E-68EB-4754-A794-82739D679B14}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{C638AA43-C7E9-4172-901C-1F4E8B468277}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C638AA43-C7E9-4172-901C-1F4E8B468277}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Release|Linux.ActiveCfg = Release|Linux
+		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Release|Linux.Build.0 = Release|Linux
+		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Debug|Windows.ActiveCfg = Debug|Windows
+		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Debug|Windows.Build.0 = Debug|Windows
+		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Debug|Linux.ActiveCfg = Debug|Linux
+		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Debug|Linux.Build.0 = Debug|Linux
+		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Release|Windows.ActiveCfg = Release|Windows
+		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Release|Windows.Build.0 = Release|Windows
+		{5D3D1256-9D64-4237-800B-381820032AE3}.Release|Linux.ActiveCfg = Release|Linux
+		{5D3D1256-9D64-4237-800B-381820032AE3}.Release|Linux.Build.0 = Release|Linux
+		{5D3D1256-9D64-4237-800B-381820032AE3}.Debug|Linux.ActiveCfg = Debug|Linux
+		{5D3D1256-9D64-4237-800B-381820032AE3}.Debug|Linux.Build.0 = Debug|Linux
+		{C638AA43-C7E9-4172-901C-1F4E8B468277}.Debug|Windows.ActiveCfg = Debug|Windows
+		{C638AA43-C7E9-4172-901C-1F4E8B468277}.Debug|Windows.Build.0 = Debug|Windows
+		{C638AA43-C7E9-4172-901C-1F4E8B468277}.Release|Windows.ActiveCfg = Release|Windows
+		{C638AA43-C7E9-4172-901C-1F4E8B468277}.Release|Windows.Build.0 = Release|Windows
 	EndGlobalSection
 EndGlobal
