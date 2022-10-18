@@ -123,7 +123,7 @@
   </data>
   <data name="GUI" xml:space="preserve">
     <value>GUI</value>
-    <comment>@Invariant</comment>
+    
   </data>
   <data name="CannotStopUnstartedGame" xml:space="preserve">
     <value>Cannot terminate an inexistent emulator.</value>
@@ -173,7 +173,7 @@
   </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
-    <comment>@Invariant</comment>
+    
   </data>
   <data name="CoreLibraryNotFound" xml:space="preserve">
     <value>The core library was not found.</value>
@@ -268,5 +268,11 @@
   </data>
   <data name="SupportedFileFormats" xml:space="preserve">
     <value>Supported file formats</value>
+  </data>
+  <data name="Browse" xml:space="preserve">
+    <value>Browse</value>
+  </data>
+  <data name="Paths" xml:space="preserve">
+    <value>Paths</value>
   </data>
 </root>

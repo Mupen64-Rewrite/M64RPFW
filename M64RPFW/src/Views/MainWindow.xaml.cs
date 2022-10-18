@@ -26,6 +26,7 @@ namespace M64RPFW.Views
     {
         private readonly MainViewModel mainViewModel;
         private readonly GeneralDependencyContainer generalDependencyContainer;
+        private SettingsWindow? settingsWindow;
 
         SavestateBoundsConfiguration ISavestateBoundsConfigurationProvider.SavestateBoundsConfiguration => new();
         ROMFileExtensionsConfiguration IRomFileExtensionsConfigurationProvider.ROMFileExtensionsConfiguration => new();
@@ -146,7 +147,13 @@ namespace M64RPFW.Views
         [RelayCommand]
         private void ShowSettingsWindow()
         {
-            new SettingsWindow() { DataContext = new SettingsViewModel(generalDependencyContainer) }.ShowDialog();
+            if (settingsWindow != null)
+            {
+                return;
+            }
+            settingsWindow = new SettingsWindow() { DataContext = new SettingsViewModel(generalDependencyContainer) };
+            settingsWindow.ShowDialog();
+            settingsWindow = null; // this is okay, because ShowDialog() blocks
         }
     }
 }

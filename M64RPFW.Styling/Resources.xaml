@@ -5,5 +5,6 @@
     <Thickness x:Key="MediumContentMargin">10</Thickness>
     <Thickness x:Key="SmallItemMargin">0 2 0 0</Thickness>
     <system:Double x:Key="SmallIconSize">30</system:Double>
+    <Thickness x:Key="SmallPadding">5</Thickness>
     
 </ResourceDictionary>

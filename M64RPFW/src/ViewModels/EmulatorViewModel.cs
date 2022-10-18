@@ -47,7 +47,7 @@ namespace M64RPFW.UI.ViewModels
         [RelayCommand]
         private void LoadROMFromPath(string path)
         {
-            if (!CheckDependencyValidity()) return;
+            if (!AreAllDependenciesMet()) return;
 
             ROMViewModel rom = new(path);
 
@@ -93,12 +93,18 @@ namespace M64RPFW.UI.ViewModels
             IsResumed ^= true;
         }
 
-        private bool CheckDependencyValidity()
+        private bool AreAllDependenciesMet()
         {
-            // Oh yeah this doesnt suck at all
+            // TODO: clean this up
+
             List<string> missingPlugins = new();
             
             bool coreLibraryExists = File.Exists(generalDependencyContainer.SettingsManager.GetSettings().CoreLibraryPath);
+
+            if (!Path.GetExtension(generalDependencyContainer.SettingsManager.GetSettings().CoreLibraryPath).Equals(".dll", StringComparison.InvariantCultureIgnoreCase))
+            {
+                coreLibraryExists = false;
+            }
 
             if (!coreLibraryExists)
             {
@@ -114,7 +120,7 @@ namespace M64RPFW.UI.ViewModels
             if (!inputPluginExists) missingPlugins.Add(generalDependencyContainer.LocalizationProvider.GetString("Input"));
             if (!rspPluginExists) missingPlugins.Add(generalDependencyContainer.LocalizationProvider.GetString("RSP"));
 
-            if (!videoPluginExists || !audioPluginExists || !inputPluginExists || !rspPluginExists)
+            if (!videoPluginExists || !audioPluginExists || !inputPluginExists || !rspPluginExists && coreLibraryExists)
             {
                 generalDependencyContainer.DialogProvider.ShowErrorDialog(string.Format(Properties.Resources.PluginNotFoundSeries, string.Join(", ", missingPlugins)));
             }

@@ -34,7 +34,7 @@ namespace M64RPFW.UI.ViewModels
         private void SetSettingsProperty(string virtualArguments, Type targetType)
         {
             string[] vParams = SettingsVirtualArgumentHelper.ParseVirtualArgument(virtualArguments);
-            System.Reflection.PropertyInfo? prop = Properties.Settings.Default.GetType().GetProperty(vParams[0]);
+            System.Reflection.PropertyInfo? prop = generalDependencyContainer.SettingsManager.GetSettings().GetType().GetProperty(vParams[0]);
 
             object? tValue = null;
 
@@ -49,9 +49,8 @@ namespace M64RPFW.UI.ViewModels
             else
                 throw new ArgumentException($"Invalid value type: {vParams[1]}");
 
-            prop.SetValue(Properties.Settings.Default, tValue, null);
-
-            Properties.Settings.Default.Save();
+            prop.SetValue(generalDependencyContainer.SettingsManager.GetSettings(), tValue, null);
+            generalDependencyContainer.SettingsManager.GetSettings().Save();
         }
 
         [RelayCommand]
@@ -59,5 +58,47 @@ namespace M64RPFW.UI.ViewModels
         [RelayCommand]
         private void SetTheme(string themeString) => generalDependencyContainer.ThemeManager.SetTheme(themeString);
 
+
+        private bool ShowFileDialogAndPickLibraryPath(out string path)
+        {
+            var ret = generalDependencyContainer.FileDialogProvider.OpenFileDialogPrompt(new[] { "dll" });
+            path = ret.ReturnedPath;
+            return !ret.Cancelled;
+        }
+
+        [RelayCommand]
+        private void BrowseCoreLibraryPath()
+        {
+            if (ShowFileDialogAndPickLibraryPath(out var path))
+            {
+                generalDependencyContainer.SettingsManager.GetSettings().CoreLibraryPath = path;
+            }
+        }
+
+
+        [RelayCommand]
+        private void BrowseVideoPluginPath()
+        {
+            if (ShowFileDialogAndPickLibraryPath(out var path))
+                generalDependencyContainer.SettingsManager.GetSettings().VideoPluginPath = path;
+        }
+        [RelayCommand]
+        private void BrowseAudioPluginPath()
+        {
+            if (ShowFileDialogAndPickLibraryPath(out var path))
+                generalDependencyContainer.SettingsManager.GetSettings().AudioPluginPath = path;
+        }
+        [RelayCommand]
+        private void BrowseInputPluginPath()
+        {
+            if (ShowFileDialogAndPickLibraryPath(out var path))
+                generalDependencyContainer.SettingsManager.GetSettings().InputPluginPath = path;
+        }
+        [RelayCommand]
+        private void BrowseRSPPluginPath()
+        {
+            if (ShowFileDialogAndPickLibraryPath(out var path))
+                generalDependencyContainer.SettingsManager.GetSettings().RSPPluginPath = path;
+        }
     }
 }

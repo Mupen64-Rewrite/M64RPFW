@@ -193,7 +193,7 @@
     <value>Dynamischer Recompiler</value>
   </data>
   <data name="CachedInterpreter" xml:space="preserve">
-    <value>Gepufferter Interpretierer</value>
+    <value>Gepufferter Interpreter</value>
   </data>
   <data name="Dark" xml:space="preserve">
     <value>Dunkel</value>
@@ -248,5 +248,17 @@
   </data>
   <data name="SupportedFileFormats" xml:space="preserve">
     <value>Unterstützte Dateiformate</value>
+  </data>
+  <data name="Browse" xml:space="preserve">
+    <value>Durchsuchen</value>
+  </data>
+  <data name="Paths" xml:space="preserve">
+    <value>Pfade</value>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="GUI" xml:space="preserve">
+    <value>GUI</value>
   </data>
 </root>
