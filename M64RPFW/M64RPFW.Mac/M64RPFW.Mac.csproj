@@ -12,7 +12,7 @@
 
         <Configurations>Release;Debug</Configurations>
 
-        <Platforms>Linux;Windows</Platforms>
+        <Platforms></Platforms>
     </PropertyGroup>
 
     <ItemGroup>

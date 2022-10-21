@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         <RootNamespace>M64RPFW.Wpf</RootNamespace>
         <Configurations>Release;Debug</Configurations>
-        <Platforms>Linux;Windows</Platforms>
+        <Platforms>Windows</Platforms>
     </PropertyGroup>
 
     <ItemGroup>

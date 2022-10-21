@@ -1,36 +1,53 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M64RPFW", "M64RPFW\M64RPFW\M64RPFW.csproj", "{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32616.157
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "M64RPFW", "M64RPFW\M64RPFW\M64RPFW.csproj", "{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M64RPFW.Gtk", "M64RPFW\M64RPFW.Gtk\M64RPFW.Gtk.csproj", "{5D3D1256-9D64-4237-800B-381820032AE3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "M64RPFW.Gtk", "M64RPFW\M64RPFW.Gtk\M64RPFW.Gtk.csproj", "{5D3D1256-9D64-4237-800B-381820032AE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M64RPFW.Mac", "M64RPFW\M64RPFW.Mac\M64RPFW.Mac.csproj", "{F7EFB68E-68EB-4754-A794-82739D679B14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "M64RPFW.Mac", "M64RPFW\M64RPFW.Mac\M64RPFW.Mac.csproj", "{F7EFB68E-68EB-4754-A794-82739D679B14}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M64RPFW.Wpf", "M64RPFW\M64RPFW.Wpf\M64RPFW.Wpf.csproj", "{C638AA43-C7E9-4172-901C-1F4E8B468277}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "M64RPFW.Wpf", "M64RPFW\M64RPFW.Wpf\M64RPFW.Wpf.csproj", "{C638AA43-C7E9-4172-901C-1F4E8B468277}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Linux = Debug|Linux
+		Debug|Windows = Debug|Windows
 		Release|Linux = Release|Linux
 		Release|Windows = Release|Windows
-		Debug|Windows = Debug|Windows
-		Debug|Linux = Debug|Linux
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Release|Linux.ActiveCfg = Release|Linux
-		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Release|Linux.Build.0 = Release|Linux
-		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Debug|Windows.ActiveCfg = Debug|Windows
-		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Debug|Windows.Build.0 = Debug|Windows
 		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Debug|Linux.ActiveCfg = Debug|Linux
 		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Debug|Linux.Build.0 = Debug|Linux
+		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Debug|Windows.ActiveCfg = Debug|Windows
+		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Debug|Windows.Build.0 = Debug|Windows
+		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Release|Linux.ActiveCfg = Release|Linux
+		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Release|Linux.Build.0 = Release|Linux
 		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Release|Windows.ActiveCfg = Release|Windows
 		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Release|Windows.Build.0 = Release|Windows
-		{5D3D1256-9D64-4237-800B-381820032AE3}.Release|Linux.ActiveCfg = Release|Linux
-		{5D3D1256-9D64-4237-800B-381820032AE3}.Release|Linux.Build.0 = Release|Linux
 		{5D3D1256-9D64-4237-800B-381820032AE3}.Debug|Linux.ActiveCfg = Debug|Linux
 		{5D3D1256-9D64-4237-800B-381820032AE3}.Debug|Linux.Build.0 = Debug|Linux
+		{5D3D1256-9D64-4237-800B-381820032AE3}.Debug|Windows.ActiveCfg = Debug|Linux
+		{5D3D1256-9D64-4237-800B-381820032AE3}.Release|Linux.ActiveCfg = Release|Linux
+		{5D3D1256-9D64-4237-800B-381820032AE3}.Release|Linux.Build.0 = Release|Linux
+		{5D3D1256-9D64-4237-800B-381820032AE3}.Release|Windows.ActiveCfg = Release|Linux
+		{F7EFB68E-68EB-4754-A794-82739D679B14}.Debug|Linux.ActiveCfg = Debug|Linux
+		{F7EFB68E-68EB-4754-A794-82739D679B14}.Debug|Windows.ActiveCfg = Debug|Windows
+		{F7EFB68E-68EB-4754-A794-82739D679B14}.Release|Linux.ActiveCfg = Release|Linux
+		{F7EFB68E-68EB-4754-A794-82739D679B14}.Release|Windows.ActiveCfg = Release|Windows
+		{C638AA43-C7E9-4172-901C-1F4E8B468277}.Debug|Linux.ActiveCfg = Debug|Windows
 		{C638AA43-C7E9-4172-901C-1F4E8B468277}.Debug|Windows.ActiveCfg = Debug|Windows
 		{C638AA43-C7E9-4172-901C-1F4E8B468277}.Debug|Windows.Build.0 = Debug|Windows
+		{C638AA43-C7E9-4172-901C-1F4E8B468277}.Release|Linux.ActiveCfg = Release|Windows
 		{C638AA43-C7E9-4172-901C-1F4E8B468277}.Release|Windows.ActiveCfg = Release|Windows
 		{C638AA43-C7E9-4172-901C-1F4E8B468277}.Release|Windows.Build.0 = Release|Windows
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {334D2324-407D-4027-9053-732206F4D0B8}
 	EndGlobalSection
 EndGlobal

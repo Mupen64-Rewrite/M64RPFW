@@ -7,7 +7,7 @@
         <Nullable>enable</Nullable>
         <RootNamespace>M64RPFW.Gtk</RootNamespace>
         <Configurations>Release;Debug</Configurations>
-        <Platforms>Linux;Windows</Platforms>
+        <Platforms>Linux</Platforms>
     </PropertyGroup>
 
     <ItemGroup>

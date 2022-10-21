@@ -1,6 +1,6 @@
 ﻿using System;
 using Eto.Forms;
-using M64RPFW.Views;
+using M64RPFW.Misc;
 
 namespace M64PRR.Wpf
 {
@@ -9,7 +9,9 @@ namespace M64PRR.Wpf
         [STAThread]
         public static void Main(string[] args)
         {
-            new Application(Eto.Platforms.Wpf).Run(new MainView());
+            var platform = new Eto.Wpf.Platform();
+            Console.WriteLine("Test!");
+            new M64RPFWApplication(platform).Run();
         }
     }
 }

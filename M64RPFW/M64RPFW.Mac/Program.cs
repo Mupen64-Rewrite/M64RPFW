@@ -2,7 +2,7 @@
 using Eto.Forms;
 using M64RPFW.Views;
 
-namespace M64PRR.Mac
+namespace M64RPFW.Mac
 {
     class Program
     {
