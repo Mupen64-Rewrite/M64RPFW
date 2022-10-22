@@ -110,7 +110,7 @@ namespace M64RPFW.Views
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                MessageBox.Show(message, (this as ILocalizationManager).GetString("Error"));
+                MessageBox.Show(message, (this as ILocalizationManager).GetString("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
             }));
         }
 
