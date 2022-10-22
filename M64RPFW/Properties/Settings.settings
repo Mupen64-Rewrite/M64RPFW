@@ -2,35 +2,8 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="M64RPFW.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="CompiledJump" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="ExtraMemory" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="DelaySpecialInterrupt" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="CyclesPerOp" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1</Value>
-    </Setting>
     <Setting Name="CoreType" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="SpecialRecompilation" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="RandomizeInterrupt" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="DisplayType" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1</Value>
-    </Setting>
-    <Setting Name="VerticalSynchronization" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="OnScreenDisplay" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="VideoPluginPath" Type="System.String" Scope="User">
       <Value Profile="(Default)">m64p/mupen64plus-video-rice.dll</Value>
@@ -46,9 +19,6 @@
     </Setting>
     <Setting Name="Culture" Type="System.String" Scope="User">
       <Value Profile="(Default)">en-US</Value>
-    </Setting>
-    <Setting Name="ShowToolbar" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="ShowStatusbar" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -67,6 +37,12 @@
     </Setting>
     <Setting Name="Theme" Type="System.String" Scope="User">
       <Value Profile="(Default)">Light</Value>
+    </Setting>
+    <Setting Name="ScreenWidth" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">800</Value>
+    </Setting>
+    <Setting Name="ScreenHeight" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">600</Value>
     </Setting>
   </Settings>
 </SettingsFile>

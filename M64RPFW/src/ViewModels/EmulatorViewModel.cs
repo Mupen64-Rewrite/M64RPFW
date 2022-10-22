@@ -86,7 +86,6 @@ namespace M64RPFW.UI.ViewModels
         [RelayCommand(CanExecute = nameof(IsRunning))]
         private void TogglePause()
         {
-            Debug.Print("A");
             IsResumed ^= true;
         }
 
@@ -142,20 +141,8 @@ namespace M64RPFW.UI.ViewModels
                 Name = "tEmulatorThread"
             };
 
-            Mupen64PlusConfig config = new();
+            Mupen64PlusConfig config = new(generalDependencyContainer.SettingsManager.GetSettings().CoreType, generalDependencyContainer.SettingsManager.GetSettings().ScreenWidth, generalDependencyContainer.SettingsManager.GetSettings().ScreenHeight);
 
-            config.CoreType.Value = generalDependencyContainer.SettingsManager.GetSettings().CoreType;
-            config.NoCompiledJump.Value = !generalDependencyContainer.SettingsManager.GetSettings().CompiledJump;
-            config.DisableExtraMemory.Value = !generalDependencyContainer.SettingsManager.GetSettings().ExtraMemory;
-            config.DelaySpecialInterrupt.Value = !generalDependencyContainer.SettingsManager.GetSettings().DelaySpecialInterrupt;
-            config.CyclesPerOp.Value = generalDependencyContainer.SettingsManager.GetSettings().CyclesPerOp;
-            config.DisableSpecialRecompilation.Value = !generalDependencyContainer.SettingsManager.GetSettings().SpecialRecompilation;
-            config.RandomizeInterrupt.Value = generalDependencyContainer.SettingsManager.GetSettings().RandomizeInterrupt;
-
-            config.ScreenWidth.Value = 800;
-            config.ScreenHeight.Value = 600;
-            config.VerticalSynchronization.Value = generalDependencyContainer.SettingsManager.GetSettings().VerticalSynchronization;
-            config.OnScreenDisplay.Value = generalDependencyContainer.SettingsManager.GetSettings().OnScreenDisplay;
 
             emulatorThread.Start(new Mupen64PlusLaunchParameters(File.ReadAllBytes(romPath),
                                                                  config,

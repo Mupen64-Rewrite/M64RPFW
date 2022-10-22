@@ -25,54 +25,6 @@ namespace M64RPFW.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool CompiledJump {
-            get {
-                return ((bool)(this["CompiledJump"]));
-            }
-            set {
-                this["CompiledJump"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ExtraMemory {
-            get {
-                return ((bool)(this["ExtraMemory"]));
-            }
-            set {
-                this["ExtraMemory"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool DelaySpecialInterrupt {
-            get {
-                return ((bool)(this["DelaySpecialInterrupt"]));
-            }
-            set {
-                this["DelaySpecialInterrupt"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public int CyclesPerOp {
-            get {
-                return ((int)(this["CyclesPerOp"]));
-            }
-            set {
-                this["CyclesPerOp"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int CoreType {
             get {
@@ -80,66 +32,6 @@ namespace M64RPFW.Properties {
             }
             set {
                 this["CoreType"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool SpecialRecompilation {
-            get {
-                return ((bool)(this["SpecialRecompilation"]));
-            }
-            set {
-                this["SpecialRecompilation"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool RandomizeInterrupt {
-            get {
-                return ((bool)(this["RandomizeInterrupt"]));
-            }
-            set {
-                this["RandomizeInterrupt"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public int DisplayType {
-            get {
-                return ((int)(this["DisplayType"]));
-            }
-            set {
-                this["DisplayType"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool VerticalSynchronization {
-            get {
-                return ((bool)(this["VerticalSynchronization"]));
-            }
-            set {
-                this["VerticalSynchronization"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool OnScreenDisplay {
-            get {
-                return ((bool)(this["OnScreenDisplay"]));
-            }
-            set {
-                this["OnScreenDisplay"] = value;
             }
         }
         
@@ -200,18 +92,6 @@ namespace M64RPFW.Properties {
             }
             set {
                 this["Culture"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ShowToolbar {
-            get {
-                return ((bool)(this["ShowToolbar"]));
-            }
-            set {
-                this["ShowToolbar"] = value;
             }
         }
         
@@ -283,6 +163,30 @@ namespace M64RPFW.Properties {
             }
             set {
                 this["Theme"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("800")]
+        public int ScreenWidth {
+            get {
+                return ((int)(this["ScreenWidth"]));
+            }
+            set {
+                this["ScreenWidth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("600")]
+        public int ScreenHeight {
+            get {
+                return ((int)(this["ScreenHeight"]));
+            }
+            set {
+                this["ScreenHeight"] = value;
             }
         }
     }

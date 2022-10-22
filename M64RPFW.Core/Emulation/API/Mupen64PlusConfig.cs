@@ -8,45 +8,35 @@ using static M64RPFW.Models.Emulation.Core.API.Mupen64PlusTypes;
 
 namespace M64RPFW.src.Models.Emulation.Core.API
 {
-    public struct Mupen64PlusConfigEntry
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+    sealed class Mupen64PlusConfigEntryAttribute : Attribute
     {
-        public readonly string Section;
-        public readonly string Name;
-        public object Value { get; set; } = default;
+        internal readonly string Section;
+        internal readonly string Name;
 
-        public Mupen64PlusConfigEntry(string section, string name)
+        public Mupen64PlusConfigEntryAttribute(string section, string name)
         {
-            Section = section;
-            Name = name;
-        }
-
-        public Mupen64PlusConfigEntry(string section, string name, object value)
-        {
-            Section = section;
-            Name = name;
-            Value = value;
+            this.Section = section;
+            this.Name = name;
         }
     }
 
-    public struct Mupen64PlusConfig
+    public readonly struct Mupen64PlusConfig
     {
-        public Mupen64PlusConfigEntry CoreType = new("Core", "R4300Emulator");
-        public Mupen64PlusConfigEntry NoCompiledJump = new("Core", "NoCompiledJump");
-        public Mupen64PlusConfigEntry DisableExtraMemory = new("Core", "DisableExtraMem");
-        public Mupen64PlusConfigEntry DelaySpecialInterrupt = new("Core", "DelaySI");
-        public Mupen64PlusConfigEntry CyclesPerOp = new("Core", "CountPerOp");
-        public Mupen64PlusConfigEntry DisableSpecialRecompilation = new("Core", "DisableSpecRecomp");
-        public Mupen64PlusConfigEntry RandomizeInterrupt = new("Core", "RandomizeInterrupt");
+        [Mupen64PlusConfigEntry("Core", "R4300Emulator")]
+        public readonly int CoreType;
 
-        public Mupen64PlusConfigEntry ScreenWidth = new("Video-General", "ScreenWidth");
-        public Mupen64PlusConfigEntry ScreenHeight = new("Video-General", "ScreenHeight");
-        public Mupen64PlusConfigEntry VerticalSynchronization = new("Video-General", "VerticalSync");
-        public Mupen64PlusConfigEntry OnScreenDisplay = new("Video-General", "OnScreenDisplay");
+        [Mupen64PlusConfigEntry("Video-General", "ScreenWidth")]
+        public readonly int ScreenWidth;
 
-        public Mupen64PlusConfig()
+        [Mupen64PlusConfigEntry("Video-General", "ScreenHeight")]
+        public readonly int ScreenHeight;
+
+        public Mupen64PlusConfig(int coreType, int screenWidth, int screenHeight)
         {
-
+            CoreType = coreType;
+            ScreenWidth = screenWidth;
+            ScreenHeight = screenHeight;
         }
-
     }
 }

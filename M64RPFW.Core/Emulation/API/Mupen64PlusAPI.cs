@@ -3,6 +3,7 @@ using M64RPFW.src.Models.Emulation.Core.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -451,6 +452,7 @@ namespace M64RPFW.Models.Emulation.Core.API
         private void UpdateFramebuffer()
         {
             GetScreenDimensions(out int newWidth, out int newHeight);
+
             if (newWidth != BufferWidth || newHeight != BufferHeight)
             {
                 AllocateFrameBuffer(newWidth, newHeight);
@@ -463,68 +465,46 @@ namespace M64RPFW.Models.Emulation.Core.API
             }
 
             int[] frameBuffer = FrameBuffer;
-            CopyFrameBuffer(ref frameBuffer, BufferWidth, BufferHeight);
+            int bufferWidth = BufferWidth, bufferHeight = BufferHeight;
+            GFXReadScreen2(frameBuffer, ref bufferWidth, ref bufferHeight, 0);
             FrameBuffer = frameBuffer;
+            BufferWidth = bufferWidth;
+            BufferHeight = bufferHeight;
         }
 
-        public void CopyFrameBuffer(ref int[] buffer, int width, int height)
+        private void SetSetting(string section, string name, object value)
         {
-            GFXReadScreen2(buffer, ref width, ref height, 0);
+            Debug.Print($"{section} {name} - {value}");
 
-            //int fromindex = width * (height - 1) * 4;
-            //int toindex = 0;
-
-            //for (int j = 0; j < height; j++)
-            //{
-            //    Buffer.BlockCopy(buffer, fromindex, buffer, toindex, width * 4);
-            //    fromindex -= width * 4;
-            //    toindex += width * 4;
-            //}
-
-            // opaque
-            //unsafe
-            //{
-            //    fixed (int* ptr = &buffer[0])
-            //    {
-            //        int l = buffer.Length;
-            //        for (int i = 0; i < l; i++)
-            //        {
-            //            //ptr[i] |= unchecked((int)0xff000000);
-            //        }
-            //    }
-            //}
-        }
-
-        public void SetSetting(Mupen64PlusConfigEntry configEntry)
-        {
             IntPtr _section = IntPtr.Zero;
-            m64pConfigOpenSection(configEntry.Section, ref _section);
+            m64pConfigOpenSection(section, ref _section);
 
-            if (configEntry.Value is int intValue)
+            if (value is int intValue)
             {
-                m64pConfigSetParameterInt(_section, configEntry.Name, m64p_type.M64TYPE_INT, ref intValue);
+                m64pConfigSetParameterInt(_section, name, m64p_type.M64TYPE_INT, ref intValue);
             }
-            else if (configEntry.Value is bool boolValue)
+            else if (value is bool boolValue)
             {
-                m64pConfigSetParameterBool(_section, configEntry.Name, m64p_type.M64TYPE_BOOL, ref boolValue);
+                m64pConfigSetParameterBool(_section, name, m64p_type.M64TYPE_BOOL, ref boolValue);
             }
-            else if (configEntry.Value is string stringValue)
+            else if (value is string stringValue)
             {
-                m64pConfigSetParameterStr(_section, configEntry.Name, m64p_type.M64TYPE_STRING, new StringBuilder(stringValue));
+                m64pConfigSetParameterStr(_section, name, m64p_type.M64TYPE_STRING, new StringBuilder(stringValue));
             }
             else
             {
-                throw new UnresolvableConfigEntryTypeException($"Type {configEntry.Value.GetType()} could not be resolved to a type accepted by m64p+");
+                throw new UnresolvableConfigEntryTypeException($"Type {value.GetType()} could not be resolved to a type accepted by m64p+");
             }
 
             m64pConfigSaveFile();
         }
 
-        public void ApplyConfig(Mupen64PlusConfig config)
+        private void ApplyConfig(Mupen64PlusConfig config)
         {
-            foreach (System.Reflection.FieldInfo item in config.GetType().GetFields())
+            foreach (FieldInfo item in config.GetType().GetFields())
             {
-                SetSetting((Mupen64PlusConfigEntry)item.GetValue(config));
+                var attrib = item.GetCustomAttribute<Mupen64PlusConfigEntryAttribute>();
+                SetSetting(attrib.Section, attrib.Name, item.GetValue(config));
             }
 
             m64pConfigSaveFile();
@@ -597,7 +577,7 @@ namespace M64RPFW.Models.Emulation.Core.API
             });
             result = m64pCoreDoCommandRenderCallback(m64p_command.M64CMD_SET_RENDER_CALLBACK, 0, m64pRenderCallback);
 
-            int enc = ((int)launchParameters.Config.ScreenWidth.Value << 16) + (int)launchParameters.Config.ScreenHeight.Value;
+            int enc = ((int)launchParameters.Config.ScreenWidth << 16) + (int)launchParameters.Config.ScreenHeight;
             result = m64pCoreDoCommandCoreStateSet(
                     m64p_command.M64CMD_CORE_STATE_SET,
                     m64p_core_param.M64CORE_VIDEO_SIZE,
@@ -881,7 +861,7 @@ namespace M64RPFW.Models.Emulation.Core.API
 
         private Dictionary<m64p_plugin_type, AttachedPlugin> plugins = new();
 
-        public IntPtr AttachPlugin(m64p_plugin_type type, string libraryPath)
+        private IntPtr AttachPlugin(m64p_plugin_type type, string libraryPath)
         {
             if (plugins.ContainsKey(type))
             {
@@ -905,7 +885,7 @@ namespace M64RPFW.Models.Emulation.Core.API
             return plugin.Handle;
         }
 
-        public void DetachPlugin(m64p_plugin_type type)
+        private void DetachPlugin(m64p_plugin_type type)
         {
             if (plugins.ContainsKey(type))
             {
