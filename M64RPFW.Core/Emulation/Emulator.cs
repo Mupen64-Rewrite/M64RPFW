@@ -18,7 +18,7 @@ namespace M64RPFW.Models.Emulation
         }
 
         public event Action? PlayModeChanged;
-        private PlayModes playMode;
+        private PlayModes playMode = PlayModes.Stopped;
         public PlayModes PlayMode
         {
             get => playMode; set
@@ -37,6 +37,9 @@ namespace M64RPFW.Models.Emulation
         public void Start(Mupen64PlusLaunchParameters mupen64PlusLaunchParameters)
         {
             API = new();
+
+            playMode = PlayModes.Running;
+            PlayModeChanged?.Invoke();
 
             emulatorThread = new(new ParameterizedThreadStart(EmulatorThreadProc))
             {
