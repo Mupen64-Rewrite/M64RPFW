@@ -40,6 +40,10 @@ public static class EGLHelpers
             int eglValue = value != 0 ? LibEGL.BACK_BUFFER : LibEGL.SINGLE_BUFFER;
             surfaceAttrs.AddRange(new[] { LibEGL.RENDER_BUFFER, eglValue });
         }
+        else
+        {
+            surfaceAttrs.AddRange(new[] { LibEGL.RENDER_BUFFER, LibEGL.BACK_BUFFER });
+        }
 
         if (attrs.TryGetValue(GLAttribute.BufferSize, out value))
         {

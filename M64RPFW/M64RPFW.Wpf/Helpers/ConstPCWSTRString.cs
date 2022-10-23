@@ -30,6 +30,6 @@ namespace M64RPFW.Wpf.Helpers
             return new PCWSTR((char*) s.data.ToPointer());
         }
 
-        IntPtr data;
+        readonly IntPtr data;
     }
 }
