@@ -66,7 +66,7 @@ namespace M64RPFW.UI.ViewModels
 
             if (!new ROMViewModel(path).IsValid)
             {
-                generalDependencyContainer.DialogProvider.ShowErrorDialog(generalDependencyContainer.LocalizationProvider.GetString("ROMInexistent"));
+                generalDependencyContainer.DialogProvider.ShowErrorDialog(generalDependencyContainer.LocalizationProvider.GetString("InvalidFile"));
                 return;
             }
 

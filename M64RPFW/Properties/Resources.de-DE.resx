@@ -231,8 +231,8 @@
   <data name="Version" xml:space="preserve">
     <value>Version</value>
   </data>
-  <data name="InvalidROMError" xml:space="preserve">
-    <value>Der ROM ist ungültig</value>
+  <data name="InvalidFile" xml:space="preserve">
+    <value>Die Datei ist ungültig</value>
   </data>
   <data name="RawData" xml:space="preserve">
     <value>Rohdaten</value>

@@ -241,15 +241,6 @@ namespace M64RPFW.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The provided ROM is invalid.
-        /// </summary>
-        public static string InvalidROMError {
-            get {
-                return ResourceManager.GetString("InvalidROMError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Language.
         /// </summary>
         public static string Language {
