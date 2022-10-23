@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace M64RPFW.Models.Emulation.Core.API
+namespace M64RPFW.Models.Emulation.API
 {
     public static class Mupen64PlusTypes
     {

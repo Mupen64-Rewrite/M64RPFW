@@ -1,4 +1,4 @@
-﻿using M64RPFW.Core.Emulation.Exceptions;
+﻿using M64RPFW.Models.Emulation.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace M64RPFW.Core.Emulation.ROM
+namespace M64RPFW.Models.Emulation
 {
     public class ROM
     {
@@ -46,8 +46,8 @@ namespace M64RPFW.Core.Emulation.ROM
             for (int i = 0; i < rom.Length / 2; i++)
             {
                 byte tmp = rom[i * 2];
-                rom[i * 2] = rom[(i * 2) + 1];
-                rom[(i * 2) + 1] = tmp;
+                rom[i * 2] = rom[i * 2 + 1];
+                rom[i * 2 + 1] = tmp;
             }
         }
     }

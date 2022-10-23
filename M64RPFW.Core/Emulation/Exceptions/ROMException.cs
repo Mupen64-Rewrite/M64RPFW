@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace M64RPFW.Core.Emulation.Exceptions
+namespace M64RPFW.Models.Emulation.Exceptions
 {
     public class ROMException : Exception
     {

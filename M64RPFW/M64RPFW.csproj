@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\M64RPFW.Core\M64RPFW.Core.csproj" />
+    <ProjectReference Include="..\M64RPFW.Core\M64RPFW.Models.csproj" />
     <ProjectReference Include="..\M64RPFW.Styling\M64RPFW.Styling.csproj" />
   </ItemGroup>
 

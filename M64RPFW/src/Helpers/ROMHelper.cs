@@ -1,5 +1,4 @@
-﻿using M64RPFW.Core.Emulation.Exceptions;
-using M64RPFW.Models.Emulation.Core;
+﻿using M64RPFW.Models.Emulation.Exceptions;
 using System;
 using System.Text;
 using System.Text.RegularExpressions;

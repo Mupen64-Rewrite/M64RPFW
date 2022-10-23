@@ -1,5 +1,4 @@
-﻿using M64RPFW.src.Models.Emulation.Core.API;
-using M64RPFW.src.Models.Emulation.Core.Exceptions;
+﻿using M64RPFW.Models.Emulation.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,18 +7,16 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static M64RPFW.Models.Emulation.Core.API.Mupen64PlusTypes;
+using static M64RPFW.Models.Emulation.API.Mupen64PlusTypes;
 
-namespace M64RPFW.Models.Emulation.Core.API
+namespace M64RPFW.Models.Emulation.API
 {
-    public class Mupen64PlusAPI : IDisposable
+    public sealed class Mupen64PlusAPI : IDisposable
     {
-        public static Mupen64PlusAPI Instance { get; private set; }
-
         #region P/Invoke
 
         [DllImport("kernel32.dll")]
-        public static extern IntPtr GetProcAddress(IntPtr hModule, string procedureName);
+        internal static extern IntPtr GetProcAddress(IntPtr hModule, string procedureName);
 
         #endregion
 
@@ -393,7 +390,7 @@ namespace M64RPFW.Models.Emulation.Core.API
         private GetScreenTextureID GFXGetScreenTextureID;
 
         #endregion
-
+        
         #region Events
 
         public event Action OnFrameFinished;
@@ -410,24 +407,19 @@ namespace M64RPFW.Models.Emulation.Core.API
         private bool disposed = false;
         private ManualResetEvent m64pStartupComplete = new(false);
         private Task m64pEmulator;
-        private volatile bool emulator_running;
+        private volatile bool isBusyInCore;
         private IntPtr coreDll;
 
         #endregion
 
         #region Properties
-        public bool IsEmulatorRunning => emulator_running;
+        public bool IsEmulatorRunning => isBusyInCore;
         public bool IsFrameBufferInitialized => FrameBuffer != null && BufferWidth != 0 && BufferHeight != 0;
         public int[] FrameBuffer { get; private set; }
         public int BufferWidth { get; private set; }
         public int BufferHeight { get; private set; }
 
         #endregion
-
-        public static void Create()
-        {
-            Mupen64PlusAPI.Instance = new();
-        }
 
         private void GetScreenDimensions(out int width, out int height)
         {
@@ -515,7 +507,7 @@ namespace M64RPFW.Models.Emulation.Core.API
         /// </summary>
         public void Launch(Mupen64PlusLaunchParameters launchParameters)
         {
-            if (emulator_running) throw new EmulatorAlreadyRunningException();
+            if (isBusyInCore) throw new EmulatorAlreadyRunningException();
 
             disposed = false;
 
@@ -577,7 +569,7 @@ namespace M64RPFW.Models.Emulation.Core.API
             });
             result = m64pCoreDoCommandRenderCallback(m64p_command.M64CMD_SET_RENDER_CALLBACK, 0, m64pRenderCallback);
 
-            int enc = ((int)launchParameters.Config.ScreenWidth << 16) + (int)launchParameters.Config.ScreenHeight;
+            int enc = (launchParameters.Config.ScreenWidth << 16) + launchParameters.Config.ScreenHeight;
             result = m64pCoreDoCommandCoreStateSet(
                     m64p_command.M64CMD_CORE_STATE_SET,
                     m64p_core_param.M64CORE_VIDEO_SIZE,
@@ -593,10 +585,27 @@ namespace M64RPFW.Models.Emulation.Core.API
         /// </summary>
         private void ExecuteEmulator()
         {
-            emulator_running = true;
+            isBusyInCore = true;
+
             StartupCallback cb = new(() => m64pStartupComplete.Set());
             m64pCoreDoCommandPtr(m64p_command.M64CMD_EXECUTE, 0, Marshal.GetFunctionPointerForDelegate(cb));
-            emulator_running = false;
+
+            isBusyInCore = false;
+
+            Debug.Print("Escaped core code");
+
+            // stopped 
+            DetachPlugin(m64p_plugin_type.M64PLUGIN_GFX);
+            DetachPlugin(m64p_plugin_type.M64PLUGIN_AUDIO);
+            DetachPlugin(m64p_plugin_type.M64PLUGIN_INPUT);
+            DetachPlugin(m64p_plugin_type.M64PLUGIN_RSP);
+
+            m64pCoreDoCommandPtr(m64p_command.M64CMD_ROM_CLOSE, 0, IntPtr.Zero);
+
+            m64pCoreShutdown();
+
+            NativeLibrary.Free(coreDll);
+
             // TODO:
             // BUG:
             // the auto-created Rice video window does something weird and causes any subsequent child window to freeze up main message pump
@@ -732,7 +741,7 @@ namespace M64RPFW.Models.Emulation.Core.API
             m64pinit_saveram();
         }
 
-        public const int kSaveramSize = 0x800 + (4 * 0x8000) + 0x20000 + 0x8000;
+        public const int kSaveramSize = 0x800 + 4 * 0x8000 + 0x20000 + 0x8000;
 
         public byte[] SaveSaveram()
         {
@@ -827,28 +836,15 @@ namespace M64RPFW.Models.Emulation.Core.API
         #region Other
         public void Dispose()
         {
+            // this is called on non-emu thread because emu thread is stuck inside m64p
+            // so dont do anything but sending close command
             if (!disposed)
             {
-                // do cleanup ig
-                // lol?
-                while (emulator_running)
+                while (isBusyInCore)
                 {
                     // send command multiple times to assure it closes :/
                     m64pCoreDoCommandPtr(m64p_command.M64CMD_STOP, 0, IntPtr.Zero);
                 }
-
-                DetachPlugin(m64p_plugin_type.M64PLUGIN_GFX);
-                DetachPlugin(m64p_plugin_type.M64PLUGIN_AUDIO);
-                DetachPlugin(m64p_plugin_type.M64PLUGIN_INPUT);
-                DetachPlugin(m64p_plugin_type.M64PLUGIN_RSP);
-
-                m64pCoreDoCommandPtr(m64p_command.M64CMD_ROM_CLOSE, 0, IntPtr.Zero);
-
-                m64pCoreShutdown();
-
-                NativeLibrary.Free(coreDll);
-
-                disposed = true;
             }
         }
 

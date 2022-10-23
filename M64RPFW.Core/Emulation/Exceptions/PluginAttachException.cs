@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace M64RPFW.src.Models.Emulation.Core.Exceptions
+namespace M64RPFW.Models.Emulation.Exceptions
 {
     public class PluginAttachException : Exception
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace M64RPFW.src.Models.Emulation.Core.API
+namespace M64RPFW.Models.Emulation.API
 {
     public class Mupen64PlusLaunchParameters
     {

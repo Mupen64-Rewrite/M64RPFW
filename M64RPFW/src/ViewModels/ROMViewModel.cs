@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using M64RPFW.Core.Emulation.ROM;
+using M64RPFW.Models.Emulation;
 using M64RPFW.src.Helpers;
 using M64RPFW.UI.Views;
 using System.IO;

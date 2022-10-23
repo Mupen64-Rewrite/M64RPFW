@@ -1,12 +1,12 @@
-﻿using M64RPFW.src.Models.Emulation.Core.Exceptions;
+﻿using M64RPFW.Models.Emulation.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static M64RPFW.Models.Emulation.Core.API.Mupen64PlusTypes;
+using static M64RPFW.Models.Emulation.API.Mupen64PlusTypes;
 
-namespace M64RPFW.src.Models.Emulation.Core.API
+namespace M64RPFW.Models.Emulation.API
 {
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
     sealed class Mupen64PlusConfigEntryAttribute : Attribute
@@ -16,8 +16,8 @@ namespace M64RPFW.src.Models.Emulation.Core.API
 
         public Mupen64PlusConfigEntryAttribute(string section, string name)
         {
-            this.Section = section;
-            this.Name = name;
+            Section = section;
+            Name = name;
         }
     }
 
