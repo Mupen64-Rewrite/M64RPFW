@@ -69,7 +69,7 @@
                         <Separator/>
                         <MenuItem Header="{extloc:Localization Exit}" Command="{Binding ExitCommand, ElementName=root}"/>
                     </MenuItem>
-                    <MenuItem Header="Run" IsEnabled="{Binding EmulatorViewModel.IsRunning}">
+                    <MenuItem Header="{extloc:Localization Emulation}" IsEnabled="{Binding EmulatorViewModel.IsRunning}">
                         <MenuItem Header="{extloc:Localization Pause}" IsCheckable="True" IsChecked="{Binding EmulatorViewModel.IsResumed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvertBooleanConverter}}" InputGestureText="{Binding ElementName=TogglePauseInputBinding, Converter={StaticResource KeyBindingToStringConverter}}"/>
                         <Separator/>
                         <MenuItem Header="{extloc:Localization FrameAdvance}" Command="{Binding EmulatorViewModel.FrameAdvanceCommand}" InputGestureText="{Binding ElementName=FrameAdvanceInputBinding, Converter={StaticResource KeyBindingToStringConverter}}"/>

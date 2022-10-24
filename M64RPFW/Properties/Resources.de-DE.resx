@@ -261,4 +261,7 @@
   <data name="GUI" xml:space="preserve">
     <value>GUI</value>
   </data>
+  <data name="Emulation" xml:space="preserve">
+    <value>Emulation</value>
+  </data>
 </root>

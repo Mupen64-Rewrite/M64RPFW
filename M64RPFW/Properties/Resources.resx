@@ -275,4 +275,7 @@
   <data name="Paths" xml:space="preserve">
     <value>Paths</value>
   </data>
+  <data name="Emulation" xml:space="preserve">
+    <value>Emulation</value>
+  </data>
 </root>
