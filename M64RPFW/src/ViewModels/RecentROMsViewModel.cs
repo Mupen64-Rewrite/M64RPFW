@@ -4,6 +4,7 @@ using M64RPFW.src.Containers;
 using M64RPFW.src.Interfaces;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 
 namespace M64RPFW.UI.ViewModels
 {
@@ -23,13 +24,13 @@ namespace M64RPFW.UI.ViewModels
 
         public void AddRecentROM(ROMViewModel rom)
         {
-            // check for duplicates
-
+            // don't add the rom if any duplicates are found
             if (recentROMs.Contains(rom))
                 return;
-
-            foreach (ROMViewModel item in RecentROMs)
-                if (item.Path.Equals(rom.Path)) return;
+            foreach (var _ in RecentROMs.Where(item => item.Path == rom.Path).Select(item => new { }))
+            {
+                return;
+            }
 
             RecentROMs.Add(rom);
 
@@ -41,8 +42,10 @@ namespace M64RPFW.UI.ViewModels
             // recreate recent rom list in settings
 
             generalDependencyContainer.SettingsManager.GetSettings().RecentROMPaths.Clear();
+
             foreach (ROMViewModel item in RecentROMs)
                 generalDependencyContainer.SettingsManager.GetSettings().RecentROMPaths.Add(item.Path);
+
             generalDependencyContainer.SettingsManager.GetSettings().Save();
         }
 
@@ -55,15 +58,19 @@ namespace M64RPFW.UI.ViewModels
         {
             this.generalDependencyContainer = generalDependencyContainer;
 
-            if (generalDependencyContainer.SettingsManager.GetSettings().RecentROMPaths == null)
-            {
-                generalDependencyContainer.SettingsManager.GetSettings().RecentROMPaths = new();
-            }
+            generalDependencyContainer.SettingsManager.GetSettings().RecentROMPaths ??= new();
 
-            foreach (string? recentROMPath in generalDependencyContainer.SettingsManager.GetSettings().RecentROMPaths)
+            foreach (string? recentROMPath in generalDependencyContainer.SettingsManager.GetSettings().RecentROMPaths.Cast<string>().ToList())
             {
-                if (File.Exists(recentROMPath))
-                    RecentROMs.Add(new(recentROMPath));
+                try
+                {
+                    var rom = new ROMViewModel(File.ReadAllBytes(recentROMPath), recentROMPath);
+                    AddRecentROM(rom);
+                }
+                catch
+                {
+                    ; // just... dont add it
+                }
             }
         }
     }

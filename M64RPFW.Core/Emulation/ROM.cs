@@ -12,17 +12,22 @@ namespace M64RPFW.Models.Emulation
 {
     public class ROM
     {
-        public string Path;
-        public byte[] RawData;
+        public readonly byte[] RawData;
 
-        public ROM(string path, byte[] rawData)
+        public ROM(byte[] rawData)
         {
-            Path = path;
             RawData = rawData;
+
+            if (!IsBigEndian)
+            {
+                // perform LE->BE byteswap
+                // e.g.: Usep Ramir O64 -> Super Mario 64 
+                Byteswap(ref rawData);
+            }
         }
 
         public bool IsBigEndian => RawData[0] == 0x80;
-        public string InternalName => Encoding.ASCII.GetString(new ArraySegment<byte>(RawData, 0x20, 0x33 - 0x20));
+        public string InternalName => Encoding.ASCII.GetString(new ArraySegment<byte>(RawData, 0x20, 20));
         public string FriendlyName => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(InternalName.Trim().ToLowerInvariant());
         public bool IsValid => RawData.Length >= 0x0FFF && HasValidHeader(IsBigEndian, RawData);
         public uint PrimaryCRC => BitConverter.ToUInt32(new ArraySegment<byte>(RawData, 0x0010, sizeof(uint)).ToArray());
@@ -41,13 +46,13 @@ namespace M64RPFW.Models.Emulation
                 return rom[0] == 0x37;
         }
 
-        private static void Byteswap(ref byte[] rom)
+        private static void Byteswap(ref byte[] data)
         {
-            for (int i = 0; i < rom.Length / 2; i++)
+            for (int i = 0; i < data.Length / 2; i++)
             {
-                byte tmp = rom[i * 2];
-                rom[i * 2] = rom[i * 2 + 1];
-                rom[i * 2 + 1] = tmp;
+                byte tmp = data[i * 2];
+                data[i * 2] = data[i * 2 + 1];
+                data[i * 2 + 1] = tmp;
             }
         }
     }

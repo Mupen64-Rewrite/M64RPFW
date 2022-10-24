@@ -6,17 +6,6 @@ namespace M64RPFW.Models.Emulation
 {
     public class Emulator
     {
-        public event Action? IsRunningChanged;
-        private bool isRunning;
-        public bool IsRunning
-        {
-            get => isRunning; set
-            {
-                isRunning = value;
-                IsRunningChanged?.Invoke();
-            }
-        }
-
         public event Action? PlayModeChanged;
         private PlayModes playMode = PlayModes.Stopped;
         public PlayModes PlayMode
@@ -55,11 +44,7 @@ namespace M64RPFW.Models.Emulation
         {
             Mupen64PlusLaunchParameters mupen64PlusLaunchParameters = (Mupen64PlusLaunchParameters)@params;
 
-            IsRunning = true;
-
             API.Launch(mupen64PlusLaunchParameters);
-
-            IsRunning = false;
 
             emulatorThreadEndTime = DateTime.Now;
 
@@ -69,6 +54,11 @@ namespace M64RPFW.Models.Emulation
         public void Stop()
         {
             API.Dispose();
+            emulatorThread.Join();
+
+            playMode = PlayModes.Stopped;
+            PlayModeChanged?.Invoke();
+
             Debug.Print("Finished queueing exit");
         }
 

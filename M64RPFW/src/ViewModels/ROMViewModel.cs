@@ -9,12 +9,10 @@ namespace M64RPFW.UI.ViewModels
 {
     public partial class ROMViewModel : ObservableObject
     {
-        private ROM rom;
+        private readonly ROM rom;
 
-        public string Path
-        {
-            get => rom.Path; set => SetProperty(ref rom.Path, value);
-        }
+        private readonly string path;
+        public string Path => path;
 
         public bool IsValid => rom.IsValid;
         public bool IsBigEndian => rom.IsBigEndian;
@@ -26,19 +24,12 @@ namespace M64RPFW.UI.ViewModels
         public byte CountryCode => rom.CountryCode;
         public byte Version => rom.Version;
 
-
-        public ROMViewModel(string _path)
+        public ROMViewModel(byte[] data, string path)
         {
-            rom = new(_path, File.ReadAllBytes(_path));
+            rom = new(data);
+            this.path = path;
 
-            if (!rom.IsBigEndian)
-            {
-                // byteswap to avoid display issues
-                // e.g.: Usep Ramir O64 -> Super Mario 64 
-                ROMHelper.Byteswap(ref rom.RawData);
-            }
-
-            OnPropertyChanged(); // notify due to byteswap
+            OnPropertyChanged(); // just notify that this entire vm changed
         }
 
         public override string ToString()

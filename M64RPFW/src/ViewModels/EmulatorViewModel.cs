@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.Intrinsics.Arm;
 using System.Threading;
 
 namespace M64RPFW.UI.ViewModels
@@ -21,20 +22,10 @@ namespace M64RPFW.UI.ViewModels
         {
             this.generalDependencyContainer = generalDependencyContainer;
             emulator = new();
-            emulator.IsRunningChanged += IsRunningChanged;
             emulator.PlayModeChanged += PlayModeChanged;
         }
 
-        public bool IsRunning => emulator.IsRunning;
-        private void IsRunningChanged()
-        {
-            generalDependencyContainer.UIThreadDispatcherProvider.Execute(() =>
-            {
-                OnPropertyChanged(nameof(IsRunning));
-                ICommandHelper.NotifyCanExecuteChanged(CloseROMCommand, ResetROMCommand, FrameAdvanceCommand, TogglePauseCommand);
-            });
-        }
-
+        public bool IsRunning => emulator.PlayMode != Mupen64PlusTypes.PlayModes.Stopped;
         public bool IsResumed
         {
             get => emulator.PlayMode == Mupen64PlusTypes.PlayModes.Running;
@@ -44,7 +35,10 @@ namespace M64RPFW.UI.ViewModels
         {
             generalDependencyContainer.UIThreadDispatcherProvider.Execute(() =>
             {
+                OnPropertyChanged(nameof(IsRunning));
                 OnPropertyChanged(nameof(IsResumed));
+                ICommandHelper.NotifyCanExecuteChanged(CloseROMCommand, ResetROMCommand, FrameAdvanceCommand, TogglePauseCommand);
+
             });
         }
 
@@ -61,16 +55,29 @@ namespace M64RPFW.UI.ViewModels
         private void LoadROMFromPath(string path)
         {
             if (!AreAllDependenciesMet()) return;
+            void ShowInvalidFileError() => generalDependencyContainer.DialogProvider.ShowErrorDialog(generalDependencyContainer.LocalizationProvider.GetString("InvalidFile"));
 
-            ROMViewModel rom = new(path);
+            // awfull 
 
-            if (!new ROMViewModel(path).IsValid)
+            ROMViewModel? rom = null;
+
+            try
             {
-                generalDependencyContainer.DialogProvider.ShowErrorDialog(generalDependencyContainer.LocalizationProvider.GetString("InvalidFile"));
+                rom = new(File.ReadAllBytes(path), path);
+            }
+            catch
+            {
+                ShowInvalidFileError();
                 return;
             }
 
-            generalDependencyContainer.RecentRomsProvider.AddRecentROM(rom);  // add recent rom here, but not in LoadROMFromPath because the latter is called by recent rom module itself
+            if (!rom.IsValid)
+            {
+                ShowInvalidFileError();
+                return;
+            }
+
+            generalDependencyContainer.RecentRomsProvider.AddRecentROM(rom);
 
             if (IsRunning)
             {
