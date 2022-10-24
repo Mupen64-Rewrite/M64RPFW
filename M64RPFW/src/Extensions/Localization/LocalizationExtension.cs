@@ -1,6 +1,6 @@
 ﻿using System.Windows.Data;
 
-namespace M64RPFW.UI.ViewModels.Extensions.Localization
+namespace M64RPFW.src.Extensions.Localization
 {
     public class LocalizationExtension : Binding
     {

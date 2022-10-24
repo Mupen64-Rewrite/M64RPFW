@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace M64RPFW.UI.ViewModels.Extensions.Bindings
+namespace M64RPFW.src.Extensions.Bindings
 {
     public class BindingProxy : Freezable
     {
@@ -15,8 +15,8 @@ namespace M64RPFW.UI.ViewModels.Extensions.Bindings
 
         public object Data
         {
-            get { return GetValue(DataProperty); }
-            set { SetValue(DataProperty, value); }
+            get => GetValue(DataProperty);
+            set => SetValue(DataProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for Data

@@ -20,8 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\M64RPFW.Core\M64RPFW.Models.csproj" />
+    <ProjectReference Include="..\M64RPFW.Models\M64RPFW.Models.csproj" />
     <ProjectReference Include="..\M64RPFW.Styling\M64RPFW.Styling.csproj" />
+    <ProjectReference Include="..\M64RPFW.ViewModels\M64RPFW.ViewModels.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -124,7 +125,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Update="SDL2.dll">

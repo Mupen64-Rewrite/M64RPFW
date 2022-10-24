@@ -1,18 +1,5 @@
-﻿using MahApps.Metro.IconPacks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace M64RPFW.src.Views.User_Controls
 {
@@ -21,19 +8,19 @@ namespace M64RPFW.src.Views.User_Controls
     /// </summary>
     public partial class SettingsTab : UserControl
     {
-        public object Content
+        public new object Content
         {
-            get { return GetValue(ContentProperty); }
-            set { SetValue(ContentProperty, value); }
+            get => GetValue(ContentProperty);
+            set => SetValue(ContentProperty, value);
         }
 
-        public static readonly DependencyProperty ContentProperty =
+        public static new readonly DependencyProperty ContentProperty =
             DependencyProperty.Register("Content", typeof(object), typeof(SettingsTab), new PropertyMetadata(default));
 
         public string Header
         {
-            get { return (string)GetValue(HeaderProperty); }
-            set { SetValue(HeaderProperty, value); }
+            get => (string)GetValue(HeaderProperty);
+            set => SetValue(HeaderProperty, value);
         }
 
         public static readonly DependencyProperty HeaderProperty =

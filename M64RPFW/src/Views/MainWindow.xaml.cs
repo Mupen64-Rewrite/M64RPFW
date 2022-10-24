@@ -1,40 +1,36 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using M64RPFW.Properties;
-using M64RPFW.src.Configurations;
-using M64RPFW.src.Containers;
-using M64RPFW.src.Interfaces;
-using M64RPFW.src.Themes;
-using M64RPFW.UI.ViewModels;
-using M64RPFW.UI.ViewModels.Extensions.Localization;
-using M64RPFW.UI.Views;
+using M64RPFW.src.Extensions.Localization;
+using M64RPFW.ViewModels;
+using M64RPFW.ViewModels.Configurations;
+using M64RPFW.ViewModels.Containers;
+using M64RPFW.ViewModels.Interfaces;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using ModernWpf;
 using System;
-using System.Collections;
-using System.Drawing;
 using System.Globalization;
-using System.Resources;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Media.Media3D;
 
-namespace M64RPFW.Views
+namespace M64RPFW.src.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Code-behind for MainWindow.xaml.cs 
+    /// <para></para>
+    /// <b>NOTE</b>:
+    /// <para></para>
+    /// This code-behind file does not perform any emulator-related tasks, computations or state management. <para></para>
+    /// It implements various interfaces for this platform to be used by VMs and itself.
     /// </summary>
-    public partial class MainWindow : Window, IFileDialogProvider, 
-        IDialogProvider, 
-        IRomFileExtensionsConfigurationProvider, 
-        ISavestateBoundsConfigurationProvider, 
-        IThemeManager, 
-        IWindowClosingProvider, 
-        ILocalizationManager, 
-        ISettingsProvider, 
-        IDrawingSurfaceProvider, 
+    public partial class MainWindow : Window, IFileDialogProvider,
+        IDialogProvider,
+        IRomFileExtensionsConfigurationProvider,
+        ISavestateBoundsConfigurationProvider,
+        IThemeManager,
+        ILocalizationManager,
+        ISettingsProvider,
+        IDrawingSurfaceProvider,
         IUIThreadDispatcherProvider
     {
         private readonly MainViewModel mainViewModel;
@@ -52,20 +48,19 @@ namespace M64RPFW.Views
         {
             InitializeComponent();
 
-            (this as ILocalizationManager).SetLocale((this as ISettingsProvider).GetSettings().Culture);
+            (this as ILocalizationManager).SetLocale((this as ISettingsProvider).GetSetting<string>("Culture"));
 
             generalDependencyContainer = new GeneralDependencyContainer(
-                this,
-                this,
-                null,
-                this,
-                this,
-                this,
-                this,
-                this,
-                this,
-                this,
-                this);
+                dialogProvider: this,
+                fileDialogProvider: this,
+                recentRomsProvider: null,
+                romFileExtensionsConfigurationProvider: this,
+                savestateBoundsConfigurationProvider: this,
+                themeManager: this,
+                settingsManager: this,  
+                localizationProvider: this,
+                drawingSurfaceProvider: this,
+                uIThreadDispatcherProvider: this);
 
             mainViewModel = new(generalDependencyContainer);
 
@@ -80,43 +75,46 @@ namespace M64RPFW.Views
             Properties.Settings.Default.Save();
         }
 
+        #region Interface Implementations 
         public (string ReturnedPath, bool Cancelled) OpenFileDialogPrompt(string[] validExtensions)
         {
             CommonOpenFileDialog dialog = new();
             string list = string.Empty;
             for (int i = 0; i < validExtensions.Length; i++)
+            {
                 list += $"*.{validExtensions[i]};";
+            }
+
             dialog.Filters.Add(new((this as ILocalizationManager).GetString("SupportedFileFormats"), list));
             dialog.EnsureFileExists = dialog.EnsurePathExists = true;
             CommonFileDialogResult result = dialog.ShowDialog();
-            if (result == CommonFileDialogResult.Ok) return (dialog.FileName, false);
-            return (string.Empty, true);
-
+            return result == CommonFileDialogResult.Ok ? ((string ReturnedPath, bool Cancelled))(dialog.FileName, false) : ((string ReturnedPath, bool Cancelled))(string.Empty, true);
         }
         public (string ReturnedPath, bool Cancelled) SaveFileDialogPrompt(string[] validExtensions)
         {
             CommonSaveFileDialog dialog = new();
             string list = string.Empty;
             for (int i = 0; i < validExtensions.Length; i++)
+            {
                 list += $"*.{validExtensions[i]};";
+            }
+
             dialog.Filters.Add(new((this as ILocalizationManager).GetString("SupportedFileFormats"), list));
             CommonFileDialogResult result = dialog.ShowDialog();
-            if (result == CommonFileDialogResult.Ok) return (dialog.FileName, false);
-            return (string.Empty, true);
-
+            return result == CommonFileDialogResult.Ok ? ((string ReturnedPath, bool Cancelled))(dialog.FileName, false) : ((string ReturnedPath, bool Cancelled))(string.Empty, true);
         }
 
         public void ShowErrorDialog(string message)
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                MessageBox.Show(message, (this as ILocalizationManager).GetString("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
+                _ = MessageBox.Show(message, (this as ILocalizationManager).GetString("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
             }));
         }
 
-        Themes IThemeManager.GetTheme()
+        string IThemeManager.GetTheme()
         {
-            return (Themes)Enum.Parse(typeof(Themes), (this as ISettingsProvider).GetSettings().Theme);
+            return ((ISettingsProvider)this).GetSetting<string>("Theme");
         }
 
         void IThemeManager.SetTheme(string themeName)
@@ -135,36 +133,33 @@ namespace M64RPFW.Views
 
         public void SetLocale(string localeKey)
         {
-            CultureInfo culture = CultureInfo.GetCultureInfo(localeKey);
-            Thread.CurrentThread.CurrentCulture =
-            Thread.CurrentThread.CurrentUICulture =
-            LocalizationSource.Instance.CurrentCulture = culture;
-            Properties.Settings.Default.Culture = localeKey;
+            (this as IUIThreadDispatcherProvider).Execute(delegate
+            {
+                CultureInfo culture = CultureInfo.GetCultureInfo(localeKey);
+                Thread.CurrentThread.CurrentCulture =
+                Thread.CurrentThread.CurrentUICulture =
+                LocalizationSource.Instance.CurrentCulture = culture;
+                Properties.Settings.Default.Culture = localeKey;
+                Properties.Settings.Default.Save();
+            });
+        }
+
+
+        public T GetSetting<T>(string key)
+        {
+            return (T)Properties.Settings.Default[key];
+        }
+        public void SetSetting<T>(string key, T value)
+        {
+            Properties.Settings.Default[key] = value;
+        }
+        public void Save()
+        {
             Properties.Settings.Default.Save();
         }
-
-
-
-        Settings ISettingsProvider.GetSettings()
-        {
-            return Properties.Settings.Default;
-        }
-
         public string GetString(string key)
         {
             return Properties.Resources.ResourceManager.GetString(key) ?? "?";
-        }
-
-        [RelayCommand]
-        private void ShowSettingsWindow()
-        {
-            if (settingsWindow != null)
-            {
-                return;
-            }
-            settingsWindow = new SettingsWindow() { DataContext = new SettingsViewModel(generalDependencyContainer) };
-            settingsWindow.ShowDialog();
-            settingsWindow = null; // this is okay, because ShowDialog() blocks
         }
 
         void IDrawingSurfaceProvider.Create(int width, int height)
@@ -188,5 +183,37 @@ namespace M64RPFW.Views
         {
             Application.Current.Dispatcher.Invoke(action);
         }
+        #endregion
+
+        #region Windowing Commands
+
+        [RelayCommand]
+        private void ShowSettingsWindow()
+        {
+            // store reference and check against it being null because WPF accelerators are a dick and eat child window's events
+            if (settingsWindow != null)
+            {
+                return;
+            }
+            settingsWindow = new SettingsWindow() { DataContext = new SettingsViewModel(generalDependencyContainer) };
+            _ = settingsWindow.ShowDialog();
+            settingsWindow = null; // this is okay, because ShowDialog() blocks
+        }
+
+        [RelayCommand]
+        private void ShowROMInspectionWindow(object dataContext)
+        {
+            var romInspectionWindow = new ROMInspectionWindow() { DataContext = dataContext };
+            romInspectionWindow.ShowDialog();
+        }
+
+        [RelayCommand]
+        private void Exit()
+        {
+            Close();
+        }
+
+        #endregion
+
     }
 }

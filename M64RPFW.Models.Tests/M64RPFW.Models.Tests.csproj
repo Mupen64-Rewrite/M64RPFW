@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\M64RPFW.Core\M64RPFW.Models.csproj" />
+    <ProjectReference Include="..\M64RPFW.Models\M64RPFW.Models.csproj" />
   </ItemGroup>
 
   <ItemGroup>

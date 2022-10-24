@@ -3,7 +3,7 @@ using System;
 using System.Windows;
 using System.Windows.Input;
 
-namespace M64RPFW.UI.ViewModels.Extensions
+namespace M64RPFW.src.Extensions
 {
     /// <summary>
     /// This class facilitates associating a key binding in XAML markup to  a command
@@ -20,17 +20,15 @@ namespace M64RPFW.UI.ViewModels.Extensions
 
         public RelayCommand Command
         {
-            get { return (RelayCommand)GetValue(CommandProperty); }
-            set { SetValue(CommandProperty, value); }
+            get => (RelayCommand)GetValue(CommandProperty);
+            set => SetValue(CommandProperty, value);
         }
 
         #region RelayCommand Members
 
         public bool CanExecute(object parameter)
         {
-            if (Command != null)
-                return Command.CanExecute(parameter);
-            return false;
+            return Command != null && Command.CanExecute(parameter);
         }
 
         public void Execute(object parameter)
@@ -43,14 +41,12 @@ namespace M64RPFW.UI.ViewModels.Extensions
         private static void OnCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             CommandReference? commandReference = d as CommandReference;
-            RelayCommand? oldCommand = e.OldValue as RelayCommand;
-            RelayCommand? newCommand = e.NewValue as RelayCommand;
 
-            if (oldCommand != null)
+            if (e.OldValue is RelayCommand oldCommand)
             {
                 oldCommand.CanExecuteChanged -= commandReference.CanExecuteChanged;
             }
-            if (newCommand != null)
+            if (e.NewValue is RelayCommand newCommand)
             {
                 newCommand.CanExecuteChanged += commandReference.CanExecuteChanged;
             }

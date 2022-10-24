@@ -23,7 +23,7 @@
     <Setting Name="ShowStatusbar" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="RecentROMPaths" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="RecentROMPaths" Type="System.String[]" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="CoreLibraryPath" Type="System.String" Scope="User">

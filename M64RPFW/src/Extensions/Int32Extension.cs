@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Markup;
 
-namespace M64RPFW.UI.ViewModels.Extensions
+namespace M64RPFW.src.Extensions
 {
     public sealed class Int32Extension : MarkupExtension
     {

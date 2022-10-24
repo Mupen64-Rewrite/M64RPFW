@@ -1,6 +1,6 @@
 ﻿using System.Windows.Data;
 
-namespace M64RPFW.UI.ViewModels.Extensions.Bindings
+namespace M64RPFW.src.Extensions.Bindings
 {
     public class SettingsBindingExtension : Binding
     {

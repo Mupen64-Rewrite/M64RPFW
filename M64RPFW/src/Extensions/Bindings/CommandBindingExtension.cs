@@ -1,11 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using System;
-using System.Reflection;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Markup;
-
-namespace M64RPFW.UI.ViewModels.Extensions.Bindings
+﻿namespace M64RPFW.src.Extensions.Bindings
 {
     //[MarkupExtensionReturnType(typeof(RelayCommand))]
     //public class CommandBindingExtension : MarkupExtension

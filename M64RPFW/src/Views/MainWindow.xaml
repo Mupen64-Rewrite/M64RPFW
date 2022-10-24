@@ -1,25 +1,25 @@
-﻿<Window x:Class="M64RPFW.Views.MainWindow"
+﻿<Window x:Class="M64RPFW.src.Views.MainWindow"
         x:Name="root"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:M64RPFW.Views" 
-        xmlns:viewmodels="clr-namespace:M64RPFW.UI.ViewModels"
-        xmlns:loc="clr-namespace:M64RPFW.UI.ViewModels.Extensions.Localization"
-        xmlns:ext="clr-namespace:M64RPFW.UI.ViewModels.Extensions"
-        xmlns:bindings="clr-namespace:M64RPFW.UI.ViewModels.Extensions.Bindings"
+        xmlns:ext="clr-namespace:M64RPFW.src.Extensions"
+        xmlns:extloc="clr-namespace:M64RPFW.src.Extensions.Localization"
+        xmlns:extbin="clr-namespace:M64RPFW.src.Extensions.Bindings"
+        xmlns:ui="http://schemas.modernwpf.com/2019" 
+        xmlns:viewmodels="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels" 
         d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
         mc:Ignorable="d"
-        Title="{loc:Localization AppName}" 
+        Title="{extloc:Localization AppName}" 
         Width="800"
         Height="450"
-        xmlns:ui="http://schemas.modernwpf.com/2019"
         ui:WindowHelper.UseModernWindowStyle="True"
         Closing="Window_Closing">
 
     <Window.Resources>
-        <bindings:BindingProxy x:Key="MainViewModelProxy" Data="{Binding}"/>
+        <extbin:BindingProxy x:Key="MainViewModelProxy" Data="{Binding}"/>
+        <extbin:BindingProxy x:Key="RootProxy" Data="{Binding ElementName=root}"/>
         <ext:CommandReference x:Key="TogglePauseCommandReference" Command="{Binding EmulatorViewModel.TogglePauseCommand}"/>
         <ext:CommandReference x:Key="FrameAdvanceCommandReference" Command="{Binding EmulatorViewModel.FrameAdvanceCommand}"/>
         <ext:CommandReference x:Key="ShowSettingsWindowCommandReference" Command="{Binding ShowSettingsWindowCommand, ElementName=root}"/>
@@ -37,8 +37,8 @@
         <Grid>
             <DockPanel LastChildFill="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <Menu IsMainMenu="True" Height="40" DockPanel.Dock="Top" VerticalAlignment="Stretch">
-                    <MenuItem Header="{loc:Localization File}">
-                        <MenuItem Header="{loc:Localization LoadROM}" Command="{Binding EmulatorViewModel.LoadROMCommand, IsAsync=True}" IsEnabled="{Binding EmulatorViewModel.IsRunning, Converter={StaticResource InvertBooleanConverter}}"/>
+                    <MenuItem Header="{extloc:Localization File}">
+                        <MenuItem Header="{extloc:Localization LoadROM}" Command="{Binding EmulatorViewModel.LoadROMCommand, IsAsync=True}"/>
                         <MenuItem Header="Recent ROMs" ItemsSource="{Binding RecentROMsViewModel.RecentROMs, UpdateSourceTrigger=PropertyChanged}" UsesItemContainerTemplate="True">
                             <MenuItem.Resources>
 
@@ -50,12 +50,13 @@
                                 Header="{Binding}">
                                         <MenuItem.ContextMenu>
                                             <ContextMenu>
-                                                <MenuItem Header="{loc:Localization Remove}" 
+                                                <MenuItem Header="{extloc:Localization Remove}" 
                                                           Command="{Binding Source={StaticResource MainViewModelProxy}, Path=Data.RecentROMsViewModel.RemoveRecentROMCommand}" 
                                                           CommandParameter="{Binding}"/>
                                                 <Separator/>
-                                                <MenuItem Header="{loc:Localization Inspect}" 
-                                                          Command="{Binding ShowInspectionWindowCommand}"/>
+                                                <MenuItem Header="{extloc:Localization Inspect}" 
+                                                          Command="{Binding Source={StaticResource RootProxy}, Path=Data.ShowROMInspectionWindowCommand}"
+                                                          CommandParameter="{Binding}"/>
                                             </ContextMenu>
                                         </MenuItem.ContextMenu>
                                     </MenuItem>
@@ -63,27 +64,27 @@
 
                             </MenuItem.Resources>
                         </MenuItem>
-                        <MenuItem Header="{loc:Localization CloseROM}" Command="{Binding EmulatorViewModel.CloseROMCommand}" IsEnabled="{Binding EmulatorViewModel.IsRunning}" />
-                        <MenuItem Header="{loc:Localization ResetROM}" Command="{Binding EmulatorViewModel.ResetROMCommand}" IsEnabled="{Binding EmulatorViewModel.IsRunning}"/>
+                        <MenuItem Header="{extloc:Localization CloseROM}" Command="{Binding EmulatorViewModel.CloseROMCommand}" IsEnabled="{Binding EmulatorViewModel.IsRunning}" />
+                        <MenuItem Header="{extloc:Localization ResetROM}" Command="{Binding EmulatorViewModel.ResetROMCommand}" IsEnabled="{Binding EmulatorViewModel.IsRunning}"/>
                         <Separator/>
-                        <MenuItem Header="{loc:Localization Exit}" Command="{Binding ExitAppCommand}"/>
+                        <MenuItem Header="{extloc:Localization Exit}" Command="{Binding ExitCommand, ElementName=root}"/>
                     </MenuItem>
                     <MenuItem Header="Run" IsEnabled="{Binding EmulatorViewModel.IsRunning}">
-                        <MenuItem Header="{loc:Localization Pause}" IsCheckable="True" IsChecked="{Binding EmulatorViewModel.IsResumed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvertBooleanConverter}}" InputGestureText="{Binding ElementName=TogglePauseInputBinding, Converter={StaticResource KeyBindingToStringConverter}}"/>
+                        <MenuItem Header="{extloc:Localization Pause}" IsCheckable="True" IsChecked="{Binding EmulatorViewModel.IsResumed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvertBooleanConverter}}" InputGestureText="{Binding ElementName=TogglePauseInputBinding, Converter={StaticResource KeyBindingToStringConverter}}"/>
                         <Separator/>
-                        <MenuItem Header="{loc:Localization FrameAdvance}" Command="{Binding EmulatorViewModel.FrameAdvanceCommand}" InputGestureText="{Binding ElementName=FrameAdvanceInputBinding, Converter={StaticResource KeyBindingToStringConverter}}"/>
+                        <MenuItem Header="{extloc:Localization FrameAdvance}" Command="{Binding EmulatorViewModel.FrameAdvanceCommand}" InputGestureText="{Binding ElementName=FrameAdvanceInputBinding, Converter={StaticResource KeyBindingToStringConverter}}"/>
                     </MenuItem>
-                    <MenuItem Header="{loc:Localization Options}">
-                        <MenuItem Header="{loc:Localization PluginSettings}">
-                            <MenuItem Header="{loc:Localization Video}" />
-                            <MenuItem Header="{loc:Localization Audio}" />
-                            <MenuItem Header="{loc:Localization Input}" />
-                            <MenuItem Header="{loc:Localization RSP}" />
+                    <MenuItem Header="{extloc:Localization Options}">
+                        <MenuItem Header="{extloc:Localization PluginSettings}">
+                            <MenuItem Header="{extloc:Localization Video}" />
+                            <MenuItem Header="{extloc:Localization Audio}" />
+                            <MenuItem Header="{extloc:Localization Input}" />
+                            <MenuItem Header="{extloc:Localization RSP}" />
                         </MenuItem>
                         <Separator/>
-                        <MenuItem x:Name="ShowStatusbar_MenuItem" Header="{loc:Localization ShowStatusbar}" IsCheckable="True" IsChecked="{bindings:SettingsBinding ShowStatusbar, Mode=TwoWay}"/>
+                        <MenuItem x:Name="ShowStatusbar_MenuItem" Header="{extloc:Localization ShowStatusbar}" IsCheckable="True" IsChecked="{extbin:SettingsBinding ShowStatusbar, Mode=TwoWay}"/>
                         <Separator/>
-                        <MenuItem Header="{loc:Localization ProgramSettings}" Command="{Binding ShowSettingsWindowCommand, ElementName=root}" InputGestureText="{Binding ElementName=ShowSettingsInputBinding, Converter={StaticResource KeyBindingToStringConverter}}"/>
+                        <MenuItem Header="{extloc:Localization ProgramSettings}" Command="{Binding ShowSettingsWindowCommand, ElementName=root}" InputGestureText="{Binding ElementName=ShowSettingsInputBinding, Converter={StaticResource KeyBindingToStringConverter}}"/>
                     </MenuItem>
                 </Menu>
                 
