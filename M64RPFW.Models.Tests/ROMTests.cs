@@ -5,12 +5,13 @@ namespace M64RPFW.Models.Tests
     [TestClass]
     public class ROMTests
     {
-        [TestMethod]
-        public void TestROMDataExtraction()
-        {
-            byte[] data = File.ReadAllBytes("m64p_test_rom.v64".ToBundledPath());
+        private ROM GetTestROM() => new ROM(File.ReadAllBytes("m64p_test_rom.v64".ToBundledPath()));
+        
 
-            ROM rom = new(data);
+        [TestMethod]
+        public void TestROMIsExtractedCorrectly()
+        {
+            var rom = GetTestROM();
 
             Assert.IsNotNull(rom, $"ROM is null");
             Assert.IsTrue(rom.IsValid, $"ROM is invalid");
