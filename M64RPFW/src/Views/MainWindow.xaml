@@ -14,6 +14,7 @@
         Title="{extloc:Localization AppName}" 
         Width="800"
         Height="450"
+        ui:TitleBar.IsIconVisible="True"
         ui:WindowHelper.UseModernWindowStyle="True"
         Closing="Window_Closing">
 

@@ -8,7 +8,22 @@
     <AssemblyVersion>1.0.0.1</AssemblyVersion>
     <FileVersion>1.0.0.1</FileVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PackageIcon>m64rpfw.png</PackageIcon>
+    <ApplicationIcon>img\m64rpfw48.ico</ApplicationIcon>
+    <Title>M64RPFW</Title>
+    <Authors>Aurumaker72</Authors>
+    <Description> A rewrite of Mupen64</Description>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="img\m64rpfw48.ico" />
+    <None Remove="img\m64rpfw64.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="img\m64rpfw48.ico" />
+    <Content Include="img\m64rpfw64.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CalcBinding" Version="2.5.2" />
@@ -36,6 +51,10 @@
   <ItemGroup>
     <None Update="freetype.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="img\m64rpfw.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
     <None Update="libpng16.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
