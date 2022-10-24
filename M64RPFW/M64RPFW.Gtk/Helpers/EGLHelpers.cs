@@ -243,6 +243,6 @@ public static class EGLHelpers
             }
         }
 
-        throw new ApplicationException("Get");
+        throw new ApplicationException("GetConfigAttr reached end of switch");
     }
 }

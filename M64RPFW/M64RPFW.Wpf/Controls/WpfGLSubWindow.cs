@@ -31,6 +31,6 @@ namespace M64RPFW.Wpf.Controls
         {
 
         }
-        private WGLSubwindow? _glWindow;
+        private GLFWSubWindow? _glWindow;
     }
 }
