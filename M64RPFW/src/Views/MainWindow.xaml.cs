@@ -13,6 +13,7 @@ using System;
 using System.Configuration;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Windows;
@@ -209,7 +210,7 @@ namespace M64RPFW.src.Views
         {
             Application.Current.Dispatcher.Invoke(delegate
             {
-                writeableBitmap.WritePixels(new(0, 0, width, height), buffer, width * sizeof(int), 0);
+                writeableBitmap.WritePixels(new(0, 0, width, height), Enumerable.Range(0x00FF0000, width * height).ToArray(), width * sizeof(int), 0);
             });
         }
 

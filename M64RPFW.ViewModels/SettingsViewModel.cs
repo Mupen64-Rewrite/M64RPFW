@@ -71,7 +71,7 @@ namespace M64RPFW.ViewModels
         {
             if (ShowFileDialogAndPickLibraryPath(out string? path))
             {
-                generalDependencyContainer.SettingsManager.SetSetting<string>("CoreLibraryPath", path);
+                generalDependencyContainer.SettingsManager.SetSetting<string>("CoreLibraryPath", path, true);
             }
         }
 
@@ -81,7 +81,7 @@ namespace M64RPFW.ViewModels
         {
             if (ShowFileDialogAndPickLibraryPath(out string? path))
             {
-                generalDependencyContainer.SettingsManager.SetSetting<string>("VideoPluginPath", path);
+                generalDependencyContainer.SettingsManager.SetSetting<string>("VideoPluginPath", path, true);
             }
         }
         [RelayCommand]
@@ -89,7 +89,7 @@ namespace M64RPFW.ViewModels
         {
             if (ShowFileDialogAndPickLibraryPath(out string? path))
             {
-                generalDependencyContainer.SettingsManager.SetSetting<string>("AudioPluginPath", path);
+                generalDependencyContainer.SettingsManager.SetSetting<string>("AudioPluginPath", path, true);
             }
         }
         [RelayCommand]
@@ -97,7 +97,7 @@ namespace M64RPFW.ViewModels
         {
             if (ShowFileDialogAndPickLibraryPath(out string? path))
             {
-                generalDependencyContainer.SettingsManager.SetSetting<string>("InputPluginPath", path);
+                generalDependencyContainer.SettingsManager.SetSetting<string>("InputPluginPath", path, true);
             }
         }
         [RelayCommand]
@@ -105,7 +105,7 @@ namespace M64RPFW.ViewModels
         {
             if (ShowFileDialogAndPickLibraryPath(out string? path))
             {
-                generalDependencyContainer.SettingsManager.SetSetting<string>("RSPPluginPath", path);
+                generalDependencyContainer.SettingsManager.SetSetting<string>("RSPPluginPath", path, true);
             }
         }
     }
