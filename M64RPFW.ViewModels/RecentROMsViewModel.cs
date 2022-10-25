@@ -50,6 +50,12 @@ namespace M64RPFW.ViewModels
 
         public void AddRecentROM(ROMViewModel rom)
         {
+            // sanity checks
+            if (!rom.IsValid)
+            {
+                return;
+            }
+
             // don't add the rom if any duplicates are found
             if (recentROMs.Contains(rom))
             {
