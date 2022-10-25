@@ -20,91 +20,76 @@
         ui:WindowHelper.UseModernWindowStyle="True">
     <TabControl TabStripPlacement="Top" Margin="0 -8 0 0">
         <TabControl.Items>
-            <TabItem Header="{iconPacks:Material Kind=Folder, Width={StaticResource SmallIconSize}}" WindowChrome.IsHitTestVisibleInChrome="True">
-                <ucs:SettingsTab Header="{extloc:Localization Paths}">
-                    <ucs:SettingsTab.Content>
-                        <Grid>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-
-                                <TextBlock VerticalAlignment="Center" Margin="0 0 5 0" Grid.Row="0" Grid.Column="0" Padding="{StaticResource SmallPadding}" Text="Core"/>
-                                <ucs:FileBrowserTextBox Grid.Row="0" Grid.Column="1" Padding="{StaticResource SmallPadding}" Path="{extbin:SettingsBinding CoreLibraryPath, Mode=TwoWay}" BrowseCommand="{Binding BrowseCoreLibraryPathCommand}"/>
-
-                                <TextBlock VerticalAlignment="Center" Margin="0 0 5 0" Grid.Row="1" Grid.Column="0" Padding="{StaticResource SmallPadding}" Text="Video Plugin"/>
-                                <ucs:FileBrowserTextBox Grid.Row="1" Grid.Column="1" Padding="{StaticResource SmallPadding}" Path="{extbin:SettingsBinding VideoPluginPath, Mode=TwoWay}" BrowseCommand="{Binding BrowseVideoPluginPathCommand}"/>
-
-                                <TextBlock VerticalAlignment="Center" Margin="0 0 5 0" Grid.Row="2" Grid.Column="0" Padding="{StaticResource SmallPadding}" Text="Audio Plugin"/>
-                                <ucs:FileBrowserTextBox Grid.Row="2" Grid.Column="1" Padding="{StaticResource SmallPadding}" Path="{extbin:SettingsBinding AudioPluginPath, Mode=TwoWay}" BrowseCommand="{Binding BrowseAudioPluginPathCommand}"/>
-
-                                <TextBlock VerticalAlignment="Center" Margin="0 0 5 0" Grid.Row="3" Grid.Column="0" Padding="{StaticResource SmallPadding}" Text="Input Plugin"/>
-                                <ucs:FileBrowserTextBox Grid.Row="3" Grid.Column="1" Padding="{StaticResource SmallPadding}" Path="{extbin:SettingsBinding InputPluginPath, Mode=TwoWay}" BrowseCommand="{Binding BrowseInputPluginPathCommand}"/>
-
-                                <TextBlock VerticalAlignment="Center" Margin="0 0 5 0" Grid.Row="4" Grid.Column="0" Padding="{StaticResource SmallPadding}" Text="RSP Plugin"/>
-                                <ucs:FileBrowserTextBox Grid.Row="4" Grid.Column="1" Padding="{StaticResource SmallPadding}" Path="{extbin:SettingsBinding RSPPluginPath, Mode=TwoWay}" BrowseCommand="{Binding BrowseRSPPluginPathCommand}"/>
-
-                            </Grid>
-                        </Grid>
-                    </ucs:SettingsTab.Content>
-                </ucs:SettingsTab>
+            <TabItem Header="{iconPacks:Material Kind=Monitor, Width={StaticResource SmallIconSize}}" WindowChrome.IsHitTestVisibleInChrome="True">
+                <ScrollViewer>
+                    <StackPanel Orientation="Vertical" Margin="{StaticResource MediumContentMargin}">
+                        <ucs:SettingsSection Header="{extloc:Localization Theme}">
+                            <ucs:SettingsSection.Content>
+                                <StackPanel Orientation="Vertical">
+                                    <RadioButton Content="{extloc:Localization Light}" Command="{Binding SetThemeCommand}" CommandParameter="Light" IsChecked="{extbin:SettingsBinding Path=Theme, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}" />
+                                    <RadioButton Content="{extloc:Localization Dark}" Command="{Binding SetThemeCommand}" CommandParameter="Dark" IsChecked="{extbin:SettingsBinding Path=Theme, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}" />
+                                </StackPanel>
+                            </ucs:SettingsSection.Content>
+                        </ucs:SettingsSection>
+                        <ucs:SettingsSection Header="{extloc:Localization Language}">
+                            <ucs:SettingsSection.Content>
+                                <StackPanel Orientation="Vertical">
+                                    <RadioButton Content="English" Command="{Binding SetCultureCommand}" CommandParameter="en-US" IsChecked="{extbin:SettingsBinding Path=Culture, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=en-US, Mode=OneWay}" />
+                                    <RadioButton Content="Deutsch" Command="{Binding SetCultureCommand}" CommandParameter="de-DE" IsChecked="{extbin:SettingsBinding Path=Culture, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=de-DE, Mode=OneWay}" />
+                                </StackPanel>
+                            </ucs:SettingsSection.Content>
+                        </ucs:SettingsSection>
+                    </StackPanel>
+                </ScrollViewer>
             </TabItem>
             <TabItem Header="{iconPacks:Material Kind=Chip, Width={StaticResource SmallIconSize}}" WindowChrome.IsHitTestVisibleInChrome="True">
-                <ucs:SettingsTab Header="{extloc:Localization Core}">
-                    <ucs:SettingsTab.Content>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <StackPanel Orientation="Vertical">
-                                <RadioButton Content="{extloc:Localization PureInterpreter}" IsChecked="{extbin:SettingsBinding CoreType, Converter={StaticResource IntegerEqualityToBooleanConverter}, ConverterParameter={ext:Int32 0}, Mode=OneWay}" Command="{Binding SetSettingsPropertyIntegerCommand}" CommandParameter="(CoreType, 0)"/>
-                                <RadioButton Content="{extloc:Localization CachedInterpreter}" IsChecked="{extbin:SettingsBinding CoreType, Converter={StaticResource IntegerEqualityToBooleanConverter}, ConverterParameter={ext:Int32 1}, Mode=OneWay}" Command="{Binding SetSettingsPropertyIntegerCommand}" CommandParameter="(CoreType, 1)"/>
-                                <RadioButton Content="{extloc:Localization DynamicRecompiler}" IsChecked="{extbin:SettingsBinding CoreType, Converter={StaticResource IntegerEqualityToBooleanConverter}, ConverterParameter={ext:Int32 2}, Mode=OneWay}" Command="{Binding SetSettingsPropertyIntegerCommand}" CommandParameter="(CoreType, 2)"/>
-                            </StackPanel>
-                        </Grid>
-                    </ucs:SettingsTab.Content>
-                </ucs:SettingsTab>
-            </TabItem>
-            <TabItem Header="{iconPacks:Material Kind=Translate, Width={StaticResource SmallIconSize}}" WindowChrome.IsHitTestVisibleInChrome="True">
-                <ucs:SettingsTab Header="{extloc:Localization Language}">
-                    <ucs:SettingsTab.Content>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <StackPanel Orientation="Vertical">
-                                <RadioButton Content="English" Command="{Binding SetCultureCommand}" CommandParameter="en-US" IsChecked="{extbin:SettingsBinding Path=Culture, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=en-US, Mode=OneWay}" />
-                                <RadioButton Content="Deutsch" Command="{Binding SetCultureCommand}" CommandParameter="de-DE" IsChecked="{extbin:SettingsBinding Path=Culture, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=de-DE, Mode=OneWay}" />
-                            </StackPanel>
-                        </Grid>
-                    </ucs:SettingsTab.Content>
-                </ucs:SettingsTab>
-            </TabItem>
-            <TabItem Header="{iconPacks:Material Kind=WeatherSunny, Width={StaticResource SmallIconSize}}" WindowChrome.IsHitTestVisibleInChrome="True">
-                <ucs:SettingsTab Header="{extloc:Localization Theme}">
-                    <ucs:SettingsTab.Content>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <StackPanel Orientation="Vertical">
-                                <RadioButton Content="{extloc:Localization Light}" Command="{Binding SetThemeCommand}" CommandParameter="Light" IsChecked="{extbin:SettingsBinding Path=Theme, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}" />
-                                <RadioButton Content="{extloc:Localization Dark}" Command="{Binding SetThemeCommand}" CommandParameter="Dark" IsChecked="{extbin:SettingsBinding Path=Theme, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}" />
-                            </StackPanel>
-                        </Grid>
-                    </ucs:SettingsTab.Content>
-                </ucs:SettingsTab>
+
+                <ScrollViewer>
+                    <StackPanel Orientation="Vertical" Margin="{StaticResource MediumContentMargin}">
+                        <ucs:SettingsSection Header="{extloc:Localization Core}">
+                            <ucs:SettingsSection.Content>
+                                <StackPanel Orientation="Vertical">
+                                    <RadioButton Content="{extloc:Localization PureInterpreter}" IsChecked="{extbin:SettingsBinding CoreType, Converter={StaticResource IntegerEqualityToBooleanConverter}, ConverterParameter={ext:Int32 0}, Mode=OneWay}" Command="{Binding SetSettingsPropertyIntegerCommand}" CommandParameter="(CoreType, 0)"/>
+                                    <RadioButton Content="{extloc:Localization CachedInterpreter}" IsChecked="{extbin:SettingsBinding CoreType, Converter={StaticResource IntegerEqualityToBooleanConverter}, ConverterParameter={ext:Int32 1}, Mode=OneWay}" Command="{Binding SetSettingsPropertyIntegerCommand}" CommandParameter="(CoreType, 1)"/>
+                                    <RadioButton Content="{extloc:Localization DynamicRecompiler}" IsChecked="{extbin:SettingsBinding CoreType, Converter={StaticResource IntegerEqualityToBooleanConverter}, ConverterParameter={ext:Int32 2}, Mode=OneWay}" Command="{Binding SetSettingsPropertyIntegerCommand}" CommandParameter="(CoreType, 2)"/>
+                                </StackPanel>
+                            </ucs:SettingsSection.Content>
+                        </ucs:SettingsSection>
+                        <ucs:SettingsSection Header="{extloc:Localization Paths}">
+                            <ucs:SettingsSection.Content>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock VerticalAlignment="Center" Margin="0 0 5 0" Grid.Row="0" Grid.Column="0" Padding="{StaticResource SmallPadding}" Text="Core"/>
+                                    <ucs:FileBrowserTextBox Grid.Row="0" Grid.Column="1" Padding="{StaticResource SmallPadding}" Path="{extbin:SettingsBinding CoreLibraryPath, Mode=TwoWay}" BrowseCommand="{Binding BrowseCoreLibraryPathCommand}"/>
+
+                                    <TextBlock VerticalAlignment="Center" Margin="0 0 5 0" Grid.Row="1" Grid.Column="0" Padding="{StaticResource SmallPadding}" Text="Video Plugin"/>
+                                    <ucs:FileBrowserTextBox Grid.Row="1" Grid.Column="1" Padding="{StaticResource SmallPadding}" Path="{extbin:SettingsBinding VideoPluginPath, Mode=TwoWay}" BrowseCommand="{Binding BrowseVideoPluginPathCommand}"/>
+
+                                    <TextBlock VerticalAlignment="Center" Margin="0 0 5 0" Grid.Row="2" Grid.Column="0" Padding="{StaticResource SmallPadding}" Text="Audio Plugin"/>
+                                    <ucs:FileBrowserTextBox Grid.Row="2" Grid.Column="1" Padding="{StaticResource SmallPadding}" Path="{extbin:SettingsBinding AudioPluginPath, Mode=TwoWay}" BrowseCommand="{Binding BrowseAudioPluginPathCommand}"/>
+
+                                    <TextBlock VerticalAlignment="Center" Margin="0 0 5 0" Grid.Row="3" Grid.Column="0" Padding="{StaticResource SmallPadding}" Text="Input Plugin"/>
+                                    <ucs:FileBrowserTextBox Grid.Row="3" Grid.Column="1" Padding="{StaticResource SmallPadding}" Path="{extbin:SettingsBinding InputPluginPath, Mode=TwoWay}" BrowseCommand="{Binding BrowseInputPluginPathCommand}"/>
+
+                                    <TextBlock VerticalAlignment="Center" Margin="0 0 5 0" Grid.Row="4" Grid.Column="0" Padding="{StaticResource SmallPadding}" Text="RSP Plugin"/>
+                                    <ucs:FileBrowserTextBox Grid.Row="4" Grid.Column="1" Padding="{StaticResource SmallPadding}" Path="{extbin:SettingsBinding RSPPluginPath, Mode=TwoWay}" BrowseCommand="{Binding BrowseRSPPluginPathCommand}"/>
+
+                                </Grid>
+                            </ucs:SettingsSection.Content>
+                        </ucs:SettingsSection>
+                    </StackPanel>
+                </ScrollViewer>
             </TabItem>
         </TabControl.Items>
     </TabControl>

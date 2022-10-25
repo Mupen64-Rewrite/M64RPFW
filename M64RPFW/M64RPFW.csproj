@@ -71,6 +71,9 @@
     <None Update="m64p\libpng16.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="m64p\libstdc++-6.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="m64p\libwinpthread-1.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -86,8 +89,14 @@
     <None Update="m64p\mupen64plus-rsp-hle.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="m64p\mupen64plus-video-glide64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="m64p\mupen64plus-video-glide64mk2.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="m64p\mupen64plus-video-GLideN64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="m64p\mupen64plus-video-rice.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

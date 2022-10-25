@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace M64RPFW.src.Settings
 {
-    public sealed class AppSettings
+    internal sealed class AppSettings
     {
         #region Emulation
 
