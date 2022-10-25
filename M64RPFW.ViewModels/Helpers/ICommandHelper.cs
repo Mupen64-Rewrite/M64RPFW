@@ -11,5 +11,13 @@ namespace M64RPFW.ViewModels.Helpers
                 cmd.NotifyCanExecuteChanged();
             }
         }
+
+        public static void ExecuteIfPossible(this IRelayCommand command, object? parameter = null)
+        {
+            if (command.CanExecute(parameter))
+            {
+                command.Execute(parameter);
+            }
+        }
     }
 }

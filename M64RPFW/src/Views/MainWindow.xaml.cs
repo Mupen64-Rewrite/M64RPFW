@@ -5,6 +5,7 @@ using M64RPFW.src.Settings;
 using M64RPFW.ViewModels;
 using M64RPFW.ViewModels.Configurations;
 using M64RPFW.ViewModels.Containers;
+using M64RPFW.ViewModels.Helpers;
 using M64RPFW.ViewModels.Interfaces;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using ModernWpf;
@@ -250,7 +251,7 @@ namespace M64RPFW.src.Views
         [RelayCommand]
         private void AtExit()
         {
-            mainViewModel.ExitCommand.Execute(null);
+            mainViewModel.ExitCommand.ExecuteIfPossible(null);
             Save();
         }
 

@@ -23,7 +23,7 @@ namespace M64RPFW.ViewModels
 
             mainViewModel.OnWindowExit += delegate
             {
-                CloseROMCommand.Execute(null);
+                CloseROMCommand.ExecuteIfPossible(null);
             };
 
             emulator = new();
