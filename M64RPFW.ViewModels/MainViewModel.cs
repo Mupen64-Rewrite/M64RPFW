@@ -7,14 +7,13 @@ namespace M64RPFW.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
+        internal event Action OnWindowExit;
+
         private readonly GeneralDependencyContainer generalDependencyContainer;
 
-        public EmulatorViewModel EmulatorViewModel { get; private set; }
-        public SavestatesViewModel SavestatesViewModel { get; private set; }
-        public RecentROMsViewModel RecentROMsViewModel { get; private set; }
-
-        [ObservableProperty]
-        private ObservableCollection<ROMViewModel> recentROMs = new();
+        public EmulatorViewModel EmulatorViewModel { get; }
+        public SavestatesViewModel SavestatesViewModel { get; }
+        public RecentROMsViewModel RecentROMsViewModel { get; }
 
         public MainViewModel(GeneralDependencyContainer generalDependencyContainer)
         {
@@ -24,9 +23,15 @@ namespace M64RPFW.ViewModels
 
             generalDependencyContainer.RecentRomsProvider = RecentROMsViewModel;
 
-            EmulatorViewModel = new(generalDependencyContainer);
+            EmulatorViewModel = new(generalDependencyContainer, this);
             SavestatesViewModel = new();
+        }
 
+
+        [RelayCommand]
+        private void Exit()
+        {
+            OnWindowExit?.Invoke();
         }
     }
 }

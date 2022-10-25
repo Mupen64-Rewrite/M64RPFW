@@ -14,10 +14,17 @@ namespace M64RPFW.ViewModels
     {
         private readonly GeneralDependencyContainer generalDependencyContainer;
         private readonly Emulator emulator;
+        private readonly MainViewModel mainViewModel;
 
-        internal EmulatorViewModel(GeneralDependencyContainer generalDependencyContainer)
+        internal EmulatorViewModel(GeneralDependencyContainer generalDependencyContainer, MainViewModel mainViewModel)
         {
             this.generalDependencyContainer = generalDependencyContainer;
+            this.mainViewModel = mainViewModel;
+
+            mainViewModel.OnWindowExit += delegate
+            {
+                CloseROMCommand.Execute(null);
+            };
 
             emulator = new();
             emulator.PlayModeChanged += PlayModeChanged;

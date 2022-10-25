@@ -500,7 +500,7 @@ namespace M64RPFW.Models.Emulation.API
             BufferHeight = bufferHeight;
         }
 
-        private void SetSetting(string section, string name, object value)
+        private void SetSetting(string section, string name, object value, bool save = false)
         {
             Debug.Print($"{section} {name} - {value}");
 
@@ -515,7 +515,10 @@ namespace M64RPFW.Models.Emulation.API
                                     ? m64pConfigSetParameterStr(_section, name, m64p_type.M64TYPE_STRING, new StringBuilder(stringValue))
                                     : throw new UnresolvableConfigEntryTypeException($"Type {value.GetType()} could not be resolved to a type accepted by m64p+");
 
-            _ = m64pConfigSaveFile();
+            if (save)
+            {
+                _ = m64pConfigSaveFile();
+            }
         }
 
         private void ApplyConfig(Mupen64PlusConfig config)
@@ -545,7 +548,9 @@ namespace M64RPFW.Models.Emulation.API
 
             ConnectFunctionPointers();
 
-            m64p_error result = m64pCoreStartup(
+            m64p_error result;
+
+            result = m64pCoreStartup(
                 0x20001,
                 "Config/",
                 "",
@@ -555,16 +560,19 @@ namespace M64RPFW.Models.Emulation.API
                 IntPtr.Zero
             );
 
+            ApplyConfig(launchParameters.Config);
 
+            int enc = (launchParameters.Config.ScreenWidth << 16) + launchParameters.Config.ScreenHeight;
+            result = m64pCoreDoCommandCoreStateSet(
+                    m64p_command.M64CMD_CORE_STATE_SET,
+                    m64p_core_param.M64CORE_VIDEO_SIZE,
+                    ref enc
+                );
 
             result = m64pCoreDoCommandPtr(m64p_command.M64CMD_STATE_SET_SLOT, launchParameters.InitialSlot, IntPtr.Zero);
 
-            ApplyConfig(launchParameters.Config);
-
             result = m64pCoreDoCommandByteArray(m64p_command.M64CMD_ROM_OPEN, launchParameters.Rom.Length, launchParameters.Rom);
             int sizeHeader = Marshal.SizeOf(typeof(m64p_rom_header));
-            m64p_rom_header header = new();
-            result = m64pCoreDoCommandROMHeader(m64p_command.M64CMD_ROM_GET_HEADER, sizeHeader, ref header);
 
             _ = AttachPlugin(m64p_plugin_type.M64PLUGIN_GFX, launchParameters.VideoPluginPath);
             _ = AttachPlugin(m64p_plugin_type.M64PLUGIN_AUDIO, launchParameters.AudioPluginPath);
@@ -588,6 +596,7 @@ namespace M64RPFW.Models.Emulation.API
                     OnFrameBufferUpdate?.Invoke();
                 }
             });
+
             result = m64pCoreDoCommandFrameCallback(m64p_command.M64CMD_SET_FRAME_CALLBACK, 0, m64pFrameCallback);
 
             m64pVICallback = new VICallback(delegate
@@ -601,13 +610,6 @@ namespace M64RPFW.Models.Emulation.API
                 OnRender?.Invoke();
             });
             result = m64pCoreDoCommandRenderCallback(m64p_command.M64CMD_SET_RENDER_CALLBACK, 0, m64pRenderCallback);
-
-            int enc = (launchParameters.Config.ScreenWidth << 16) + launchParameters.Config.ScreenHeight;
-            result = m64pCoreDoCommandCoreStateSet(
-                    m64p_command.M64CMD_CORE_STATE_SET,
-                    m64p_core_param.M64CORE_VIDEO_SIZE,
-                    ref enc
-                );
 
             ExecuteEmulator();
         }

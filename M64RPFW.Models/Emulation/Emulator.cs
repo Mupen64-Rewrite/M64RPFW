@@ -7,6 +7,7 @@ namespace M64RPFW.Models.Emulation
     public class Emulator
     {
         public event Action? PlayModeChanged;
+
         private PlayModes playMode = PlayModes.Stopped;
         public PlayModes PlayMode
         {
@@ -19,9 +20,10 @@ namespace M64RPFW.Models.Emulation
         }
 
         public Mupen64PlusAPI? API { get; private set; }
+
         private Thread? emulatorThread;
         private DateTime emulatorThreadBeginTime, emulatorThreadEndTime;
-
+        private bool internalTermination;
 
         public void Start(Mupen64PlusLaunchParameters mupen64PlusLaunchParameters)
         {
@@ -34,7 +36,7 @@ namespace M64RPFW.Models.Emulation
             {
                 Name = "tEmulatorThread"
             };
-
+            
             emulatorThread.Start(mupen64PlusLaunchParameters);
 
             emulatorThreadBeginTime = DateTime.Now;
@@ -48,18 +50,29 @@ namespace M64RPFW.Models.Emulation
 
             emulatorThreadEndTime = DateTime.Now;
 
+            if (!internalTermination)
+            {
+                // thread killed by m64p
+                // we can dispatch onto UI thread only in this case, otherwise we have a deadlock!
+                playMode = PlayModes.Stopped;
+                PlayModeChanged?.Invoke();
+            }
+
             Debug.Print($"Emulator thread exited after {emulatorThreadEndTime - emulatorThreadBeginTime}");
         }
 
         public void Stop()
         {
+            internalTermination = true;
+
             API.Dispose();
             emulatorThread.Join();
 
             playMode = PlayModes.Stopped;
             PlayModeChanged?.Invoke();
 
-            Debug.Print("Finished queueing exit");
+            Debug.Print("Stopped");
+            internalTermination = false;
         }
 
         public void Reset()

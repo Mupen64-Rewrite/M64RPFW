@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using M64RPFW.src.Extensions.Localization;
 using M64RPFW.src.Settings;
 using M64RPFW.ViewModels;
@@ -28,7 +29,9 @@ namespace M64RPFW.src.Views
     /// It implements various interfaces for this platform to be used by VMs and itself.<para></para>
     /// View-first MVVM is employed here: the View layer handles ViewModel creation
     /// </summary>
-    public partial class MainWindow : Window, IFileDialogProvider,
+    public partial class MainWindow : 
+        Window, 
+        IFileDialogProvider,
         IDialogProvider,
         IRomFileExtensionsConfigurationProvider,
         ISavestateBoundsConfigurationProvider,
@@ -88,11 +91,6 @@ namespace M64RPFW.src.Views
             mainViewModel = new(generalDependencyContainer);
 
             DataContext = mainViewModel;
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            Save();
         }
 
         #region Interface Implementations 
@@ -218,6 +216,7 @@ namespace M64RPFW.src.Views
         {
             Application.Current.Dispatcher.Invoke(action);
         }
+
         #endregion
 
         #region Windowing Commands
@@ -243,10 +242,19 @@ namespace M64RPFW.src.Views
         }
 
         [RelayCommand]
-        private void Exit()
+        private void DoExit()
         {
             Close();
         }
+
+        [RelayCommand]
+        private void AtExit()
+        {   
+            mainViewModel.ExitCommand.Execute(null);
+            Save();
+        }
+
+        
 
         #endregion
 
