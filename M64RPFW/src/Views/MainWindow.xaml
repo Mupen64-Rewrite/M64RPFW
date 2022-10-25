@@ -14,6 +14,7 @@
         Title="{extloc:Localization AppName}" 
         Width="800"
         Height="450"
+        MinHeight="{StaticResource MenuHeight}"
         ui:TitleBar.IsIconVisible="True"
         ui:WindowHelper.UseModernWindowStyle="True"
         Closing="Window_Closing">
@@ -37,7 +38,7 @@
         HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid>
             <DockPanel LastChildFill="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <Menu IsMainMenu="True" Height="40" DockPanel.Dock="Top" VerticalAlignment="Stretch">
+                <Menu IsMainMenu="True" Height="{StaticResource MenuHeight}" DockPanel.Dock="Top" VerticalAlignment="Stretch">
                     <MenuItem Header="{extloc:Localization File}">
                         <MenuItem Header="{extloc:Localization LoadROM}" Command="{Binding EmulatorViewModel.LoadROMCommand, IsAsync=True}"/>
                         <MenuItem Header="Recent ROMs" ItemsSource="{Binding RecentROMsViewModel.RecentROMs, UpdateSourceTrigger=PropertyChanged}" UsesItemContainerTemplate="True">
@@ -89,11 +90,11 @@
                     </MenuItem>
                 </Menu>
                 
-                <StatusBar Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Visibility="{Binding ElementName=ShowStatusbar_MenuItem, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" DockPanel.Dock="Bottom">
+                <StatusBar Height="{StaticResource MenuHeight}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Visibility="{Binding ElementName=ShowStatusbar_MenuItem, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" DockPanel.Dock="Bottom">
                     <StackPanel Orientation="Horizontal" Margin="0 0 0 0">
                         <StackPanel.Resources>
                             <Style TargetType="Separator">
-                                <Setter Property="LayoutTransform" Value="{StaticResource VerticalRotateTransform}"/>
+                                <!--<Setter Property="LayoutTransform" Value="0"/>-->
                                 <Setter Property="Margin" Value="5 0 5 0"/>
                             </Style>
                         </StackPanel.Resources>

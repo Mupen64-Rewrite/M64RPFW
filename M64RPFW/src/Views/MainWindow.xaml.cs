@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using M64RPFW.src.Extensions.Localization;
+using M64RPFW.src.Settings;
 using M64RPFW.ViewModels;
 using M64RPFW.ViewModels.Configurations;
 using M64RPFW.ViewModels.Containers;
@@ -7,7 +8,10 @@ using M64RPFW.ViewModels.Interfaces;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using ModernWpf;
 using System;
+using System.Configuration;
 using System.Globalization;
+using System.IO;
+using System.Text.Json;
 using System.Threading;
 using System.Windows;
 using System.Windows.Media;
@@ -21,7 +25,8 @@ namespace M64RPFW.src.Views
     /// <b>NOTE</b>:
     /// <para></para>
     /// This code-behind file does not perform any emulator-related tasks, computations or state management. <para></para>
-    /// It implements various interfaces for this platform to be used by VMs and itself.
+    /// It implements various interfaces for this platform to be used by VMs and itself.<para></para>
+    /// View-first MVVM is employed here: the View layer handles ViewModel creation
     /// </summary>
     public partial class MainWindow : Window, IFileDialogProvider,
         IDialogProvider,
@@ -33,22 +38,40 @@ namespace M64RPFW.src.Views
         IDrawingSurfaceProvider,
         IUIThreadDispatcherProvider
     {
+
+        // for bindings
+        internal static AppSettings AppSettings { get; private set; }
+
         private readonly MainViewModel mainViewModel;
         private readonly GeneralDependencyContainer generalDependencyContainer;
+        private readonly AppSettings appSettings;
+        private const string appSettingsPath = "appsettings.json";
+        
         private SettingsWindow? settingsWindow;
-
         SavestateBoundsConfiguration ISavestateBoundsConfigurationProvider.SavestateBoundsConfiguration => new();
         ROMFileExtensionsConfiguration IRomFileExtensionsConfigurationProvider.ROMFileExtensionsConfiguration => new();
-
         bool IDrawingSurfaceProvider.IsCreated => writeableBitmap != null;
-
         private WriteableBitmap writeableBitmap;
 
         public MainWindow()
         {
+            if (!File.Exists(appSettingsPath))
+            {
+                // create settings
+                appSettings = new();
+                Save();
+            }
+            else
+            {
+                appSettings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(appSettingsPath));
+            }
+
+            AppSettings = appSettings;
+
             InitializeComponent();
 
             (this as ILocalizationManager).SetLocale((this as ISettingsProvider).GetSetting<string>("Culture"));
+            (this as IThemeManager).SetTheme(GetSetting<string>("Theme"));
 
             generalDependencyContainer = new GeneralDependencyContainer(
                 dialogProvider: this,
@@ -65,14 +88,11 @@ namespace M64RPFW.src.Views
             mainViewModel = new(generalDependencyContainer);
 
             DataContext = mainViewModel;
-
-            (this as IThemeManager).SetTheme(Properties.Settings.Default.Theme);
-
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Properties.Settings.Default.Save();
+            Save();
         }
 
         #region Interface Implementations 
@@ -127,8 +147,7 @@ namespace M64RPFW.src.Views
             {
                 ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
             }
-            Properties.Settings.Default.Theme = themeName;
-            Properties.Settings.Default.Save();
+            SetSetting<string>("Theme", themeName, true);
         }
 
         public void SetLocale(string localeKey)
@@ -139,24 +158,40 @@ namespace M64RPFW.src.Views
                 Thread.CurrentThread.CurrentCulture =
                 Thread.CurrentThread.CurrentUICulture =
                 LocalizationSource.Instance.CurrentCulture = culture;
-                Properties.Settings.Default.Culture = localeKey;
-                Properties.Settings.Default.Save();
+                SetSetting<string>("Culture", localeKey, true);
             });
         }
 
 
         public T GetSetting<T>(string key)
         {
-            return (T)Properties.Settings.Default[key];
+            var prop = appSettings.GetType().GetProperty(key);
+            if (prop == null)
+            {
+                throw new Exception($"Could not find property {key}");
+            }
+            var val = (T)prop.GetValue(appSettings);
+            if (val == null)
+            {
+                throw new Exception($"Could not get property value {key}");
+            }
+            return val;
         }
-        public void SetSetting<T>(string key, T value)
+        public void SetSetting<T>(string key, T value, bool saveAfter = false)
         {
-            Properties.Settings.Default[key] = value;
+            var prop = appSettings.GetType().GetProperty(key);
+            prop.SetValue(appSettings, value);
+            if (saveAfter)
+            {
+                Save();
+            }
         }
         public void Save()
         {
-            Properties.Settings.Default.Save();
+            var json = JsonSerializer.Serialize(appSettings, typeof(AppSettings), new JsonSerializerOptions() { WriteIndented = true });
+            File.WriteAllText(appSettingsPath, json);
         }
+
         public string GetString(string key)
         {
             return Properties.Resources.ResourceManager.GetString(key) ?? "?";

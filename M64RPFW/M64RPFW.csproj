@@ -31,21 +31,12 @@
     <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.11.0" />
     <PackageReference Include="Microsoft.WindowsAPICodePack-Shell" Version="1.1.0" />
     <PackageReference Include="ModernWpfUI" Version="0.9.7-preview.2" />
-    <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\M64RPFW.Models\M64RPFW.Models.csproj" />
     <ProjectReference Include="..\M64RPFW.Styling\M64RPFW.Styling.csproj" />
     <ProjectReference Include="..\M64RPFW.ViewModels\M64RPFW.ViewModels.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Properties\Settings.Designer.cs">
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -142,10 +133,6 @@
     </None>
     <None Update="mupen64plus.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Properties\Settings.settings">
-      <Generator>PublicSettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Update="SDL2.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

@@ -12,7 +12,6 @@
         xmlns:viewmodels="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels" 
         d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
         mc:Ignorable="d"
-        Closing="Window_Closing"
         WindowStartupLocation="CenterScreen"
         Width="300"
         Height="500" 

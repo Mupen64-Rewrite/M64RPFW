@@ -1,4 +1,5 @@
-﻿using System.Windows.Data;
+﻿using M64RPFW.src.Views;
+using System.Windows.Data;
 
 namespace M64RPFW.src.Extensions.Bindings
 {
@@ -16,7 +17,7 @@ namespace M64RPFW.src.Extensions.Bindings
 
         private void Initialize()
         {
-            Source = Properties.Settings.Default;
+            Source = MainWindow.AppSettings;
             Mode = BindingMode.OneWay;
         }
     }

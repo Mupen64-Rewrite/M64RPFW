@@ -12,15 +12,17 @@
                 <ui:ThemeResources RequestedTheme="Dark"/>
                 <ui:XamlControlsResources/>
                 <ResourceDictionary Source="pack://application:,,,/M64RPFW.Styling;component/Resources.xaml"/>
+                <ResourceDictionary>
+                    <conv:StringEqualityToBooleanConverter x:Key="StringEqualityToBooleanConverter"/>
+                    <conv:KeyBindingToStringConverter x:Key="KeyBindingToStringConverter"/>
+                    <conv:IntegerEqualityToBooleanConverter x:Key="IntegerEqualityToBooleanConverter"/>
+                    <conv:InvertBooleanConverter x:Key="InvertBooleanConverter"/>
+                    <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+                    <conv:IntegerToHexadecimalStringConverter x:Key="IntegerToHexadecimalStringConverter"/>
+                    <conv:UnsignedIntegerToHexadecimalStringConverter x:Key="UnsignedIntegerToHexadecimalStringConverter"/>
+                    <RotateTransform x:Key="VerticalRotateTransform" Angle="90"/>
+                </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
-            <conv:StringEqualityToBooleanConverter x:Key="StringEqualityToBooleanConverter"/>
-            <conv:KeyBindingToStringConverter x:Key="KeyBindingToStringConverter"/>
-            <conv:IntegerEqualityToBooleanConverter x:Key="IntegerEqualityToBooleanConverter"/>
-            <conv:InvertBooleanConverter x:Key="InvertBooleanConverter"/>
-            <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-            <conv:IntegerToHexadecimalStringConverter x:Key="IntegerToHexadecimalStringConverter"/>
-            <conv:UnsignedIntegerToHexadecimalStringConverter x:Key="UnsignedIntegerToHexadecimalStringConverter"/>
-            <RotateTransform x:Key="VerticalRotateTransform" Angle="90"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

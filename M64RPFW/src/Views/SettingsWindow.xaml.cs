@@ -11,10 +11,5 @@ namespace M64RPFW.src.Views
         {
             InitializeComponent();
         }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            Properties.Settings.Default.Save();
-        }
     }
 }
