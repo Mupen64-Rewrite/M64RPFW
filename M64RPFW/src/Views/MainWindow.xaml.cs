@@ -29,8 +29,8 @@ namespace M64RPFW.src.Views
     /// It implements various interfaces for this platform to be used by VMs and itself.<para></para>
     /// View-first MVVM is employed here: the View layer handles ViewModel creation
     /// </summary>
-    public partial class MainWindow : 
-        Window, 
+    public partial class MainWindow :
+        Window,
         IFileDialogProvider,
         IDialogProvider,
         IRomFileExtensionsConfigurationProvider,
@@ -49,7 +49,7 @@ namespace M64RPFW.src.Views
         private readonly GeneralDependencyContainer generalDependencyContainer;
         private readonly AppSettings appSettings;
         private const string appSettingsPath = "appsettings.json";
-        
+
         private SettingsWindow? settingsWindow;
         SavestateBoundsConfiguration ISavestateBoundsConfigurationProvider.SavestateBoundsConfiguration => new();
         ROMFileExtensionsConfiguration IRomFileExtensionsConfigurationProvider.ROMFileExtensionsConfiguration => new();
@@ -83,7 +83,7 @@ namespace M64RPFW.src.Views
                 romFileExtensionsConfigurationProvider: this,
                 savestateBoundsConfigurationProvider: this,
                 themeManager: this,
-                settingsManager: this,  
+                settingsManager: this,
                 localizationProvider: this,
                 drawingSurfaceProvider: this,
                 uIThreadDispatcherProvider: this);
@@ -163,12 +163,12 @@ namespace M64RPFW.src.Views
 
         public T GetSetting<T>(string key)
         {
-            var prop = appSettings.GetType().GetProperty(key);
+            System.Reflection.PropertyInfo? prop = appSettings.GetType().GetProperty(key);
             if (prop == null)
             {
                 throw new Exception($"Could not find property {key}");
             }
-            var val = (T)prop.GetValue(appSettings);
+            T? val = (T)prop.GetValue(appSettings);
             if (val == null)
             {
                 throw new Exception($"Could not get property value {key}");
@@ -177,7 +177,7 @@ namespace M64RPFW.src.Views
         }
         public void SetSetting<T>(string key, T value, bool saveAfter = false)
         {
-            var prop = appSettings.GetType().GetProperty(key);
+            System.Reflection.PropertyInfo? prop = appSettings.GetType().GetProperty(key);
             prop.SetValue(appSettings, value);
             if (saveAfter)
             {
@@ -186,7 +186,7 @@ namespace M64RPFW.src.Views
         }
         public void Save()
         {
-            var json = JsonSerializer.Serialize(appSettings, typeof(AppSettings), new JsonSerializerOptions() { WriteIndented = true });
+            string json = JsonSerializer.Serialize(appSettings, typeof(AppSettings), new JsonSerializerOptions() { WriteIndented = true });
             File.WriteAllText(appSettingsPath, json);
         }
 
@@ -237,7 +237,7 @@ namespace M64RPFW.src.Views
         [RelayCommand]
         private void ShowROMInspectionWindow(object dataContext)
         {
-            var romInspectionWindow = new ROMInspectionWindow() { DataContext = dataContext };
+            ROMInspectionWindow romInspectionWindow = new() { DataContext = dataContext };
             romInspectionWindow.ShowDialog();
         }
 
@@ -249,12 +249,12 @@ namespace M64RPFW.src.Views
 
         [RelayCommand]
         private void AtExit()
-        {   
+        {
             mainViewModel.ExitCommand.Execute(null);
             Save();
         }
 
-        
+
 
         #endregion
 

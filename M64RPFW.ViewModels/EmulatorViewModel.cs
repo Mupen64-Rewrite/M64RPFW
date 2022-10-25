@@ -111,7 +111,7 @@ namespace M64RPFW.ViewModels
                                                                              generalDependencyContainer.SettingsManager.GetSetting<string>("RSPPluginPath"));
             emulator.Start(launchParameters);
 
-            emulator.API.OnFrameBufferCreated += delegate
+            emulator.API.OnFrameBufferCreate += delegate
             {
                 generalDependencyContainer.DrawingSurfaceProvider.Create(emulator.API.BufferWidth, emulator.API.BufferHeight);
             };
@@ -192,7 +192,7 @@ namespace M64RPFW.ViewModels
                 missingPlugins.Add(generalDependencyContainer.LocalizationProvider.GetString("RSP"));
             }
 
-            if (!videoPluginExists || !audioPluginExists || !inputPluginExists || !rspPluginExists && coreLibraryExists)
+            if (!videoPluginExists || !audioPluginExists || !inputPluginExists || (!rspPluginExists && coreLibraryExists))
             {
                 generalDependencyContainer.DialogProvider.ShowErrorDialog(string.Format(generalDependencyContainer.LocalizationProvider.GetString("PluginNotFoundSeries"), string.Join(", ", missingPlugins)));
             }

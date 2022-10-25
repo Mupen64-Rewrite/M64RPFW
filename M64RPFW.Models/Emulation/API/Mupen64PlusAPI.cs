@@ -429,11 +429,11 @@ namespace M64RPFW.Models.Emulation.API
 
         #region Events
 
-        public event Action OnFrameFinished;
+        public event Action OnFrameFinish;
         public event Action OnVIInterrupt;
-        public event Action OnRender;
+        public event Action OnPostRender;
 
-        public event Action OnFrameBufferCreated;
+        public event Action OnFrameBufferCreate;
         public event Action OnFrameBufferUpdate;
 
         #endregion
@@ -473,7 +473,7 @@ namespace M64RPFW.Models.Emulation.API
 
             if (IsFrameBufferInitialized) // sometimes it randomly returns 0,0
             {
-                OnFrameBufferCreated?.Invoke();
+                OnFrameBufferCreate?.Invoke();
             }
         }
 
@@ -590,7 +590,7 @@ namespace M64RPFW.Models.Emulation.API
             m64pFrameCallback = new FrameCallback(delegate
             {
                 UpdateFramebuffer();
-                OnFrameFinished?.Invoke();
+                OnFrameFinish?.Invoke();
                 if (IsFrameBufferInitialized)
                 {
                     OnFrameBufferUpdate?.Invoke();
@@ -607,7 +607,7 @@ namespace M64RPFW.Models.Emulation.API
 
             m64pRenderCallback = new RenderCallback(delegate
             {
-                OnRender?.Invoke();
+                OnPostRender?.Invoke();
             });
             result = m64pCoreDoCommandRenderCallback(m64p_command.M64CMD_SET_RENDER_CALLBACK, 0, m64pRenderCallback);
 

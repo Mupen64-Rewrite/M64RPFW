@@ -36,7 +36,7 @@ namespace M64RPFW.Models.Emulation
             {
                 Name = "tEmulatorThread"
             };
-            
+
             emulatorThread.Start(mupen64PlusLaunchParameters);
 
             emulatorThreadBeginTime = DateTime.Now;

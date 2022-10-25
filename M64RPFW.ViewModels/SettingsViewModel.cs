@@ -44,7 +44,7 @@ namespace M64RPFW.ViewModels
             {
                 throw new Exception($"Could not resolve VirtualArgument");
             }
-            
+
         }
 
         [RelayCommand]

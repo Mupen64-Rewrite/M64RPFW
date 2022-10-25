@@ -30,7 +30,7 @@ namespace M64RPFW.ViewModels
 
             foreach (ROMViewModel item in RecentROMs)
             {
-                var paths = generalDependencyContainer.SettingsManager.GetSetting<string[]>("RecentROMPaths").ToList();
+                List<string> paths = generalDependencyContainer.SettingsManager.GetSetting<string[]>("RecentROMPaths").ToList();
                 paths.Add(item.Path);
                 generalDependencyContainer.SettingsManager.SetSetting("RecentROMPaths", paths.ToArray());
             }
