@@ -13,6 +13,7 @@
     <Title>M64RPFW</Title>
     <Authors>Aurumaker72</Authors>
     <Description> A rewrite of Mupen64</Description>
+    <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -36,25 +37,30 @@
 
   <ItemGroup>
     <ProjectReference Include="..\M64RPFW.Models\M64RPFW.Models.csproj" />
-    <ProjectReference Include="..\M64RPFW.Styling\M64RPFW.Styling.csproj" />
     <ProjectReference Include="..\M64RPFW.ViewModels\M64RPFW.ViewModels.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="freetype.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="img\m64rpfw.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-    <None Update="libpng16.dll">
+    <None Update="m64p\doc\font-license">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="m64p\doc\gpl-license">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="m64p\doc\lgpl-license">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="m64p\font.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="m64p\freetype.dll">
+    <None Update="m64p\freetype26.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="m64p\freetype6.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="m64p\glew32.dll">
@@ -66,16 +72,22 @@
     <None Update="m64p\InputAutoCfg.ini">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="m64p\libgcc_s_seh-1.dll">
+    <None Update="m64p\libgcc_s_dw2-1.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="m64p\libpng12.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="m64p\libpng16.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="m64p\libstdc++-6.dll">
+    <None Update="m64p\libpng3.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="m64p\libwinpthread-1.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="m64p\m64p_test_rom.v64">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="m64p\mupen64plus-audio-sdl.dll">
@@ -84,20 +96,14 @@
     <None Update="m64p\mupen64plus-input-sdl.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="m64p\mupen64plus-old.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="m64p\mupen64plus-rsp-hle.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="m64p\mupen64plus-video-glide64.dll">
+    <None Update="m64p\mupen64plus-ui-console.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="m64p\mupen64plus-video-glide64mk2.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\mupen64plus-video-GLideN64.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="m64p\mupen64plus-video-rice.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -117,42 +123,16 @@
     <None Update="m64p\RiceVideoLinux.ini">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="m64p\SDL.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="m64p\SDL2.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="m64p\SDL2_net.dll">
+    <None Update="m64p\zlib1.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="m64p\zlib.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="mupen64plus-audio-sdl.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="mupen64plus-input-sdl.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="mupen64plus-rsp-hle.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="mupen64plus-video-glide64mk2.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="mupen64plus-video-rice.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="mupen64plus.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="SDL2.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="SDL2_net.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="zlib.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    
   </ItemGroup>
 
 </Project>

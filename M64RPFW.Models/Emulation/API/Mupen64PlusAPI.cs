@@ -469,8 +469,18 @@ namespace M64RPFW.Models.Emulation.API
         {
             BufferWidth = width;
             BufferHeight = height;
-            FrameBuffer = new int[BufferWidth * BufferHeight];
-
+            if (FrameBuffer == null)
+            {
+                FrameBuffer = new int[BufferWidth * BufferHeight];
+            }
+            else
+            {
+                int[] frameBuffer = FrameBuffer;
+                Array.Resize(ref frameBuffer, BufferWidth * BufferHeight);
+                Array.Clear(frameBuffer);
+                FrameBuffer = frameBuffer;
+            }
+            
             if (IsFrameBufferInitialized) // sometimes it randomly returns 0,0
             {
                 OnFrameBufferCreate?.Invoke();
@@ -552,7 +562,7 @@ namespace M64RPFW.Models.Emulation.API
 
             result = m64pCoreStartup(
                 0x20001,
-                "Config/",
+                "",
                 "",
                 "Core",
                 null,
@@ -562,12 +572,7 @@ namespace M64RPFW.Models.Emulation.API
 
             ApplyConfig(launchParameters.Config);
 
-            int enc = (launchParameters.Config.ScreenWidth << 16) + launchParameters.Config.ScreenHeight;
-            result = m64pCoreDoCommandCoreStateSet(
-                    m64p_command.M64CMD_CORE_STATE_SET,
-                    m64p_core_param.M64CORE_VIDEO_SIZE,
-                    ref enc
-                );
+            
 
             result = m64pCoreDoCommandPtr(m64p_command.M64CMD_STATE_SET_SLOT, launchParameters.InitialSlot, IntPtr.Zero);
 
@@ -610,6 +615,13 @@ namespace M64RPFW.Models.Emulation.API
                 OnPostRender?.Invoke();
             });
             result = m64pCoreDoCommandRenderCallback(m64p_command.M64CMD_SET_RENDER_CALLBACK, 0, m64pRenderCallback);
+
+            int enc = (launchParameters.Config.ScreenWidth << 16) + launchParameters.Config.ScreenHeight;
+            result = m64pCoreDoCommandCoreStateSet(
+                    m64p_command.M64CMD_CORE_STATE_SET,
+                    m64p_core_param.M64CORE_VIDEO_SIZE,
+                    ref enc
+                );
 
             ExecuteEmulator();
         }

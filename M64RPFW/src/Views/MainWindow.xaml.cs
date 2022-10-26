@@ -201,7 +201,7 @@ namespace M64RPFW.src.Views
         {
             Application.Current.Dispatcher.Invoke(delegate
             {
-                writeableBitmap = new(width, height, VisualTreeHelper.GetDpi(this).PixelsPerInchX, VisualTreeHelper.GetDpi(this).PixelsPerInchY, PixelFormats.Bgra32, null);
+                writeableBitmap = new(width, height, VisualTreeHelper.GetDpi(this).PixelsPerInchX, VisualTreeHelper.GetDpi(this).PixelsPerInchY, PixelFormats.Cmyk32, null);
                 Main_Image.Source = writeableBitmap;
             });
         }
@@ -210,7 +210,7 @@ namespace M64RPFW.src.Views
         {
             Application.Current.Dispatcher.Invoke(delegate
             {
-                writeableBitmap.WritePixels(new(0, 0, width, height), Enumerable.Range(0x00FF0000, width * height).ToArray(), width * sizeof(int), 0);
+                writeableBitmap.WritePixels(new(0, 0, width, height), buffer, width * sizeof(int), 0);
             });
         }
 

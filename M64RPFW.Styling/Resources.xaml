@@ -2,12 +2,5 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
 
-    <system:Double x:Key="MenuHeight">40</system:Double>
-    <Thickness x:Key="MediumContentMargin">10</Thickness>
-    <Thickness x:Key="SmallItemMargin">0 2 0 0</Thickness>
-    <system:Double x:Key="SmallIconSize">30</system:Double>
-    <Thickness x:Key="SmallPadding">5</Thickness>
-    <system:Double x:Key="Headline4">24</system:Double>
-    <system:Double x:Key="Headline5">34</system:Double>
-
+    
 </ResourceDictionary>
