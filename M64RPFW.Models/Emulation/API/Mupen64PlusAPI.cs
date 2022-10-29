@@ -469,17 +469,8 @@ namespace M64RPFW.Models.Emulation.API
         {
             BufferWidth = width;
             BufferHeight = height;
-            if (FrameBuffer == null)
-            {
-                FrameBuffer = new int[BufferWidth * BufferHeight];
-            }
-            else
-            {
-                int[] frameBuffer = FrameBuffer;
-                Array.Resize(ref frameBuffer, BufferWidth * BufferHeight);
-                Array.Clear(frameBuffer);
-                FrameBuffer = frameBuffer;
-            }
+            
+            FrameBuffer = new int[BufferWidth * BufferHeight];
             
             if (IsFrameBufferInitialized) // sometimes it randomly returns 0,0
             {
@@ -499,6 +490,7 @@ namespace M64RPFW.Models.Emulation.API
             if (FrameBuffer == null)
             {
                 // ??? something's wrong
+                Debug.Print("Framebuffer is null after size change check");
                 AllocateFrameBuffer(2, 2);
             }
 
@@ -594,6 +586,7 @@ namespace M64RPFW.Models.Emulation.API
 
             m64pFrameCallback = new FrameCallback(delegate
             {
+                Debug.Print("New frame");
                 UpdateFramebuffer();
                 OnFrameFinish?.Invoke();
                 if (IsFrameBufferInitialized)
@@ -614,6 +607,7 @@ namespace M64RPFW.Models.Emulation.API
             {
                 OnPostRender?.Invoke();
             });
+
             result = m64pCoreDoCommandRenderCallback(m64p_command.M64CMD_SET_RENDER_CALLBACK, 0, m64pRenderCallback);
 
             int enc = (launchParameters.Config.ScreenWidth << 16) + launchParameters.Config.ScreenHeight;
