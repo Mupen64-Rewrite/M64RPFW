@@ -9,9 +9,9 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <GroupBox Content="{Binding ElementName=root, Path=Content}">
         <GroupBox.Header>
-            <Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <TextBlock Text="{Binding ElementName=root, Path=Header}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="{StaticResource Headline4}"/>
-            </Viewbox>
+            <!--<Viewbox StretchDirection="DownOnly" HorizontalAlignment="Left" VerticalAlignment="Center">-->
+                <TextBlock TextWrapping="Wrap" Text="{Binding ElementName=root, Path=Header}" Style="{StaticResource HeadlineSmallTextBlock}"/>
+            <!--</Viewbox>-->
         </GroupBox.Header>
     </GroupBox>
 </UserControl>

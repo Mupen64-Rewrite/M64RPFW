@@ -13,7 +13,7 @@
     <Title>M64RPFW</Title>
     <Authors>Aurumaker72</Authors>
     <Description> A rewrite of Mupen64</Description>
-    <Platforms>AnyCPU;x86</Platforms>
+    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,7 +28,7 @@
 
   <ItemGroup>
     <PackageReference Include="CalcBinding" Version="2.5.2" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0-preview1" />
     <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.11.0" />
     <PackageReference Include="Microsoft.WindowsAPICodePack-Shell" Version="1.1.0" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
@@ -37,6 +37,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\M64RPFW.Models\M64RPFW.Models.csproj" />
+    <ProjectReference Include="..\M64RPFW.Services\M64RPFW.Services.csproj" />
     <ProjectReference Include="..\M64RPFW.ViewModels\M64RPFW.ViewModels.csproj" />
   </ItemGroup>
 

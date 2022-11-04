@@ -36,10 +36,10 @@ namespace M64RPFW.Models.Emulation.API
         public enum m64p_command
         {
             M64CMD_NOP = 0,
-            M64CMD_ROM_OPEN,
-            M64CMD_ROM_CLOSE,
-            M64CMD_ROM_GET_HEADER,
-            M64CMD_ROM_GET_SETTINGS,
+            M64CMD_Rom_OPEN,
+            M64CMD_rom_close,
+            M64CMD_rom_get_header,
+            M64CMD_rom_get_settings,
             M64CMD_EXECUTE,
             M64CMD_STOP,
             M64CMD_PAUSE,
@@ -107,13 +107,13 @@ namespace M64RPFW.Models.Emulation.API
             RI_REG,
             AI_REG,
 
-            EEPROM = 100,
+            EEPRom = 100,
             MEMPAK1,
             MEMPAK2,
             MEMPAK3,
             MEMPAK4,
 
-            THE_ROM
+            THE_Rom
         }
 
         public enum m64p_system_type
@@ -152,14 +152,14 @@ namespace M64RPFW.Models.Emulation.API
 
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-        public struct m64p_rom_settings
+        public struct m64p_Rom_settings
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
             public char[] goodname;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 33)]
             public char[] MD5;
             public byte savetype;
-            public byte status;         // Rom status on a scale from 0-5. 
+            public byte status;         // Rom status on a scale fRom 0-5. 
             public byte players;        // Local players 0-4, 2/3/4 way Netplay indicated by 5/6/7. 
             public byte rumble;         // 0 - No, 1 - Yes boolean for rumble support. 
             public byte transferpak;    // 0 - No, 1 - Yes boolean for transfer pak support. 

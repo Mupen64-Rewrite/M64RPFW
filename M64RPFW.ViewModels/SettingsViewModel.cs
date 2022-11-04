@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using M64RPFW.ViewModels.Containers;
 using M64RPFW.ViewModels.Helpers;
 using System;
+using System.IO;
 
 namespace M64RPFW.ViewModels
 {
@@ -30,15 +31,15 @@ namespace M64RPFW.ViewModels
 
             if (typeof(T) == typeof(bool))
             {
-                generalDependencyContainer.SettingsManager.SetSetting(vParams[0], bool.Parse(vParams[1].ToString()));
+                generalDependencyContainer.SettingsService.Set(vParams[0], bool.Parse(vParams[1].ToString()));
             }
             else if (typeof(T) == typeof(int))
             {
-                generalDependencyContainer.SettingsManager.SetSetting(vParams[0], int.Parse(vParams[1].ToString()));
+                generalDependencyContainer.SettingsService.Set(vParams[0], int.Parse(vParams[1].ToString()));
             }
             else if (typeof(T) == typeof(string))
             {
-                generalDependencyContainer.SettingsManager.SetSetting(vParams[0], vParams[1].ToString());
+                generalDependencyContainer.SettingsService.Set(vParams[0], vParams[1].ToString());
             }
             else
             {
@@ -50,62 +51,69 @@ namespace M64RPFW.ViewModels
         [RelayCommand]
         private void SetCulture(string cultureString)
         {
-            generalDependencyContainer.LocalizationProvider.SetLocale(cultureString);
+            generalDependencyContainer.LocalizationService.SetLocale(cultureString);
         }
 
         [RelayCommand]
         private void SetTheme(string themeString)
         {
-            generalDependencyContainer.ThemeManager.SetTheme(themeString);
+            generalDependencyContainer.ThemeService.Set(themeString);
         }
 
-        private bool ShowFileDialogAndPickLibraryPath(out string path)
+        private async Task<(bool Succeeded, string Path)> ShowFileDialogAndPickPath()
         {
-            (string ReturnedPath, bool Cancelled) = generalDependencyContainer.FileDialogProvider.OpenFileDialogPrompt(new[] { "dll" });
-            path = ReturnedPath;
-            return !Cancelled;
+            var file = await generalDependencyContainer.FilesService.TryPickOpenFileAsync(new[] { "dll" });
+            return file != null ? ((bool Succeeded, string Path))(true, file.Path) : ((bool Succeeded, string Path))(false, null);
         }
 
         [RelayCommand]
-        private void BrowseCoreLibraryPath()
+        private async void BrowseCoreLibraryPath()
         {
-            if (ShowFileDialogAndPickLibraryPath(out string? path))
+            var result = await ShowFileDialogAndPickPath();
+            if (result.Succeeded)
             {
-                generalDependencyContainer.SettingsManager.SetSetting<string>("CoreLibraryPath", path, true);
+                generalDependencyContainer.SettingsService.Set<string>("CoreLibraryPath", result.Path, true);
             }
         }
 
 
         [RelayCommand]
-        private void BrowseVideoPluginPath()
+        private async void BrowseVideoPluginPath()
         {
-            if (ShowFileDialogAndPickLibraryPath(out string? path))
+            var result = await ShowFileDialogAndPickPath();
+            if (result.Succeeded)
             {
-                generalDependencyContainer.SettingsManager.SetSetting<string>("VideoPluginPath", path, true);
+                generalDependencyContainer.SettingsService.Set<string>("VideoPluginPath", result.Path, true);
             }
         }
+
         [RelayCommand]
-        private void BrowseAudioPluginPath()
+        private async void BrowseAudioPluginPath()
         {
-            if (ShowFileDialogAndPickLibraryPath(out string? path))
+            var result = await ShowFileDialogAndPickPath();
+            if (result.Succeeded)
             {
-                generalDependencyContainer.SettingsManager.SetSetting<string>("AudioPluginPath", path, true);
+                generalDependencyContainer.SettingsService.Set<string>("AudioPluginPath", result.Path, true);
             }
         }
+
         [RelayCommand]
-        private void BrowseInputPluginPath()
+        private async void BrowseInputPluginPath()
         {
-            if (ShowFileDialogAndPickLibraryPath(out string? path))
+            var result = await ShowFileDialogAndPickPath();
+            if (result.Succeeded)
             {
-                generalDependencyContainer.SettingsManager.SetSetting<string>("InputPluginPath", path, true);
+                generalDependencyContainer.SettingsService.Set<string>("InputPluginPath", result.Path, true);
             }
-        }
+        } 
+
         [RelayCommand]
-        private void BrowseRSPPluginPath()
+        private async void BrowseRSPPluginPath()
         {
-            if (ShowFileDialogAndPickLibraryPath(out string? path))
+            var result = await ShowFileDialogAndPickPath();
+            if (result.Succeeded)
             {
-                generalDependencyContainer.SettingsManager.SetSetting<string>("RSPPluginPath", path, true);
+                generalDependencyContainer.SettingsService.Set<string>("RSPPluginPath", result.Path, true);
             }
         }
     }

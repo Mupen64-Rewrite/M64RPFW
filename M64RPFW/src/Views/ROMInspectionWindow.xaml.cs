@@ -3,11 +3,11 @@
 namespace M64RPFW.src.Views
 {
     /// <summary>
-    /// Interaction logic for ROMInspectionWindow.xaml
+    /// Interaction logic for RomInspectionWindow.xaml
     /// </summary>
-    public partial class ROMInspectionWindow : Window
+    public partial class RomInspectionWindow : Window
     {
-        public ROMInspectionWindow()
+        public RomInspectionWindow()
         {
             InitializeComponent();
         }

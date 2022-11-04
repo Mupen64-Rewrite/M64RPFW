@@ -115,11 +115,11 @@ namespace M64RPFW.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Close ROM.
+        ///   Looks up a localized string similar to Close Rom.
         /// </summary>
-        public static string CloseROM {
+        public static string CloseRom {
             get {
-                return ResourceManager.GetString("CloseROM", resourceCulture);
+                return ResourceManager.GetString("CloseRom", resourceCulture);
             }
         }
         
@@ -259,11 +259,11 @@ namespace M64RPFW.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Load ROM.
+        ///   Looks up a localized string similar to Load Rom.
         /// </summary>
-        public static string LoadROM {
+        public static string LoadRom {
             get {
-                return ResourceManager.GetString("LoadROM", resourceCulture);
+                return ResourceManager.GetString("LoadRom", resourceCulture);
             }
         }
         
@@ -394,20 +394,20 @@ namespace M64RPFW.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reset ROM.
+        ///   Looks up a localized string similar to Reset Rom.
         /// </summary>
-        public static string ResetROM {
+        public static string ResetRom {
             get {
-                return ResourceManager.GetString("ResetROM", resourceCulture);
+                return ResourceManager.GetString("ResetRom", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The ROM does not exist.
+        ///   Looks up a localized string similar to The Rom does not exist.
         /// </summary>
-        public static string ROMInexistent {
+        public static string RomInexistent {
             get {
-                return ResourceManager.GetString("ROMInexistent", resourceCulture);
+                return ResourceManager.GetString("RomInexistent", resourceCulture);
             }
         }
         

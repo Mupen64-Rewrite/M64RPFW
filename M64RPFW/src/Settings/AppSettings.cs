@@ -37,7 +37,7 @@ namespace M64RPFW.src.Settings
         private bool pauseOnFrameAdvance = true;
 
         [ObservableProperty]
-        private string[] recentROMPaths = Array.Empty<string>();
+        private string[] recentRomPaths = Array.Empty<string>();
 
         [ObservableProperty]
         private int screenWidth = 800;

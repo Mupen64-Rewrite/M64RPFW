@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Globalization;
 
-namespace M64RPFW.src.Extensions.Localization
+namespace M64RPFW.src.Extensions.Bindings
 {
     // No ObservableObject. We must implement this manually to call invoke on PC event with instance as parameter, couldn't figure out how to do it with MVVM Toolkit.
     public class LocalizationSource : INotifyPropertyChanged

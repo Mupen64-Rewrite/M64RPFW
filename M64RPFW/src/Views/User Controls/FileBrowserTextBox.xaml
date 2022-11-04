@@ -8,11 +8,11 @@
              mc:Ignorable="d">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         
-        <TextBox Text="{Binding ElementName=root, Path=Path, Mode=TwoWay}" Width="130" Margin="0 0 2 0"/>
+        <TextBox Text="{Binding ElementName=root, Path=Path, Mode=TwoWay}"/>
         <Button Grid.Column="1" Content="{iconPacks:Material Kind=DotsHorizontal}" Command="{Binding ElementName=root, Path=BrowseCommand}"/>
     </Grid>
 </UserControl>
