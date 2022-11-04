@@ -1,12 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using M64RPFW.src.Extensions.Localization;
+using M64RPFW.Services;
+using M64RPFW.src.Extensions.Bindings;
 using M64RPFW.src.Settings;
 using M64RPFW.ViewModels;
 using M64RPFW.ViewModels.Configurations;
 using M64RPFW.ViewModels.Containers;
 using M64RPFW.ViewModels.Helpers;
-using M64RPFW.ViewModels.Interfaces;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using ModernWpf;
 using System;
@@ -33,19 +33,15 @@ namespace M64RPFW.src.Views
     /// </summary>
     public partial class MainWindow :
         Window,
-        IFileDialogProvider,
-        IDialogProvider,
-        IRomFileExtensionsConfigurationProvider,
-        ISavestateBoundsConfigurationProvider,
-        IThemeManager,
-        ILocalizationManager,
-        ISettingsProvider,
-        IDrawingSurfaceProvider,
-        IUIThreadDispatcherProvider
+        IDialogService,
+        IThemeService,
+        ILocalizationService,
+        ISettingsService,
+        IBitmapDrawingService,
+        IDispatcherService
     {
-
-        // for bindings
         internal static AppSettings AppSettings { get; private set; }
+        internal static ILocalizationService LocalizationService { get; private set; }
 
         private readonly MainViewModel mainViewModel;
         private readonly GeneralDependencyContainer generalDependencyContainer;
@@ -53,13 +49,14 @@ namespace M64RPFW.src.Views
         private const string appSettingsPath = "appsettings.json";
 
         private SettingsWindow? settingsWindow;
-        SavestateBoundsConfiguration ISavestateBoundsConfigurationProvider.SavestateBoundsConfiguration => new();
-        ROMFileExtensionsConfiguration IRomFileExtensionsConfigurationProvider.ROMFileExtensionsConfiguration => new();
-        bool IDrawingSurfaceProvider.IsCreated => writeableBitmap != null;
+        bool IBitmapDrawingService.IsReady => writeableBitmap != null;
         private WriteableBitmap writeableBitmap;
 
         public MainWindow()
         {
+            LocalizationService = this;
+
+            // todo: move appsettings logic to vm
             if (!File.Exists(appSettingsPath))
             {
                 // create settings
@@ -75,69 +72,34 @@ namespace M64RPFW.src.Views
 
             InitializeComponent();
 
-            (this as ILocalizationManager).SetLocale((this as ISettingsProvider).GetSetting<string>("Culture"));
-            (this as IThemeManager).SetTheme(GetSetting<string>("Theme"));
+            (this as ILocalizationService).SetLocale((this as ISettingsService).Get<string>("Culture"));
+            (this as IThemeService).Set(Get<string>("Theme"));
 
-            generalDependencyContainer = new GeneralDependencyContainer(
-                dialogProvider: this,
-                fileDialogProvider: this,
-                recentRomsProvider: null,
-                romFileExtensionsConfigurationProvider: this,
-                savestateBoundsConfigurationProvider: this,
-                themeManager: this,
-                settingsManager: this,
-                localizationProvider: this,
-                drawingSurfaceProvider: this,
-                uIThreadDispatcherProvider: this);
+            generalDependencyContainer = new GeneralDependencyContainer(this, this, this, this, this, this, new Services.FilesService());
 
             mainViewModel = new(generalDependencyContainer);
 
             DataContext = mainViewModel;
+
+
         }
 
-        #region Interface Implementations 
-        public (string ReturnedPath, bool Cancelled) OpenFileDialogPrompt(string[] validExtensions)
-        {
-            CommonOpenFileDialog dialog = new();
-            string list = string.Empty;
-            for (int i = 0; i < validExtensions.Length; i++)
-            {
-                list += $"*.{validExtensions[i]};";
-            }
+        #region Service Implementations 
 
-            dialog.Filters.Add(new((this as ILocalizationManager).GetString("SupportedFileFormats"), list));
-            dialog.EnsureFileExists = dialog.EnsurePathExists = true;
-            CommonFileDialogResult result = dialog.ShowDialog();
-            return result == CommonFileDialogResult.Ok ? ((string ReturnedPath, bool Cancelled))(dialog.FileName, false) : ((string ReturnedPath, bool Cancelled))(string.Empty, true);
-        }
-        public (string ReturnedPath, bool Cancelled) SaveFileDialogPrompt(string[] validExtensions)
-        {
-            CommonSaveFileDialog dialog = new();
-            string list = string.Empty;
-            for (int i = 0; i < validExtensions.Length; i++)
-            {
-                list += $"*.{validExtensions[i]};";
-            }
-
-            dialog.Filters.Add(new((this as ILocalizationManager).GetString("SupportedFileFormats"), list));
-            CommonFileDialogResult result = dialog.ShowDialog();
-            return result == CommonFileDialogResult.Ok ? ((string ReturnedPath, bool Cancelled))(dialog.FileName, false) : ((string ReturnedPath, bool Cancelled))(string.Empty, true);
-        }
-
-        public void ShowErrorDialog(string message)
+        public void ShowError(string message)
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                _ = MessageBox.Show(message, (this as ILocalizationManager).GetString("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
+                _ = MessageBox.Show(message, (this as ILocalizationService).GetString("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
             }));
         }
 
-        string IThemeManager.GetTheme()
+        string IThemeService.Get()
         {
-            return ((ISettingsProvider)this).GetSetting<string>("Theme");
+            return ((ISettingsService)this).Get<string>("Theme");
         }
 
-        void IThemeManager.SetTheme(string themeName)
+        void IThemeService.Set(string themeName)
         {
             if (themeName.Equals("Light"))
             {
@@ -147,23 +109,23 @@ namespace M64RPFW.src.Views
             {
                 ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
             }
-            SetSetting<string>("Theme", themeName, true);
+            Set<string>("Theme", themeName, true);
         }
 
         public void SetLocale(string localeKey)
         {
-            (this as IUIThreadDispatcherProvider).Execute(delegate
+            (this as IDispatcherService).Execute(delegate
             {
                 CultureInfo culture = CultureInfo.GetCultureInfo(localeKey);
                 Thread.CurrentThread.CurrentCulture =
                 Thread.CurrentThread.CurrentUICulture =
                 LocalizationSource.Instance.CurrentCulture = culture;
-                SetSetting<string>("Culture", localeKey, true);
+                Set<string>("Culture", localeKey, true);
             });
         }
 
 
-        public T GetSetting<T>(string key)
+        public T Get<T>(string key)
         {
             System.Reflection.PropertyInfo? prop = appSettings.GetType().GetProperty(key);
             if (prop == null)
@@ -177,7 +139,7 @@ namespace M64RPFW.src.Views
             }
             return val;
         }
-        public void SetSetting<T>(string key, T value, bool saveAfter = false)
+        public void Set<T>(string key, T value, bool saveAfter = false)
         {
             System.Reflection.PropertyInfo? prop = appSettings.GetType().GetProperty(key);
             prop.SetValue(appSettings, value);
@@ -197,7 +159,7 @@ namespace M64RPFW.src.Views
             return Properties.Resources.ResourceManager.GetString(key) ?? "?";
         }
 
-        void IDrawingSurfaceProvider.Create(int width, int height)
+        void IBitmapDrawingService.Create(int width, int height)
         {
             Application.Current.Dispatcher.Invoke(delegate
             {
@@ -206,7 +168,7 @@ namespace M64RPFW.src.Views
             });
         }
 
-        void IDrawingSurfaceProvider.Draw(Array buffer, int width, int height)
+        void IBitmapDrawingService.Draw(Array buffer, int width, int height)
         {
             Application.Current.Dispatcher.Invoke(delegate
             {
@@ -214,7 +176,7 @@ namespace M64RPFW.src.Views
             });
         }
 
-        void IUIThreadDispatcherProvider.Execute(Action action)
+        void IDispatcherService.Execute(Action action)
         {
             Application.Current.Dispatcher.Invoke(action);
         }
@@ -237,10 +199,10 @@ namespace M64RPFW.src.Views
         }
 
         [RelayCommand]
-        private void ShowROMInspectionWindow(object dataContext)
+        private void ShowRomInspectionWindow(object dataContext)
         {
-            ROMInspectionWindow romInspectionWindow = new() { DataContext = dataContext };
-            romInspectionWindow.ShowDialog();
+            RomInspectionWindow RomInspectionWindow = new() { DataContext = dataContext };
+            RomInspectionWindow.Show();
         }
 
         [RelayCommand]

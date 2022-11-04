@@ -1,4 +1,5 @@
 ﻿using M64RPFW.Models.Emulation.Exceptions;
+using M64RPFW.Services;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -214,14 +215,14 @@ namespace M64RPFW.Models.Emulation.API
         private CoreDoCommandStr? m64pCoreDoCommandStr;
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate m64p_error CoreDoCommandROMHeader(m64p_command Command, int ParamInt, ref m64p_rom_header ParamPtr);
+        private delegate m64p_error CoreDoCommandRomHeader(m64p_command Command, int ParamInt, ref m64p_rom_header ParamPtr);
 
-        private CoreDoCommandROMHeader? m64pCoreDoCommandROMHeader;
+        private CoreDoCommandRomHeader? m64pCoreDoCommandRomHeader;
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate m64p_error CoreDoCommandROMSettings(m64p_command Command, m64p_rom_settings ParamInt, ref int ParamPtr);
+        private delegate m64p_error CoreDoCommandRomSettings(m64p_command Command, m64p_Rom_settings ParamInt, ref int ParamPtr);
 
-        private CoreDoCommandROMSettings? m64pCoreDoCommandROMSettings;
+        private CoreDoCommandRomSettings? m64pCoreDoCommandRomSettings;
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate m64p_error CoreDoCommandCoreStateQuery(m64p_command Command, m64p_core_param ParamInt, int ParamPtr);
@@ -443,6 +444,7 @@ namespace M64RPFW.Models.Emulation.API
         private bool disposed = false;
         private readonly ManualResetEvent m64pStartupComplete = new(false);
         private readonly Task? m64pEmulator;
+        private readonly IFilesService filesService;
         private volatile bool isBusyInCore;
         private IntPtr coreDll;
 
@@ -457,6 +459,11 @@ namespace M64RPFW.Models.Emulation.API
 
         #endregion
 
+        public Mupen64PlusAPI(IFilesService filesService)
+        {
+            this.filesService = filesService;
+        }
+
         private void GetScreenDimensions(out int width, out int height)
         {
             int w = 0, h = 0;
@@ -469,9 +476,9 @@ namespace M64RPFW.Models.Emulation.API
         {
             BufferWidth = width;
             BufferHeight = height;
-            
+
             FrameBuffer = new int[BufferWidth * BufferHeight];
-            
+
             if (IsFrameBufferInitialized) // sometimes it randomly returns 0,0
             {
                 OnFrameBufferCreate?.Invoke();
@@ -564,11 +571,11 @@ namespace M64RPFW.Models.Emulation.API
 
             ApplyConfig(launchParameters.Config);
 
-            
+
 
             result = m64pCoreDoCommandPtr(m64p_command.M64CMD_STATE_SET_SLOT, launchParameters.InitialSlot, IntPtr.Zero);
 
-            result = m64pCoreDoCommandByteArray(m64p_command.M64CMD_ROM_OPEN, launchParameters.Rom.Length, launchParameters.Rom);
+            result = m64pCoreDoCommandByteArray(m64p_command.M64CMD_Rom_OPEN, launchParameters.Rom.Length, launchParameters.Rom);
             int sizeHeader = Marshal.SizeOf(typeof(m64p_rom_header));
 
             _ = AttachPlugin(m64p_plugin_type.M64PLUGIN_GFX, launchParameters.VideoPluginPath);
@@ -641,7 +648,7 @@ namespace M64RPFW.Models.Emulation.API
             DetachPlugin(m64p_plugin_type.M64PLUGIN_INPUT);
             DetachPlugin(m64p_plugin_type.M64PLUGIN_RSP);
 
-            _ = m64pCoreDoCommandPtr(m64p_command.M64CMD_ROM_CLOSE, 0, IntPtr.Zero);
+            _ = m64pCoreDoCommandPtr(m64p_command.M64CMD_rom_close, 0, IntPtr.Zero);
 
             _ = m64pCoreShutdown();
 
@@ -659,20 +666,20 @@ namespace M64RPFW.Models.Emulation.API
             _ = m64pCoreDoCommandPtr(m64p_command.M64CMD_STATE_SET_SLOT, slot, IntPtr.Zero);
         }
 
-        public m64p_rom_header GetROMHeader(m64p_rom_header _rom_header)
+        public m64p_rom_header GetRomHeader(m64p_rom_header _rom_header)
         {
             int size = Marshal.SizeOf(typeof(m64p_rom_header));
 
-            _ = m64pCoreDoCommandROMHeader(m64p_command.M64CMD_ROM_GET_HEADER, size, ref _rom_header);
+            _ = m64pCoreDoCommandRomHeader(m64p_command.M64CMD_rom_get_header, size, ref _rom_header);
 
             return _rom_header;
         }
 
-        public m64p_rom_settings GetROMSettings(m64p_rom_settings _rom_settings)
+        public m64p_Rom_settings GetRomSettings(m64p_Rom_settings _rom_settings)
         {
-            int size = Marshal.SizeOf(typeof(m64p_rom_settings));
+            int size = Marshal.SizeOf(typeof(m64p_Rom_settings));
 
-            _ = m64pCoreDoCommandROMSettings(m64p_command.M64CMD_ROM_GET_SETTINGS, _rom_settings, ref size);
+            _ = m64pCoreDoCommandRomSettings(m64p_command.M64CMD_rom_get_settings, _rom_settings, ref size);
 
             return _rom_settings;
         }
@@ -846,8 +853,8 @@ namespace M64RPFW.Models.Emulation.API
             // Custom
             m64pCoreDoCommandRefPtr = (CoreDoCommandRefPtr)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDoCommand"), typeof(CoreDoCommandRefPtr));
             m64pCoreDoCommandStr = (CoreDoCommandStr)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDoCommand"), typeof(CoreDoCommandStr));
-            m64pCoreDoCommandROMHeader = (CoreDoCommandROMHeader)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDoCommand"), typeof(CoreDoCommandROMHeader));
-            m64pCoreDoCommandROMSettings = (CoreDoCommandROMSettings)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDoCommand"), typeof(CoreDoCommandROMSettings));
+            m64pCoreDoCommandRomHeader = (CoreDoCommandRomHeader)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDoCommand"), typeof(CoreDoCommandRomHeader));
+            m64pCoreDoCommandRomSettings = (CoreDoCommandRomSettings)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDoCommand"), typeof(CoreDoCommandRomSettings));
             m64pCoreDoCommandCoreStateSet = (CoreDoCommandCoreStateSet)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDoCommand"), typeof(CoreDoCommandCoreStateSet));
             m64pCoreDoCommandCoreStateVideoMode = (CoreDoCommandCoreStateSetVideoMode)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDoCommand"), typeof(CoreDoCommandCoreStateSetVideoMode));
             m64pCoreDoCommandCoreStateSetRef = (CoreDoCommandCoreStateSetRef)Marshal.GetDelegateForFunctionPointer(NativeLibrary.GetExport(coreDll, "CoreDoCommand"), typeof(CoreDoCommandCoreStateSetRef));

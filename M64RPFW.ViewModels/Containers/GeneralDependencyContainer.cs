@@ -1,32 +1,30 @@
-﻿using M64RPFW.ViewModels.Interfaces;
+﻿using M64RPFW.Services;
+using M64RPFW.ViewModels.Configurations;
 
 namespace M64RPFW.ViewModels.Containers
 {
     public class GeneralDependencyContainer
     {
-        public GeneralDependencyContainer(IDialogProvider dialogProvider, IFileDialogProvider fileDialogProvider, IRecentRomsProvider recentRomsProvider, IRomFileExtensionsConfigurationProvider romFileExtensionsConfigurationProvider, ISavestateBoundsConfigurationProvider savestateBoundsConfigurationProvider, IThemeManager themeManager, ISettingsProvider settingsManager, ILocalizationManager localizationProvider, IDrawingSurfaceProvider drawingSurfaceProvider, IUIThreadDispatcherProvider uIThreadDispatcherProvider)
+        public GeneralDependencyContainer(IDialogService dialogService, IThemeService themeService, ISettingsService settingsService, ILocalizationService localizationService, IBitmapDrawingService bitmapDrawingService, IDispatcherService dispatcherService, IFilesService filesService)
         {
-            DialogProvider = dialogProvider;
-            FileDialogProvider = fileDialogProvider;
-            RecentRomsProvider = recentRomsProvider;
-            RomFileExtensionsConfigurationProvider = romFileExtensionsConfigurationProvider;
-            SavestateBoundsConfigurationProvider = savestateBoundsConfigurationProvider;
-            ThemeManager = themeManager;
-            SettingsManager = settingsManager;
-            LocalizationProvider = localizationProvider;
-            DrawingSurfaceProvider = drawingSurfaceProvider;
-            UIThreadDispatcherProvider = uIThreadDispatcherProvider;
+            DialogService = dialogService;
+            ThemeService = themeService;
+            SettingsService = settingsService;
+            LocalizationService = localizationService;
+            BitmapDrawingService = bitmapDrawingService;
+            DispatcherService = dispatcherService;
+            FilesService = filesService;
         }
 
-        internal IDialogProvider DialogProvider { get; set; }
-        internal IFileDialogProvider FileDialogProvider { get; set; }
-        internal IRecentRomsProvider RecentRomsProvider { get; set; }
-        internal IRomFileExtensionsConfigurationProvider RomFileExtensionsConfigurationProvider { get; set; }
-        internal ISavestateBoundsConfigurationProvider SavestateBoundsConfigurationProvider { get; set; }
-        internal IThemeManager ThemeManager { get; set; }
-        internal ISettingsProvider SettingsManager { get; set; }
-        internal ILocalizationManager LocalizationProvider { get; set; }
-        internal IDrawingSurfaceProvider DrawingSurfaceProvider { get; set; }
-        internal IUIThreadDispatcherProvider UIThreadDispatcherProvider { get; set; }
+        internal IDialogService DialogService { get; }
+        internal IThemeService ThemeService { get; }
+        internal ISettingsService SettingsService { get; }
+        internal ILocalizationService LocalizationService { get; }
+        internal IBitmapDrawingService BitmapDrawingService { get; }
+        internal IDispatcherService DispatcherService { get; }
+        internal IFilesService FilesService { get; }
+
+        internal FileExtensionsConfiguration RomFileExtensionsConfiguration { get; } = new();
+        internal SavestateConfiguration SavestateBoundsConfiguration { get; } = new();
     }
 }

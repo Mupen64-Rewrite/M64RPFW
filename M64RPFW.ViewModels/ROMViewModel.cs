@@ -4,12 +4,13 @@ using M64RPFW.Models.Emulation;
 
 namespace M64RPFW.ViewModels
 {
-    public partial class ROMViewModel : ObservableObject
+    public partial class RomViewModel : ObservableObject
     {
-        private readonly ROM rom;
+        private readonly Rom rom;
 
         public string Path { get; }
 
+        public byte[] RawData => rom.RawData;
         public bool IsValid => rom.IsValid;
         public bool IsBigEndian => rom.IsBigEndian;
         public string InternalName => rom.InternalName;
@@ -20,7 +21,7 @@ namespace M64RPFW.ViewModels
         public byte CountryCode => rom.CountryCode;
         public byte Version => rom.Version;
 
-        public ROMViewModel(byte[] data, string path)
+        public RomViewModel(byte[] data, string path)
         {
             rom = new(data);
             Path = path;

@@ -1,8 +1,8 @@
 ﻿namespace M64RPFW.Models.Emulation.Exceptions
 {
-    public class ROMException : Exception
+    public class RomException : Exception
     {
-        public ROMException(string message) : base(message)
+        public RomException(string message) : base(message)
         {
         }
     }

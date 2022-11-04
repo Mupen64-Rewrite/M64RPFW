@@ -1,4 +1,5 @@
 ﻿using M64RPFW.Models.Emulation.API;
+using M64RPFW.Services;
 using System.Diagnostics;
 using static M64RPFW.Models.Emulation.API.Mupen64PlusTypes;
 
@@ -6,6 +7,13 @@ namespace M64RPFW.Models.Emulation
 {
     public class Emulator
     {
+        public Emulator(IFilesService filesService)
+        {
+            this.filesService = filesService;
+        }
+
+        private readonly IFilesService filesService;
+
         public event Action? PlayModeChanged;
 
         private PlayModes playMode = PlayModes.Stopped;
@@ -27,7 +35,7 @@ namespace M64RPFW.Models.Emulation
 
         public void Start(Mupen64PlusLaunchParameters mupen64PlusLaunchParameters)
         {
-            API = new();
+            API = new(filesService);
 
             playMode = PlayModes.Running;
             PlayModeChanged?.Invoke();

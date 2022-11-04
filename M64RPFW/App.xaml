@@ -9,8 +9,9 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ui:ThemeResources RequestedTheme="Dark"/>
-                <ui:XamlControlsResources/>
+                    <ui:ThemeResources RequestedTheme="Dark"/>
+                    <ui:XamlControlsResources/>
+                
                 <ResourceDictionary>
                     <conv:StringEqualityToBooleanConverter x:Key="StringEqualityToBooleanConverter"/>
                     <conv:KeyBindingToStringConverter x:Key="KeyBindingToStringConverter"/>
@@ -19,16 +20,99 @@
                     <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
                     <conv:IntegerToHexadecimalStringConverter x:Key="IntegerToHexadecimalStringConverter"/>
                     <conv:UnsignedIntegerToHexadecimalStringConverter x:Key="UnsignedIntegerToHexadecimalStringConverter"/>
+                    <conv:BooleanToStringConverter x:Key="BooleanToStringConverter"/>
                     <RotateTransform x:Key="VerticalRotateTransform" Angle="90"/>
                 </ResourceDictionary>
                 <ResourceDictionary>
                     <system:Double x:Key="MenuHeight">40</system:Double>
+                    <system:Double x:Key="SmallIconSize">30</system:Double>
+
+                    
                     <Thickness x:Key="MediumContentMargin">10</Thickness>
                     <Thickness x:Key="SmallItemMargin">0 2 0 0</Thickness>
-                    <system:Double x:Key="SmallIconSize">30</system:Double>
+                    <Thickness x:Key="TitlebarOverlapMargin">0 -8 0 0</Thickness>
                     <Thickness x:Key="SmallPadding">5</Thickness>
-                    <system:Double x:Key="Headline4">24</system:Double>
-                    <system:Double x:Key="Headline5">34</system:Double>
+
+                    <Style x:Key="BodySmallTextBlock" TargetType="{x:Type TextBlock}">
+                        <Setter Property="FontSize" Value="12" />
+                        <Setter Property="FontWeight" Value="Regular" />
+                        <Setter Property="LineHeight" Value="16" />
+                    </Style>
+                    <Style x:Key="BodyMediumTextBlock" TargetType="{x:Type TextBlock}">
+                        <Setter Property="FontSize" Value="14" />
+                        <Setter Property="FontWeight" Value="Regular" />
+                        <Setter Property="LineHeight" Value="20" />
+                    </Style>
+                    <Style x:Key="BodyLargeTextBlock" TargetType="{x:Type TextBlock}">
+                        <Setter Property="FontSize" Value="16" />
+                        <Setter Property="FontWeight" Value="Regular" />
+                        <Setter Property="LineHeight" Value="24" />
+                    </Style>
+
+                    <Style x:Key="LabelSmallTextBlock" TargetType="{x:Type TextBlock}">
+                        <Setter Property="FontSize" Value="11" />
+                        <Setter Property="FontWeight" Value="Medium" />
+                        <Setter Property="LineHeight" Value="16" />
+                    </Style>
+                    <Style x:Key="LabelMediumTextBlock" TargetType="{x:Type TextBlock}">
+                        <Setter Property="FontSize" Value="12" />
+                        <Setter Property="FontWeight" Value="Medium" />
+                        <Setter Property="LineHeight" Value="16" />
+                    </Style>
+                    <Style x:Key="LabelLargeTextBlock" TargetType="{x:Type TextBlock}">
+                        <Setter Property="FontSize" Value="14" />
+                        <Setter Property="FontWeight" Value="Medium" />
+                        <Setter Property="LineHeight" Value="20" />
+                    </Style>
+
+                    <Style x:Key="TitleSmallTextBlock" TargetType="{x:Type TextBlock}">
+                        <Setter Property="FontSize" Value="14" />
+                        <Setter Property="FontWeight" Value="Medium" />
+                        <Setter Property="LineHeight" Value="20" />
+                    </Style>
+                    <Style x:Key="TitleMediumTextBlock" TargetType="{x:Type TextBlock}">
+                        <Setter Property="FontSize" Value="16" />
+                        <Setter Property="FontWeight" Value="Medium" />
+                        <Setter Property="LineHeight" Value="24" />
+                    </Style>
+                    <Style x:Key="TitleLargeTextBlock" TargetType="{x:Type TextBlock}">
+                        <Setter Property="FontSize" Value="22" />
+                        <Setter Property="FontWeight" Value="Medium" />
+                        <Setter Property="LineHeight" Value="28" />
+                    </Style>
+
+                    <Style x:Key="HeadlineSmallTextBlock" TargetType="{x:Type TextBlock}">
+                        <Setter Property="FontSize" Value="24" />
+                        <Setter Property="FontWeight" Value="Regular" />
+                        <Setter Property="LineHeight" Value="32" />
+                    </Style>
+                    <Style x:Key="HeadlineMediumTextBlock" TargetType="{x:Type TextBlock}">
+                        <Setter Property="FontSize" Value="28" />
+                        <Setter Property="FontWeight" Value="Regular" />
+                        <Setter Property="LineHeight" Value="36" />
+                    </Style>
+                    <Style x:Key="HeadlineLargeTextBlock" TargetType="{x:Type TextBlock}">
+                        <Setter Property="FontSize" Value="32" />
+                        <Setter Property="FontWeight" Value="Regular" />
+                        <Setter Property="LineHeight" Value="40" />
+                    </Style>
+
+                    <Style x:Key="DisplaySmallTextBlock" TargetType="{x:Type TextBlock}">
+                        <Setter Property="FontSize" Value="36" />
+                        <Setter Property="FontWeight" Value="Regular" />
+                        <Setter Property="LineHeight" Value="44" />
+                    </Style>
+                    <Style x:Key="DisplayMediumTextBlock" TargetType="{x:Type TextBlock}">
+                        <Setter Property="FontSize" Value="45" />
+                        <Setter Property="FontWeight" Value="Regular" />
+                        <Setter Property="LineHeight" Value="52" />
+                    </Style>
+                    <Style x:Key="DisplayLargeTextBlock" TargetType="{x:Type TextBlock}">
+                        <Setter Property="FontSize" Value="57" />
+                        <Setter Property="FontWeight" Value="Regular" />
+                        <Setter Property="LineHeight" Value="64" />
+                    </Style>
+                    
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

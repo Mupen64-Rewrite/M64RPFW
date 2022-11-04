@@ -3,11 +3,11 @@ using System.Text;
 
 namespace M64RPFW.Models.Emulation
 {
-    public class ROM
+    public class Rom
     {
         public readonly byte[] RawData;
 
-        public ROM(byte[] rawData)
+        public Rom(byte[] rawData)
         {
             RawData = rawData;
 

@@ -123,14 +123,14 @@
   <data name="File" xml:space="preserve">
     <value>Datei</value>
   </data>
-  <data name="LoadROM" xml:space="preserve">
-    <value>Lade ROM</value>
+  <data name="LoadRom" xml:space="preserve">
+    <value>Lade Rom</value>
   </data>
-  <data name="CloseROM" xml:space="preserve">
-    <value>Schließe ROM</value>
+  <data name="CloseRom" xml:space="preserve">
+    <value>Schließe Rom</value>
   </data>
-  <data name="ResetROM" xml:space="preserve">
-    <value>Starte ROM neu</value>
+  <data name="ResetRom" xml:space="preserve">
+    <value>Starte Rom neu</value>
   </data>
   <data name="Exit" xml:space="preserve">
     <value>Schließen</value>
@@ -237,8 +237,8 @@
   <data name="RawData" xml:space="preserve">
     <value>Rohdaten</value>
   </data>
-  <data name="ROMInexistent" xml:space="preserve">
-    <value>Der ROM existiert nicht</value>
+  <data name="RomInexistent" xml:space="preserve">
+    <value>Der Rom existiert nicht</value>
   </data>
   <data name="Plugins" xml:space="preserve">
     <value>Plugins</value>
@@ -263,5 +263,11 @@
   </data>
   <data name="Emulation" xml:space="preserve">
     <value>Emulation</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Nein</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Ja</value>
   </data>
 </root>

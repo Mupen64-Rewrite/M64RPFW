@@ -2,8 +2,10 @@
 using CommunityToolkit.Mvvm.Input;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Emulation.API;
+using M64RPFW.Services.Abstractions;
 using M64RPFW.ViewModels.Containers;
 using M64RPFW.ViewModels.Helpers;
+using M64RPFW.ViewModels.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,20 +15,20 @@ namespace M64RPFW.ViewModels
     public partial class EmulatorViewModel : ObservableObject
     {
         private readonly GeneralDependencyContainer generalDependencyContainer;
+        private readonly IRecentRomsProvider recentRomsProvider;
         private readonly Emulator emulator;
-        private readonly MainViewModel mainViewModel;
 
-        internal EmulatorViewModel(GeneralDependencyContainer generalDependencyContainer, MainViewModel mainViewModel)
+        internal EmulatorViewModel(GeneralDependencyContainer generalDependencyContainer, IAppExitEventProvider appExitEventProvider, IRecentRomsProvider recentRomsProvider)
         {
             this.generalDependencyContainer = generalDependencyContainer;
-            this.mainViewModel = mainViewModel;
+            this.recentRomsProvider = recentRomsProvider;
 
-            mainViewModel.OnWindowExit += delegate
+            appExitEventProvider.Register(delegate
             {
-                CloseROMCommand.ExecuteIfPossible(null);
-            };
+                CloseRomCommand.ExecuteIfPossible(null);
+            });
 
-            emulator = new();
+            emulator = new(generalDependencyContainer.FilesService);
             emulator.PlayModeChanged += PlayModeChanged;
         }
 
@@ -36,99 +38,91 @@ namespace M64RPFW.ViewModels
             get => emulator.PlayMode == Mupen64PlusTypes.PlayModes.Running;
             set => emulator.PlayMode = value ? Mupen64PlusTypes.PlayModes.Running : Mupen64PlusTypes.PlayModes.Paused;
         }
+
         private void PlayModeChanged()
         {
-            generalDependencyContainer.UIThreadDispatcherProvider.Execute(() =>
+            generalDependencyContainer.DispatcherService.Execute(() =>
             {
                 OnPropertyChanged(nameof(IsRunning));
                 OnPropertyChanged(nameof(IsResumed));
-                ICommandHelper.NotifyCanExecuteChanged(CloseROMCommand, ResetROMCommand, FrameAdvanceCommand, TogglePauseCommand);
+                ICommandHelper.NotifyCanExecuteChanged(CloseRomCommand, ResetRomCommand, FrameAdvanceCommand, TogglePauseCommand);
 
             });
         }
 
+        private int saveStateSlot = 0;
+        public int SaveStateSlot { get => saveStateSlot; set => SetProperty(ref saveStateSlot, Math.Clamp(value, 0, generalDependencyContainer.SavestateBoundsConfiguration.Slots)); }
+
 
         [RelayCommand]
-        private void LoadROM()
+        private async void BrowseRom()
         {
-            (string ReturnedPath, bool Cancelled) = generalDependencyContainer.FileDialogProvider.OpenFileDialogPrompt(generalDependencyContainer.RomFileExtensionsConfigurationProvider.ROMFileExtensionsConfiguration.FileExtensions);
-            if (Cancelled)
-            {
-                return;
-            }
+            var file = await generalDependencyContainer.FilesService.TryPickOpenFileAsync(generalDependencyContainer.RomFileExtensionsConfiguration.RomExtensions);
 
-            LoadROMFromPath(ReturnedPath);
+            if (file != null)
+            {
+                var bytes = await file.ReadAllBytes();
+                LoadRomCommand.ExecuteIfPossible(new RomViewModel(bytes, file.Path));
+            }
         }
 
         [RelayCommand]
-        private void LoadROMFromPath(string path)
+        private async void LoadRom(RomViewModel romViewModel)
         {
-            if (!AreAllDependenciesMet())
+            TryVerifyDependencies(out var hasAllDependencies);
+            
+            if (!hasAllDependencies)
             {
                 return;
             }
 
             void ShowInvalidFileError()
             {
-                generalDependencyContainer.DialogProvider.ShowErrorDialog(generalDependencyContainer.LocalizationProvider.GetString("InvalidFile"));
+                generalDependencyContainer.DialogService.ShowError(generalDependencyContainer.LocalizationService.GetString("InvalidFile"));
             }
 
-            // awfull 
-
-            ROMViewModel? rom = null;
-
-            try
-            {
-                rom = new(File.ReadAllBytes(path), path);
-            }
-            catch
+            if (!romViewModel.IsValid)
             {
                 ShowInvalidFileError();
                 return;
             }
 
-            if (!rom.IsValid)
-            {
-                ShowInvalidFileError();
-                return;
-            }
-
-            generalDependencyContainer.RecentRomsProvider.AddRecentROM(rom);
+            recentRomsProvider.Add(romViewModel);
 
             if (IsRunning)
             {
                 emulator.Stop();
             }
 
-            Mupen64PlusConfig config = new(generalDependencyContainer.SettingsManager.GetSetting<int>("CoreType"), generalDependencyContainer.SettingsManager.GetSetting<int>("ScreenWidth"), generalDependencyContainer.SettingsManager.GetSetting<int>("ScreenHeight"));
-            Mupen64PlusLaunchParameters launchParameters = new(File.ReadAllBytes(path),
+            Mupen64PlusConfig config = new(generalDependencyContainer.SettingsService.Get<int>("CoreType"), generalDependencyContainer.SettingsService.Get<int>("ScreenWidth"), generalDependencyContainer.SettingsService.Get<int>("ScreenHeight"));
+            Mupen64PlusLaunchParameters launchParameters = new(romViewModel.RawData,
                                                                              config,
-                                                                             generalDependencyContainer.SettingsManager.GetSetting<int>("DefaultSlot"),
-                                                                             generalDependencyContainer.SettingsManager.GetSetting<string>("CoreLibraryPath"),
-                                                                             generalDependencyContainer.SettingsManager.GetSetting<string>("VideoPluginPath"),
-                                                                             generalDependencyContainer.SettingsManager.GetSetting<string>("AudioPluginPath"),
-                                                                             generalDependencyContainer.SettingsManager.GetSetting<string>("InputPluginPath"),
-                                                                             generalDependencyContainer.SettingsManager.GetSetting<string>("RSPPluginPath"));
+                                                                             generalDependencyContainer.SettingsService.Get<int>("DefaultSlot"),
+                                                                             generalDependencyContainer.SettingsService.Get<string>("CoreLibraryPath"),
+                                                                             generalDependencyContainer.SettingsService.Get<string>("VideoPluginPath"),
+                                                                             generalDependencyContainer.SettingsService.Get<string>("AudioPluginPath"),
+                                                                             generalDependencyContainer.SettingsService.Get<string>("InputPluginPath"),
+                                                                             generalDependencyContainer.SettingsService.Get<string>("RSPPluginPath"));
             emulator.Start(launchParameters);
 
             emulator.API.OnFrameBufferCreate += delegate
             {
-                generalDependencyContainer.DrawingSurfaceProvider.Create(emulator.API.BufferWidth, emulator.API.BufferHeight);
+                generalDependencyContainer.BitmapDrawingService.Create(emulator.API.BufferWidth, emulator.API.BufferHeight);
             };
             emulator.API.OnFrameBufferUpdate += delegate
             {
-                generalDependencyContainer.DrawingSurfaceProvider.Draw(emulator.API.FrameBuffer, emulator.API.BufferWidth, emulator.API.BufferHeight);
+                generalDependencyContainer.BitmapDrawingService.Draw(emulator.API.FrameBuffer, emulator.API.BufferWidth, emulator.API.BufferHeight);
             };
         }
 
         [RelayCommand(CanExecute = nameof(IsRunning))]
-        private void CloseROM()
+        private void CloseRom()
         {
             emulator.Stop();
         }
 
         [RelayCommand(CanExecute = nameof(IsRunning))]
-        private void ResetROM()
+        private void ResetRom()
         {
             emulator.Reset();
         }
@@ -136,7 +130,7 @@ namespace M64RPFW.ViewModels
         [RelayCommand(CanExecute = nameof(IsRunning))]
         private void FrameAdvance()
         {
-            if (generalDependencyContainer.SettingsManager.GetSetting<bool>("PauseOnFrameAdvance"))
+            if (generalDependencyContainer.SettingsService.Get<bool>("PauseOnFrameAdvance"))
             {
                 emulator.PlayMode = Mupen64PlusTypes.PlayModes.Paused;
             }
@@ -150,54 +144,54 @@ namespace M64RPFW.ViewModels
             emulator.PlayMode = emulator.PlayMode == Mupen64PlusTypes.PlayModes.Running ? Mupen64PlusTypes.PlayModes.Paused : Mupen64PlusTypes.PlayModes.Running;
         }
 
-        private bool AreAllDependenciesMet()
+        private void TryVerifyDependencies(out bool hasAllDependencies)
         {
             // TODO: clean this up
 
             List<string> missingPlugins = new();
 
-            bool coreLibraryExists = File.Exists(generalDependencyContainer.SettingsManager.GetSetting<string>("CoreLibraryPath"));
+            bool coreLibraryExists = File.Exists(generalDependencyContainer.SettingsService.Get<string>("CoreLibraryPath"));
 
-            if (!Path.GetExtension(generalDependencyContainer.SettingsManager.GetSetting<string>("CoreLibraryPath")).Equals(".dll", StringComparison.InvariantCultureIgnoreCase))
+            if (!Path.GetExtension(generalDependencyContainer.SettingsService.Get<string>("CoreLibraryPath")).Equals(".dll", StringComparison.InvariantCultureIgnoreCase))
             {
                 coreLibraryExists = false;
             }
 
             if (!coreLibraryExists)
             {
-                generalDependencyContainer.DialogProvider.ShowErrorDialog(generalDependencyContainer.LocalizationProvider.GetString("CoreLibraryNotFound"));
+                generalDependencyContainer.DialogService.ShowError(generalDependencyContainer.LocalizationService.GetString("CoreLibraryNotFound"));
             }
 
-            bool videoPluginExists = File.Exists(generalDependencyContainer.SettingsManager.GetSetting<string>("VideoPluginPath"));
-            bool audioPluginExists = File.Exists(generalDependencyContainer.SettingsManager.GetSetting<string>("AudioPluginPath"));
-            bool inputPluginExists = File.Exists(generalDependencyContainer.SettingsManager.GetSetting<string>("InputPluginPath"));
-            bool rspPluginExists = File.Exists(generalDependencyContainer.SettingsManager.GetSetting<string>("RSPPluginPath"));
+            bool videoPluginExists = File.Exists(generalDependencyContainer.SettingsService.Get<string>("VideoPluginPath"));
+            bool audioPluginExists = File.Exists(generalDependencyContainer.SettingsService.Get<string>("AudioPluginPath"));
+            bool inputPluginExists = File.Exists(generalDependencyContainer.SettingsService.Get<string>("InputPluginPath"));
+            bool rspPluginExists = File.Exists(generalDependencyContainer.SettingsService.Get<string>("RSPPluginPath"));
             if (!videoPluginExists)
             {
-                missingPlugins.Add(generalDependencyContainer.LocalizationProvider.GetString("Video"));
+                missingPlugins.Add(generalDependencyContainer.LocalizationService.GetString("Video"));
             }
 
             if (!audioPluginExists)
             {
-                missingPlugins.Add(generalDependencyContainer.LocalizationProvider.GetString("Audio"));
+                missingPlugins.Add(generalDependencyContainer.LocalizationService.GetString("Audio"));
             }
 
             if (!inputPluginExists)
             {
-                missingPlugins.Add(generalDependencyContainer.LocalizationProvider.GetString("Input"));
+                missingPlugins.Add(generalDependencyContainer.LocalizationService.GetString("Input"));
             }
 
             if (!rspPluginExists)
             {
-                missingPlugins.Add(generalDependencyContainer.LocalizationProvider.GetString("RSP"));
+                missingPlugins.Add(generalDependencyContainer.LocalizationService.GetString("RSP"));
             }
 
             if (!videoPluginExists || !audioPluginExists || !inputPluginExists || (!rspPluginExists && coreLibraryExists))
             {
-                generalDependencyContainer.DialogProvider.ShowErrorDialog(string.Format(generalDependencyContainer.LocalizationProvider.GetString("PluginNotFoundSeries"), string.Join(", ", missingPlugins)));
+                generalDependencyContainer.DialogService.ShowError(string.Format(generalDependencyContainer.LocalizationService.GetString("PluginNotFoundSeries"), string.Join(", ", missingPlugins)));
             }
 
-            return coreLibraryExists && videoPluginExists && audioPluginExists && inputPluginExists && rspPluginExists;
+            hasAllDependencies = coreLibraryExists && videoPluginExists && audioPluginExists && inputPluginExists && rspPluginExists;
         }
     }
 }
