@@ -81,8 +81,8 @@
                                     <TextBlock VerticalAlignment="Center" Grid.Row="3" Grid.Column="0" Padding="{StaticResource SmallPadding}" Text="Input Plugin"/>
                                     <ucs:FileBrowserTextBox Grid.Row="3" Grid.Column="1" Path="{extbin:SettingsBinding InputPluginPath, Mode=TwoWay}" BrowseCommand="{Binding BrowseInputPluginPathCommand}"/>
 
-                                    <TextBlock VerticalAlignment="Center" Grid.Row="4" Grid.Column="0" Padding="{StaticResource SmallPadding}" Text="RSP Plugin"/>
-                                    <ucs:FileBrowserTextBox Grid.Row="4" Grid.Column="1" Path="{extbin:SettingsBinding RSPPluginPath, Mode=TwoWay}" BrowseCommand="{Binding BrowseRSPPluginPathCommand}"/>
+                                    <TextBlock VerticalAlignment="Center" Grid.Row="4" Grid.Column="0" Padding="{StaticResource SmallPadding}" Text="Rsp Plugin"/>
+                                    <ucs:FileBrowserTextBox Grid.Row="4" Grid.Column="1" Path="{extbin:SettingsBinding RspPluginPath, Mode=TwoWay}" BrowseCommand="{Binding BrowseRspPluginPathCommand}"/>
 
                                 </Grid>
                             </ucs:SettingsSection.Content>

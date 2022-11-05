@@ -14,7 +14,7 @@ namespace M64RPFW.Models.Tests
         [TestMethod]
         public void TestRomIsExtractedCorrectly()
         {
-            var rom = GetTestRom();
+            Rom rom = GetTestRom();
 
             Assert.IsNotNull(rom, $"Rom is null");
             Assert.IsTrue(rom.IsValid, $"Rom is invalid");

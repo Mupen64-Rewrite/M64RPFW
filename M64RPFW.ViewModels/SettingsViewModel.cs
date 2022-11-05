@@ -62,14 +62,14 @@ namespace M64RPFW.ViewModels
 
         private async Task<(bool Succeeded, string Path)> ShowFileDialogAndPickPath()
         {
-            var file = await generalDependencyContainer.FilesService.TryPickOpenFileAsync(new[] { "dll" });
+            Services.Abstractions.IFile? file = await generalDependencyContainer.FilesService.TryPickOpenFileAsync(new[] { "dll" });
             return file != null ? ((bool Succeeded, string Path))(true, file.Path) : ((bool Succeeded, string Path))(false, null);
         }
 
         [RelayCommand]
         private async void BrowseCoreLibraryPath()
         {
-            var result = await ShowFileDialogAndPickPath();
+            (bool Succeeded, string Path) result = await ShowFileDialogAndPickPath();
             if (result.Succeeded)
             {
                 generalDependencyContainer.SettingsService.Set<string>("CoreLibraryPath", result.Path, true);
@@ -80,7 +80,7 @@ namespace M64RPFW.ViewModels
         [RelayCommand]
         private async void BrowseVideoPluginPath()
         {
-            var result = await ShowFileDialogAndPickPath();
+            (bool Succeeded, string Path) result = await ShowFileDialogAndPickPath();
             if (result.Succeeded)
             {
                 generalDependencyContainer.SettingsService.Set<string>("VideoPluginPath", result.Path, true);
@@ -90,7 +90,7 @@ namespace M64RPFW.ViewModels
         [RelayCommand]
         private async void BrowseAudioPluginPath()
         {
-            var result = await ShowFileDialogAndPickPath();
+            (bool Succeeded, string Path) result = await ShowFileDialogAndPickPath();
             if (result.Succeeded)
             {
                 generalDependencyContainer.SettingsService.Set<string>("AudioPluginPath", result.Path, true);
@@ -100,20 +100,20 @@ namespace M64RPFW.ViewModels
         [RelayCommand]
         private async void BrowseInputPluginPath()
         {
-            var result = await ShowFileDialogAndPickPath();
+            (bool Succeeded, string Path) result = await ShowFileDialogAndPickPath();
             if (result.Succeeded)
             {
                 generalDependencyContainer.SettingsService.Set<string>("InputPluginPath", result.Path, true);
             }
-        } 
+        }
 
         [RelayCommand]
-        private async void BrowseRSPPluginPath()
+        private async void BrowseRspPluginPath()
         {
-            var result = await ShowFileDialogAndPickPath();
+            (bool Succeeded, string Path) result = await ShowFileDialogAndPickPath();
             if (result.Succeeded)
             {
-                generalDependencyContainer.SettingsService.Set<string>("RSPPluginPath", result.Path, true);
+                generalDependencyContainer.SettingsService.Set<string>("RspPluginPath", result.Path, true);
             }
         }
     }

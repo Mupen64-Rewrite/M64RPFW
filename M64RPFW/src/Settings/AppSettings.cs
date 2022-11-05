@@ -28,7 +28,7 @@ namespace M64RPFW.src.Settings
         private string inputPluginPath = "m64p/mupen64plus-input-sdl.dll";
 
         [ObservableProperty]
-        private string rSPPluginPath = "m64p/mupen64plus-rsp-hle.dll";
+        private string rspPluginPath = "m64p/mupen64plus-rsp-hle.dll";
 
         [ObservableProperty]
         private int defaultSlot = 0;

@@ -18,15 +18,15 @@ namespace M64RPFW.Services.Abstractions
         /// <returns>The <paramref name="file"/>'s contents as <see cref="byte"/>s</returns>
         public static async Task<byte[]?> ReadAllBytes(this IFile file)
         {
-            var stream = await file.OpenStreamForReadAsync();
+            Stream stream = await file.OpenStreamForReadAsync();
 
             if (stream == null)
             {
                 return await Task.FromResult<byte[]?>(null);
             }
 
-            var fileProperties = await file.GetPropertiesAsync();
-            var buffer = new byte[fileProperties.Size];
+            (ulong Size, DateTimeOffset EditTime) fileProperties = await file.GetPropertiesAsync();
+            byte[] buffer = new byte[fileProperties.Size];
 
             using (stream)
             {

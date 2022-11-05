@@ -1,14 +1,14 @@
-﻿using System;
+﻿using M64RPFW.Services;
+using M64RPFW.Services.Abstractions;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using System;
 using System.Collections.Generic;
-using System.IO.Packaging;
 using System.IO;
+using System.IO.Packaging;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.WindowsAPICodePack.Dialogs;
-using System.Reflection;
-using M64RPFW.Services;
-using M64RPFW.Services.Abstractions;
 
 namespace M64RPFW.src.Services
 {
@@ -45,8 +45,8 @@ namespace M64RPFW.src.Services
         /// <inheritdoc/>
         public async Task<IFile> CreateOrOpenFileFromPathAsync(string path)
         {
-            var folderPath = Path.GetDirectoryName(path);
-            var filename = Path.GetFileName(path);
+            string? folderPath = Path.GetDirectoryName(path);
+            string filename = Path.GetFileName(path);
 
             if (folderPath != null && !Directory.Exists(folderPath))
             {
@@ -76,7 +76,7 @@ namespace M64RPFW.src.Services
 
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                return (new Abstractions.File(dialog.FileName));
+                return new Abstractions.File(dialog.FileName);
             }
             return null;
         }

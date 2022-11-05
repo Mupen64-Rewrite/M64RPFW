@@ -57,11 +57,11 @@ namespace M64RPFW.ViewModels
         [RelayCommand]
         private async void BrowseRom()
         {
-            var file = await generalDependencyContainer.FilesService.TryPickOpenFileAsync(generalDependencyContainer.RomFileExtensionsConfiguration.RomExtensions);
+            IFile? file = await generalDependencyContainer.FilesService.TryPickOpenFileAsync(generalDependencyContainer.RomFileExtensionsConfiguration.RomExtensions);
 
             if (file != null)
             {
-                var bytes = await file.ReadAllBytes();
+                byte[]? bytes = await file.ReadAllBytes();
                 LoadRomCommand.ExecuteIfPossible(new RomViewModel(bytes, file.Path));
             }
         }
@@ -69,8 +69,8 @@ namespace M64RPFW.ViewModels
         [RelayCommand]
         private async void LoadRom(RomViewModel romViewModel)
         {
-            TryVerifyDependencies(out var hasAllDependencies);
-            
+            TryVerifyDependencies(out bool hasAllDependencies);
+
             if (!hasAllDependencies)
             {
                 return;
@@ -94,15 +94,21 @@ namespace M64RPFW.ViewModels
                 emulator.Stop();
             }
 
+            IFile coreLibraryFile = await generalDependencyContainer.FilesService.GetFileFromPathAsync(generalDependencyContainer.SettingsService.Get<string>("CoreLibraryPath"));
+            IFile videoPluginFile = await generalDependencyContainer.FilesService.GetFileFromPathAsync(generalDependencyContainer.SettingsService.Get<string>("VideoPluginPath"));
+            IFile audioPluginFile = await generalDependencyContainer.FilesService.GetFileFromPathAsync(generalDependencyContainer.SettingsService.Get<string>("AudioPluginPath"));
+            IFile inputPluginFile = await generalDependencyContainer.FilesService.GetFileFromPathAsync(generalDependencyContainer.SettingsService.Get<string>("InputPluginPath"));
+            IFile rspPluginFile = await generalDependencyContainer.FilesService.GetFileFromPathAsync(generalDependencyContainer.SettingsService.Get<string>("RspPluginPath"));
+
             Mupen64PlusConfig config = new(generalDependencyContainer.SettingsService.Get<int>("CoreType"), generalDependencyContainer.SettingsService.Get<int>("ScreenWidth"), generalDependencyContainer.SettingsService.Get<int>("ScreenHeight"));
             Mupen64PlusLaunchParameters launchParameters = new(romViewModel.RawData,
                                                                              config,
                                                                              generalDependencyContainer.SettingsService.Get<int>("DefaultSlot"),
-                                                                             generalDependencyContainer.SettingsService.Get<string>("CoreLibraryPath"),
-                                                                             generalDependencyContainer.SettingsService.Get<string>("VideoPluginPath"),
-                                                                             generalDependencyContainer.SettingsService.Get<string>("AudioPluginPath"),
-                                                                             generalDependencyContainer.SettingsService.Get<string>("InputPluginPath"),
-                                                                             generalDependencyContainer.SettingsService.Get<string>("RSPPluginPath"));
+                                                                             coreLibraryFile,
+                                                                             videoPluginFile,
+                                                                             audioPluginFile,
+                                                                             inputPluginFile,
+                                                                             rspPluginFile);
             emulator.Start(launchParameters);
 
             emulator.API.OnFrameBufferCreate += delegate
@@ -165,7 +171,7 @@ namespace M64RPFW.ViewModels
             bool videoPluginExists = File.Exists(generalDependencyContainer.SettingsService.Get<string>("VideoPluginPath"));
             bool audioPluginExists = File.Exists(generalDependencyContainer.SettingsService.Get<string>("AudioPluginPath"));
             bool inputPluginExists = File.Exists(generalDependencyContainer.SettingsService.Get<string>("InputPluginPath"));
-            bool rspPluginExists = File.Exists(generalDependencyContainer.SettingsService.Get<string>("RSPPluginPath"));
+            bool rspPluginExists = File.Exists(generalDependencyContainer.SettingsService.Get<string>("RspPluginPath"));
             if (!videoPluginExists)
             {
                 missingPlugins.Add(generalDependencyContainer.LocalizationService.GetString("Video"));
@@ -183,7 +189,7 @@ namespace M64RPFW.ViewModels
 
             if (!rspPluginExists)
             {
-                missingPlugins.Add(generalDependencyContainer.LocalizationService.GetString("RSP"));
+                missingPlugins.Add(generalDependencyContainer.LocalizationService.GetString("Rsp"));
             }
 
             if (!videoPluginExists || !audioPluginExists || !inputPluginExists || (!rspPluginExists && coreLibraryExists))

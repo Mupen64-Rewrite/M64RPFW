@@ -412,11 +412,11 @@ namespace M64RPFW.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to RSP.
+        ///   Looks up a localized string similar to Rsp.
         /// </summary>
-        public static string RSP {
+        public static string Rsp {
             get {
-                return ResourceManager.GetString("RSP", resourceCulture);
+                return ResourceManager.GetString("Rsp", resourceCulture);
             }
         }
         

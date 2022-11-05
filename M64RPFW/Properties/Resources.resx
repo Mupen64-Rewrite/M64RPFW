@@ -167,8 +167,8 @@
   <data name="Input" xml:space="preserve">
     <value>Input</value>
   </data>
-  <data name="RSP" xml:space="preserve">
-    <value>RSP</value>
+  <data name="Rsp" xml:space="preserve">
+    <value>Rsp</value>
     <comment>@Invariant</comment>
   </data>
   <data name="OK" xml:space="preserve">

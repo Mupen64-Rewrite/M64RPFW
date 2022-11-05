@@ -86,7 +86,7 @@
                             <MenuItem Header="{extbin:LocalizationBinding Video}" />
                             <MenuItem Header="{extbin:LocalizationBinding Audio}" />
                             <MenuItem Header="{extbin:LocalizationBinding Input}" />
-                            <MenuItem Header="{extbin:LocalizationBinding RSP}" />
+                            <MenuItem Header="{extbin:LocalizationBinding Rsp}" />
                         </MenuItem>
                         <Separator/>
                         <MenuItem x:Name="ShowStatusbar_MenuItem" Header="{extbin:LocalizationBinding ShowStatusbar}" IsCheckable="True" IsChecked="{extbin:SettingsBinding ShowStatusbar, Mode=TwoWay}"/>
