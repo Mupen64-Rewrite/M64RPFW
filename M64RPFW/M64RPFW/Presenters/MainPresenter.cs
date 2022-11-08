@@ -29,12 +29,16 @@ internal partial class MainPresenter
         {
             if (args.Param == Mupen64Plus.CoreParam.EmuState)
             {
-                EmuStateChanged?.Invoke(this, EventArgs.Empty);
+                Application.Instance.AsyncInvoke(() =>
+                {
+                    EmuStateChanged?.Invoke(this, EventArgs.Empty);
+                });
             }
         };
 
         EmuStateChanged += (_, _) =>
         {
+            
             OpenRomCommand.NotifyCanExecuteChanged();
             CloseRomCommand.NotifyCanExecuteChanged();
             ResetCommand.NotifyCanExecuteChanged();

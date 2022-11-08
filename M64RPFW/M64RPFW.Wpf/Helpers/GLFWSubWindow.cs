@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Windows.Interop;
+using System.Runtime.InteropServices;
 using System.Drawing;
 
 using Windows.Win32.Foundation;
@@ -15,6 +15,7 @@ using static Windows.Win32.PInvoke;
 using OpenTK.Graphics.OpenGL4;
 
 using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
+using static M64RPFW.Wpf.Helpers.Win32Extras;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace M64RPFW.Wpf.Helpers
@@ -32,7 +33,19 @@ namespace M64RPFW.Wpf.Helpers
 
             GLFWHelpers.InterpretAttributes(attrs);
 
-            _glfwWindow = GLFW.CreateWindow(size.Width, size.Height, "", null, null);
+            int realWidth = size.Width;
+            int realHeight = size.Height;
+
+            realWidth = (realWidth < 640) ? 640 : realWidth;
+            realHeight = (realHeight < 480) ? 480 : realHeight;
+
+            _glfwWindow = GLFW.CreateWindow(realWidth, realHeight, "", null, null);
+
+            if (_glfwWindow == null)
+            {
+                GLFW.GetError(out string msg);
+                throw new ApplicationException($"GLFW error: {msg}");
+            }
 
             if (attrs.TryGetValue(GLAttribute.SwapControl, out int attrValue))
             {
@@ -44,6 +57,8 @@ namespace M64RPFW.Wpf.Helpers
             // Use raw Win32 to turn it into a child window
             // ============================================
 
+            int err;
+
             _glfwHwnd = (HWND) GLFW.GetWin32Window(_glfwWindow);
             HWND parentHwnd = (HWND) new WindowInteropHelper(parent).Handle;
 
@@ -53,17 +68,23 @@ namespace M64RPFW.Wpf.Helpers
 
             // change style to "child window" and prevent it from
             // getting input
+            Marshal.SetLastSystemError(0);
             WINDOW_STYLE prevStyle = (WINDOW_STYLE) GetWindowLong(_glfwHwnd, GWL_STYLE);
-            if (prevStyle == 0)
-                throw new Win32Exception();
+            err = Marshal.GetLastSystemError();
+            if (err != 0)
+                throw new Win32Exception(err);
+
             prevStyle &= ~(WS_POPUP | WS_OVERLAPPED);
             prevStyle |= WS_CHILD | WS_DISABLED;
-            if (SetWindowLong(_glfwHwnd, GWL_STYLE, (int) prevStyle) == 0)
-                throw new Win32Exception();
+
+            Marshal.SetLastSystemError(0);
+            nint result = SetWindowLongPtr(_glfwHwnd, GWL_STYLE, (nint) prevStyle);
+            err = Marshal.GetLastSystemError();
+            if (result == 0 && err != 0)
+                throw new Win32Exception(err);
 
             // *now* display it
-            if (!ShowWindow(_glfwHwnd, SW_NORMAL))
-                throw new Win32Exception();
+            ShowWindow(_glfwHwnd, SW_SHOWNOACTIVATE);
         }
 
         public void MakeCurrent()
@@ -74,6 +95,7 @@ namespace M64RPFW.Wpf.Helpers
         public void SwapBuffers()
         {
             GLFW.SwapBuffers(_glfwWindow);
+            GLFW.PollEvents();
         }
 
         public void SetPosition(Point p)
@@ -104,18 +126,22 @@ namespace M64RPFW.Wpf.Helpers
 
         public void Dispose()
         {
+            EnableWindow(_glfwHwnd, true);
+
             GLFW.DestroyWindow(_glfwWindow);
             _glfwWindow = null;
         }
 
         public void SetVisible(bool visible)
         {
-            SHOW_WINDOW_CMD cmd = visible ? SW_NORMAL : SW_HIDE;
+            SHOW_WINDOW_CMD cmd = visible ? SW_SHOWNOACTIVATE : SW_HIDE;
             ShowWindow(_glfwHwnd, cmd);
         }
 
         ~GLFWSubWindow()
         {
+            EnableWindow(_glfwHwnd, true);
+
             if (_glfwWindow != null)
                 GLFW.DestroyWindow(_glfwWindow);
         }

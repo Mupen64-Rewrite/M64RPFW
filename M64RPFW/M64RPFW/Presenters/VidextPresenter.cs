@@ -97,7 +97,7 @@ internal class VidextPresenter : IVideoExtension
 
     public (Error err, Size2D[]? modes) ListFullscreenModes(int maxLen)
     {
-        return (Error.Unsupported, null);
+        return (Error.Success, new Size2D[] { new() { uiWidth = 640, uiHeight = 480 } });
     }
 
     public (Error err, int[]? rates) ListFullscreenRates(Size2D size, int maxLen)

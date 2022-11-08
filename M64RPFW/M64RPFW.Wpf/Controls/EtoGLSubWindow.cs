@@ -19,42 +19,45 @@ namespace M64RPFW.Wpf.Controls
 
         public void CloseVideo()
         {
-            throw new NotImplementedException();
+            Control.CloseVideo();
         }
 
         public Mupen64Plus.Error GetAttribute(Mupen64Plus.GLAttribute attr, ref int value)
         {
-            throw new NotImplementedException();
+            return Control.GetAttribute(attr, ref value);
         }
 
         public IntPtr GetProcAddress(string symbol)
         {
-            throw new NotImplementedException();
+            return Control.GetProcAddress(symbol);
         }
 
         public void MakeCurrent()
         {
-            throw new NotImplementedException();
+            Control.MakeCurrent();
         }
 
         public Mupen64Plus.Error ResizeWindow(Size size)
         {
-            throw new NotImplementedException();
+            Control.ResizeWindow(size);
+            return Mupen64Plus.Error.Success;
         }
 
         public Mupen64Plus.Error SetAttribute(Mupen64Plus.GLAttribute attr, int value)
         {
-            throw new NotImplementedException();
+            return Control.SetAttribute(attr, value);
         }
 
         public Mupen64Plus.Error SetVideoMode(Size size, int bitsPerPixel, Mupen64Plus.VideoMode videoMode, Mupen64Plus.VideoFlags flags)
         {
-            throw new NotImplementedException();
+            return Control.SetVideoMode(size, bitsPerPixel, videoMode);
         }
 
         public Mupen64Plus.Error SwapBuffers()
         {
-            throw new NotImplementedException();
+
+            Control.SwapBuffers();
+            return Mupen64Plus.Error.Success;
         }
     }
 }

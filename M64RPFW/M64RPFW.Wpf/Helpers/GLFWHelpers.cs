@@ -78,6 +78,7 @@ namespace M64RPFW.Wpf.Helpers
                 case GLAttribute.BufferSize:
                 {
                     GLFW.MakeContextCurrent(window);
+                    GL.LoadBindings(new GLFWBindingsContext());
                     GL.GetFramebufferAttachmentParameter(
                         FramebufferTarget.DrawFramebuffer,
                         FramebufferAttachment.BackLeft,

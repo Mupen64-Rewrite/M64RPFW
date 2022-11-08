@@ -1,6 +1,6 @@
 ﻿User32.*
 Kernel32.*
 WM_*
-GetLastError
+SetWindowLongPtr
 Windows.Win32.Graphics.OpenGL
 Windows.Win32.Graphics.Gdi

@@ -29,7 +29,7 @@ Global
 		{0BAB7343-C62E-4AAF-91FB-65DC349FFBF9}.Release|Windows.Build.0 = Release|Windows
 		{5D3D1256-9D64-4237-800B-381820032AE3}.Debug|Linux.ActiveCfg = Debug|Linux
 		{5D3D1256-9D64-4237-800B-381820032AE3}.Debug|Linux.Build.0 = Debug|Linux
-		{5D3D1256-9D64-4237-800B-381820032AE3}.Debug|Windows.ActiveCfg = Debug|Linux
+		{5D3D1256-9D64-4237-800B-381820032AE3}.Debug|Windows.ActiveCfg = Debug|Windows
 		{5D3D1256-9D64-4237-800B-381820032AE3}.Release|Linux.ActiveCfg = Release|Linux
 		{5D3D1256-9D64-4237-800B-381820032AE3}.Release|Linux.Build.0 = Release|Linux
 		{5D3D1256-9D64-4237-800B-381820032AE3}.Release|Windows.ActiveCfg = Release|Linux
