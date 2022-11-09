@@ -24,7 +24,7 @@
 
     <Target Name="CopyCustomLibraries" AfterTargets="AfterBuild">
         <ItemGroup>
-            <LibraryList Include="Libraries\*.dll" />
+            <LibraryList Include="Libraries\*.*" />
         </ItemGroup>
         <Message Importance="high" Text="Library list: @(LibraryList)" />
         <Copy SourceFiles="@(LibraryList)" DestinationFolder="$(OutDir)/Libraries" />
@@ -32,7 +32,7 @@
 
     <Target Name="CopyCustomLibrariesPublish" AfterTargets="AfterPublish">
         <ItemGroup>
-            <LibraryList Include="Libraries\*.dll" />
+            <LibraryList Include="Libraries\*.*" />
         </ItemGroup>
         <Copy SourceFiles="@(LibraryList)" DestinationFolder="$(PublishDir)/Libraries" />
     </Target>

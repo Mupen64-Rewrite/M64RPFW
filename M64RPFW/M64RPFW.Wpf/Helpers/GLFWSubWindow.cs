@@ -50,6 +50,7 @@ namespace M64RPFW.Wpf.Helpers
             if (attrs.TryGetValue(GLAttribute.SwapControl, out int attrValue))
             {
                 GLFW.SwapInterval(attrValue);
+                _vsync = (attrValue != 0);
             }
 
             GL.LoadBindings(new GLFWBindingsContext());
@@ -75,7 +76,7 @@ namespace M64RPFW.Wpf.Helpers
                 throw new Win32Exception(err);
 
             prevStyle &= ~(WS_POPUP | WS_OVERLAPPED);
-            prevStyle |= WS_CHILD | WS_DISABLED;
+            prevStyle |= WS_CHILD;
 
             Marshal.SetLastSystemError(0);
             nint result = SetWindowLongPtr(_glfwHwnd, GWL_STYLE, (nint) prevStyle);
@@ -85,6 +86,7 @@ namespace M64RPFW.Wpf.Helpers
 
             // *now* display it
             ShowWindow(_glfwHwnd, SW_SHOWNOACTIVATE);
+            EnableWindow(_glfwHwnd, false);
         }
 
         public void MakeCurrent()
@@ -113,7 +115,10 @@ namespace M64RPFW.Wpf.Helpers
 
         public int GetAttribute(GLAttribute attr)
         {
-            return GLFWHelpers.QueryAttribute(attr, _glfwWindow);
+            if (attr == GLAttribute.SwapControl)
+                return _vsync ? 1 : 0;
+            else
+                return GLFWHelpers.QueryAttribute(attr, _glfwWindow);
         }
 
         public void ResizeWindow(Size s)
@@ -129,6 +134,7 @@ namespace M64RPFW.Wpf.Helpers
             EnableWindow(_glfwHwnd, true);
 
             GLFW.DestroyWindow(_glfwWindow);
+            GLFW.Terminate();
             _glfwWindow = null;
         }
 
@@ -149,5 +155,6 @@ namespace M64RPFW.Wpf.Helpers
 
         private Window* _glfwWindow;
         private HWND _glfwHwnd;
+        private bool _vsync;
     }
 }

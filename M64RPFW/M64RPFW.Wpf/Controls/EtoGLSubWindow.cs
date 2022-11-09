@@ -50,6 +50,7 @@ namespace M64RPFW.Wpf.Controls
 
         public Mupen64Plus.Error SetVideoMode(Size size, int bitsPerPixel, Mupen64Plus.VideoMode videoMode, Mupen64Plus.VideoFlags flags)
         {
+            Console.WriteLine($"VIDEXT: setting video mode with size {size.Width}x{size.Height}");
             return Control.SetVideoMode(size, bitsPerPixel, videoMode);
         }
 

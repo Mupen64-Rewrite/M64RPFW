@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 using System.CodeDom;
+using OpenTK.Graphics.Wgl;
 
 namespace M64RPFW.Wpf.Helpers
 {
@@ -71,14 +72,18 @@ namespace M64RPFW.Wpf.Helpers
 
         public static unsafe int QueryAttribute(GLAttribute attr, Window* window)
         {
+            GL.LoadBindings(new GLFWBindingsContext());
             switch (attr)
             {
                 case GLAttribute.DoubleBuffer:
-                    throw new NotImplementedException("Can't query double-buffer");
+                {
+                    GLFW.MakeContextCurrent(window);
+                    bool result = GL.GetBoolean(GetPName.Doublebuffer);
+                    return (result) ? 1 : 0;
+                }
                 case GLAttribute.BufferSize:
                 {
                     GLFW.MakeContextCurrent(window);
-                    GL.LoadBindings(new GLFWBindingsContext());
                     GL.GetFramebufferAttachmentParameter(
                         FramebufferTarget.DrawFramebuffer,
                         FramebufferAttachment.BackLeft,

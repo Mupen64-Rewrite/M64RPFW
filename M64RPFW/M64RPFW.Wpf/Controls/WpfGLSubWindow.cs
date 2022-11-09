@@ -10,6 +10,7 @@ using System.Windows.Media;
 using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 
 using Size = System.Drawing.Size;
+using System.Drawing;
 
 namespace M64RPFW.Wpf.Controls
 {
@@ -93,8 +94,8 @@ namespace M64RPFW.Wpf.Controls
         public void ResizeWindow(Size size)
         {
             _windowSize = size;
-            MinWidth = size.Width;
-            MinHeight = size.Height;
+            Width = MinWidth = size.Width;
+            Height = MinHeight = size.Height;
         }
 
         public void CloseVideo()
@@ -114,8 +115,14 @@ namespace M64RPFW.Wpf.Controls
             Window win = Window.GetWindow(this);
             _glWindow = new GLFWSubWindow(win, _windowSize, _attrMap);
 
-            var pos = TransformToAncestor(win).Transform(new Point(0, 0));
-            _glWindow.SetPosition(new System.Drawing.Point((int) pos.X, (int) pos.Y));
+            var winPos = TransformToAncestor(win).Transform(new System.Windows.Point(0, 0));
+
+            var basePos = new System.Drawing.Point
+            {
+                X = (int) winPos.X + ((int) ActualWidth - _windowSize.Width) / 2,
+                Y = (int) winPos.Y + ((int) ActualHeight - _windowSize.Height) / 2
+            };
+            _glWindow.SetPosition(basePos);
         }
 
         #region WPF event handlers
@@ -128,12 +135,18 @@ namespace M64RPFW.Wpf.Controls
 
         private void OnUnloaded(object _, RoutedEventArgs evt)
         {
+            _glWindow?.SetVisible(false);
             _glWindow?.Dispose();
         }
 
         private void OnVisibleChanged(object _, DependencyPropertyChangedEventArgs evt)
         {
             _glWindow?.SetVisible((bool) evt.NewValue);
+        }
+
+        private void OnSizeChanged(object _, SizeChangedEventArgs evt)
+        {
+
         }
 
         #endregion
