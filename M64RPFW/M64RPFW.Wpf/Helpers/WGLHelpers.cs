@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ using Windows.Win32.UI.WindowsAndMessaging;
 using Windows.Win32.Foundation;
 using static Windows.Win32.PInvoke;
 using static Windows.Win32.UI.WindowsAndMessaging.WNDCLASS_STYLES;
+using static Windows.Win32.UI.WindowsAndMessaging.WINDOW_STYLE;
 using static Windows.Win32.Graphics.Gdi.SYS_COLOR_INDEX;
 using static Windows.Win32.Graphics.OpenGL.PFD_FLAGS;
 using static Windows.Win32.Graphics.OpenGL.PFD_PIXEL_TYPE;
@@ -15,6 +17,7 @@ using static Windows.Win32.Graphics.OpenGL.PFD_LAYER_TYPE;
 using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 using Windows.Win32.Graphics.Gdi;
 using Windows.Win32.Graphics.OpenGL;
+using M64PRR.Wpf.Interfaces;
 using OpenTK;
 using OpenTK.Graphics.Wgl;
 using OpenTK.Platform.Windows;
@@ -24,24 +27,24 @@ namespace M64RPFW.Wpf.Helpers
 {
     public static class WGLHelpers
     {
-        private static CWStringHolder? _dummyWindowClassName;
+        private static CWStringHolder _dummyWindowClassName;
         private static WNDCLASSW? _dummyWindowClass;
 
-        [ThreadStatic] private static int _pixFormatReturn;
+        private static CWStringHolder _emptyString = new("");
 
-        private static unsafe void EnsureDummyWindowClassInit()
+        [ThreadStatic] private static int _pixFormatReturn;
+        [ThreadStatic] private static HDC _dummyDC;
+        [ThreadStatic] private static HGLRC _dummyGLRC;
+
+        static unsafe WGLHelpers()
         {
-            HDC dc = HDC.Null;
-            HGLRC glrc = HGLRC.Null;
-            
-            
-            unsafe LRESULT DummyWindowProc(HWND hWnd, uint uMsg, WPARAM wParam, LPARAM lParam)
+            LRESULT DummyWindowProc(HWND hWnd, uint uMsg, WPARAM wParam, LPARAM lParam)
             {
                 switch (uMsg)
                 {
                     case WM_CREATE:
                     {
-                        dc = GetDC(hWnd);
+                        _dummyDC = GetDC(hWnd);
                         // Setup dummy pixel format
                         PIXELFORMATDESCRIPTOR pfd = new PIXELFORMATDESCRIPTOR
                         {
@@ -63,33 +66,40 @@ namespace M64RPFW.Wpf.Helpers
                             bReserved = 0,
                             dwLayerMask = 0, dwVisibleMask = 0, dwDamageMask = 0
                         };
-                        int basePixFmt = ChoosePixelFormat(dc, &pfd);
-                        SetPixelFormat(dc, basePixFmt, &pfd);
+                        int basePixFmt = ChoosePixelFormat(_dummyDC, &pfd);
+                        SetPixelFormat(_dummyDC, basePixFmt, &pfd);
 
                         // Open WGL context
-                        glrc = wglCreateContext(dc);
-                        wglMakeCurrent(dc, glrc);
+                        _dummyGLRC = wglCreateContext(_dummyDC);
+                        wglMakeCurrent(_dummyDC, _dummyGLRC);
                         
                         // Prepare function I/O
                         int[] outFormats = new int[1];
 
                         CREATESTRUCTW* initParams = (CREATESTRUCTW*) lParam.Value;
+                        int* pixFmtAttribs = (int*) initParams->lpCreateParams;
 
-                        Wgl.LoadBindings(new WGLBindingsContext());
-                        Wgl.Arb.ChoosePixelFormat(dc, null, null, 1, outFormats, out int numFormats);
-
-                        if (numFormats < 1)
-                            throw new ApplicationException("Could not find WGL pixel format");
-
+                        WGLBindings.LoadBindings(new WGLBindingsContext());
+                        fixed (int* outFormatsPtr = outFormats)
+                        {
+                            if (!WGLBindings.wglChoosePixelFormatARB(
+                                    _dummyDC, pixFmtAttribs, null,
+                                    1, outFormatsPtr,
+                                    out var numFormats))
+                            {
+                                throw new Win32Exception();
+                            }
+                            
+                            if (numFormats < 1)
+                                throw new ApplicationException("Could not find WGL pixel format");
+                        }
                         _pixFormatReturn = outFormats[0];
-
-                        DestroyWindow(hWnd);
                         return (LRESULT) 0;
                     }
                     case WM_DESTROY:
                     {
-                        wglMakeCurrent(dc, (HGLRC) IntPtr.Zero);
-                        wglDeleteContext(glrc);
+                        wglMakeCurrent(_dummyDC, (HGLRC) IntPtr.Zero);
+                        wglDeleteContext(_dummyGLRC);
                         PostQuitMessage(0);
                         return (LRESULT) 0;
                     }
@@ -98,27 +108,23 @@ namespace M64RPFW.Wpf.Helpers
                 }
             }
             
-            if (_dummyWindowClassName == null)
+            _dummyWindowClassName = new CWStringHolder("M64RPFW.GraphicsDummy");
+            _dummyWindowClass = new WNDCLASSW
             {
-                _dummyWindowClassName = new CWStringHolder("M64RPFW.GraphicsDummy");
-                
-                _dummyWindowClass = new WNDCLASSW
-                {
-                    style = CS_OWNDC,
-                    lpfnWndProc = DummyWindowProc,
-                    cbClsExtra = 0,
-                    cbWndExtra = 0,
-                    hInstance = (HINSTANCE) Marshal.GetHINSTANCE(typeof(WGLHelpers).Module!),
-                    hIcon = (HICON) IntPtr.Zero,
-                    hCursor = (HCURSOR) IntPtr.Zero,
-                    hbrBackground = (HBRUSH) (nint) (int) COLOR_BACKGROUND,
-                    lpszMenuName = null,
-                    lpszClassName = (PCWSTR) _dummyWindowClassName
-                };
-            }
+                style = CS_OWNDC,
+                lpfnWndProc = DummyWindowProc,
+                cbClsExtra = 0,
+                cbWndExtra = 0,
+                hInstance = (HINSTANCE) Marshal.GetHINSTANCE(typeof(WGLHelpers).Module!),
+                hIcon = (HICON) IntPtr.Zero,
+                hCursor = (HCURSOR) IntPtr.Zero,
+                hbrBackground = (HBRUSH) (nint) (int) COLOR_BACKGROUND,
+                lpszMenuName = null,
+                lpszClassName = (PCWSTR) _dummyWindowClassName
+            };
         }
 
-        private static WGLParsedAttributes parseAttributes(IDictionary<GLAttribute, int> attrs)
+        public static (int[] pixFmt, int[] context) ParseAttributes(IDictionary<GLAttribute, int> attrs)
         {
             List<int> pixFmt = new()
             {
@@ -205,20 +211,27 @@ namespace M64RPFW.Wpf.Helpers
                 }
             }
 
-            return new WGLParsedAttributes
+            return (pixFmt.ToArray(), context.ToArray());
+        }
+
+        public static unsafe int GetPixelFormat(int[] pixFmtAttrs)
+        {
+            fixed (int* pixFmtAttrsPtr = pixFmtAttrs)
             {
-                pixFmt = pixFmt.ToArray(),
-                context = context.ToArray()
-            };
+                // Create and destroy a dummy window
+                // This has the side effect of setting _pixFormatReturn to the selected pixel format
+                HWND dummy = CreateWindowEx(
+                    0, (PCWSTR) _dummyWindowClassName, (PCWSTR) _emptyString, WS_OVERLAPPED, 
+                    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 
+                    HWND.Null, HMENU.Null, (HINSTANCE) Marshal.GetHINSTANCE(typeof(WGLHelpers).Module), 
+                    pixFmtAttrsPtr);
+                DestroyWindow(dummy);
+
+                return _pixFormatReturn;
+            }
         }
         
         
-    }
-
-    internal struct WGLParsedAttributes
-    {
-        public int[] pixFmt;
-        public int[] context;
     }
 
     internal unsafe class CWStringHolder

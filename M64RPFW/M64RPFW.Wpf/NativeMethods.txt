@@ -3,5 +3,6 @@ Kernel32.*
 WM_*
 COLOUR_*
 CREATESTRUCTW
+CW_USEDEFAULT
 Windows.Win32.Graphics.OpenGL
 Windows.Win32.Graphics.Gdi
