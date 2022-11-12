@@ -8,21 +8,42 @@ using static Windows.Win32.PInvoke;
 namespace M64RPFW.Wpf.Helpers
 {
     public static class Win32Extras
-    {
+    { 
         [DllImport("USER32.dll", EntryPoint = "SetWindowLongPtrW")]
         private static extern long SetWindowLongPtr_Internal(HWND window, WINDOW_LONG_PTR_INDEX setting, long value);
+        
+        
+        [DllImport("USER32.dll", EntryPoint = "GetWindowLongPtrW")]
+        private static extern long GetWindowLongPtr_Internal(HWND window, WINDOW_LONG_PTR_INDEX setting);
 
-        internal static nint SetWindowLongPtr(HWND window, WINDOW_LONG_PTR_INDEX setting, nint value)
+        internal static long SetWindowLongPtr(HWND window, WINDOW_LONG_PTR_INDEX setting, long value)
         {
             if (IntPtr.Size == 4)
             {
-                return (nint) SetWindowLong(window, setting, (int) value);
+                return SetWindowLong(window, setting, (int) value);
             }
-            else if (IntPtr.Size == 8)
+
+            if (IntPtr.Size == 8)
             {
-                return (nint) SetWindowLongPtr_Internal(window, setting, (long) value);
+                return SetWindowLongPtr_Internal(window, setting, value);
             }
-            throw new PlatformNotSupportedException("WhAAaaAT?");
+            
+            throw new PlatformNotSupportedException("This version of Windows is not supported.");
+        }
+
+        internal static long GetWindowLongPtr(HWND window, WINDOW_LONG_PTR_INDEX setting)
+        {
+            if (IntPtr.Size == 4)
+            {
+                return GetWindowLong(window, setting);
+            }
+
+            if (IntPtr.Size == 8)
+            {
+                return GetWindowLongPtr_Internal(window, setting);
+            }
+            
+            throw new PlatformNotSupportedException("This version of Windows is not supported.");
         }
     }
 }

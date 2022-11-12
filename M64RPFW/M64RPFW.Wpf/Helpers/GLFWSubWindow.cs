@@ -79,7 +79,7 @@ namespace M64RPFW.Wpf.Helpers
             prevStyle |= WS_CHILD;
 
             Marshal.SetLastSystemError(0);
-            nint result = SetWindowLongPtr(_glfwHwnd, GWL_STYLE, (nint) prevStyle);
+            long result = SetWindowLongPtr(_glfwHwnd, GWL_STYLE, (nint) prevStyle);
             err = Marshal.GetLastSystemError();
             if (result == 0 && err != 0)
                 throw new Win32Exception(err);
