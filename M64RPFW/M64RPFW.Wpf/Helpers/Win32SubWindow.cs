@@ -39,7 +39,7 @@ public partial class Win32SubWindow : IDisposable
         try
         {
             // Create child window that clips other windows and does not receive input
-            _hWnd = CreateWindowEx(0, _wndclassName, new CWStringHolder(""),
+            _hWnd = CreateWindowEx(0, _wndclassName, new Utf16CString(""),
                 WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_DISABLED,
                 CW_USEDEFAULT, CW_USEDEFAULT, size.Width, size.Height,
                 parentHwnd, HMENU.Null, (HINSTANCE) Marshal.GetHINSTANCE(typeof(Win32SubWindow).Module),
@@ -54,13 +54,17 @@ public partial class Win32SubWindow : IDisposable
         }
     }
 
-    void MakeCurrent()
+    public void MakeCurrent()
     {
         if (!wglMakeCurrent(_hDC, _hGLRC))
-            throw new Win32Exception();
+        {
+            int err = Marshal.GetLastWin32Error();
+            if (err is not 170)
+                throw new Win32Exception(err);
+        }
     }
 
-    void SwapBuffers()
+    public void SwapBuffers()
     {
         if (!PInvoke.SwapBuffers(_hDC))
             throw new Win32Exception();
@@ -75,15 +79,9 @@ public partial class Win32SubWindow : IDisposable
     public void Dispose()
     {
         DestroyWindow(_hWnd);
-        // Wait for the event loop to terminate
-        while (GetMessage(out var msg, _hWnd, 0, 0))
-        {
-            TranslateMessage(in msg);
-            DispatchMessage(in msg);
-        }
     }
 
-    void SetPosition(Point pos)
+    public void SetPosition(Point pos)
     {
         if (!GetWindowRect(_hWnd, out var winRect))
             throw new Win32Exception();
@@ -91,7 +89,7 @@ public partial class Win32SubWindow : IDisposable
         MoveWindow(_hWnd, pos.X, pos.Y, winRect.Width, winRect.Height, false);
     }
 
-    int GetAttribute(GLAttribute attr)
+    public int GetAttribute(GLAttribute attr)
     {
         int pixFmt = GetPixelFormat(_hDC);
         MakeCurrent();
@@ -212,7 +210,7 @@ public partial class Win32SubWindow : IDisposable
         throw new ArgumentException("Invalid GLAttribute");
     }
 
-    void ResizeWindow(Size size)
+    public void ResizeWindow(Size size)
     {
         if (!GetWindowRect(_hWnd, out var winRect))
             throw new Win32Exception();
@@ -220,12 +218,12 @@ public partial class Win32SubWindow : IDisposable
         MoveWindow(_hWnd, winRect.X, winRect.Y, size.Width, size.Height, false);
     }
 
-    void SetVisible(bool visible)
+    public void SetVisible(bool visible)
     {
         ShowWindow(_hWnd, visible ? SW_SHOWNA : SW_HIDE);
     }
 
-    IntPtr GetProcAddress(string symbol)
+    public IntPtr GetProcAddress(string symbol)
     {
         return wglGetProcAddress(symbol);
     }

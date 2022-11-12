@@ -117,22 +117,72 @@ namespace M64RPFW.Wpf.Helpers
 
             return (pixFmt.ToArray(), context.ToArray());
         }
+
+        internal static unsafe int GetPixelFormat(int[] pixFmtAttrs)
+        {
+            // Create WGL context via PFD
+            PIXELFORMATDESCRIPTOR pfd = default(PIXELFORMATDESCRIPTOR);
+
+            pfd.nSize = (ushort) sizeof(PIXELFORMATDESCRIPTOR);
+            pfd.nVersion = 1;
+            pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+            pfd.iPixelType = PFD_TYPE_RGBA;
+            pfd.cColorBits = 24;
+            
+            HGLRC prevRC, rc;
+            HDC prevDC, dc;
+
+            dc = GetDC(_helperWindow);
+
+            if (!SetPixelFormat(dc, ChoosePixelFormat(dc, &pfd), &pfd))
+                throw new Win32Exception();
+            
+            prevDC = wglGetCurrentDC();
+            prevRC = wglGetCurrentContext();
+            
+            int fmtOut;
+
+            try
+            {
+                rc = wglCreateContext(dc);
+                if (rc == HGLRC.Null)
+                    throw new Win32Exception();
+                if (!wglMakeCurrent(dc, rc))
+                    throw new Win32Exception();
+
+                WGL.LoadBindings(new WGLBindingsContext());
+                fixed (int* pixFmtAttrPtr = pixFmtAttrs)
+                {
+                    if (!WGL.wglChoosePixelFormatARB(dc, pixFmtAttrPtr, null, 1, &fmtOut, out var nFmts))
+                        throw new Win32Exception();
+                    if (nFmts == 0)
+                        throw new ApplicationException("Could not find any matching formats");
+                }
+            }
+            finally
+            {
+                wglMakeCurrent(prevDC, prevRC);
+                ReleaseDC(_helperWindow, dc);
+            }
+            
+            return fmtOut;
+        }
     }
 
-    internal unsafe class CWStringHolder
+    internal unsafe class Utf16CString
     {
-        public CWStringHolder(string? s)
+        public Utf16CString(string? s)
         {
             _pMem = Marshal.StringToHGlobalUni(s);
         }
 
-        ~CWStringHolder()
+        ~Utf16CString()
         {
             if (_pMem != IntPtr.Zero)
                 Marshal.FreeHGlobal(_pMem);
         }
 
-        public static implicit operator PCWSTR(CWStringHolder sh)
+        public static implicit operator PCWSTR(Utf16CString sh)
         {
             return (char*) sh._pMem;
         }

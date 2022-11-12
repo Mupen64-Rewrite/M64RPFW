@@ -14,7 +14,7 @@ using System.Drawing;
 
 namespace M64RPFW.Wpf.Controls
 {
-    public unsafe class WpfGLSubWindow : UserControl
+    public class WpfGLSubWindow : UserControl
     {
         public WpfGLSubWindow() : this(new Size(640, 480))
         {
@@ -112,8 +112,8 @@ namespace M64RPFW.Wpf.Controls
 
         private void InitGLWindow()
         {
-            Window win = Window.GetWindow(this);
-            _glWindow = new GLFWSubWindow(win, _windowSize, _attrMap);
+            Window win = Window.GetWindow(this)!;
+            _glWindow = new Win32SubWindow(win, _windowSize, _attrMap);
 
             var winPos = TransformToAncestor(win).Transform(new System.Windows.Point(0, 0));
 
@@ -146,7 +146,15 @@ namespace M64RPFW.Wpf.Controls
 
         private void OnSizeChanged(object _, SizeChangedEventArgs evt)
         {
+            Window win = Window.GetWindow(this)!;
+            var winPos = TransformToAncestor(win).Transform(new System.Windows.Point(0, 0));
 
+            var basePos = new System.Drawing.Point
+            {
+                X = (int) winPos.X + ((int) ActualWidth - _windowSize.Width) / 2,
+                Y = (int) winPos.Y + ((int) ActualHeight - _windowSize.Height) / 2
+            };
+            _glWindow?.SetPosition(basePos);
         }
 
         #endregion
@@ -155,6 +163,6 @@ namespace M64RPFW.Wpf.Controls
         private Dictionary<GLAttribute, int> _attrMap;
         private Size _windowSize;
         private bool _queueRealize;
-        private GLFWSubWindow? _glWindow;
+        private Win32SubWindow? _glWindow;
     }
 }

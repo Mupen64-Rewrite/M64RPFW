@@ -23,7 +23,7 @@ public partial class Win32SubWindow
     private static unsafe LRESULT WindowProc(HWND hWnd, uint uMsg, WPARAM wParam, LPARAM lParam)
     {
         Win32SubWindow inst;
-        if (uMsg == WM_CREATE)
+        if (uMsg == WM_NCCREATE)
         {
             // ((CREATESTRUCTW*) lParam)->lpCreateParams is an array of 2 IntPtrs,
             // the first is the the instance pointer
@@ -31,6 +31,7 @@ public partial class Win32SubWindow
             inst = (Win32SubWindow) GCHandle.FromIntPtr(gcHandleBlockPtr[0]).Target!;
             // Save GCHandle pointer to GWLP_USERDATA
             SetWindowLongPtr(hWnd, GWLP_USERDATA, (long) gcHandleBlockPtr[0]);
+            return (LRESULT) 1;
         }
         else
         {
@@ -63,7 +64,7 @@ public partial class Win32SubWindow
                 
                 // I don't want to pass null to the ppfd parameter of SetPixelFormat
                 PIXELFORMATDESCRIPTOR pfd = new();
-                if (DescribePixelFormat(inst._hDC, PFD_TYPE_RGBA, (uint) sizeof(PIXELFORMATDESCRIPTOR), &pfd) == 0)
+                if (DescribePixelFormat(inst._hDC, (PFD_PIXEL_TYPE) 1, (uint) sizeof(PIXELFORMATDESCRIPTOR), &pfd) == 0)
                     throw new Win32Exception();
 
                 if (!SetPixelFormat(inst._hDC, pixFormat, &pfd))
@@ -91,6 +92,8 @@ public partial class Win32SubWindow
                     throw new Win32Exception();
                 if (!wglMakeCurrent(inst._hDC, inst._hGLRC))
                     throw new Win32Exception();
+
+                ShowWindow(hWnd, SHOW_WINDOW_CMD.SW_SHOWNA);
                 
                 return (LRESULT) 0;
             }
@@ -109,7 +112,7 @@ public partial class Win32SubWindow
 
     // Class names must be short, this acronym stands for
     // RPFW.(openGL Window)
-    private static CWStringHolder _wndclassName = new("RPFW.GLW");
+    private static Utf16CString _wndclassName = new("RPFW.GLW");
     private static WNDCLASSW _windowClass = new()
     {
         style = CS_OWNDC,

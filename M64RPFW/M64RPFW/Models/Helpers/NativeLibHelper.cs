@@ -25,9 +25,10 @@ public class RuntimeDllImportAttribute : Attribute
 
 public static class NativeLibHelper
 {
-    public static T GetFunction<T>(IntPtr lib, string name)
+    public static T? GetFunction<T>(IntPtr lib, string name)
     {
-        return Marshal.GetDelegateForFunctionPointer<T>(NativeLibrary.GetExport(lib, name));
+        IntPtr res = NativeLibrary.GetExport(lib, name);
+        return Marshal.GetDelegateForFunctionPointer<T>(res);
     }
     
     /// <summary>
