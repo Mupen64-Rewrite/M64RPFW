@@ -169,8 +169,10 @@ namespace M64RPFW.Wpf.Helpers
             }
             finally
             {
-                wglMakeCurrent(prevDC, prevRC);
-                ReleaseDC(_helperWindow, dc);
+                if (!wglMakeCurrent(prevDC, prevRC))
+                    throw new Win32Exception();
+                if (ReleaseDC(_helperWindow, dc) == 0)
+                    throw new Win32Exception();
             }
             
             return fmtOut;

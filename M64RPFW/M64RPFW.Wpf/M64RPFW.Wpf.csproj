@@ -22,6 +22,14 @@
         <PackageReference Include="OpenTK" Version="4.7.5" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Libraries\vc143.pdb" />
+      <None Remove="Libraries\mupen64plus.pdb" />
+      <None Remove="Libraries\mupen64plus-ui-console.pdb" />
+      <None Remove="Libraries\mupen64plus-rsp-hle.pdb" />
+      <None Remove="Libraries\mupen64plus-input-sdl.pdb" />
+    </ItemGroup>
+
     <Target Name="CopyCustomLibraries" AfterTargets="AfterBuild">
         <ItemGroup>
             <LibraryList Include="Libraries\*.*" />

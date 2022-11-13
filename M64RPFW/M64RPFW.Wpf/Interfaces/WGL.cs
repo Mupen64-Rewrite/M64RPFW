@@ -108,11 +108,16 @@ public static unsafe class WGL
 
     internal static BOOL wglSwapIntervalEXT(int interval)
     {
+        if (p_wglSwapIntervalEXT is null)
+            throw new NotSupportedException("wglSwapIntervalEXT is not available");
         return p_wglSwapIntervalEXT(interval);
     }
 
     internal static int wglGetSwapIntervalEXT()
     {
+        
+        if (p_wglGetSwapIntervalEXT is null)
+            throw new NotSupportedException("wglGetSwapIntervalEXT is not available");
         return p_wglGetSwapIntervalEXT();
     }
 }

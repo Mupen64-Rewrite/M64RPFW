@@ -36,20 +36,18 @@ public partial class Win32SubWindow
             SetWindowLongPtr(hWnd, GWLP_USERDATA, (long) gcHandleBlockPtr[0]);
             return (LRESULT) 1;
         }
-        else
-        {
-            // Retrieve GCHandle pointer from GWLP_USERDATA
-            IntPtr gcHandlePtr = (IntPtr) GetWindowLongPtr(hWnd, GWLP_USERDATA);
-            GCHandle hnd = GCHandle.FromIntPtr(gcHandlePtr);
-            inst = (Win32SubWindow) hnd.Target!;
 
-            if (uMsg == WM_DESTROY)
-            {
-                // Free the GCHandle, since this is the last time we need it
-                hnd.Free();
-            }
+        // Retrieve GCHandle pointer from GWLP_USERDATA
+        IntPtr gcHandlePtr = (IntPtr) GetWindowLongPtr(hWnd, GWLP_USERDATA);
+        GCHandle hnd = GCHandle.FromIntPtr(gcHandlePtr);
+        inst = (Win32SubWindow) hnd.Target!;
+
+        if (uMsg == WM_DESTROY)
+        {
+            // Free the GCHandle, since this is the last time we need it
+            hnd.Free();
         }
-        
+
         switch (uMsg)
         {
             case WM_CREATE:
@@ -108,6 +106,8 @@ public partial class Win32SubWindow
                 ReleaseDC(hWnd, inst._hDC);
                 return (LRESULT) 0;
             }
+            case WM_PAINT:
+                return (LRESULT) 0;
             default:
                 return DefWindowProc(hWnd, uMsg, wParam, lParam);
         }

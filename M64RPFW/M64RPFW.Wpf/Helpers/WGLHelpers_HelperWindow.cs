@@ -38,7 +38,7 @@ public partial class WGLHelpers
         hInstance = _hInstance,
         hIcon = HICON.Null,
         hCursor = HCURSOR.Null,
-        hbrBackground = (HBRUSH) (IntPtr) (int) SYS_COLOR_INDEX.COLOR_BACKGROUND,
+        hbrBackground = (HBRUSH) (IntPtr) 1,
         lpszMenuName = null,
         lpszClassName = _helperClassName,
         hIconSm = HICON.Null
