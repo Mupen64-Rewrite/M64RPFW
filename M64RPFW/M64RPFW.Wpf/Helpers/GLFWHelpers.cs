@@ -12,6 +12,10 @@ using OpenTK.Graphics.Wgl;
 
 namespace M64RPFW.Wpf.Helpers
 {
+    /// <summary>
+    /// Obsolete GLFW helpers.
+    /// </summary>
+    [Obsolete]
     internal class GLFWHelpers
     {
         public static void InterpretAttributes(IDictionary<GLAttribute, int> attrs)

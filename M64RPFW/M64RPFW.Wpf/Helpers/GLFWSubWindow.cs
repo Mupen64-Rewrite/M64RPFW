@@ -20,6 +20,10 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace M64RPFW.Wpf.Helpers
 {
+    /// <summary>
+    /// GLFW-based Win32 implementation of an OpenGL subwindow.
+    /// </summary>
+    [Obsolete]
     internal unsafe class GLFWSubWindow : IDisposable
     {
         public GLFWSubWindow(System.Windows.Window parent, Size size, IDictionary<GLAttribute, int> attrs)

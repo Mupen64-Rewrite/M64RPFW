@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace M64RPFW.Wpf.Controls
 {
+    /// <summary>
+    /// Interface binding <see cref="WpfGLSubWindow"/> to Eto.
+    /// </summary>
     public class GLSubWindow : WpfControl<
         WpfGLSubWindow, M64RPFW.Controls.GLSubWindow, Eto.Forms.Control.ICallback>, M64RPFW.Controls.GLSubWindow.IGLSubWindow
     {

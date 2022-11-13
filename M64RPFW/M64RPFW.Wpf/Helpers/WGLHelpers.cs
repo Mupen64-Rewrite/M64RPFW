@@ -25,9 +25,17 @@ using static M64RPFW.Wpf.Helpers.WGLConstants;
 
 namespace M64RPFW.Wpf.Helpers
 {
+    /// <summary>
+    /// Utilities and helpers for WGL.
+    /// </summary>
     public static partial class WGLHelpers
     {
-
+        /// <summary>
+        /// Converts Mupen64Plus attributes into WGL attribute lists.
+        /// </summary>
+        /// <param name="attrs">The attribute dictionary</param>
+        /// <returns>A named tuple of arrays: <c>pixFmt</c> for <c>wglChoosePixelFormatARB</c>, <c>context</c> for <c>wglCreateContextAttribsARB</c></returns>
+        /// <exception cref="ArgumentException"></exception>
         public static (int[] pixFmt, int[] context) ParseAttributes(IDictionary<GLAttribute, int> attrs)
         {
             List<int> pixFmt = new()
@@ -168,7 +176,10 @@ namespace M64RPFW.Wpf.Helpers
             return fmtOut;
         }
     }
-
+    
+    /// <summary>
+    /// Class holding a const wchar_t* in memory.
+    /// </summary>
     internal unsafe class Utf16CString
     {
         public Utf16CString(string? s)
@@ -189,7 +200,10 @@ namespace M64RPFW.Wpf.Helpers
 
         private readonly IntPtr _pMem;
     }
-
+    
+    /// <summary>
+    /// OpenTK-compatible bindings context for WGL.
+    /// </summary>
     internal class WGLBindingsContext : IBindingsContext
     {
         public IntPtr GetProcAddress(string procName)

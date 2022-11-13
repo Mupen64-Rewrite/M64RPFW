@@ -7,7 +7,6 @@ using System.Windows.Interop;
 using Windows.Win32;
 using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 using Windows.Win32.Foundation;
-using Windows.Win32.Graphics.Gdi;
 using Windows.Win32.UI.WindowsAndMessaging;
 using M64PRR.Wpf.Interfaces;
 using OpenTK.Graphics.OpenGL4;
@@ -20,6 +19,9 @@ using static M64RPFW.Wpf.Helpers.WGLConstants;
 
 namespace M64RPFW.Wpf.Helpers;
 
+/// <summary>
+/// A Win32/WGL based implementation of an OpenGL subwindow.
+/// </summary>
 public partial class Win32SubWindow : IDisposable
 {
     private static Utf16CString _glWindowTitle = new("M64RPFW OpenGL output");

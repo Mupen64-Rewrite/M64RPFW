@@ -19,6 +19,10 @@ namespace M64RPFW.Wpf.Helpers;
 
 public partial class Win32SubWindow
 {
+    /// <summary>
+    /// Function called as the window procedure of the OpenGL window.
+    /// Handles setup and cleanup of OpenGL resources.
+    /// </summary>
     private static unsafe LRESULT WindowProc(HWND hWnd, uint uMsg, WPARAM wParam, LPARAM lParam)
     {
         Win32SubWindow inst;

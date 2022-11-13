@@ -11,18 +11,28 @@ using static Windows.Win32.UI.WindowsAndMessaging.WINDOW_STYLE;
 
 namespace M64RPFW.Wpf.Helpers;
 
+// This file contains the implementation of a helper window.
+// This is needed to do such things as initializing WGL properly.
+
 public partial class WGLHelpers
 {
     private static readonly HINSTANCE _hInstance = (HINSTANCE) Marshal.GetHINSTANCE(typeof(WGLHelpers).Module);
 
     private static HWND _helperWindow;
-    private static Utf16CString _helperClassName = new("RPFW.Helper");
+    // Window class names should be short. This one stands for
+    // RPFW.(HeLPer)
+    private static Utf16CString _helperClassName = new("RPFW.HLP");
     private static Utf16CString _helperWindowTitle = new("RPFW WGL Helper");
     private static WNDCLASSEXW _helperWndclass = new()
     {
         cbSize = (uint) Marshal.SizeOf<WNDCLASSEXW>(),
         style = WNDCLASS_STYLES.CS_OWNDC,
-        lpfnWndProc = DefWindowProc,
+        lpfnWndProc = (hWnd, uMsg, wParam, lParam) =>
+        {
+            // This lambda is left here for extensibility.
+            // ReSharper disable once ConvertClosureToMethodGroup
+            return DefWindowProc(hWnd, uMsg, wParam, lParam);
+        },
         cbClsExtra = 0,
         cbWndExtra = 0,
         hInstance = _hInstance,
