@@ -13,7 +13,6 @@ using static Windows.Win32.Graphics.OpenGL.PFD_PIXEL_TYPE;
 using static Windows.Win32.PInvoke;
 using static Windows.Win32.UI.WindowsAndMessaging.WINDOW_LONG_PTR_INDEX;
 using static Windows.Win32.UI.WindowsAndMessaging.WNDCLASS_STYLES;
-using static M64PRR.Wpf.Interfaces.WGL;
 using static M64RPFW.Wpf.Helpers.Win32Extras;
 
 namespace M64RPFW.Wpf.Helpers;
@@ -80,7 +79,7 @@ public partial class Win32SubWindow
                 WGL.LoadBindings(new WGLBindingsContext());
                 
                 fixed (int* attrsPtr = attrs.context)
-                    inst._hGLRC = wglCreateContextAttribsARB(inst._hDC, inst._hGLRC, attrsPtr);
+                    inst._hGLRC = WGL.wglCreateContextAttribsARB(inst._hDC, inst._hGLRC, attrsPtr);
 
                 if (inst._hGLRC == HGLRC.Null)
                     throw new Win32Exception();

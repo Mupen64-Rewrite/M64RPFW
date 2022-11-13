@@ -17,6 +17,7 @@ public partial class WGLHelpers
 
     private static HWND _helperWindow;
     private static Utf16CString _helperClassName = new("RPFW.Helper");
+    private static Utf16CString _helperWindowTitle = new("RPFW WGL Helper");
     private static WNDCLASSEXW _helperWndclass = new()
     {
         cbSize = (uint) Marshal.SizeOf<WNDCLASSEXW>(),
@@ -42,7 +43,7 @@ public partial class WGLHelpers
             throw new Win32Exception();
 
         _helperWindow = CreateWindowEx(WS_EX_OVERLAPPEDWINDOW, _helperClassName,
-            new Utf16CString("RPFW WGL Helper"), 
+            _helperWindowTitle, 
             WS_CLIPSIBLINGS | WS_CLIPCHILDREN, 
             0, 0, 1, 1, HWND.Null, HMENU.Null, _hInstance);
         if (_helperWindow == HWND.Null)

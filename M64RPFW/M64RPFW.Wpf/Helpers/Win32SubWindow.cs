@@ -22,6 +22,7 @@ namespace M64RPFW.Wpf.Helpers;
 
 public partial class Win32SubWindow : IDisposable
 {
+    private static Utf16CString _glWindowTitle = new("M64RPFW OpenGL output");
     public unsafe Win32SubWindow(System.Windows.Window parent, Size size, IDictionary<GLAttribute, int> attrs)
     {
         GCHandle attrsHandle = GCHandle.Alloc(attrs);
@@ -39,7 +40,7 @@ public partial class Win32SubWindow : IDisposable
         try
         {
             // Create child window that clips other windows and does not receive input
-            _hWnd = CreateWindowEx(0, _wndclassName, new Utf16CString(""),
+            _hWnd = CreateWindowEx(0, _wndclassName, _glWindowTitle,
                 WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_DISABLED,
                 CW_USEDEFAULT, CW_USEDEFAULT, size.Width, size.Height,
                 parentHwnd, HMENU.Null, (HINSTANCE) Marshal.GetHINSTANCE(typeof(Win32SubWindow).Module),
