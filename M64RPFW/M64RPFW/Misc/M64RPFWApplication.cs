@@ -5,6 +5,7 @@ using Eto.Forms;
 using M64RPFW.Models.Emulation.Core;
 using M64RPFW.Models.Settings;
 using M64RPFW.Views;
+using UnhandledExceptionEventArgs = Eto.UnhandledExceptionEventArgs;
 
 namespace M64RPFW.Misc;
 
@@ -32,6 +33,11 @@ public class M64RPFWApplication : Application
         Settings.Init();
 
         MainForm.Visible = true;
+    }
+
+    protected override void OnUnhandledException(UnhandledExceptionEventArgs e)
+    {
+        throw (Exception) e.ExceptionObject;
     }
 
     protected override void OnTerminating(CancelEventArgs e)

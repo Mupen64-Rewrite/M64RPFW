@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using Gtk;
-using M64RPFW.Gtk.Helpers;
+using M64RPFW.Misc;
 using Point = System.Drawing.Point;
 using Rectangle = Gdk.Rectangle;
 using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
@@ -101,7 +101,7 @@ public class GtkGLSubWindow : Widget
 
     private void InitGLWindow()
     {
-        _glWindow = IOpenGLWindow.Create(Window, _windowSize, _attrMap);
+        _glWindow = GtkOpenGLWindowFactory.Create(Window, _windowSize, _attrMap);
 
         int basePosX = Allocation.Left + (Allocation.Width - _windowSize.Width) / 2,
             basePosY = Allocation.Top + (Allocation.Height - _windowSize.Height) / 2;

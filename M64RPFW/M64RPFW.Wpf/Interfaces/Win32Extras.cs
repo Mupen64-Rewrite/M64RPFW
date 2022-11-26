@@ -48,5 +48,7 @@ namespace M64RPFW.Wpf.Helpers
             
             throw new PlatformNotSupportedException("This version of Windows is not supported.");
         }
+
+        internal static readonly HINSTANCE AppHInstance = (HINSTANCE) Marshal.GetHINSTANCE(typeof(Win32Extras).Module);
     }
 }

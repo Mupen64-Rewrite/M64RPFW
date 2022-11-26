@@ -5,7 +5,7 @@ using System.Linq;
 using M64RPFW.Gtk.Interfaces;
 using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 
-namespace M64RPFW.Gtk.Helpers;
+namespace M64RPFW.Misc;
 
 public static class EGLHelpers
 {

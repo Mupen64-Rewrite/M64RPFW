@@ -5,7 +5,7 @@ using M64RPFW.Gtk.Interfaces;
 using WaylandSharp;
 using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 
-namespace M64RPFW.Gtk.Helpers;
+namespace M64RPFW.Misc;
 
 /// <summary>
 /// A WL-native subwindow bound to a parent <see cref="Gdk.Window"/>.

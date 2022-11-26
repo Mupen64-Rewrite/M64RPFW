@@ -8,7 +8,7 @@ using static X11.Xlib;
 using static M64RPFW.Gtk.Interfaces.LibXlib;
 using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 
-namespace M64RPFW.Gtk.Helpers;
+namespace M64RPFW.Misc;
 
 public class X11OpenGLWindow : IOpenGLWindow
 {

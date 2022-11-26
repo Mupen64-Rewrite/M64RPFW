@@ -10,6 +10,12 @@ namespace M64PRR.Wpf
         [STAThread]
         public static void Main(string[] args)
         {
+            AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
+            {
+                Console.WriteLine($"Exception thrown! ({eventArgs.ExceptionObject.GetType().FullName})");
+                Console.WriteLine(eventArgs.ExceptionObject.ToString());
+            };
+            
             var platform = new Eto.Wpf.Platform();
             platform.Add<GLSubWindow.IGLSubWindow>(() => new M64RPFW.Wpf.Controls.GLSubWindow());
 
