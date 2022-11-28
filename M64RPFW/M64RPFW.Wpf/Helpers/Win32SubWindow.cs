@@ -1,36 +1,80 @@
 ﻿using System;
-using System.Drawing;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Interop;
 using Windows.Win32;
 using Windows.Win32.Foundation;
+using Windows.Win32.Graphics.Gdi;
+using Windows.Win32.Graphics.OpenGL;
+using Windows.Win32.UI.WindowsAndMessaging;
 using M64RPFW.Misc;
 using M64RPFW.Models.Emulation.Core;
+using MS.WindowsAPICodePack.Internal;
+using static Windows.Win32.Graphics.OpenGL.PFD_PIXEL_TYPE;
+using static Windows.Win32.PInvoke;
+using static Windows.Win32.UI.WindowsAndMessaging.SHOW_WINDOW_CMD;
+using static Windows.Win32.UI.WindowsAndMessaging.WINDOW_STYLE;
+using static M64PRR.Wpf.Interfaces.Win32PInvoke;
+using Point = System.Drawing.Point;
+using Size = System.Drawing.Size;
 
-namespace M64PRR.Wpf.Helpers;
+namespace M64RPFW.Wpf.Helpers;
 
-public class Win32SubWindow : IOpenGLWindow
+public partial class Win32SubWindow : IOpenGLWindow
 {
-    public Win32SubWindow()
+    public unsafe Win32SubWindow(Window parent, Size size, Dictionary<Mupen64Plus.GLAttribute, int> attrs)
     {
+        HWND parentHWnd = (HWND) new WindowInteropHelper(parent).Handle;
+        
+        _window = CreateWindowEx(0, WINDOW_CLASS, "M64RPFW Output",
+            WS_CHILD | WS_DISABLED, 0, 0, size.Width, size.Height,
+            parentHWnd, null, CurrentHInstance, null);
+        if (_window == HWND.Null)
+            throw new Win32Exception();
+
+        _dc = GetDC_SafeHandle2(_window);
+
+        int pixFmt = WGLHelpers.ChoosePixelFormatM64P(attrs);
+        PIXELFORMATDESCRIPTOR pfd;
+        if (DescribePixelFormat(_dc, (PFD_PIXEL_TYPE) pixFmt, (uint) Marshal.SizeOf<PIXELFORMATDESCRIPTOR>(), &pfd) == 0)
+            throw new Win32Exception();
+
+        if (!SetPixelFormat(_dc, pixFmt, in pfd))
+            throw new Win32Exception();
+        
+        _glRC = WGLHelpers.CreateContextM64P(_dc, attrs);
+    }
+
+    ~Win32SubWindow()
+    {
+        Dispose();
     }
     
     public void Dispose()
     {
-        throw new NotImplementedException();
+        _glRC.Dispose();
+        _dc.Dispose();
+        DestroyWindow(_window);
+        
+        GC.SuppressFinalize(this);
     }
 
     public void MakeCurrent()
     {
-        throw new NotImplementedException();
+        wglMakeCurrent(_dc, _glRC);
     }
 
     public void SwapBuffers()
     {
-        throw new NotImplementedException();
+        PInvoke.SwapBuffers(_dc);
     }
 
     public void SetPosition(Point pos)
     {
-        throw new NotImplementedException();
+        GetWindowRect(_window, out var winRect);
+        MoveWindow(_window, pos.X, pos.Y, winRect.Width, winRect.Height, false);
     }
 
     public int GetAttribute(Mupen64Plus.GLAttribute attr)
@@ -40,18 +84,26 @@ public class Win32SubWindow : IOpenGLWindow
 
     public void ResizeWindow(Size size)
     {
-        throw new NotImplementedException();
+        GetWindowRect(_window, out var winRect);
+        MoveWindow(_window, winRect.X, winRect.Y, size.Width, size.Height, false);
     }
 
     public void SetVisible(bool visible)
     {
-        throw new NotImplementedException();
+        SHOW_WINDOW_CMD cmd = visible ? SW_SHOWNA : SW_HIDE;
+        ShowWindow(_window, cmd);
     }
 
     public IntPtr GetProcAddress(string symbol)
     {
-        throw new NotImplementedException();
+        if (wglGetCurrentContext() != _glRC.DangerousGetHandle())
+        {
+            wglMakeCurrent(_dc, _glRC);
+        }
+        return wglGetProcAddress(symbol);
     }
-    
-    
+
+    private HWND _window;
+    private SafeHandle _dc;
+    private SafeHandle _glRC;
 }

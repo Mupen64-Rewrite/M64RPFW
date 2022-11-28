@@ -60,44 +60,59 @@ internal class VidextPresenter : IVideoExtension
 
     public Error Init()
     {
-        Console.WriteLine("[VIDEXT] Initializing...");
-        Application.Instance.Invoke(delegate
+        try
         {
-            _prevContent = _view.Content;
-            _view.Content = _view.SubWindow;
-            _decoSize = _view.Size - _view.ClientSize;
+            Console.WriteLine("[VIDEXT] Initializing...");
+            Application.Instance.Invoke(delegate
+            {
+                _prevContent = _view.Content;
+                _view.Content = _view.SubWindow;
+                _decoSize = _view.Size - _view.ClientSize;
 
-            _view.SizeChanged += OnSizeChanged;
-            _view.KeyDown += OnKeyDown;
-            _view.KeyUp += OnKeyUp;
-        });
-        return Error.Success;
+                _view.SizeChanged += OnSizeChanged;
+                _view.KeyDown += OnKeyDown;
+                _view.KeyUp += OnKeyUp;
+            });
+            return Error.Success;
+        }
+        catch (Exception e)
+        {
+            return Error.Internal;
+        }
     }
 
     public Error Quit()
     {
-        Console.WriteLine($"Closing flag: {_closingFlag == 1}");
-        if (_closingFlag == 0)
+        try
         {
-            _view.SubWindow.CloseVideo();
-            Application.Instance.Invoke(delegate
+            Console.WriteLine($"Closing flag: {_closingFlag == 1}");
+            if (_closingFlag == 0)
             {
-                _view.Content = _prevContent;
-                _prevContent = null;
-                _view.ParentWindow.Resizable = true;
-                _view.MinimumSize = new Size(256, 144);
+                _view.SubWindow.CloseVideo();
+                Application.Instance.Invoke(delegate
+                {
+                    _view.Content = _prevContent;
+                    _prevContent = null;
+                    _view.ParentWindow.Resizable = true;
+                    _view.MinimumSize = new Size(256, 144);
 
-                _view.SizeChanged -= OnSizeChanged;
-                _view.KeyDown -= OnKeyDown;
-                _view.KeyUp -= OnKeyUp;
-            });
+                    _view.SizeChanged -= OnSizeChanged;
+                    _view.KeyDown -= OnKeyDown;
+                    _view.KeyUp -= OnKeyUp;
+                });
+            }
+
+            return Error.Success;
         }
-        return Error.Success;
+        catch (Exception e)
+        {
+            return Error.Internal;
+        }
     }
 
     public (Error err, Size2D[]? modes) ListFullscreenModes(int maxLen)
     {
-        return (Error.Success, new Size2D[] { new() { uiWidth = 640, uiHeight = 480 } });
+        return (Error.Unsupported, null);
     }
 
     public (Error err, int[]? rates) ListFullscreenRates(Size2D size, int maxLen)
@@ -158,17 +173,38 @@ internal class VidextPresenter : IVideoExtension
 
     public Error SetAttribute(GLAttribute attr, int value)
     {
-        return _view.SubWindow.SetAttribute(attr, value);
+        try
+        {
+            return _view.SubWindow.SetAttribute(attr, value);
+        }
+        catch (Exception e)
+        {
+            return Error.Internal;
+        }
     }
 
     public Error GetAttribute(GLAttribute attr, ref int value)
     {
-        return _view.SubWindow.GetAttribute(attr, ref value);
+        try
+        {
+            return _view.SubWindow.GetAttribute(attr, ref value);
+        }
+        catch (Exception e)
+        {
+            return Error.Internal;
+        }
     }
 
     public Error SwapBuffers()
     {
-        return _view.SubWindow.SwapBuffers();
+        try
+        {
+            return _view.SubWindow.SwapBuffers();
+        }
+        catch (Exception e)
+        {
+            return Error.Internal;
+        }
     }
 
     public uint GetDefaultFramebuffer()

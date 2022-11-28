@@ -30,6 +30,10 @@
       <None Remove="Libraries\mupen64plus-input-sdl.pdb" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Misc" />
+    </ItemGroup>
+
     <Target Name="CopyCustomLibraries" AfterTargets="AfterBuild">
         <ItemGroup>
             <LibraryList Include="Libraries\*.*" />

@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using M64RPFW.Models.Helpers;
@@ -16,6 +15,7 @@ public static partial class Mupen64Plus
     static unsafe Mupen64Plus()
     {
         _libHandle = NativeLibrary.Load(GetExpectedLibPath());
+        Console.WriteLine($"_libHandle = {_libHandle}");
 
         ResolveFrontendFunctions();
         ResolveConfigFunctions();
@@ -46,10 +46,6 @@ public static partial class Mupen64Plus
             
             NativeLibrary.Free(_libHandle);
         };
-    }
-
-    private static void ThrowIfNotInited([CallerMemberName] string name = "")
-    {
     }
 
     private static void OnDebug(IntPtr context, MessageLevel level, string message)
@@ -451,9 +447,8 @@ public static partial class Mupen64Plus
     /// <param name="type">The plugin type to detach</param>
     public static void DetachPlugin(PluginType type)
     {
-        
-        _pluginDict.Remove(type, out var pluginLib);
-
+        if (!_pluginDict.Remove(type, out var pluginLib)) 
+            return;
         Error err = _fnCoreDetachPlugin(type);
         ThrowForError(err);
 
@@ -462,6 +457,8 @@ public static partial class Mupen64Plus
         ThrowForError(err);
 
         NativeLibrary.Free(pluginLib);
+
+
     }
 
     #endregion

@@ -2,6 +2,7 @@
 Kernel32.*
 WM_*
 ERROR_*
+IDC_*
 CREATESTRUCTW
 CW_USEDEFAULT
 Windows.Win32.Graphics.OpenGL
