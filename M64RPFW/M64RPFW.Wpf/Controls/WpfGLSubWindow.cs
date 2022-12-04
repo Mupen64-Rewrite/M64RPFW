@@ -1,16 +1,11 @@
 ﻿using M64RPFW.Wpf.Helpers;
 using System;
-using System.ComponentModel.Design;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Interop;
-using System.Windows.Media;
-
 using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 
 using Size = System.Drawing.Size;
-using System.Drawing;
 
 namespace M64RPFW.Wpf.Controls;
 

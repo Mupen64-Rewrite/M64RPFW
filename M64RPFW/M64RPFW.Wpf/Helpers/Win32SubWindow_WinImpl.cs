@@ -1,10 +1,7 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using Windows.Win32;
+﻿using System.Runtime.InteropServices;
 using Windows.Win32.Foundation;
 using Windows.Win32.Graphics.Gdi;
 using Windows.Win32.UI.WindowsAndMessaging;
-using M64RPFW.Misc;
 using static Windows.Win32.PInvoke;
 using static Windows.Win32.UI.WindowsAndMessaging.WNDCLASS_STYLES;
 using static M64PRR.Wpf.Interfaces.Win32PInvoke;

@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Windows.Win32;
 using Windows.Win32.Graphics.Gdi;
 using Windows.Win32.Graphics.OpenGL;
 using M64PRR.Wpf.Interfaces;
-using M64RPFW.Models.Emulation.Core;
-using OpenTK.Graphics.Wgl;
-using static Windows.Win32.Graphics.OpenGL.PFD_LAYER_TYPE;
 using static Windows.Win32.PInvoke;
 using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
+using System.ComponentModel;
+using static Windows.Win32.Graphics.OpenGL.PFD_LAYER_TYPE;
 
 namespace M64RPFW.Wpf.Helpers;
 
@@ -46,7 +42,8 @@ internal static partial class WGLHelpers
         HGLRC prevRC = wglGetCurrentContext();
         try
         {
-            wglMakeCurrent(helperDC, helperRC);
+            if (!wglMakeCurrent(helperDC, helperRC))
+                throw new Win32Exception();
             if (!WGL.IsLoaded)
                 WGL.LoadFunctions();
             
@@ -58,7 +55,18 @@ internal static partial class WGLHelpers
                 select values
             ).Concat(new[] {WGL.WGL_SUPPORT_OPENGL_ARB, 1, 0}).ToArray();
             int[] results = new int[1];
-            WGL.ChoosePixelFormatARB(helperDC, pfAttrsArray, null, results, out var numFormats);
+            if (!WGL.ChoosePixelFormatARB(helperDC, pfAttrsArray, null, results, out var numFormats))
+                throw new Win32Exception();
+            
+            // verify
+            int[] check = new int[1];
+            WGL.GetPixelFormatAttribs(helperDC, results[0], PFD_MAIN_PLANE, new int[] { WGL.WGL_SUPPORT_OPENGL_ARB },
+                check);
+            if (check[0] != 1)
+            {
+                throw new ApplicationException("Context does not support OpenGL?");
+            }
+            
             if (numFormats == 0)
                 throw new InvalidOperationException("OpenGL appears to be unsupported by your graphics driver");
 
@@ -110,7 +118,7 @@ internal static partial class WGLHelpers
             ctxAttrsList.Add(0);
 
             int[] ctxAttrsArray = ctxAttrsList.ToArray();
-            return WGL.CreateContextAttribsARB(helperDC, null, ctxAttrsArray);
+            return WGL.CreateContextAttribsARB(dc, null, ctxAttrsArray);
         }
         finally
         {

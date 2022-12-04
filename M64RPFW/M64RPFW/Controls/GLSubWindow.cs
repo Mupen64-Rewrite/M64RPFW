@@ -26,8 +26,7 @@ namespace M64RPFW.Controls
             Mupen64Plus.Error err = Application.Instance.Invoke(() => Handler.SetVideoMode(size, bitsPerPixel, videoMode, flags));
             if (err != Mupen64Plus.Error.Success)
                 return err;
-            Handler.MakeCurrent();
-            return Mupen64Plus.Error.Success;
+            return Handler.MakeCurrent();
         }
 
         public Mupen64Plus.Error SetAttribute(Mupen64Plus.GLAttribute attr, int value)
@@ -85,7 +84,7 @@ namespace M64RPFW.Controls
             /// <summary>
             /// Make the OpenGL subwindow's context current.
             /// </summary>
-            void MakeCurrent();
+            Mupen64Plus.Error MakeCurrent();
             /// <summary>
             /// Set an OpenGL attribute before the window is created.
             /// </summary>

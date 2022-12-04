@@ -28,7 +28,7 @@ public static class NativeLibHelper
     public static T? GetFunction<T>(IntPtr lib, string name)
     {
         IntPtr res = NativeLibrary.GetExport(lib, name);
-        return Marshal.GetDelegateForFunctionPointer<T>(res);
+        return (res == IntPtr.Zero)? default(T) : Marshal.GetDelegateForFunctionPointer<T>(res);
     }
     
     /// <summary>
@@ -65,7 +65,9 @@ public static class NativeLibHelper
         {
             symbol = rtDllImport.Name;
         }
-
-        del = GetFunction<T>(lib, symbol);
+        T? val = GetFunction<T>(lib, symbol);
+        if (val == null)
+            throw new ApplicationException("Failed to load function");
+        del = val;
     }
 }

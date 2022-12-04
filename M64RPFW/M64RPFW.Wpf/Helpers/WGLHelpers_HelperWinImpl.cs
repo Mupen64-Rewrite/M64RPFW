@@ -8,8 +8,6 @@ using Windows.Win32.Graphics.Gdi;
 using Windows.Win32.Graphics.OpenGL;
 using Windows.Win32.UI.WindowsAndMessaging;
 using M64PRR.Wpf.Interfaces;
-using OpenTK;
-using OpenTK.Graphics.Wgl;
 using static Windows.Win32.Graphics.OpenGL.PFD_FLAGS;
 using static Windows.Win32.Graphics.OpenGL.PFD_PIXEL_TYPE;
 using static Windows.Win32.PInvoke;

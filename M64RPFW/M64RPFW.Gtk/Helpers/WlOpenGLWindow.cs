@@ -51,12 +51,18 @@ public class WlOpenGLWindow : IOpenGLWindow
     }
     public void MakeCurrent()
     {
-        LibEGL.MakeCurrent(_eglDisplay, _eglSurface, _eglSurface, _eglContext);
+        if (!LibEGL.MakeCurrent(_eglDisplay, _eglSurface, _eglSurface, _eglContext))
+        {
+            throw new ApplicationException("EGL error at eglMakeCurrent()");
+        }
     }
 
     public void SwapBuffers()
     {
-        LibEGL.SwapBuffers(_eglDisplay, _eglSurface);
+        if (!LibEGL.SwapBuffers(_eglDisplay, _eglSurface))
+        {
+            throw new ApplicationException("EGL error at eglSwapBuffers()");
+        }
     }
 
     public void SetPosition(Point pos)

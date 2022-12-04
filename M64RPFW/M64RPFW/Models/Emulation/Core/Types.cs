@@ -28,26 +28,35 @@ public static partial class Mupen64Plus
     {
         if (err == Error.Success)
             return;
-        string msg = _fnCoreErrorMessage(err);
+        
         switch (err)
         {
             case Error.NotInit:
+                throw new InvalidOperationException("M64+: Is not initialized");
             case Error.AlreadyInit:
+                throw new InvalidOperationException("M64+: Is already initialized");
             case Error.InvalidState:
+                throw new InvalidOperationException("M64+: Current state is invalid");
             case Error.Incompatible:
-                throw new InvalidOperationException($"M64+: {msg}");
+                throw new InvalidOperationException("M64+: Incompatible");
             case Error.InputAssert:
+                throw new ArgumentException("M64+: Input assertion failed");
             case Error.InputInvalid:
+                throw new ArgumentException("M64+: Input is invalid");
             case Error.InputNotFound:
+                throw new ArgumentException("M64+: Incorrect data type");
             case Error.WrongType:
-                throw new ArgumentException($"M64+: {msg}");
+                throw new ArgumentException("M64+: Incorrect data type");
             case Error.PluginFail:
+                throw new ApplicationException("M64+: Error in Plugin");
             case Error.SystemFail:
+                throw new ApplicationException("M64+: System error");
             case Error.Internal:
+                throw new ApplicationException("M64+: Internal error");
             case Error.Files:
-                throw new ApplicationException($"M64+: {msg}");
+                throw new ApplicationException("M64+: File error");
             case Error.NoMemory:
-                throw new OutOfMemoryException($"M64+: {msg}");
+                throw new OutOfMemoryException("M64+: Out of memory");
         }
     }
 

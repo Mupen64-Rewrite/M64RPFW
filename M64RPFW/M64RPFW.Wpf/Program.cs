@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using Windows.Win32;
-using Eto.Forms;
 using M64RPFW.Controls;
 using M64RPFW.Misc;
 
@@ -27,10 +27,12 @@ namespace M64PRR.Wpf
             {
                 new M64RPFWApplication(platform).Run();
             }
-            catch (AccessViolationException e)
+            catch (SEHException e)
             {
-                Console.WriteLine($"Segfault at 0x{e.:X8}");
+                Console.WriteLine($"Segfault!");
             }
+
+            Console.ReadKey();
         }
     }
 }

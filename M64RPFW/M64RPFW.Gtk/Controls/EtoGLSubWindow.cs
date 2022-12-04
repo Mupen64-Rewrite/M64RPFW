@@ -18,9 +18,17 @@ public class GLSubWindow : GtkControl<GtkGLSubWindow, M64RPFW.Controls.GLSubWind
         return Control.SetVideoMode(size, bitsPerPixel, videoMode);
     }
 
-    public void MakeCurrent()
+    public Mupen64Plus.Error MakeCurrent()
     {
-        Control.MakeCurrent();
+        try
+        {
+            Control.MakeCurrent();
+            return Mupen64Plus.Error.Success;
+        }
+        catch (ApplicationException e)
+        {
+            return Mupen64Plus.Error.Internal;
+        }
     }
     public Mupen64Plus.Error SetAttribute(Mupen64Plus.GLAttribute attr, int value)
     {
@@ -34,8 +42,15 @@ public class GLSubWindow : GtkControl<GtkGLSubWindow, M64RPFW.Controls.GLSubWind
 
     public Mupen64Plus.Error SwapBuffers()
     {
-        Control.SwapBuffers();
-        return Mupen64Plus.Error.Success;
+        try
+        {
+            Control.SwapBuffers();
+            return Mupen64Plus.Error.Success;
+        }
+        catch (ApplicationException e)
+        {
+            return Mupen64Plus.Error.Internal;
+        }
     }
 
     public Mupen64Plus.Error ResizeWindow(Size size)

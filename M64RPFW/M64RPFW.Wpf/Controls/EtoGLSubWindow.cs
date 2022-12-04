@@ -1,11 +1,8 @@
 ﻿using Eto.Wpf.Forms;
 using M64RPFW.Models.Emulation.Core;
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace M64RPFW.Wpf.Controls
 {
@@ -35,9 +32,17 @@ namespace M64RPFW.Wpf.Controls
             return Control.GetProcAddress(symbol);
         }
 
-        public void MakeCurrent()
+        public Mupen64Plus.Error MakeCurrent()
         {
-            Control.MakeCurrent();
+            try
+            {
+                Control.MakeCurrent();
+                return Mupen64Plus.Error.Success;
+            }
+            catch (Win32Exception)
+            {
+                return Mupen64Plus.Error.SystemFail;
+            }
         }
 
         public Mupen64Plus.Error ResizeWindow(Size size)

@@ -6,13 +6,10 @@ using System.Windows;
 using System.Windows.Interop;
 using Windows.Win32;
 using Windows.Win32.Foundation;
-using Windows.Win32.Graphics.Gdi;
 using Windows.Win32.Graphics.OpenGL;
 using Windows.Win32.UI.WindowsAndMessaging;
 using M64RPFW.Misc;
 using M64RPFW.Models.Emulation.Core;
-using MS.WindowsAPICodePack.Internal;
-using static Windows.Win32.Graphics.OpenGL.PFD_PIXEL_TYPE;
 using static Windows.Win32.PInvoke;
 using static Windows.Win32.UI.WindowsAndMessaging.SHOW_WINDOW_CMD;
 using static Windows.Win32.UI.WindowsAndMessaging.WINDOW_STYLE;
@@ -43,8 +40,10 @@ public partial class Win32SubWindow : IOpenGLWindow
 
         if (!SetPixelFormat(_dc, pixFmt, in pfd))
             throw new Win32Exception();
-        
+
         _glRC = WGLHelpers.CreateContextM64P(_dc, attrs);
+
+        ShowWindow(_window, SW_SHOWNA);
     }
 
     ~Win32SubWindow()
@@ -63,12 +62,20 @@ public partial class Win32SubWindow : IOpenGLWindow
 
     public void MakeCurrent()
     {
-        wglMakeCurrent(_dc, _glRC);
+        if (!wglMakeCurrent(_dc, _glRC))
+        {
+            var err = new Win32Exception();
+            Console.Error.WriteLine($"wglMakeCurrent failed ({err.NativeErrorCode}, {err.Message})");
+            throw err;
+        }
     }
 
     public void SwapBuffers()
     {
-        PInvoke.SwapBuffers(_dc);
+        if (!PInvoke.SwapBuffers(_dc))
+        {
+            throw new Win32Exception();
+        }
     }
 
     public void SetPosition(Point pos)

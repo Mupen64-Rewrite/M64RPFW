@@ -49,6 +49,7 @@ public static partial class Mupen64Plus
     // ========================================================
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [return : MarshalAs(UnmanagedType.LPStr)]
     [RuntimeDllImport]
     private delegate string DCoreErrorMessage(Error code);
 
