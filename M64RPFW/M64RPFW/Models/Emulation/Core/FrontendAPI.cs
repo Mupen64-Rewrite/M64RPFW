@@ -15,12 +15,11 @@ public static partial class Mupen64Plus
     static unsafe Mupen64Plus()
     {
         _libHandle = NativeLibrary.Load(GetExpectedLibPath());
-        Console.WriteLine($"_libHandle = {_libHandle}");
 
         ResolveFrontendFunctions();
         ResolveConfigFunctions();
 
-        _debugCallback = OnDebug;
+        _debugCallback = LogDebug;
         _stateCallback = OnStateChange;
 
         Error err = _fnCoreStartup(
@@ -48,17 +47,19 @@ public static partial class Mupen64Plus
         };
     }
 
-    private static void OnDebug(IntPtr context, MessageLevel level, string message)
+    private static void LogDebug(IntPtr context, MessageLevel level, string message)
     {
-        var type = (PluginType) (int) context;
+        var type = (int) context;
 
         string typeString = type switch
         {
-            PluginType.Core => "",
-            PluginType.Graphics => "VIDEO ",
-            PluginType.Audio => "AUDIO ",
-            PluginType.Input => "INPUT ",
-            PluginType.RSP => "RSP   ",
+            (int) PluginType.Core => "",
+            (int) PluginType.Graphics => "VIDEO ",
+            (int) PluginType.Audio => "AUDIO ",
+            (int) PluginType.Input => "INPUT ",
+            (int) PluginType.RSP => "RSP   ",
+            0x4201 => "VDEXT ",
+            0x4202 => "APP   ",
             _ => "??    "
         };
 
@@ -433,7 +434,7 @@ public static partial class Mupen64Plus
 
 
         var startup = NativeLibHelper.GetFunction<DPluginStartup>(pluginLib, "PluginStartup");
-        err = startup(_libHandle, (IntPtr) (int) type, OnDebug);
+        err = startup(_libHandle, (IntPtr) (int) type, LogDebug);
         ThrowForError(err);
 
         err = _fnCoreAttachPlugin(type, pluginLib);

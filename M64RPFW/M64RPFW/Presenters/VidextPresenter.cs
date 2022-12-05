@@ -86,9 +86,9 @@ internal class VidextPresenter : IVideoExtension
         try
         {
             Console.WriteLine($"Closing flag: {_closingFlag == 1}");
+            _view.SubWindow.CloseVideo();
             if (_closingFlag == 0)
             {
-                _view.SubWindow.CloseVideo();
                 Application.Instance.Invoke(delegate
                 {
                     _view.Content = _prevContent;

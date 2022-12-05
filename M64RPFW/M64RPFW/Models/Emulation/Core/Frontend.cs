@@ -39,9 +39,9 @@ public static partial class Mupen64Plus
     public delegate void FrameCallback(int index);
     
     #pragma warning disable CS8618
-    private static DebugCallback _debugCallback;
-    private static StateCallback _stateCallback;
-    private static FrameCallback _frameCallback;
+    private static readonly DebugCallback _debugCallback;
+    private static readonly StateCallback _stateCallback;
+    private static readonly FrameCallback _frameCallback;
     #pragma warning restore CS8618
     
 

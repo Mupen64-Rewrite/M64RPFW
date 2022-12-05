@@ -66,6 +66,8 @@ internal class RecentRomPresenter
     
     public void SelectAndRunROM(int index)
     {
+        if (index < 0)
+            return;
         _parent.LaunchRom(RecentRoms[index]);
     }
 

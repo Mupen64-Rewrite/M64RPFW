@@ -48,16 +48,31 @@ public partial class Win32SubWindow : IOpenGLWindow
 
     ~Win32SubWindow()
     {
-        Dispose();
+        Dispose(false);
     }
     
     public void Dispose()
     {
-        _glRC.Dispose();
-        _dc.Dispose();
-        DestroyWindow(_window);
-        
-        GC.SuppressFinalize(this);
+        Dispose(true);
+    }
+
+    private void Dispose(bool fromDispose)
+    {
+        if (fromDispose)
+        {
+            _glRC.Dispose();
+            _dc.Dispose();
+        }
+
+        Eto.Forms.Application.Instance.Invoke(() =>
+        {
+            if (!DestroyWindow(_window))
+            {
+                var exc = new Win32Exception();
+                Console.WriteLine($"DestroyWindow() failed: {exc}");
+            }
+        });
+        GC.KeepAlive(_refWndProc);
     }
 
     public void MakeCurrent()

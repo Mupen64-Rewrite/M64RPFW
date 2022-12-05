@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using Windows.Win32;
+using Windows.Win32.UI.WindowsAndMessaging;
 using M64RPFW.Controls;
 using M64RPFW.Misc;
+using M64RPFW.Wpf.Helpers;
 
 namespace M64PRR.Wpf
 {
@@ -26,13 +28,12 @@ namespace M64PRR.Wpf
             try
             {
                 new M64RPFWApplication(platform).Run();
+                
             }
             catch (SEHException e)
             {
-                Console.WriteLine($"Segfault!");
+                Console.WriteLine("Segfault!");
             }
-
-            Console.ReadKey();
         }
     }
 }

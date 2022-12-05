@@ -22,8 +22,8 @@ public class WpfGLSubWindow : UserControl
     public WpfGLSubWindow(Size size)
     {
         Loaded += OnLoaded;
-        Unloaded += OnUnloaded;
         IsVisibleChanged += OnVisibleChanged;
+        LayoutUpdated += OnLayoutUpdated;
 
         MinHeight = size.Height;
         MinWidth = size.Width;
@@ -73,8 +73,11 @@ public class WpfGLSubWindow : UserControl
         }
 
         _windowSize = size;
-
-        InitGLWindow();
+        
+        if (!IsLoaded)
+            _queueRealize = true;
+        else
+            InitGLWindow();
 
         return Error.Success;
     }
@@ -98,6 +101,7 @@ public class WpfGLSubWindow : UserControl
 
     public void CloseVideo()
     {
+        Console.WriteLine("Video Closing");
         _glWindow?.Dispose();
         _glWindow = null;
     }
@@ -125,34 +129,31 @@ public class WpfGLSubWindow : UserControl
 
     #region WPF event handlers
 
-    private void OnLoaded(object _, RoutedEventArgs evt)
+    private void OnLoaded(object obj, RoutedEventArgs evt)
     {
         if (_queueRealize && _glWindow != null)
             InitGLWindow();
     }
 
-    private void OnUnloaded(object _, RoutedEventArgs evt)
-    {
-        _glWindow?.SetVisible(false);
-        _glWindow?.Dispose();
-    }
-
-    private void OnVisibleChanged(object _, DependencyPropertyChangedEventArgs evt)
+    private void OnVisibleChanged(object obj, DependencyPropertyChangedEventArgs evt)
     {
         _glWindow?.SetVisible((bool) evt.NewValue);
     }
 
-    private void OnSizeChanged(object _, SizeChangedEventArgs evt)
+    private void OnLayoutUpdated(object? obj, EventArgs evt)
     {
-        Window win = Window.GetWindow(this)!;
-        var winPos = TransformToAncestor(win).Transform(new System.Windows.Point(0, 0));
-
-        var basePos = new System.Drawing.Point
+        Window? win = Window.GetWindow(this);
+        if (win != null)
         {
-            X = (int) winPos.X + ((int) ActualWidth - _windowSize.Width) / 2,
-            Y = (int) winPos.Y + ((int) ActualHeight - _windowSize.Height) / 2
-        };
-        _glWindow?.SetPosition(basePos);
+            var winPos = TransformToAncestor(win).Transform(new System.Windows.Point(0, 0));
+
+            var basePos = new System.Drawing.Point
+            {
+                X = (int) winPos.X + ((int) ActualWidth - _windowSize.Width) / 2,
+                Y = (int) winPos.Y + ((int) ActualHeight - _windowSize.Height) / 2
+            };
+            _glWindow?.SetPosition(basePos);
+        }
     }
 
     #endregion
