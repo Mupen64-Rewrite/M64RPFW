@@ -115,4 +115,12 @@ internal static partial class WGL
     public const int WGL_CONTEXT_ES2_PROFILE_BIT_EXT = 0x00000004;
     
     #endregion
+
+    #region WGL_EXT_swap_control
+
+    private delegate BOOL pfn_wglSwapIntervalEXT(int interval);
+
+    private delegate int pfn_wglGetSwapIntervalEXT();
+
+    #endregion
 }

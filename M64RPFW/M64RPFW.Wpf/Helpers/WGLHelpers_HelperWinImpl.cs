@@ -42,6 +42,7 @@ internal partial class WGLHelpers
     }
     
     private static ImmutableHashSet<string> extensionList;
+    private static WNDPROC _refWndProc;
 
     static unsafe WGLHelpers()
     {
@@ -51,13 +52,15 @@ internal partial class WGLHelpers
 
         #region Init the helper window
 
+        _refWndProc = WindowProc;
+        
         fixed (char* pWindowClass = WINDOW_CLASS)
         {
             WNDCLASSEXW wndClass = new()
             {
                 cbSize = (uint) Marshal.SizeOf<WNDCLASSEXW>(),
                 style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW,
-                lpfnWndProc = WindowProc,
+                lpfnWndProc = _refWndProc,
                 cbClsExtra = 0,
                 cbWndExtra = 0,
                 hInstance = CurrentHInstanceRaw,

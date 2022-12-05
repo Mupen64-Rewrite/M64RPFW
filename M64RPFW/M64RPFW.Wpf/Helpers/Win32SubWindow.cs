@@ -8,6 +8,7 @@ using Windows.Win32;
 using Windows.Win32.Foundation;
 using Windows.Win32.Graphics.OpenGL;
 using Windows.Win32.UI.WindowsAndMessaging;
+using M64PRR.Wpf.Interfaces;
 using M64RPFW.Misc;
 using M64RPFW.Models.Emulation.Core;
 using static Windows.Win32.PInvoke;
@@ -42,7 +43,14 @@ public partial class Win32SubWindow : IOpenGLWindow
             throw new Win32Exception();
 
         _glRC = WGLHelpers.CreateContextM64P(_dc, attrs);
-
+        {
+            if (attrs.TryGetValue(Mupen64Plus.GLAttribute.SwapControl, out int value))
+            {
+                if (!WGLHelpers.IsWGLExtensionSupported("WGL_EXT_swap_control"))
+                    throw new InvalidOperationException("Swap intervals are not supported");
+                WGL.SwapIntervalEXT(value);
+            }
+        }
         ShowWindow(_window, SW_SHOWNA);
     }
 

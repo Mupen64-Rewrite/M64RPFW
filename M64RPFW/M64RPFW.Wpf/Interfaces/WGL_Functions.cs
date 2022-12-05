@@ -204,6 +204,8 @@ internal static partial class WGL
 
     public static unsafe HGLRC CreateContextAttribsARB(HDC hDC, HGLRC hShareContext, int* attribList)
     {
+        if (_wglCreateContextAttribsARB is null)
+            throw new InvalidOperationException("wglCreateContextAttribsARB is not loaded");
         return _wglCreateContextAttribsARB(hDC, hShareContext, attribList);
     }
 
@@ -235,5 +237,26 @@ internal static partial class WGL
         }
     }
 
+    #endregion
+
+    #region wgl(Get)SwapIntervalEXT
+
+    private static pfn_wglSwapIntervalEXT? _wglSwapIntervalEXT = null;
+    private static pfn_wglGetSwapIntervalEXT? _wglGetSwapIntervalEXT = null;
+
+    public static BOOL SwapIntervalEXT(int interval)
+    {
+        if (_wglSwapIntervalEXT is null)
+            throw new InvalidOperationException("wglSwapIntervalEXT() is not loaded");
+        return _wglSwapIntervalEXT(interval);
+    }
+
+    public static int GetSwapIntervalEXT()
+    {
+        if (_wglGetSwapIntervalEXT is null)
+            throw new InvalidOperationException("wglGetSwapIntervalEXT() is not loaded");
+        return _wglGetSwapIntervalEXT();
+    }
+    
     #endregion
 }
