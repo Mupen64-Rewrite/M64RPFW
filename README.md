@@ -11,5 +11,5 @@ Wrangler" part was likely because of the hundreds of lines of native library bin
 
 ### When can I start using it?
 
-It's not quite ready for use yet: the rerecording core is still missing audio capture, and this project still has quite
-a few pieces of functionality left to implement.
+The basic GUI is complete, and is ready for beta-testing. Other parts have yet to be worked on, including such features 
+as rerecording and video capture. 
