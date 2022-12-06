@@ -72,7 +72,7 @@ public partial class Win32SubWindow : IOpenGLWindow
             _dc.Dispose();
         }
 
-        Eto.Forms.Application.Instance.Invoke(() =>
+        Eto.Forms.Application.Instance.InvokeAsync(() =>
         {
             if (!DestroyWindow(_window))
             {
@@ -80,7 +80,6 @@ public partial class Win32SubWindow : IOpenGLWindow
                 Console.WriteLine($"DestroyWindow() failed: {exc}");
             }
         });
-        GC.KeepAlive(_refWndProc);
     }
 
     public void MakeCurrent()
