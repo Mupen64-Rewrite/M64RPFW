@@ -14,7 +14,8 @@ public static partial class Mupen64Plus
 #pragma warning disable CS8618, CS8602
     static unsafe Mupen64Plus()
     {
-        _libHandle = NativeLibrary.Load(GetExpectedLibPath());
+        string expectedPath = GetExpectedLibPath();
+        _libHandle = NativeLibrary.Load(Path.Join(expectedPath, NativeLibHelper.AsDLL("mupen64plus")));
 
         ResolveFrontendFunctions();
         ResolveConfigFunctions();
@@ -23,7 +24,7 @@ public static partial class Mupen64Plus
         _stateCallback = OnStateChange;
 
         Error err = _fnCoreStartup(
-            0x020000, null, null, (IntPtr) (int) PluginType.Core,
+            0x020000, null, expectedPath, (IntPtr) (int) PluginType.Core,
             _debugCallback, IntPtr.Zero, _stateCallback);
         ThrowForError(err);
 
@@ -469,19 +470,11 @@ public static partial class Mupen64Plus
     // =================================
     private static string GetExpectedLibPath()
     {
-        var asLib = ((Func<Func<string, string>>) (() =>
-        {
-            if (OperatingSystem.IsWindows())
-                return s => $"{s}.dll";
-            if (OperatingSystem.IsLinux())
-                return s => $"{s}.so";
-            throw new NotSupportedException("Your OS is not supported");
-        }))();
 
         string path = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location) ??
                       throw new ApplicationException("Could not retrieve .exe path");
 
-        return Path.Join(new[] { path, "Libraries", asLib("mupen64plus") });
+        return Path.Join(new[] { path, "Libraries" });
 
         //return "/usr/lib/libmupen64plus.so";
     }

@@ -70,4 +70,13 @@ public static class NativeLibHelper
             throw new ApplicationException("Failed to load function");
         del = val;
     }
+
+    public static string AsDLL(string name)
+    {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            return $"{name}.dll";
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            return $"{name}.so";
+        throw new PlatformNotSupportedException("Only Windows and Linux are supported at the moment");
+    }
 }
