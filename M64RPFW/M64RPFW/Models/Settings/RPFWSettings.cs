@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using M64RPFW.Models.Helpers;
 using Tomlyn.Model;
 
 namespace M64RPFW.Models.Settings;
@@ -29,27 +30,11 @@ public class RPFWSettings : ITomlMetadataProvider
 
         public PluginsSection()
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                Video = "/usr/lib/mupen64plus/mupen64plus-video-rice.so";
-                Audio = "/usr/lib/mupen64plus/mupen64plus-audio-sdl.so";
-                Input = "/usr/lib/mupen64plus/mupen64plus-input-sdl.so";
-                RSP = "/usr/lib/mupen64plus/mupen64plus-rsp-hle.so";
-                return;
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                string execPath = Directory.GetParent(Assembly.GetEntryAssembly()!.Location)!.FullName;
-
-                Video = $"{execPath}/Libraries/mupen64plus-video-rice.dll";
-                Audio = $"{execPath}/Libraries/mupen64plus-audio-sdl.dll";
-                Input = $"{execPath}/Libraries/mupen64plus-input-sdl.dll";
-                RSP = $"{execPath}/Libraries/mupen64plus-rsp-hle.dll";
-                return;
-            }
-
-            throw new NotSupportedException("MacOS and other non-Linux Unices are not supported yet");
+            string execPath = Directory.GetParent(Assembly.GetEntryAssembly()!.Location)!.FullName;
+            Video = NativeLibHelper.AsDLL($"{execPath}/Libraries/mupen64plus-video-rice");
+            Audio = NativeLibHelper.AsDLL($"{execPath}/Libraries/mupen64plus-audio-sdl");
+            Input = NativeLibHelper.AsDLL($"{execPath}/Libraries/mupen64plus-input-sdl");
+            RSP = NativeLibHelper.AsDLL($"{execPath}/Libraries/mupen64plus-rsp-hle");
         }
         public string Video { get; set; }
         public string Audio { get; set; }
