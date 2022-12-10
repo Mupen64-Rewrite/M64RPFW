@@ -1,7 +1,7 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using WaylandSharp;
+using M64RPFW.Gtk.Interfaces.Wayland;
 
 namespace M64RPFW.Gtk.Interfaces;
 

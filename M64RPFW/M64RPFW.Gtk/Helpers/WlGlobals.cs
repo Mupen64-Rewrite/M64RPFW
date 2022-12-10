@@ -1,7 +1,7 @@
 using System;
-using WaylandSharp;
+using M64RPFW.Gtk.Interfaces.Wayland;
 
-namespace M64RPFW.Misc;
+namespace M64RPFW.Gtk.Helpers;
 
 public static class WlGlobals
 {

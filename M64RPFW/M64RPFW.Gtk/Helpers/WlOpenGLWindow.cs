@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using M64RPFW.Gtk.Interfaces;
-using WaylandSharp;
+using M64RPFW.Gtk.Interfaces.Wayland;
+using M64RPFW.Misc;
 using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 
-namespace M64RPFW.Misc;
+namespace M64RPFW.Gtk.Helpers;
 
 /// <summary>
 /// A WL-native subwindow bound to a parent <see cref="Gdk.Window"/>.

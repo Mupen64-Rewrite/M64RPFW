@@ -2,7 +2,7 @@
 using Windows.Win32;
 using OpenTK;
 
-namespace M64PRR.Wpf.Interfaces;
+namespace M64RPFW.Wpf.Interfaces;
 
 public class WGLBindingsContext : IBindingsContext
 {

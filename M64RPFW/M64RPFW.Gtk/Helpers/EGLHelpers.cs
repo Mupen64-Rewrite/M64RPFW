@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Linq;
+using System.Runtime.InteropServices;
 using M64RPFW.Gtk.Interfaces;
 using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 
-namespace M64RPFW.Misc;
+namespace M64RPFW.Gtk.Helpers;
 
 public static class EGLHelpers
 {

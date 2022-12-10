@@ -9,10 +9,10 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
-using static WaylandSharp.Client;
+using static M64RPFW.Gtk.Interfaces.Wayland.Client;
 
 #nullable enable
-namespace WaylandSharp
+namespace M64RPFW.Gtk.Interfaces.Wayland
 {
     internal readonly ref struct _WlProxy
     {

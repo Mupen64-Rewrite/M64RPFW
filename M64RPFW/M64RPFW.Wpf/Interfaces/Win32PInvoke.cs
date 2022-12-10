@@ -6,7 +6,7 @@ using Windows.Win32.Graphics.Gdi;
 using Windows.Win32.UI.WindowsAndMessaging;
 using static Windows.Win32.PInvoke;
 
-namespace M64PRR.Wpf.Interfaces;
+namespace M64RPFW.Wpf.Interfaces;
 
 internal static class Win32PInvoke
 {

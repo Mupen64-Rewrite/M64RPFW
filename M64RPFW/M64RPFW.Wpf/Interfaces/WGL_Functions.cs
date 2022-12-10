@@ -6,7 +6,7 @@ using Windows.Win32.Foundation;
 using Windows.Win32.Graphics.Gdi;
 using Windows.Win32.Graphics.OpenGL;
 
-namespace M64PRR.Wpf.Interfaces;
+namespace M64RPFW.Wpf.Interfaces;
 
 internal static partial class WGL
 {

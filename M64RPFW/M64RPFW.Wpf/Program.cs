@@ -1,39 +1,22 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using Windows.Win32;
-using Windows.Win32.UI.WindowsAndMessaging;
 using M64RPFW.Controls;
 using M64RPFW.Misc;
-using M64RPFW.Wpf.Helpers;
 
-namespace M64PRR.Wpf
+namespace M64RPFW.Wpf
 {
     class Program
     {
         [STAThread]
         public static void Main(string[] args)
         {
-            AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
-            {
-                Console.WriteLine($"Exception thrown! ({eventArgs.ExceptionObject.GetType().FullName})");
-                Console.WriteLine(eventArgs.ExceptionObject.ToString());
-            };
-
             var platform = new Eto.Wpf.Platform();
             platform.Add<GLSubWindow.IGLSubWindow>(() => new M64RPFW.Wpf.Controls.GLSubWindow());
 
             PInvoke.AttachConsole(0xFFFF_FFFF);
 
-            Console.WriteLine("Test!");
-            try
-            {
-                new M64RPFWApplication(platform).Run();
-                
-            }
-            catch (SEHException e)
-            {
-                Console.WriteLine("Segfault!");
-            }
+            new M64RPFWApplication(platform).Run();
         }
     }
 }

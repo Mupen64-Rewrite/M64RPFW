@@ -7,7 +7,7 @@ using Windows.Win32.UI.WindowsAndMessaging;
 using static Windows.Win32.PInvoke;
 using static Windows.Win32.UI.WindowsAndMessaging.SHOW_WINDOW_CMD;
 using static Windows.Win32.UI.WindowsAndMessaging.WNDCLASS_STYLES;
-using static M64PRR.Wpf.Interfaces.Win32PInvoke;
+using static M64RPFW.Wpf.Interfaces.Win32PInvoke;
 
 namespace M64RPFW.Wpf.Helpers;
 

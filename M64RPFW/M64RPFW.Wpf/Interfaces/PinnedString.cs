@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using Windows.Win32.Foundation;
 
-namespace M64PRR.Wpf.Interfaces;
+namespace M64RPFW.Wpf.Interfaces;
 
 internal sealed class PinnedString : CriticalFinalizerObject
 {

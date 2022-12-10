@@ -7,7 +7,7 @@ using Windows.Win32.Foundation;
 using Windows.Win32.Graphics.Gdi;
 using Windows.Win32.Graphics.OpenGL;
 using Windows.Win32.UI.WindowsAndMessaging;
-using M64PRR.Wpf.Interfaces;
+using M64RPFW.Wpf.Interfaces;
 using static Windows.Win32.Graphics.OpenGL.PFD_FLAGS;
 using static Windows.Win32.Graphics.OpenGL.PFD_PIXEL_TYPE;
 using static Windows.Win32.PInvoke;
@@ -15,7 +15,7 @@ using static Windows.Win32.UI.WindowsAndMessaging.PEEK_MESSAGE_REMOVE_TYPE;
 using static Windows.Win32.UI.WindowsAndMessaging.WINDOW_EX_STYLE;
 using static Windows.Win32.UI.WindowsAndMessaging.WINDOW_STYLE;
 using static Windows.Win32.UI.WindowsAndMessaging.WNDCLASS_STYLES;
-using static M64PRR.Wpf.Interfaces.Win32PInvoke;
+using static M64RPFW.Wpf.Interfaces.Win32PInvoke;
 
 namespace M64RPFW.Wpf.Helpers;
 

@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Drawing;
 using M64RPFW.Gtk.Interfaces;
+using M64RPFW.Misc;
 using M64RPFW.Models.Emulation.Core;
 
-namespace M64RPFW.Misc;
+namespace M64RPFW.Gtk.Helpers;
 
 public static class GtkOpenGLWindowFactory
 {

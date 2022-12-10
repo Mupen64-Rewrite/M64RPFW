@@ -37,7 +37,9 @@ public class M64RPFWApplication : Application
 
     protected override void OnUnhandledException(UnhandledExceptionEventArgs e)
     {
-        throw (Exception) e.ExceptionObject;
+        object exc = e.ExceptionObject;
+        string typeName = exc.GetType().FullName;
+        MessageBox.Show($"A fatal exception occurred! ({typeName})", "Fatal Exception");
     }
 
     protected override void OnTerminating(CancelEventArgs e)

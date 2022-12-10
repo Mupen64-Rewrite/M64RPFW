@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using M64RPFW.Models.Helpers;
 using Tomlyn.Model;
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
 namespace M64RPFW.Models.Settings;
 

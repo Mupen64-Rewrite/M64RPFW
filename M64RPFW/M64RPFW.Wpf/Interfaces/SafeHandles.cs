@@ -5,7 +5,7 @@ using Windows.Win32.Foundation;
 using Windows.Win32.Graphics.Gdi;
 using static Windows.Win32.PInvoke;
 
-namespace M64PRR.Wpf.Interfaces;
+namespace M64RPFW.Wpf.Interfaces;
 
 /// <summary>
 /// A SafeHandle that does absolutely nothing to clean up its contents.

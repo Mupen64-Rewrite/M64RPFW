@@ -5,10 +5,10 @@ using System.Runtime.InteropServices;
 using Windows.Win32;
 using Windows.Win32.Graphics.Gdi;
 using Windows.Win32.Graphics.OpenGL;
-using M64PRR.Wpf.Interfaces;
 using static Windows.Win32.PInvoke;
 using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 using System.ComponentModel;
+using M64RPFW.Wpf.Interfaces;
 using static Windows.Win32.Graphics.OpenGL.PFD_LAYER_TYPE;
 
 namespace M64RPFW.Wpf.Helpers;

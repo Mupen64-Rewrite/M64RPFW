@@ -8,13 +8,13 @@ using Windows.Win32;
 using Windows.Win32.Foundation;
 using Windows.Win32.Graphics.OpenGL;
 using Windows.Win32.UI.WindowsAndMessaging;
-using M64PRR.Wpf.Interfaces;
 using M64RPFW.Misc;
 using M64RPFW.Models.Emulation.Core;
+using M64RPFW.Wpf.Interfaces;
 using static Windows.Win32.PInvoke;
 using static Windows.Win32.UI.WindowsAndMessaging.SHOW_WINDOW_CMD;
 using static Windows.Win32.UI.WindowsAndMessaging.WINDOW_STYLE;
-using static M64PRR.Wpf.Interfaces.Win32PInvoke;
+using static M64RPFW.Wpf.Interfaces.Win32PInvoke;
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
 

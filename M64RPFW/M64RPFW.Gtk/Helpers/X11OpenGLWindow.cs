@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using M64RPFW.Gtk.Interfaces;
+using M64RPFW.Misc;
 using X11;
-
 using static X11.Xlib;
 using static M64RPFW.Gtk.Interfaces.LibXlib;
 using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 
-namespace M64RPFW.Misc;
+namespace M64RPFW.Gtk.Helpers;
 
 public class X11OpenGLWindow : IOpenGLWindow
 {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using Gtk;
+using M64RPFW.Gtk.Helpers;
 using M64RPFW.Misc;
 using Point = System.Drawing.Point;
 using Rectangle = Gdk.Rectangle;
