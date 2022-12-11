@@ -120,7 +120,7 @@ public static partial class Mupen64Plus
     /// correct byte order.
     /// </summary>
     /// <param name="romData">The ROM to load</param>
-    public static unsafe void OpenRomBinary(byte[] romData)
+    public static unsafe void OpenRomBinary(ReadOnlySpan<byte> romData)
     {
         fixed (byte* dataPtr = romData)
         {

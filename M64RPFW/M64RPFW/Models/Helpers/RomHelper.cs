@@ -1,4 +1,6 @@
 using System;
+using System.Diagnostics;
+using System.IO;
 
 namespace M64RPFW.Models.Helpers;
 
@@ -33,6 +35,19 @@ public static class RomHelper
         }
 
         throw new ArgumentException($"Data is most likely not an N64 ROM. Signature was {signature:X8}");
+    }
+
+    public static byte[] ReadFileSection(string path, long begin, long end)
+    {
+        byte[] data = new byte[end - begin];
+        using (var file = File.Open(path, FileMode.Open, FileAccess.Read))
+        {
+            file.Seek(begin, SeekOrigin.Begin);
+            if (file.Read(data) < data.LongLength)
+                throw new InvalidOperationException("Hit EOF while trying to read bytes");
+        }
+
+        return data;
     }
 
     public static uint AsBigEndian(uint x)

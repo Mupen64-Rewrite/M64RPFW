@@ -1,6 +1,8 @@
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using M64RPFW.Models.Emulation.Core;
 using M64RPFW.Models.Helpers;
@@ -24,19 +26,15 @@ public class RomFile
     
     public RomFile(string path)
     {
-        string fullPath = Path.GetFullPath(path);
-        Console.WriteLine($"Loading ROM from {fullPath}");
-
-        _path = fullPath;
-        _data = File.ReadAllBytes(fullPath);
-
-        if (_data.Length < 0x1000)
-            throw new ArgumentException("Data is too short to be a ROM!");
+        _path = Path.GetFullPath(path);
+        Console.WriteLine($"Loading ROM from {_path}");
         
-        RomHelper.AdaptiveByteSwap(ref _data);
+        // Read ROM header
+        _header = RomHelper.ReadFileSection(_path, 0, 64);
+        RomHelper.AdaptiveByteSwap(ref _header);
     }
     
-    public RegionEnum Region => _data[0x3E] switch
+    public RegionEnum Region => _header[0x3E] switch
     {
         0x44 => RegionEnum.Germany,
         0x45 => RegionEnum.USA,
@@ -50,20 +48,39 @@ public class RomFile
         _ => RegionEnum.None
     };
 
-    public void LoadThisRom()
+    public unsafe void LoadThisRom()
     {
-        Mupen64Plus.OpenRomBinary(_data);
+        FileInfo fi = new FileInfo(_path);
+        if (fi.Length < 0x1000)
+            throw new InvalidOperationException("Data is too short to be a ROM!");
+        // 2^20 = 1 MiB, 2^26 = 64 MiB
+        if (fi.Length >= 1 << 26)
+            throw new InvalidOperationException("Data is too large for a cartridge!");
+        
+        IntPtr blockPtr = Marshal.AllocHGlobal((nint) fi.Length);
+        Span<byte> block = new((void*) blockPtr, (int) fi.Length);
+        try
+        {
+            using var file = File.OpenRead(_path);
+            Trace.Assert(file.Read(block) == fi.Length);
+            
+            Mupen64Plus.OpenRomBinary(block);
+        }
+        finally
+        {
+            Marshal.FreeHGlobal(blockPtr);
+        }
     }
 
-    public string InternalName => Encoding.ASCII.GetString(new ArraySegment<byte>(_data, 0x20, 20));
+    public string InternalName => Encoding.ASCII.GetString(new ArraySegment<byte>(_header, 0x20, 20));
     public string FriendlyName => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(InternalName.ToLowerInvariant());
-    public uint CRC1 => RomHelper.AsBigEndian(BitConverter.ToUInt32(_data, 0x0010));
-    public uint CRC2 => RomHelper.AsBigEndian(BitConverter.ToUInt32(_data, 0x0014));
-    public byte Version => _data[0x3F];
+    public uint CRC1 => RomHelper.AsBigEndian(BitConverter.ToUInt32(_header, 0x0010));
+    public uint CRC2 => RomHelper.AsBigEndian(BitConverter.ToUInt32(_header, 0x0014));
+    public byte Version => _header[0x3F];
     public string FileName => Path.GetFileName(_path);
     
     internal readonly string _path;
-    private readonly byte[] _data;
+    private readonly byte[] _header;
     
     
 }

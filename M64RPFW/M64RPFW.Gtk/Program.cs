@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Eto.Forms;
 using Gdk;
 using M64RPFW.Controls;

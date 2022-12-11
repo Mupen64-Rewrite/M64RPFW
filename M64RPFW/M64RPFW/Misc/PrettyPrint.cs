@@ -8,7 +8,7 @@ namespace M64RPFW.Misc;
 
 public static class PrettyPrint
 {
-    private static ImmutableDictionary<Type, string> SpecialNames = new Dictionary<Type, string>
+    private static readonly ImmutableDictionary<Type, string> SpecialNames = new Dictionary<Type, string>
     {
         {typeof(bool), "bool"},
         {typeof(byte), "byte"},
