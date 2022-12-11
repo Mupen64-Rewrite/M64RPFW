@@ -18,6 +18,12 @@ internal class RecentRomPresenter
         _parent = parent.Presenter;
 
         var setting = Settings.RPFW.Roms.Recent;
+        {
+            // deduplicate settings
+            var distinct = setting.Distinct().ToArray();
+            setting.Clear();
+            setting.AddRange(distinct);
+        }
 
         RecentRoms = new(setting.Select(path => new RomFile(path)));
 
@@ -27,7 +33,7 @@ internal class RecentRomPresenter
             {
                 case NotifyCollectionChangedAction.Add:
                 {
-                    setting.InsertRange(args.NewStartingIndex, args.NewItems!.Cast<RomFile>().Select(rom => rom._path));
+                    setting.InsertRange(args.NewStartingIndex, args.NewItems!.Cast<RomFile>().Select(rom => rom.Path));
                     break;
                 }
                 case NotifyCollectionChangedAction.Remove:
@@ -42,7 +48,7 @@ internal class RecentRomPresenter
                     
                     for (int i = 0; i < len; i++)
                     {
-                        setting[begin + i] = ((RomFile) args.NewItems![i]!)._path;
+                        setting[begin + i] = ((RomFile) args.NewItems![i]!).Path;
                     }
 
                     break;
@@ -50,13 +56,13 @@ internal class RecentRomPresenter
                 case NotifyCollectionChangedAction.Move:
                 {
                     setting.RemoveRange(args.OldStartingIndex, args.OldItems!.Count);
-                    setting.InsertRange(args.NewStartingIndex, args.OldItems!.Cast<RomFile>().Select(rom => rom._path));
+                    setting.InsertRange(args.NewStartingIndex, args.OldItems!.Cast<RomFile>().Select(rom => rom.Path));
                     break;
                 }
                 case NotifyCollectionChangedAction.Reset:
                 {
                     setting.Clear();
-                    setting.AddRange(args.NewItems!.Cast<RomFile>().Select(rom => rom._path));
+                    setting.AddRange(args.NewItems!.Cast<RomFile>().Select(rom => rom.Path));
                     break;
                 }
             }

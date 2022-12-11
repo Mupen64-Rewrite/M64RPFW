@@ -26,7 +26,7 @@ public class RomFile
     
     public RomFile(string path)
     {
-        _path = Path.GetFullPath(path);
+        _path = System.IO.Path.GetFullPath(path);
         Console.WriteLine($"Loading ROM from {_path}");
         
         // Read ROM header
@@ -77,9 +77,11 @@ public class RomFile
     public uint CRC1 => RomHelper.AsBigEndian(BitConverter.ToUInt32(_header, 0x0010));
     public uint CRC2 => RomHelper.AsBigEndian(BitConverter.ToUInt32(_header, 0x0014));
     public byte Version => _header[0x3F];
-    public string FileName => Path.GetFileName(_path);
+    public string FileName => System.IO.Path.GetFileName(_path);
+
+    public string Path => _path;
     
-    internal readonly string _path;
+    private readonly string _path;
     private readonly byte[] _header;
     
     

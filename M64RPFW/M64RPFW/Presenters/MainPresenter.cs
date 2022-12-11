@@ -157,7 +157,8 @@ internal partial class MainPresenter
             return;
 
         var rom = new RomFile(fileDialog.FileName);
-        _view.RomView.Presenter.RecentRoms.Add(rom);
+        if (_view.RomView.Presenter.RecentRoms.All(r => r.Path != fileDialog.FileName))
+            _view.RomView.Presenter.RecentRoms.Add(rom);
 
         LaunchRom(rom);
     }
