@@ -13,6 +13,7 @@ using M64RPFW.Models.Emulation.Core;
 using M64RPFW.Wpf.Interfaces;
 using static Windows.Win32.PInvoke;
 using static Windows.Win32.UI.WindowsAndMessaging.SHOW_WINDOW_CMD;
+using static Windows.Win32.UI.WindowsAndMessaging.WINDOW_EX_STYLE;
 using static Windows.Win32.UI.WindowsAndMessaging.WINDOW_STYLE;
 using static M64RPFW.Wpf.Interfaces.Win32PInvoke;
 using Point = System.Drawing.Point;
@@ -27,7 +28,7 @@ public partial class Win32SubWindow : IOpenGLWindow
         HWND parentHWnd = (HWND) new WindowInteropHelper(parent).Handle;
         
         _window = CreateWindowEx(0, WINDOW_CLASS, "M64RPFW Output",
-            WS_CHILD | WS_DISABLED, 0, 0, size.Width, size.Height,
+            WS_CHILD, 0, 0, size.Width, size.Height,
             parentHWnd, null, CurrentHInstance, null);
         if (_window == HWND.Null)
             throw new Win32Exception();
