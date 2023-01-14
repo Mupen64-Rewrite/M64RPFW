@@ -1,33 +1,33 @@
 ﻿<Application x:Class="M64RPFW.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:M64RPFW"
-             xmlns:ui="http://schemas.modernwpf.com/2019" 
-             xmlns:conv="clr-namespace:M64RPFW.src.Converters" 
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+             xmlns:conv="clr-namespace:M64RPFW.src.Converters"
              xmlns:system="clr-namespace:System;assembly=netstandard"
              StartupUri="src/Views/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                    <ui:ThemeResources RequestedTheme="Dark"/>
-                    <ui:XamlControlsResources/>
-                
+                <ui:ThemeResources RequestedTheme="Dark" />
+                <ui:XamlControlsResources />
+
                 <ResourceDictionary>
-                    <conv:StringEqualityToBooleanConverter x:Key="StringEqualityToBooleanConverter"/>
-                    <conv:KeyBindingToStringConverter x:Key="KeyBindingToStringConverter"/>
-                    <conv:IntegerEqualityToBooleanConverter x:Key="IntegerEqualityToBooleanConverter"/>
-                    <conv:InvertBooleanConverter x:Key="InvertBooleanConverter"/>
-                    <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-                    <conv:IntegerToHexadecimalStringConverter x:Key="IntegerToHexadecimalStringConverter"/>
-                    <conv:UnsignedIntegerToHexadecimalStringConverter x:Key="UnsignedIntegerToHexadecimalStringConverter"/>
-                    <conv:BooleanToStringConverter x:Key="BooleanToStringConverter"/>
-                    <RotateTransform x:Key="VerticalRotateTransform" Angle="90"/>
+                    <conv:StringEqualityToBooleanConverter x:Key="StringEqualityToBooleanConverter" />
+                    <conv:KeyBindingToStringConverter x:Key="KeyBindingToStringConverter" />
+                    <conv:IntegerEqualityToBooleanConverter x:Key="IntegerEqualityToBooleanConverter" />
+                    <conv:InvertBooleanConverter x:Key="InvertBooleanConverter" />
+                    <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+                    <conv:IntegerToHexadecimalStringConverter x:Key="IntegerToHexadecimalStringConverter" />
+                    <conv:UnsignedIntegerToHexadecimalStringConverter
+                        x:Key="UnsignedIntegerToHexadecimalStringConverter" />
+                    <conv:BooleanToStringConverter x:Key="BooleanToStringConverter" />
+                    <RotateTransform x:Key="VerticalRotateTransform" Angle="90" />
                 </ResourceDictionary>
                 <ResourceDictionary>
                     <system:Double x:Key="MenuHeight">40</system:Double>
                     <system:Double x:Key="SmallIconSize">30</system:Double>
 
-                    
+
                     <Thickness x:Key="MediumContentMargin">10</Thickness>
                     <Thickness x:Key="SmallItemMargin">0 2 0 0</Thickness>
                     <Thickness x:Key="TitlebarOverlapMargin">0 -8 0 0</Thickness>
@@ -112,7 +112,7 @@
                         <Setter Property="FontWeight" Value="Regular" />
                         <Setter Property="LineHeight" Value="64" />
                     </Style>
-                    
+
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

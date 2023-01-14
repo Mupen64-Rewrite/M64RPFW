@@ -1,12 +1,11 @@
-﻿namespace M64RPFW.ViewModels.Configurations
+﻿namespace M64RPFW.ViewModels.Configurations;
+
+public class FileExtensionsConfiguration
 {
-    public class FileExtensionsConfiguration
+    public string[] RomExtensions =
     {
-        public string[] RomExtensions = new string[]
-        {
-            "z64",
-            "n64",
-            "v64",
-        };
-    }
+        "z64",
+        "n64",
+        "v64"
+    };
 }

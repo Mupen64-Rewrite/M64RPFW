@@ -1,287 +1,292 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
-    Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
-    associated with the data types.
-    
-    Example:
-    
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-                
-    There are any number of "resheader" rows that contain simple 
-    name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
-    mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
-    extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
-    read any of the formats listed below.
-    
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
+    <!-- 
+      Microsoft ResX Schema 
+      
+      Version 2.0
+      
+      The primary goals of this format is to allow a simple XML format 
+      that is mostly human readable. The generation and parsing of the 
+      various data types are done through the TypeConverter classes 
+      associated with the data types.
+      
+      Example:
+      
+      ... ado.net/XML headers & schema ...
+      <resheader name="resmimetype">text/microsoft-resx</resheader>
+      <resheader name="version">2.0</resheader>
+      <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+      <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+      <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+      <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+      <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+          <value>[base64 mime encoded serialized .NET Framework object]</value>
+      </data>
+      <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+          <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+          <comment>This is a comment</comment>
+      </data>
+                  
+      There are any number of "resheader" rows that contain simple 
+      name/value pairs.
+      
+      Each data row contains a name, and value. The row also contains a 
+      type or mimetype. Type corresponds to a .NET class that support 
+      text/value conversion through the TypeConverter architecture. 
+      Classes that don't support this are serialized and stored with the 
+      mimetype set.
+      
+      The mimetype is used for serialized objects, and tells the 
+      ResXResourceReader how to depersist the object. This is currently not 
+      extensible. For a given mimetype the value must be set accordingly:
+      
+      Note - application/x-microsoft.net.object.binary.base64 is the format 
+      that the ResXResourceWriter will generate, however the reader can 
+      read any of the formats listed below.
+      
+      mimetype: application/x-microsoft.net.object.binary.base64
+      value   : The object must be serialized with 
+              : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+              : and then encoded with base64 encoding.
+      
+      mimetype: application/x-microsoft.net.object.soap.base64
+      value   : The object must be serialized with 
+              : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+              : and then encoded with base64 encoding.
+  
+      mimetype: application/x-microsoft.net.object.bytearray.base64
+      value   : The object must be serialized into a byte array 
+              : using a System.ComponentModel.TypeConverter
+              : and then encoded with base64 encoding.
+      -->
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
+                xmlns="">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
             <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
-              </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
             </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <data name="Mupen64Plus" xml:space="preserve">
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Mupen64Plus" xml:space="preserve">
     <value>Mupen64Plus</value>
-    <comment>@Invariant</comment>
+        <comment>@Invariant</comment>
   </data>
-  <data name="GUI" xml:space="preserve">
+    <data name="GUI" xml:space="preserve">
     <value>GUI</value>
     
   </data>
-  <data name="CannotStopUnstartedGame" xml:space="preserve">
+    <data name="CannotStopUnstartedGame" xml:space="preserve">
     <value>Cannot terminate an inexistent emulator.</value>
   </data>
-  <data name="File" xml:space="preserve">
+    <data name="File" xml:space="preserve">
     <value>File</value>
   </data>
-  <data name="LoadRom" xml:space="preserve">
+    <data name="LoadRom" xml:space="preserve">
     <value>Load Rom</value>
   </data>
-  <data name="CloseRom" xml:space="preserve">
+    <data name="CloseRom" xml:space="preserve">
     <value>Close Rom</value>
   </data>
-  <data name="ResetRom" xml:space="preserve">
+    <data name="ResetRom" xml:space="preserve">
     <value>Reset Rom</value>
   </data>
-  <data name="Exit" xml:space="preserve">
+    <data name="Exit" xml:space="preserve">
     <value>Exit</value>
   </data>
-  <data name="Options" xml:space="preserve">
+    <data name="Options" xml:space="preserve">
     <value>Options</value>
   </data>
-  <data name="PluginSettings" xml:space="preserve">
+    <data name="PluginSettings" xml:space="preserve">
     <value>Plugin settings</value>
   </data>
-  <data name="ShowToolbar" xml:space="preserve">
+    <data name="ShowToolbar" xml:space="preserve">
     <value>Show Toolbar</value>
   </data>
-  <data name="ShowStatusbar" xml:space="preserve">
+    <data name="ShowStatusbar" xml:space="preserve">
     <value>Show Statusbar</value>
   </data>
-  <data name="ProgramSettings" xml:space="preserve">
+    <data name="ProgramSettings" xml:space="preserve">
     <value>Program settings</value>
   </data>
-  <data name="Video" xml:space="preserve">
+    <data name="Video" xml:space="preserve">
     <value>Video</value>
   </data>
-  <data name="Audio" xml:space="preserve">
+    <data name="Audio" xml:space="preserve">
     <value>Audio</value>
   </data>
-  <data name="Input" xml:space="preserve">
+    <data name="Input" xml:space="preserve">
     <value>Input</value>
   </data>
-  <data name="Rsp" xml:space="preserve">
+    <data name="Rsp" xml:space="preserve">
     <value>Rsp</value>
-    <comment>@Invariant</comment>
+        <comment>@Invariant</comment>
   </data>
-  <data name="OK" xml:space="preserve">
+    <data name="OK" xml:space="preserve">
     <value>OK</value>
     
   </data>
-  <data name="CoreLibraryNotFound" xml:space="preserve">
+    <data name="CoreLibraryNotFound" xml:space="preserve">
     <value>The core library was not found.</value>
   </data>
-  <data name="PluginNotFoundTemplate" xml:space="preserve">
+    <data name="PluginNotFoundTemplate" xml:space="preserve">
     <value>The {0} plugin library was not found.</value>
   </data>
-  <data name="Error" xml:space="preserve">
+    <data name="Error" xml:space="preserve">
     <value>Error</value>
   </data>
-  <data name="PluginNotFoundSeries" xml:space="preserve">
+    <data name="PluginNotFoundSeries" xml:space="preserve">
     <value>The following plugins are missing: {0}.</value>
   </data>
-  <data name="Clear" xml:space="preserve">
+    <data name="Clear" xml:space="preserve">
     <value>Clear</value>
   </data>
-  <data name="Remove" xml:space="preserve">
+    <data name="Remove" xml:space="preserve">
     <value>Remove</value>
   </data>
-  <data name="Inspect" xml:space="preserve">
+    <data name="Inspect" xml:space="preserve">
     <value>Inspect</value>
   </data>
-  <data name="Pause" xml:space="preserve">
+    <data name="Pause" xml:space="preserve">
     <value>Pause</value>
   </data>
-  <data name="FrameAdvance" xml:space="preserve">
+    <data name="FrameAdvance" xml:space="preserve">
     <value>Frame Advance</value>
   </data>
-  <data name="PureInterpreter" xml:space="preserve">
+    <data name="PureInterpreter" xml:space="preserve">
     <value>Pure Interpreter</value>
   </data>
-  <data name="CachedInterpreter" xml:space="preserve">
+    <data name="CachedInterpreter" xml:space="preserve">
     <value>Cached Interpreter</value>
   </data>
-  <data name="DynamicRecompiler" xml:space="preserve">
+    <data name="DynamicRecompiler" xml:space="preserve">
     <value>Dynamic Recompiler</value>
   </data>
-  <data name="Dark" xml:space="preserve">
+    <data name="Dark" xml:space="preserve">
     <value>Dark</value>
   </data>
-  <data name="Light" xml:space="preserve">
+    <data name="Light" xml:space="preserve">
     <value>Light</value>
   </data>
-  <data name="CPU" xml:space="preserve">
+    <data name="CPU" xml:space="preserve">
     <value>CPU</value>
   </data>
-  <data name="Language" xml:space="preserve">
+    <data name="Language" xml:space="preserve">
     <value>Language</value>
   </data>
-  <data name="Theme" xml:space="preserve">
+    <data name="Theme" xml:space="preserve">
     <value>Theme</value>
   </data>
-  <data name="BigEndian" xml:space="preserve">
+    <data name="BigEndian" xml:space="preserve">
     <value>Big Endian</value>
   </data>
-  <data name="PrimaryCRC" xml:space="preserve">
+    <data name="PrimaryCRC" xml:space="preserve">
     <value>Primary CRC</value>
   </data>
-  <data name="SecondaryCRC" xml:space="preserve">
+    <data name="SecondaryCRC" xml:space="preserve">
     <value>Secondary CRC</value>
   </data>
-  <data name="InternalName" xml:space="preserve">
+    <data name="InternalName" xml:space="preserve">
     <value>Internal Name</value>
   </data>
-  <data name="MediaFormat" xml:space="preserve">
+    <data name="MediaFormat" xml:space="preserve">
     <value>Media Format</value>
   </data>
-  <data name="CountryCode" xml:space="preserve">
+    <data name="CountryCode" xml:space="preserve">
     <value>Country Code</value>
   </data>
-  <data name="Version" xml:space="preserve">
+    <data name="Version" xml:space="preserve">
     <value>Version</value>
   </data>
-  <data name="InvalidFile" xml:space="preserve">
+    <data name="InvalidFile" xml:space="preserve">
     <value>The provided file is invalid</value>
   </data>
-  <data name="RawData" xml:space="preserve">
+    <data name="RawData" xml:space="preserve">
     <value>Raw Data</value>
   </data>
-  <data name="AppName" xml:space="preserve">
+    <data name="AppName" xml:space="preserve">
     <value>M64RPFW</value>
-    <comment>@Invariant</comment>
+        <comment>@Invariant</comment>
   </data>
-  <data name="RomInexistent" xml:space="preserve">
+    <data name="RomInexistent" xml:space="preserve">
     <value>The Rom does not exist</value>
   </data>
-  <data name="Plugins" xml:space="preserve">
+    <data name="Plugins" xml:space="preserve">
     <value>Plugins</value>
   </data>
-  <data name="Core" xml:space="preserve">
+    <data name="Core" xml:space="preserve">
     <value>Core</value>
   </data>
-  <data name="SupportedFileFormats" xml:space="preserve">
+    <data name="SupportedFileFormats" xml:space="preserve">
     <value>Supported file formats</value>
   </data>
-  <data name="Browse" xml:space="preserve">
+    <data name="Browse" xml:space="preserve">
     <value>Browse</value>
   </data>
-  <data name="Paths" xml:space="preserve">
+    <data name="Paths" xml:space="preserve">
     <value>Paths</value>
   </data>
-  <data name="Emulation" xml:space="preserve">
+    <data name="Emulation" xml:space="preserve">
     <value>Emulation</value>
   </data>
-  <data name="Yes" xml:space="preserve">
+    <data name="Yes" xml:space="preserve">
     <value>Yes</value>
   </data>
-  <data name="No" xml:space="preserve">
+    <data name="No" xml:space="preserve">
     <value>No</value>
   </data>
 </root>

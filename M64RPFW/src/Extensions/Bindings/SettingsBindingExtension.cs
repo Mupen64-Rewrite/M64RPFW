@@ -1,24 +1,23 @@
-﻿using M64RPFW.src.Views;
-using System.Windows.Data;
+﻿using System.Windows.Data;
+using M64RPFW.src.Views;
 
-namespace M64RPFW.src.Extensions.Bindings
+namespace M64RPFW.src.Extensions.Bindings;
+
+public class SettingsBindingExtension : Binding
 {
-    public class SettingsBindingExtension : Binding
+    public SettingsBindingExtension()
     {
-        public SettingsBindingExtension()
-        {
-            Initialize();
-        }
+        Initialize();
+    }
 
-        public SettingsBindingExtension(string path) : base(path)
-        {
-            Initialize();
-        }
+    public SettingsBindingExtension(string path) : base(path)
+    {
+        Initialize();
+    }
 
-        private void Initialize()
-        {
-            Source = MainWindow.AppSettings;
-            Mode = BindingMode.OneWay;
-        }
+    private void Initialize()
+    {
+        Source = MainWindow.AppSettings;
+        Mode = BindingMode.OneWay;
     }
 }

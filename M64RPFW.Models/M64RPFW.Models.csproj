@@ -1,19 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Platforms>AnyCPU</Platforms>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Emulation\API\Mupen64PlusFunctions.cs~RF293188.TMP" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Remove="Emulation\API\Mupen64PlusFunctions.cs~RF293188.TMP"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\M64RPFW.Services\M64RPFW.Services.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\M64RPFW.Services\M64RPFW.Services.csproj"/>
+    </ItemGroup>
 
 </Project>

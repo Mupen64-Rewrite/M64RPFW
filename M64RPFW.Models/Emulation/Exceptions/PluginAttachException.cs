@@ -1,9 +1,8 @@
-﻿namespace M64RPFW.Models.Emulation.Exceptions
+﻿namespace M64RPFW.Models.Emulation.Exceptions;
+
+public class PluginAttachException : Exception
 {
-    public class PluginAttachException : Exception
+    public PluginAttachException(string? message) : base(message)
     {
-        public PluginAttachException(string? message) : base(message)
-        {
-        }
     }
 }

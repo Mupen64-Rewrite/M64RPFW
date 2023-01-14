@@ -1,154 +1,154 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UseWPF>true</UseWPF>
-    <AssemblyVersion>1.0.0.1</AssemblyVersion>
-    <FileVersion>1.0.0.1</FileVersion>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <PackageIcon>m64rpfw.png</PackageIcon>
-    <ApplicationIcon>img\m64rpfw48.ico</ApplicationIcon>
-    <Title>M64RPFW</Title>
-    <Authors>Aurumaker72</Authors>
-    <Description> A rewrite of Mupen64</Description>
-    <Platforms>AnyCPU</Platforms>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net6.0-windows</TargetFramework>
+        <Nullable>enable</Nullable>
+        <UseWPF>true</UseWPF>
+        <AssemblyVersion>1.0.0.1</AssemblyVersion>
+        <FileVersion>1.0.0.1</FileVersion>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <PackageIcon>m64rpfw.png</PackageIcon>
+        <ApplicationIcon>img\m64rpfw48.ico</ApplicationIcon>
+        <Title>M64RPFW</Title>
+        <Authors>Aurumaker72</Authors>
+        <Description>A rewrite of Mupen64</Description>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="img\m64rpfw48.ico" />
-    <None Remove="img\m64rpfw64.ico" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Remove="img\m64rpfw48.ico"/>
+        <None Remove="img\m64rpfw64.ico"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="img\m64rpfw48.ico" />
-    <Content Include="img\m64rpfw64.ico" />
-  </ItemGroup>
+    <ItemGroup>
+        <Content Include="img\m64rpfw48.ico"/>
+        <Content Include="img\m64rpfw64.ico"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="CalcBinding" Version="2.5.2" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0-preview1" />
-    <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.11.0" />
-    <PackageReference Include="Microsoft.WindowsAPICodePack-Shell" Version="1.1.0" />
-    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
-    <PackageReference Include="ModernWpfUI" Version="0.9.7-preview.2" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="CalcBinding" Version="2.5.2"/>
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0-preview1"/>
+        <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.11.0"/>
+        <PackageReference Include="Microsoft.WindowsAPICodePack-Shell" Version="1.1.0"/>
+        <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39"/>
+        <PackageReference Include="ModernWpfUI" Version="0.9.7-preview.2"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\M64RPFW.Models\M64RPFW.Models.csproj" />
-    <ProjectReference Include="..\M64RPFW.Services\M64RPFW.Services.csproj" />
-    <ProjectReference Include="..\M64RPFW.ViewModels\M64RPFW.ViewModels.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\M64RPFW.Models\M64RPFW.Models.csproj"/>
+        <ProjectReference Include="..\M64RPFW.Services\M64RPFW.Services.csproj"/>
+        <ProjectReference Include="..\M64RPFW.ViewModels\M64RPFW.ViewModels.csproj"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <None Update="img\m64rpfw.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Update="m64p\font.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\freetype.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\glew32.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\InputAutoCfg.ini">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\libbrotlicommon.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\libbrotlidec.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\libbz2-1.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\libfreetype-6.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\libgcc_s_seh-1.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\libglib-2.0-0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\libgraphite2.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\libharfbuzz-0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\libiconv-2.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\libintl-8.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\libpcre2-8-0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\libpng16-16.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\libpng16.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\libsamplerate-0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\libspeexdsp-1.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\libstdc++-6.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\libwinpthread-1.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\mupen64plus-audio-sdl.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\mupen64plus-input-sdl.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\mupen64plus-rsp-hle.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\mupen64plus-video-rice.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\mupen64plus-video-z64.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\mupen64plus.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\mupen64plus.ini">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\mupencheat.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\RiceVideoLinux.ini">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\SDL2.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\SDL2_net.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\zlib.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="m64p\zlib1.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  
-  </ItemGroup>
+    <ItemGroup>
+        <None Update="img\m64rpfw.png">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+        <None Update="m64p\font.ttf">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\freetype.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\glew32.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\InputAutoCfg.ini">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\libbrotlicommon.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\libbrotlidec.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\libbz2-1.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\libfreetype-6.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\libgcc_s_seh-1.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\libglib-2.0-0.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\libgraphite2.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\libharfbuzz-0.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\libiconv-2.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\libintl-8.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\libpcre2-8-0.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\libpng16-16.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\libpng16.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\libsamplerate-0.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\libspeexdsp-1.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\libstdc++-6.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\libwinpthread-1.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\mupen64plus-audio-sdl.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\mupen64plus-input-sdl.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\mupen64plus-rsp-hle.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\mupen64plus-video-rice.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\mupen64plus-video-z64.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\mupen64plus.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\mupen64plus.ini">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\mupencheat.txt">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\RiceVideoLinux.ini">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\SDL2.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\SDL2_net.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\zlib.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="m64p\zlib1.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+
+    </ItemGroup>
 
 </Project>

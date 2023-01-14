@@ -1,9 +1,8 @@
-﻿namespace M64RPFW.Models.Emulation.Exceptions
+﻿namespace M64RPFW.Models.Emulation.Exceptions;
+
+public class PluginDetachedException : Exception
 {
-    public class PluginDetachedException : Exception
+    public PluginDetachedException(string? message) : base(message)
     {
-        public PluginDetachedException(string? message) : base(message)
-        {
-        }
     }
 }

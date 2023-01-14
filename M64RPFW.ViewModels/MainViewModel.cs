@@ -2,35 +2,36 @@
 using CommunityToolkit.Mvvm.Input;
 using M64RPFW.ViewModels.Containers;
 using M64RPFW.ViewModels.Interfaces;
-using System.Collections.ObjectModel;
 
-namespace M64RPFW.ViewModels
+namespace M64RPFW.ViewModels;
+
+public partial class MainViewModel : ObservableObject, IAppExitEventProvider
 {
-    public partial class MainViewModel : ObservableObject, IAppExitEventProvider
+    private readonly GeneralDependencyContainer generalDependencyContainer;
+
+    public MainViewModel(GeneralDependencyContainer generalDependencyContainer)
     {
-        private event Action onWindowExit;
-        void IAppExitEventProvider.Register(Action action) => onWindowExit += action;
+        this.generalDependencyContainer = generalDependencyContainer;
 
-        private readonly GeneralDependencyContainer generalDependencyContainer;
+        RecentRomsViewModel = new RecentRomsViewModel(generalDependencyContainer);
 
-        public EmulatorViewModel EmulatorViewModel { get; }
-        public RecentRomsViewModel RecentRomsViewModel { get; }
+        EmulatorViewModel = new EmulatorViewModel(generalDependencyContainer, this, RecentRomsViewModel);
+    }
 
-        public MainViewModel(GeneralDependencyContainer generalDependencyContainer)
-        {
-            this.generalDependencyContainer = generalDependencyContainer;
+    public EmulatorViewModel EmulatorViewModel { get; }
+    public RecentRomsViewModel RecentRomsViewModel { get; }
 
-            RecentRomsViewModel = new(generalDependencyContainer);
+    void IAppExitEventProvider.Register(Action action)
+    {
+        onWindowExit += action;
+    }
 
-            EmulatorViewModel = new(generalDependencyContainer, this, RecentRomsViewModel);
-        }
+    private event Action onWindowExit;
 
 
-        [RelayCommand]
-        private void Exit()
-        {
-            onWindowExit?.Invoke();
-        }
-
+    [RelayCommand]
+    private void Exit()
+    {
+        onWindowExit?.Invoke();
     }
 }

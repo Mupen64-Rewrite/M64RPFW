@@ -1,14 +1,13 @@
-﻿namespace M64RPFW.Services
+﻿namespace M64RPFW.Services;
+
+/// <summary>
+///     The default <see langword="interface" /> for a service that displays dialogs
+/// </summary>
+public interface IDialogService
 {
     /// <summary>
-    /// The default <see langword="interface"/> for a service that displays dialogs
+    ///     Shows an error dialog
     /// </summary>
-    public interface IDialogService
-    {
-        /// <summary>
-        /// Shows an error dialog
-        /// </summary>
-        /// <param name="content">The dialog's content</param>
-        public void ShowError(string content);
-    }
+    /// <param name="content">The dialog's content</param>
+    public void ShowError(string content);
 }

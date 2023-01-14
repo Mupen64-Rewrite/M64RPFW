@@ -1,72 +1,59 @@
-﻿using M64RPFW.Services.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using static M64RPFW.Models.Emulation.API.Mupen64PlusDelegates;
 using static M64RPFW.Models.Emulation.API.Mupen64PlusTypes;
 
-namespace M64RPFW.Models.Emulation.API.Plugins
+namespace M64RPFW.Models.Emulation.API.Plugins;
+
+internal abstract class Plugin : IDisposable
 {
-    internal abstract class Plugin : IDisposable
+    internal Plugin(EmulatorPluginType type, IntPtr handle)
     {
-        internal Plugin(EmulatorPluginType type, IntPtr handle)
+        Type = type;
+        Handle = handle;
+
+        if (TryGetDelegateFromLibrary(Handle, out PluginStartupDelegate? pluginStartup)) PluginStartup = pluginStartup;
+        if (TryGetDelegateFromLibrary(Handle, out PluginShutdownDelegate? pluginShutdown))
+            PluginShutdown = pluginShutdown;
+
+        Debug.Print($"Loaded {Type}");
+    }
+
+    internal IntPtr Handle { get; }
+    internal EmulatorPluginType Type { get; }
+    internal bool IsAttached { get; private set; }
+
+    internal PluginStartupDelegate? PluginStartup { get; }
+    internal PluginShutdownDelegate? PluginShutdown { get; }
+
+    void IDisposable.Dispose()
+    {
+        if (Handle != IntPtr.Zero)
         {
-            Type = type;
-            Handle = handle;
-
-            if (TryGetDelegateFromLibrary<PluginStartupDelegate>(Handle, out PluginStartupDelegate? pluginStartup))
-            {
-                PluginStartup = pluginStartup;
-            }
-            if (TryGetDelegateFromLibrary<PluginShutdownDelegate>(Handle, out PluginShutdownDelegate? pluginShutdown))
-            {
-                PluginShutdown = pluginShutdown;
-            }
-
-            Debug.Print($"Loaded {Type}");
+            NativeLibrary.Free(Handle);
+            Debug.Print($"Freed {Type}");
         }
+    }
 
-        internal IntPtr Handle { get; private set; }
-        internal EmulatorPluginType Type { get; }
-        internal bool IsAttached { get; private set; }
+    internal virtual void Attach(CorePlugin? corePlugin)
+    {
+        IsAttached = true;
 
-        internal PluginStartupDelegate? PluginStartup { get; private set; }
-        internal PluginShutdownDelegate? PluginShutdown { get; private set; }
-
-        internal virtual void Attach(CorePlugin? corePlugin)
+        if (corePlugin != null)
         {
-            IsAttached = true;
-
-            if (corePlugin != null)
-            {
-                PluginStartup?.Invoke(corePlugin.Handle, null, null);
-                corePlugin?.AttachPlugin(Type, Handle);
-            }
+            PluginStartup?.Invoke(corePlugin.Handle, null, null);
+            corePlugin?.AttachPlugin(Type, Handle);
         }
+    }
 
-        internal virtual void Detach(CorePlugin? corePlugin)
+    internal virtual void Detach(CorePlugin? corePlugin)
+    {
+        IsAttached = false;
+
+        if (corePlugin != null)
         {
-            IsAttached = false;
-
-            if (corePlugin != null)
-            {
-                PluginShutdown?.Invoke();
-                corePlugin?.DetachPlugin(Type);
-            }
-        }
-
-        void IDisposable.Dispose()
-        {
-            if (Handle != IntPtr.Zero)
-            {
-                NativeLibrary.Free(Handle);
-                Debug.Print($"Freed {Type}");
-            }
+            PluginShutdown?.Invoke();
+            corePlugin?.DetachPlugin(Type);
         }
     }
 }

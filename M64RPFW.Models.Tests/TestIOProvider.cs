@@ -1,10 +1,9 @@
-﻿namespace M64RPFW.Models.Tests
+﻿namespace M64RPFW.Models.Tests;
+
+internal static class TestIOProvider
 {
-    internal static class TestIOProvider
+    internal static string ToBundledPath(this string fileName)
     {
-        internal static string ToBundledPath(this string fileName)
-        {
-            return Path.Combine("Bundled", fileName);
-        }
+        return Path.Combine("Bundled", fileName);
     }
 }
