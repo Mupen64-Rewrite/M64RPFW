@@ -7,86 +7,86 @@ namespace M64RPFW.Models.Emulation;
 
 public class Emulator
 {
-    private readonly IFilesService filesService;
+    private readonly IFilesService _filesService;
 
-    private Thread? emulatorThread;
-    private DateTime emulatorThreadBeginTime, emulatorThreadEndTime;
-    private bool internalTermination;
+    private Thread? _emulatorThread;
+    private DateTime _emulatorThreadBeginTime, _emulatorThreadEndTime;
+    private bool _internalTermination;
 
-    private PlayModes playMode = PlayModes.Stopped;
+    private PlayModes _playMode = PlayModes.Stopped;
 
     public Emulator(IFilesService filesService)
     {
-        this.filesService = filesService;
+        this._filesService = filesService;
     }
 
     public PlayModes PlayMode
     {
-        get => playMode;
+        get => _playMode;
         set
         {
-            playMode = value;
-            API.SetPlayMode(playMode);
+            _playMode = value;
+            Api.SetPlayMode(_playMode);
             PlayModeChanged?.Invoke();
         }
     }
 
-    public Mupen64PlusAPI? API { get; private set; }
+    public Mupen64PlusApi? Api { get; private set; }
 
     public event Action? PlayModeChanged;
 
     public void Start(Mupen64PlusLaunchParameters mupen64PlusLaunchParameters)
     {
-        API = new Mupen64PlusAPI(filesService);
+        Api = new Mupen64PlusApi(_filesService);
 
-        playMode = PlayModes.Running;
+        _playMode = PlayModes.Running;
         PlayModeChanged?.Invoke();
 
-        emulatorThread = new Thread(EmulatorThreadProc)
+        _emulatorThread = new Thread(EmulatorThreadProc)
         {
             Name = "tEmulatorThread"
         };
 
-        emulatorThread.Start(mupen64PlusLaunchParameters);
+        _emulatorThread.Start(mupen64PlusLaunchParameters);
 
-        emulatorThreadBeginTime = DateTime.Now;
+        _emulatorThreadBeginTime = DateTime.Now;
     }
 
     private void EmulatorThreadProc(object @params)
     {
         var mupen64PlusLaunchParameters = (Mupen64PlusLaunchParameters)@params;
 
-        API.Launch(mupen64PlusLaunchParameters);
+        Api.Launch(mupen64PlusLaunchParameters);
 
-        emulatorThreadEndTime = DateTime.Now;
+        _emulatorThreadEndTime = DateTime.Now;
 
-        if (!internalTermination)
+        if (!_internalTermination)
         {
             // thread killed by m64p
             // we can dispatch onto UI thread only in this case, otherwise we have a deadlock!
-            playMode = PlayModes.Stopped;
+            _playMode = PlayModes.Stopped;
             PlayModeChanged?.Invoke();
         }
 
-        Debug.Print($"Emulator thread exited after {emulatorThreadEndTime - emulatorThreadBeginTime}");
+        Debug.Print($"Emulator thread exited after {_emulatorThreadEndTime - _emulatorThreadBeginTime}");
     }
 
     public void Stop()
     {
-        internalTermination = true;
+        _internalTermination = true;
 
-        API.Dispose();
-        emulatorThread.Join();
+        Api.Dispose();
+        _emulatorThread.Join();
 
-        playMode = PlayModes.Stopped;
+        _playMode = PlayModes.Stopped;
         PlayModeChanged?.Invoke();
 
         Debug.Print("Stopped");
-        internalTermination = false;
+        _internalTermination = false;
     }
 
     public void Reset()
     {
-        API.Reset(true);
+        Api.Reset(true);
     }
 }

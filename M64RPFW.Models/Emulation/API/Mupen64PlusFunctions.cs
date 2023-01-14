@@ -49,8 +49,8 @@ internal static class Mupen64PlusDelegates
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("CoreStartup")]
-    internal delegate EmulatorStatus CoreStartupDelegate(int APIVersion, string ConfigPath, string DataPath,
-        string Context, DebugCallbackDelegate DebugCallback, string context2, IntPtr dummy);
+    internal delegate EmulatorStatus CoreStartupDelegate(int apiVersion, string configPath, string dataPath,
+        string context, DebugCallbackDelegate debugCallback, string context2, IntPtr dummy);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("CoreShutdown")]
@@ -58,111 +58,111 @@ internal static class Mupen64PlusDelegates
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("CoreAttachPlugin")]
-    internal delegate EmulatorStatus CoreAttachPluginDelegate(EmulatorPluginType PluginType, IntPtr PluginLibHandle);
+    internal delegate EmulatorStatus CoreAttachPluginDelegate(EmulatorPluginType pluginType, IntPtr pluginLibHandle);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("CoreDetachPlugin")]
-    internal delegate EmulatorStatus CoreDetachPluginDelegate(EmulatorPluginType PluginType);
+    internal delegate EmulatorStatus CoreDetachPluginDelegate(EmulatorPluginType pluginType);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("ConfigOpenSection")]
-    internal delegate EmulatorStatus ConfigOpenSectionDelegate(string SectionName, ref IntPtr ConfigSectionHandle);
+    internal delegate EmulatorStatus ConfigOpenSectionDelegate(string sectionName, ref IntPtr configSectionHandle);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("ConfigSetParameter")]
-    internal delegate EmulatorStatus ConfigSetParameterIntDelegate(IntPtr ConfigSectionHandle, string ParamName,
-        EmulatorTypes ParamType, ref int ParamValue);
+    internal delegate EmulatorStatus ConfigSetParameterIntDelegate(IntPtr configSectionHandle, string paramName,
+        EmulatorTypes paramType, ref int paramValue);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("ConfigSetParameter")]
-    internal delegate EmulatorStatus ConfigSetParameterStringDelegate(IntPtr ConfigSectionHandle, string ParamName,
-        EmulatorTypes ParamType, StringBuilder ParamValue);
+    internal delegate EmulatorStatus ConfigSetParameterStringDelegate(IntPtr configSectionHandle, string paramName,
+        EmulatorTypes paramType, StringBuilder paramValue);
 
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("ConfigSetParameter")]
-    internal delegate EmulatorStatus ConfigSetParameterBoolDelegate(IntPtr ConfigSectionHandle, string ParamName,
-        EmulatorTypes ParamType, ref bool ParamValue);
+    internal delegate EmulatorStatus ConfigSetParameterBoolDelegate(IntPtr configSectionHandle, string paramName,
+        EmulatorTypes paramType, ref bool paramValue);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("CoreDoCommand")]
-    internal delegate EmulatorStatus CoreDoCommandByteArrayDelegate(EmulatorCommand Command, int ParamInt,
-        byte[] ParamPtr);
+    internal delegate EmulatorStatus CoreDoCommandByteArrayDelegate(EmulatorCommand command, int paramInt,
+        byte[] paramPtr);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("CoreDoCommand")]
-    internal delegate EmulatorStatus CoreDoCommandPointerDelegate(EmulatorCommand Command, int ParamInt,
-        IntPtr ParamPtr);
+    internal delegate EmulatorStatus CoreDoCommandPointerDelegate(EmulatorCommand command, int paramInt,
+        IntPtr paramPtr);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("CoreDoCommand")]
-    internal delegate EmulatorStatus CoreDoCommandRefPointerDelegate(EmulatorCommand Command, ref int ParamInt,
-        IntPtr ParamPtr);
+    internal delegate EmulatorStatus CoreDoCommandRefPointerDelegate(EmulatorCommand command, ref int paramInt,
+        IntPtr paramPtr);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("CoreDoCommand")]
     internal delegate EmulatorStatus
-        CoreDoCommandStringDelegate(EmulatorCommand Command, int ParamInt, string ParamPtr);
+        CoreDoCommandStringDelegate(EmulatorCommand command, int paramInt, string paramPtr);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("CoreDoCommand")]
-    internal delegate EmulatorStatus CoreDoCommandRomHeaderDelegate(EmulatorCommand Command, int ParamInt,
-        ref EmulatorRomHeader ParamPtr);
+    internal delegate EmulatorStatus CoreDoCommandRomHeaderDelegate(EmulatorCommand command, int paramInt,
+        ref EmulatorRomHeader paramPtr);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("CoreDoCommand")]
-    internal delegate EmulatorStatus CoreDoCommandRomSettingsDelegate(EmulatorCommand Command,
-        EmulatorRomSettings ParamInt, ref int ParamPtr);
+    internal delegate EmulatorStatus CoreDoCommandRomSettingsDelegate(EmulatorCommand command,
+        EmulatorRomSettings paramInt, ref int paramPtr);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("CoreDoCommand")]
-    internal delegate EmulatorStatus CoreDoCommandCoreStateQueryDelegate(EmulatorCommand Command,
-        EmulatorCoreParameters ParamInt, int ParamPtr);
+    internal delegate EmulatorStatus CoreDoCommandCoreStateQueryDelegate(EmulatorCommand command,
+        EmulatorCoreParameters paramInt, int paramPtr);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("CoreDoCommand")]
-    internal delegate EmulatorStatus CoreDoCommandCoreStateSetDelegate(EmulatorCommand Command,
-        EmulatorCoreParameters ParamInt, ref int ParamPtr);
+    internal delegate EmulatorStatus CoreDoCommandCoreStateSetDelegate(EmulatorCommand command,
+        EmulatorCoreParameters paramInt, ref int paramPtr);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("CoreDoCommand")]
-    internal delegate EmulatorStatus CoreDoCommandCoreStateSetVideoModeDelegate(EmulatorCommand Command,
-        EmulatorVideoModes ParamInt, IntPtr ParamPtr);
+    internal delegate EmulatorStatus CoreDoCommandCoreStateSetVideoModeDelegate(EmulatorCommand command,
+        EmulatorVideoModes paramInt, IntPtr paramPtr);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("CoreDoCommand")]
-    internal delegate EmulatorStatus CoreDoCommandCoreStateSetRefDelegate(EmulatorCommand Command,
-        EmulatorCoreParameters ParamInt, ref int ParamPtr);
+    internal delegate EmulatorStatus CoreDoCommandCoreStateSetRefDelegate(EmulatorCommand command,
+        EmulatorCoreParameters paramInt, ref int paramPtr);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("CoreDoCommand")]
-    internal delegate EmulatorStatus CoreDoCommandRefIntDelegate(EmulatorCommand Command, int ParamInt,
-        ref int ParamPtr);
+    internal delegate EmulatorStatus CoreDoCommandRefIntDelegate(EmulatorCommand command, int paramInt,
+        ref int paramPtr);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("CoreDoCommand")]
-    internal delegate EmulatorStatus CoreDoCommandFrameCallbackDelegate(EmulatorCommand Command, int ParamInt,
-        FrameCallbackDelegate ParamPtr);
+    internal delegate EmulatorStatus CoreDoCommandFrameCallbackDelegate(EmulatorCommand command, int paramInt,
+        FrameCallbackDelegate paramPtr);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("CoreDoCommand")]
-    internal delegate EmulatorStatus CoreDoCommandVICallbackDelegate(EmulatorCommand Command, int ParamInt,
-        VICallbackDelegate ParamPtr);
+    internal delegate EmulatorStatus CoreDoCommandViCallbackDelegate(EmulatorCommand command, int paramInt,
+        ViCallbackDelegate paramPtr);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("CoreDoCommand")]
-    internal delegate EmulatorStatus CoreDoCommandRenderCallbackDelegate(EmulatorCommand Command, int ParamInt,
-        RenderCallbackDelegate ParamPtr);
+    internal delegate EmulatorStatus CoreDoCommandRenderCallbackDelegate(EmulatorCommand command, int paramInt,
+        RenderCallbackDelegate paramPtr);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("ConfigSetDefaultFloat")]
-    internal delegate EmulatorStatus ConfigSetDefaultFloatDelegate(string ConfigSectionHandle, string ParamName,
-        double ParamValue, string ParamHelp);
+    internal delegate EmulatorStatus ConfigSetDefaultFloatDelegate(string configSectionHandle, string paramName,
+        double paramValue, string paramHelp);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("ConfigSetDefaultString")]
-    internal delegate EmulatorStatus ConfigSetDefaultStringDelegate(string ConfigSectionHandle, string ParamName,
-        string ParamValue, string ParamHelp);
+    internal delegate EmulatorStatus ConfigSetDefaultStringDelegate(string configSectionHandle, string paramName,
+        string paramValue, string paramHelp);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("ConfigSaveFile")]
@@ -176,7 +176,7 @@ internal static class Mupen64PlusDelegates
     internal delegate void FrameCallbackDelegate();
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal delegate void VICallbackDelegate();
+    internal delegate void ViCallbackDelegate();
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void RenderCallbackDelegate();
@@ -185,7 +185,7 @@ internal static class Mupen64PlusDelegates
     internal delegate void StartupCallbackDelegate();
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal delegate void DebugCallbackDelegate(IntPtr Context, int level, string Message);
+    internal delegate void DebugCallbackDelegate(IntPtr context, int level, string message);
 
     #endregion
 
@@ -193,8 +193,8 @@ internal static class Mupen64PlusDelegates
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("PluginStartup")]
-    internal delegate EmulatorStatus PluginStartupDelegate(IntPtr CoreHandle, string Context,
-        DebugCallbackDelegate DebugCallback);
+    internal delegate EmulatorStatus PluginStartupDelegate(IntPtr coreHandle, string context,
+        DebugCallbackDelegate debugCallback);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("PluginShutdown")]
@@ -210,7 +210,7 @@ internal static class Mupen64PlusDelegates
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [LibraryFunction("GetScreenTextureID")]
-    internal delegate int GetScreenTextureIDDelegate();
+    internal delegate int GetScreenTextureIdDelegate();
 
     #endregion
 }

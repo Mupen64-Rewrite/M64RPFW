@@ -2,7 +2,7 @@
 
 namespace M64RPFW.ViewModels.Helpers;
 
-public static class ICommandHelper
+public static class CommandHelper
 {
     public static void NotifyCanExecuteChanged(params IRelayCommand[] commands)
     {

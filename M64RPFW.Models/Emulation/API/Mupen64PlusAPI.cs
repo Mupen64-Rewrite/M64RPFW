@@ -10,11 +10,11 @@ using static M64RPFW.Models.Emulation.API.Mupen64PlusTypes;
 
 namespace M64RPFW.Models.Emulation.API;
 
-public sealed class Mupen64PlusAPI : IDisposable
+public sealed class Mupen64PlusApi : IDisposable
 {
-    public Mupen64PlusAPI(IFilesService filesService)
+    internal Mupen64PlusApi(IFilesService filesService)
     {
-        this.filesService = filesService;
+        this._filesService = filesService;
     }
 
     #region Other
@@ -23,10 +23,10 @@ public sealed class Mupen64PlusAPI : IDisposable
     {
         // this is called on non-emu thread because emu thread is stuck inside m64p
         // so dont do anything but sending close command
-        if (!disposed)
-            while (isBusyInCore)
+        if (!_disposed)
+            while (_isBusyInCore)
                 // send command multiple times to assure it closes :/
-                _ = corePlugin.DoCommandPointer(EmulatorCommand.M64CMD_STOP, 0, IntPtr.Zero);
+                _ = _corePlugin.DoCommandPointer(EmulatorCommand.M64CmdStop, 0, IntPtr.Zero);
     }
 
     #endregion
@@ -34,7 +34,7 @@ public sealed class Mupen64PlusAPI : IDisposable
     private void GetScreenDimensions(out int width, out int height)
     {
         int w = 0, h = 0;
-        videoPlugin.ReadScreen2Res(IntPtr.Zero, ref w, ref h, 0);
+        _videoPlugin.ReadScreen2Res(IntPtr.Zero, ref w, ref h, 0);
         width = w;
         height = h;
     }
@@ -65,7 +65,7 @@ public sealed class Mupen64PlusAPI : IDisposable
 
         var frameBuffer = FrameBuffer;
         int bufferWidth = BufferWidth, bufferHeight = BufferHeight;
-        videoPlugin.ReadScreen2(frameBuffer, ref bufferWidth, ref bufferHeight, 0);
+        _videoPlugin.ReadScreen2(frameBuffer, ref bufferWidth, ref bufferHeight, 0);
         FrameBuffer = frameBuffer;
         BufferWidth = bufferWidth;
         BufferHeight = bufferHeight;
@@ -75,21 +75,21 @@ public sealed class Mupen64PlusAPI : IDisposable
     {
         Debug.Print($"{section} {name} - {value}");
 
-        var _section = IntPtr.Zero;
+        var sectionPtr = IntPtr.Zero;
 
-        _ = corePlugin.ConfigOpenSection(section, ref _section);
+        _ = _corePlugin.ConfigOpenSection(section, ref sectionPtr);
 
         _ = value is int intValue
-            ? corePlugin.ConfigSetParameterInt(_section, name, EmulatorTypes.M64TYPE_INT, ref intValue)
+            ? _corePlugin.ConfigSetParameterInt(sectionPtr, name, EmulatorTypes.M64TypeInt, ref intValue)
             : value is bool boolValue
-                ? corePlugin.ConfigSetParameterBool(_section, name, EmulatorTypes.M64TYPE_BOOL, ref boolValue)
+                ? _corePlugin.ConfigSetParameterBool(sectionPtr, name, EmulatorTypes.M64TypeBool, ref boolValue)
                 : value is string stringValue
-                    ? corePlugin.ConfigSetParameterString(_section, name, EmulatorTypes.M64TYPE_STRING,
+                    ? _corePlugin.ConfigSetParameterString(sectionPtr, name, EmulatorTypes.M64TypeString,
                         new StringBuilder(stringValue))
                     : throw new UnresolvableConfigEntryTypeException(
                         $"Type {value.GetType()} could not be resolved to a type accepted by m64p+");
 
-        if (save) _ = corePlugin.ConfigSaveFile();
+        if (save) _ = _corePlugin.ConfigSaveFile();
     }
 
     private void ApplyConfig(Mupen64PlusConfig config)
@@ -100,7 +100,7 @@ public sealed class Mupen64PlusAPI : IDisposable
             SetSetting(attrib.Section, attrib.Name, item.GetValue(config));
         }
 
-        _ = corePlugin.ConfigSaveFile();
+        _ = _corePlugin.ConfigSaveFile();
     }
 
     /// <summary>
@@ -108,26 +108,26 @@ public sealed class Mupen64PlusAPI : IDisposable
     /// </summary>
     public void Launch(Mupen64PlusLaunchParameters launchParameters)
     {
-        if (isBusyInCore) throw new EmulatorAlreadyRunningException();
-        disposed = false;
+        if (_isBusyInCore) throw new EmulatorAlreadyRunningException();
+        _disposed = false;
 
-        using (corePlugin = new CorePlugin(EmulatorPluginType.M64PLUGIN_CORE,
+        using (_corePlugin = new CorePlugin(EmulatorPluginType.M64PluginCore,
                    NativeLibrary.Load(launchParameters.CoreLibrary.Path)))
-        using (videoPlugin = new VideoPlugin(EmulatorPluginType.M64PLUGIN_GFX,
+        using (_videoPlugin = new VideoPlugin(EmulatorPluginType.M64PluginGfx,
                    NativeLibrary.Load(launchParameters.VideoPlugin.Path)))
-        using (audioPlugin = new AudioPlugin(EmulatorPluginType.M64PLUGIN_AUDIO,
+        using (_audioPlugin = new AudioPlugin(EmulatorPluginType.M64PluginAudio,
                    NativeLibrary.Load(launchParameters.AudioPlugin.Path)))
-        using (inputPlugin = new InputPlugin(EmulatorPluginType.M64PLUGIN_INPUT,
+        using (_inputPlugin = new InputPlugin(EmulatorPluginType.M64PluginInput,
                    NativeLibrary.Load(launchParameters.InputPlugin.Path)))
-        using (rspPlugin = new RspPlugin(EmulatorPluginType.M64PLUGIN_RSP,
+        using (_rspPlugin = new RspPlugin(EmulatorPluginType.M64PluginRsp,
                    NativeLibrary.Load(launchParameters.RspPlugin.Path)))
         {
-            corePlugin.Attach(null);
+            _corePlugin.Attach(null);
 
 
             EmulatorStatus result;
 
-            result = corePlugin.Startup(
+            result = _corePlugin.Startup(
                 0x20001,
                 "",
                 "",
@@ -139,19 +139,19 @@ public sealed class Mupen64PlusAPI : IDisposable
 
             ApplyConfig(launchParameters.Config);
 
-            result = corePlugin.DoCommandPointer(EmulatorCommand.M64CMD_STATE_SET_SLOT, launchParameters.InitialSlot,
+            result = _corePlugin.DoCommandPointer(EmulatorCommand.M64CmdStateSetSlot, launchParameters.InitialSlot,
                 IntPtr.Zero);
 
-            result = corePlugin.DoCommandByteArray(EmulatorCommand.M64CMD_ROM_OPEN, launchParameters.Rom.Length,
+            result = _corePlugin.DoCommandByteArray(EmulatorCommand.M64CmdRomOpen, launchParameters.Rom.Length,
                 launchParameters.Rom);
             var sizeHeader = Marshal.SizeOf(typeof(EmulatorRomHeader));
 
-            videoPlugin.Attach(corePlugin);
-            audioPlugin.Attach(corePlugin);
-            inputPlugin.Attach(corePlugin);
-            rspPlugin.Attach(corePlugin);
+            _videoPlugin.Attach(_corePlugin);
+            _audioPlugin.Attach(_corePlugin);
+            _inputPlugin.Attach(_corePlugin);
+            _rspPlugin.Attach(_corePlugin);
 
-            result = corePlugin.DoCommandFrameCallback(EmulatorCommand.M64CMD_SET_FRAME_CALLBACK, 0, delegate
+            result = _corePlugin.DoCommandFrameCallback(EmulatorCommand.M64CmdSetFrameCallback, 0, delegate
             {
                 Debug.Print("New frame");
                 UpdateFramebuffer();
@@ -159,29 +159,29 @@ public sealed class Mupen64PlusAPI : IDisposable
                 if (IsFrameBufferInitialized) OnFrameBufferUpdate?.Invoke();
             });
 
-            result = corePlugin.DoCommandVICallback(EmulatorCommand.M64CMD_SET_VI_CALLBACK, 0,
-                delegate { OnVIInterrupt?.Invoke(); });
+            result = _corePlugin.DoCommandViCallback(EmulatorCommand.M64CmdSetViCallback, 0,
+                delegate { OnViInterrupt?.Invoke(); });
 
-            result = corePlugin.DoCommandRenderCallback(EmulatorCommand.M64CMD_SET_RENDER_CALLBACK, 0,
+            result = _corePlugin.DoCommandRenderCallback(EmulatorCommand.M64CmdSetRenderCallback, 0,
                 delegate { OnPostRender?.Invoke(); });
 
             var enc = (launchParameters.Config.ScreenWidth << 16) + launchParameters.Config.ScreenHeight;
-            result = corePlugin.DoCommandCoreStateSet(
-                EmulatorCommand.M64CMD_CORE_STATE_SET,
-                EmulatorCoreParameters.M64CORE_VIDEO_SIZE,
+            result = _corePlugin.DoCommandCoreStateSet(
+                EmulatorCommand.M64CmdCoreStateSet,
+                EmulatorCoreParameters.M64CoreVideoSize,
                 ref enc
             );
 
             ExecuteEmulator();
 
-            videoPlugin.Detach(corePlugin);
-            audioPlugin.Detach(corePlugin);
-            inputPlugin.Detach(corePlugin);
-            rspPlugin.Detach(corePlugin);
+            _videoPlugin.Detach(_corePlugin);
+            _audioPlugin.Detach(_corePlugin);
+            _inputPlugin.Detach(_corePlugin);
+            _rspPlugin.Detach(_corePlugin);
 
-            _ = corePlugin.DoCommandPointer(EmulatorCommand.M64CMD_ROM_CLOSE, 0, IntPtr.Zero);
+            _ = _corePlugin.DoCommandPointer(EmulatorCommand.M64CmdRomClose, 0, IntPtr.Zero);
 
-            _ = corePlugin.Shutdown();
+            _ = _corePlugin.Shutdown();
         }
     }
 
@@ -191,12 +191,12 @@ public sealed class Mupen64PlusAPI : IDisposable
     /// </summary>
     private void ExecuteEmulator()
     {
-        isBusyInCore = true;
+        _isBusyInCore = true;
 
-        StartupCallbackDelegate cb = () => m64pStartupComplete.Set();
-        _ = corePlugin.DoCommandPointer(EmulatorCommand.M64CMD_EXECUTE, 0, Marshal.GetFunctionPointerForDelegate(cb));
+        StartupCallbackDelegate cb = () => _m64PStartupComplete.Set();
+        _ = _corePlugin.DoCommandPointer(EmulatorCommand.M64CmdExecute, 0, Marshal.GetFunctionPointerForDelegate(cb));
 
-        isBusyInCore = false;
+        _isBusyInCore = false;
 
         Debug.Print("Escaped core code");
     }
@@ -204,7 +204,7 @@ public sealed class Mupen64PlusAPI : IDisposable
     #region Events
 
     public event Action OnFrameFinish;
-    public event Action OnVIInterrupt;
+    public event Action OnViInterrupt;
     public event Action OnPostRender;
 
     public event Action OnFrameBufferCreate;
@@ -214,23 +214,23 @@ public sealed class Mupen64PlusAPI : IDisposable
 
     #region Private Fields
 
-    private bool disposed;
-    private readonly ManualResetEvent m64pStartupComplete = new(false);
-    private readonly Task? m64pEmulator;
-    private readonly IFilesService filesService;
-    private volatile bool isBusyInCore;
+    private bool _disposed;
+    private readonly ManualResetEvent _m64PStartupComplete = new(false);
+    private readonly Task? _m64PEmulator;
+    private readonly IFilesService _filesService;
+    private volatile bool _isBusyInCore;
 
-    private CorePlugin corePlugin;
-    private VideoPlugin videoPlugin;
-    private AudioPlugin audioPlugin;
-    private InputPlugin inputPlugin;
-    private RspPlugin rspPlugin;
+    private CorePlugin _corePlugin;
+    private VideoPlugin _videoPlugin;
+    private AudioPlugin _audioPlugin;
+    private InputPlugin _inputPlugin;
+    private RspPlugin _rspPlugin;
 
     #endregion
 
     #region Properties
 
-    public bool IsEmulatorRunning => isBusyInCore;
+    public bool IsEmulatorRunning => _isBusyInCore;
     public bool IsFrameBufferInitialized => FrameBuffer != null && BufferWidth != 0 && BufferHeight != 0;
     public int[]? FrameBuffer { get; private set; }
     public int BufferWidth { get; private set; }
@@ -242,58 +242,58 @@ public sealed class Mupen64PlusAPI : IDisposable
 
     public void SetStateSlot(int slot)
     {
-        _ = corePlugin.DoCommandPointer(EmulatorCommand.M64CMD_STATE_SET_SLOT, slot, IntPtr.Zero);
+        _ = _corePlugin.DoCommandPointer(EmulatorCommand.M64CmdStateSetSlot, slot, IntPtr.Zero);
     }
 
-    public EmulatorRomHeader GetRomHeader(EmulatorRomHeader _rom_header)
+    public EmulatorRomHeader GetRomHeader(EmulatorRomHeader romHeader)
     {
         var size = Marshal.SizeOf(typeof(EmulatorRomHeader));
 
-        _ = corePlugin.DoCommandRomHeader(EmulatorCommand.M64CMD_ROM_GET_HEADER, size, ref _rom_header);
+        _ = _corePlugin.DoCommandRomHeader(EmulatorCommand.M64CmdRomGetHeader, size, ref romHeader);
 
-        return _rom_header;
+        return romHeader;
     }
 
-    public EmulatorRomSettings GetRomSettings(EmulatorRomSettings _rom_settings)
+    public EmulatorRomSettings GetRomSettings(EmulatorRomSettings romSettings)
     {
         var size = Marshal.SizeOf(typeof(EmulatorRomSettings));
 
-        _ = corePlugin.DoCommandRomSettings(EmulatorCommand.M64CMD_ROM_GET_SETTINGS, _rom_settings, ref size);
+        _ = _corePlugin.DoCommandRomSettings(EmulatorCommand.M64CmdRomGetSettings, romSettings, ref size);
 
-        return _rom_settings;
+        return romSettings;
     }
 
     public void LoadState(int slot)
     {
-        _ = corePlugin.DoCommandPointer(EmulatorCommand.M64CMD_STATE_LOAD, slot, IntPtr.Zero);
+        _ = _corePlugin.DoCommandPointer(EmulatorCommand.M64CmdStateLoad, slot, IntPtr.Zero);
     }
 
     public void SaveState(int slot)
     {
-        _ = corePlugin.DoCommandPointer(EmulatorCommand.M64CMD_STATE_SAVE, slot, IntPtr.Zero);
+        _ = _corePlugin.DoCommandPointer(EmulatorCommand.M64CmdStateSave, slot, IntPtr.Zero);
     }
 
     public void LoadState(string filePath)
     {
-        _ = corePlugin.DoCommandString(EmulatorCommand.M64CMD_STATE_LOAD, 0, filePath);
+        _ = _corePlugin.DoCommandString(EmulatorCommand.M64CmdStateLoad, 0, filePath);
     }
 
     public void SaveState(string filePath, SaveStateTypes type = SaveStateTypes.Mupen64Plus)
     {
-        _ = corePlugin.DoCommandString(EmulatorCommand.M64CMD_STATE_SAVE, (int)type, filePath);
+        _ = _corePlugin.DoCommandString(EmulatorCommand.M64CmdStateSave, (int)type, filePath);
     }
 
     public void Screenshot()
     {
-        _ = corePlugin.DoCommandPointer(EmulatorCommand.M64CMD_TAKE_NEXT_SCREENSHOT, 0, IntPtr.Zero);
+        _ = _corePlugin.DoCommandPointer(EmulatorCommand.M64CmdTakeNextScreenshot, 0, IntPtr.Zero);
     }
 
     public void SetPlayMode(PlayModes playMode)
     {
         var dummy = (int)playMode;
-        _ = corePlugin.DoCommandCoreStateSet(
-            EmulatorCommand.M64CMD_CORE_STATE_SET,
-            EmulatorCoreParameters.M64CORE_EMU_STATE,
+        _ = _corePlugin.DoCommandCoreStateSet(
+            EmulatorCommand.M64CmdCoreStateSet,
+            EmulatorCoreParameters.M64CoreEmuState,
             ref dummy
         );
     }
@@ -301,9 +301,9 @@ public sealed class Mupen64PlusAPI : IDisposable
     public void SetSoundMode(bool silence)
     {
         var dummy = silence ? 1 : 0;
-        _ = corePlugin.DoCommandCoreStateSet(
-            EmulatorCommand.M64CMD_CORE_STATE_SET,
-            EmulatorCoreParameters.M64CORE_AUDIO_MUTE,
+        _ = _corePlugin.DoCommandCoreStateSet(
+            EmulatorCommand.M64CmdCoreStateSet,
+            EmulatorCoreParameters.M64CoreAudioMute,
             ref dummy
         );
     }
@@ -315,14 +315,14 @@ public sealed class Mupen64PlusAPI : IDisposable
 
     public void Reset(bool soft)
     {
-        _ = corePlugin.DoCommandPointer(EmulatorCommand.M64CMD_RESET, soft ? 0 : 1, IntPtr.Zero);
+        _ = _corePlugin.DoCommandPointer(EmulatorCommand.M64CmdReset, soft ? 0 : 1, IntPtr.Zero);
     }
 
     public void SetSpeedFactor(int speed)
     {
-        _ = corePlugin.DoCommandCoreStateSet(
-            EmulatorCommand.M64CMD_CORE_STATE_SET,
-            EmulatorCoreParameters.M64CORE_SPEED_FACTOR,
+        _ = _corePlugin.DoCommandCoreStateSet(
+            EmulatorCommand.M64CmdCoreStateSet,
+            EmulatorCoreParameters.M64CoreSpeedFactor,
             ref speed
         );
     }
@@ -330,16 +330,16 @@ public sealed class Mupen64PlusAPI : IDisposable
     public void SetVideoMode(EmulatorVideoModes mode)
     {
         var dummy = (int)mode;
-        _ = corePlugin.DoCommandCoreStateSet(
-            EmulatorCommand.M64CMD_CORE_STATE_SET,
-            EmulatorCoreParameters.M64CORE_VIDEO_MODE,
+        _ = _corePlugin.DoCommandCoreStateSet(
+            EmulatorCommand.M64CmdCoreStateSet,
+            EmulatorCoreParameters.M64CoreVideoMode,
             ref dummy);
     }
 
 
     public void FrameAdvance()
     {
-        _ = corePlugin.DoCommandPointer(EmulatorCommand.M64CMD_ADVANCE_FRAME, 0, IntPtr.Zero);
+        _ = _corePlugin.DoCommandPointer(EmulatorCommand.M64CmdAdvanceFrame, 0, IntPtr.Zero);
     }
 
     #endregion

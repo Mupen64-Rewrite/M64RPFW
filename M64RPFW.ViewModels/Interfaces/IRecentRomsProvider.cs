@@ -17,6 +17,6 @@ public interface IRecentRomsProvider
     /// <summary>
     ///     Adds a rom to the <see cref="ObservableCollection{RomViewModel}" />
     /// </summary>
-    /// <param name="Rom">The rom to be added</param>
-    public void Add(RomViewModel Rom);
+    /// <param name="rom">The rom to be added</param>
+    public void Add(RomViewModel rom);
 }

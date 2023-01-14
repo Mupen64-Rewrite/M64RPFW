@@ -5,11 +5,11 @@ namespace M64RPFW.ViewModels;
 
 public class RomViewModel : ObservableObject
 {
-    private readonly Rom rom;
+    private readonly Rom _rom;
 
     public RomViewModel(byte[] data, string path)
     {
-        rom = new Rom(data);
+        _rom = new Rom(data);
         Path = path;
 
         OnPropertyChanged(); // just notify that this entire vm changed
@@ -17,19 +17,19 @@ public class RomViewModel : ObservableObject
 
     public string Path { get; }
 
-    public byte[] RawData => rom.RawData;
-    public bool IsValid => rom.IsValid;
-    public bool IsBigEndian => rom.IsBigEndian;
-    public string InternalName => rom.InternalName;
-    public string FriendlyName => rom.FriendlyName;
-    public uint PrimaryCRC => rom.PrimaryCRC;
-    public uint SecondaryCRC => rom.SecondaryCRC;
-    public uint MediaFormat => rom.MediaFormat;
-    public byte CountryCode => rom.CountryCode;
-    public byte Version => rom.Version;
+    public byte[] RawData => _rom.RawData;
+    public bool IsValid => _rom.IsValid;
+    public bool IsBigEndian => _rom.IsBigEndian;
+    public string InternalName => _rom.InternalName;
+    public string FriendlyName => _rom.FriendlyName;
+    public uint PrimaryCrc => _rom.PrimaryCrc;
+    public uint SecondaryCrc => _rom.SecondaryCrc;
+    public uint MediaFormat => _rom.MediaFormat;
+    public byte CountryCode => _rom.CountryCode;
+    public byte Version => _rom.Version;
 
     public override string ToString()
     {
-        return rom.FriendlyName;
+        return _rom.FriendlyName;
     }
 }

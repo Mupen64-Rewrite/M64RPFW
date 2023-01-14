@@ -37,15 +37,15 @@
                      VerticalAlignment="Center" TextAlignment="Left" />
 
             <TextBlock Grid.Row="1" Grid.Column="0" Margin="{StaticResource SmallItemMargin}"
-                       Text="{extbin:LocalizationBinding PrimaryCRC}" VerticalAlignment="Center" TextAlignment="Left" />
+                       Text="{extbin:LocalizationBinding PrimaryCrc}" VerticalAlignment="Center" TextAlignment="Left" />
             <TextBox Grid.Row="1" Grid.Column="1" Margin="{StaticResource SmallItemMargin}" IsReadOnly="True"
-                     Text="{Binding PrimaryCRC, Converter={StaticResource UnsignedIntegerToHexadecimalStringConverter}, Mode=OneWay}"
+                     Text="{Binding PrimaryCrc, Converter={StaticResource UnsignedIntegerToHexadecimalStringConverter}, Mode=OneWay}"
                      VerticalAlignment="Center" TextAlignment="Left" />
 
             <TextBlock Grid.Row="2" Grid.Column="0" Margin="{StaticResource SmallItemMargin}"
-                       Text="{extbin:LocalizationBinding SecondaryCRC}" VerticalAlignment="Center" TextAlignment="Left" />
+                       Text="{extbin:LocalizationBinding SecondaryCrc}" VerticalAlignment="Center" TextAlignment="Left" />
             <TextBox Grid.Row="2" Grid.Column="1" Margin="{StaticResource SmallItemMargin}" IsReadOnly="True"
-                     Text="{Binding SecondaryCRC, Converter={StaticResource UnsignedIntegerToHexadecimalStringConverter}, Mode=OneWay}"
+                     Text="{Binding SecondaryCrc, Converter={StaticResource UnsignedIntegerToHexadecimalStringConverter}, Mode=OneWay}"
                      VerticalAlignment="Center" TextAlignment="Left" />
 
             <TextBlock Grid.Row="3" Grid.Column="0" Margin="{StaticResource SmallItemMargin}"

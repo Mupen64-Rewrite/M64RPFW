@@ -13,12 +13,12 @@ internal class VideoPlugin : Plugin
 
         var funcPtr = GetProcAddress(handle, "GetScreenTextureID");
         if (funcPtr != IntPtr.Zero)
-            GetScreenTextureID =
-                (GetScreenTextureIDDelegate)Marshal.GetDelegateForFunctionPointer(funcPtr,
-                    typeof(GetScreenTextureIDDelegate));
+            GetScreenTextureId =
+                (GetScreenTextureIdDelegate)Marshal.GetDelegateForFunctionPointer(funcPtr,
+                    typeof(GetScreenTextureIdDelegate));
     }
 
     internal ReadScreen2Delegate ReadScreen2 { get; }
     internal ReadScreen2ResDelegate ReadScreen2Res { get; }
-    internal GetScreenTextureIDDelegate GetScreenTextureID { get; }
+    internal GetScreenTextureIdDelegate GetScreenTextureId { get; }
 }

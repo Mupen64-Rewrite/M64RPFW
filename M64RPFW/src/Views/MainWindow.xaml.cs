@@ -38,49 +38,49 @@ public partial class MainWindow :
     IBitmapDrawingService,
     IDispatcherService
 {
-    private const string appSettingsPath = "appsettings.json";
-    private readonly AppSettings appSettings;
-    private readonly GeneralDependencyContainer generalDependencyContainer;
+    private const string AppSettingsPath = "appsettings.json";
+    private readonly AppSettings _appSettings;
+    private readonly GeneralDependencyContainer _generalDependencyContainer;
 
-    private readonly MainViewModel mainViewModel;
+    private readonly MainViewModel _mainViewModel;
 
-    private SettingsWindow? settingsWindow;
-    private WriteableBitmap writeableBitmap;
+    private SettingsWindow? _settingsWindow;
+    private WriteableBitmap _writeableBitmap;
 
     public MainWindow()
     {
         LocalizationService = this;
 
         // todo: move appsettings logic to vm
-        if (!File.Exists(appSettingsPath))
+        if (!File.Exists(AppSettingsPath))
         {
             // create settings
-            appSettings = new AppSettings();
+            _appSettings = new AppSettings();
             Save();
         }
         else
         {
-            appSettings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(appSettingsPath));
+            _appSettings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(AppSettingsPath));
         }
 
-        AppSettings = appSettings;
+        AppSettings = _appSettings;
 
         InitializeComponent();
 
         (this as ILocalizationService).SetLocale((this as ISettingsService).Get<string>("Culture"));
         (this as IThemeService).Set(Get<string>("Theme"));
 
-        generalDependencyContainer =
+        _generalDependencyContainer =
             new GeneralDependencyContainer(this, this, this, this, this, this, new FilesService());
 
-        mainViewModel = new MainViewModel(generalDependencyContainer);
+        _mainViewModel = new MainViewModel(_generalDependencyContainer);
 
-        DataContext = mainViewModel;
+        DataContext = _mainViewModel;
     }
 
     internal static AppSettings AppSettings { get; private set; }
     internal static ILocalizationService LocalizationService { get; private set; }
-    bool IBitmapDrawingService.IsReady => writeableBitmap != null;
+    bool IBitmapDrawingService.IsReady => _writeableBitmap != null;
 
     #region Service Implementations
 
@@ -121,25 +121,25 @@ public partial class MainWindow :
 
     public T Get<T>(string key)
     {
-        var prop = appSettings.GetType().GetProperty(key);
+        var prop = _appSettings.GetType().GetProperty(key);
         if (prop == null) throw new Exception($"Could not find property {key}");
-        var val = (T)prop.GetValue(appSettings);
+        var val = (T)prop.GetValue(_appSettings);
         if (val == null) throw new Exception($"Could not get property value {key}");
         return val;
     }
 
     public void Set<T>(string key, T value, bool saveAfter = false)
     {
-        var prop = appSettings.GetType().GetProperty(key);
-        prop.SetValue(appSettings, value);
+        var prop = _appSettings.GetType().GetProperty(key);
+        prop.SetValue(_appSettings, value);
         if (saveAfter) Save();
     }
 
     public void Save()
     {
-        var json = JsonSerializer.Serialize(appSettings, typeof(AppSettings),
+        var json = JsonSerializer.Serialize(_appSettings, typeof(AppSettings),
             new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(appSettingsPath, json);
+        File.WriteAllText(AppSettingsPath, json);
     }
 
     public string GetString(string key)
@@ -151,9 +151,9 @@ public partial class MainWindow :
     {
         Application.Current.Dispatcher.Invoke(delegate
         {
-            writeableBitmap = new WriteableBitmap(width, height, VisualTreeHelper.GetDpi(this).PixelsPerInchX,
+            _writeableBitmap = new WriteableBitmap(width, height, VisualTreeHelper.GetDpi(this).PixelsPerInchX,
                 VisualTreeHelper.GetDpi(this).PixelsPerInchY, PixelFormats.Cmyk32, null);
-            Main_Image.Source = writeableBitmap;
+            Main_Image.Source = _writeableBitmap;
         });
     }
 
@@ -161,7 +161,7 @@ public partial class MainWindow :
     {
         Application.Current.Dispatcher.Invoke(delegate
         {
-            writeableBitmap.WritePixels(new Int32Rect(0, 0, width, height), buffer, width * sizeof(int), 0);
+            _writeableBitmap.WritePixels(new Int32Rect(0, 0, width, height), buffer, width * sizeof(int), 0);
         });
     }
 
@@ -178,17 +178,17 @@ public partial class MainWindow :
     private void ShowSettingsWindow()
     {
         // store reference and check against it being null because WPF accelerators are a dick and eat child window's events
-        if (settingsWindow != null) return;
-        settingsWindow = new SettingsWindow { DataContext = new SettingsViewModel(generalDependencyContainer) };
-        _ = settingsWindow.ShowDialog();
-        settingsWindow = null; // this is okay, because ShowDialog() blocks
+        if (_settingsWindow != null) return;
+        _settingsWindow = new SettingsWindow { DataContext = new SettingsViewModel(_generalDependencyContainer) };
+        _ = _settingsWindow.ShowDialog();
+        _settingsWindow = null; // this is okay, because ShowDialog() blocks
     }
 
     [RelayCommand]
     private void ShowRomInspectionWindow(object dataContext)
     {
-        RomInspectionWindow RomInspectionWindow = new() { DataContext = dataContext };
-        RomInspectionWindow.Show();
+        RomInspectionWindow romInspectionWindow = new() { DataContext = dataContext };
+        romInspectionWindow.Show();
     }
 
     [RelayCommand]
@@ -200,7 +200,7 @@ public partial class MainWindow :
     [RelayCommand]
     private void AtExit()
     {
-        mainViewModel.ExitCommand.ExecuteIfPossible();
+        _mainViewModel.ExitCommand.ExecuteIfPossible();
         Save();
     }
 

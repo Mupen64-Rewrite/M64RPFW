@@ -6,20 +6,20 @@ public static class Mupen64PlusTypes
 {
     public enum ConsoleMemorySections : uint
     {
-        RDRAM = 1,
-        PI_REG,
-        SI_REG,
-        VI_REG,
-        RI_REG,
-        AI_REG,
+        Rdram = 1,
+        PiReg,
+        SiReg,
+        ViReg,
+        RiReg,
+        AiReg,
 
-        EEPRom = 100,
-        MEMPAK1,
-        MEMPAK2,
-        MEMPAK3,
-        MEMPAK4,
+        EepRom = 100,
+        Mempak1,
+        Mempak2,
+        Mempak3,
+        Mempak4,
 
-        THE_Rom
+        TheRom
     }
 
     public enum CoreTypes
@@ -37,125 +37,125 @@ public static class Mupen64PlusTypes
 
     public enum EmulatorCommand
     {
-        M64CMD_NOP = 0,
-        M64CMD_ROM_OPEN,
-        M64CMD_ROM_CLOSE,
-        M64CMD_ROM_GET_HEADER,
-        M64CMD_ROM_GET_SETTINGS,
-        M64CMD_EXECUTE,
-        M64CMD_STOP,
-        M64CMD_PAUSE,
-        M64CMD_RESUME,
-        M64CMD_CORE_STATE_QUERY,
-        M64CMD_STATE_LOAD,
-        M64CMD_STATE_SAVE,
-        M64CMD_STATE_SET_SLOT,
-        M64CMD_SEND_SDL_KEYDOWN,
-        M64CMD_SEND_SDL_KEYUP,
-        M64CMD_SET_FRAME_CALLBACK,
-        M64CMD_TAKE_NEXT_SCREENSHOT,
-        M64CMD_CORE_STATE_SET,
-        M64CMD_READ_SCREEN,
-        M64CMD_RESET,
-        M64CMD_ADVANCE_FRAME,
-        M64CMD_SET_VI_CALLBACK,
-        M64CMD_SET_RENDER_CALLBACK
+        M64CmdNop = 0,
+        M64CmdRomOpen,
+        M64CmdRomClose,
+        M64CmdRomGetHeader,
+        M64CmdRomGetSettings,
+        M64CmdExecute,
+        M64CmdStop,
+        M64CmdPause,
+        M64CmdResume,
+        M64CmdCoreStateQuery,
+        M64CmdStateLoad,
+        M64CmdStateSave,
+        M64CmdStateSetSlot,
+        M64CmdSendSdlKeydown,
+        M64CmdSendSdlKeyup,
+        M64CmdSetFrameCallback,
+        M64CmdTakeNextScreenshot,
+        M64CmdCoreStateSet,
+        M64CmdReadScreen,
+        M64CmdReset,
+        M64CmdAdvanceFrame,
+        M64CmdSetViCallback,
+        M64CmdSetRenderCallback
     }
 
     public enum EmulatorCoreParameters
     {
-        M64CORE_EMU_STATE = 1,
-        M64CORE_VIDEO_MODE,
-        M64CORE_SAVESTATE_SLOT,
-        M64CORE_SPEED_FACTOR,
-        M64CORE_SPEED_LIMITER,
-        M64CORE_VIDEO_SIZE,
-        M64CORE_AUDIO_VOLUME,
-        M64CORE_AUDIO_MUTE,
-        M64CORE_INPUT_GAMESHARK,
-        M64CORE_STATE_LOADCOMPLETE,
-        M64CORE_STATE_SAVECOMPLETE
+        M64CoreEmuState = 1,
+        M64CoreVideoMode,
+        M64CoreSavestateSlot,
+        M64CoreSpeedFactor,
+        M64CoreSpeedLimiter,
+        M64CoreVideoSize,
+        M64CoreAudioVolume,
+        M64CoreAudioMute,
+        M64CoreInputGameshark,
+        M64CoreStateLoadcomplete,
+        M64CoreStateSavecomplete
     }
 
-    public enum EmulatorGLAttributes
+    public enum EmulatorGlAttributes
     {
-        M64P_GL_DOUBLEBUFFER = 1,
-        M64P_GL_BUFFER_SIZE,
-        M64P_GL_DEPTH_SIZE,
-        M64P_GL_RED_SIZE,
-        M64P_GL_GREEN_SIZE,
-        M64P_GL_BLUE_SIZE,
-        M64P_GL_ALPHA_SIZE,
-        M64P_GL_SWAP_CONTROL,
-        M64P_GL_MULTISAMPLEBUFFERS,
-        M64P_GL_MULTISAMPLESAMPLES,
-        M64P_GL_CONTEXT_MAJOR_VERSION,
-        M64P_GL_CONTEXT_MINOR_VERSION,
-        M64P_GL_CONTEXT_PROFILE_MASK
+        M64PGlDoublebuffer = 1,
+        M64PGlBufferSize,
+        M64PGlDepthSize,
+        M64PGlRedSize,
+        M64PGlGreenSize,
+        M64PGlBlueSize,
+        M64PGlAlphaSize,
+        M64PGlSwapControl,
+        M64PGlMultisamplebuffers,
+        M64PGlMultisamplesamples,
+        M64PGlContextMajorVersion,
+        M64PGlContextMinorVersion,
+        M64PGlContextProfileMask
     }
 
     public enum EmulatorPluginType
     {
-        M64PLUGIN_NULL = 0,
-        M64PLUGIN_RSP = 1,
-        M64PLUGIN_GFX,
-        M64PLUGIN_AUDIO,
-        M64PLUGIN_INPUT,
-        M64PLUGIN_CORE
+        M64PluginNull = 0,
+        M64PluginRsp = 1,
+        M64PluginGfx,
+        M64PluginAudio,
+        M64PluginInput,
+        M64PluginCore
     }
 
 
     public enum EmulatorStates
     {
-        M64EMU_STOPPED = 1,
-        M64EMU_RUNNING,
-        M64EMU_PAUSED
+        M64EmuStopped = 1,
+        M64EmuRunning,
+        M64EmuPaused
     }
 
     public enum EmulatorStatus
     {
-        M64ERR_SUCCESS = 0,
-        M64ERR_NOT_INIT, /* Function is disallowed before InitMupen64Plus() is called */
-        M64ERR_ALREADY_INIT, /* InitMupen64Plus() was called twice */
-        M64ERR_INCOMPATIBLE, /* API versions between components are incompatible */
-        M64ERR_INPUT_ASSERT, /* Invalid parameters for function call, such as ParamValue=NULL for GetCoreParameter() */
-        M64ERR_INPUT_INVALID, /* Invalid input data, such as ParamValue="maybe" for SetCoreParameter() to set a BOOL-type value */
-        M64ERR_INPUT_NOT_FOUND, /* The input parameter(s) specified a particular item which was not found */
-        M64ERR_NO_MEMORY, /* Memory allocation failed */
-        M64ERR_FILES, /* Error opening, creating, reading, or writing to a file */
-        M64ERR_public, /* public error (bug) */
-        M64ERR_INVALID_STATE, /* Current program state does not allow operation */
-        M64ERR_PLUGIN_FAIL, /* A plugin function returned a fatal error */
-        M64ERR_SYSTEM_FAIL, /* A system function call, such as an SDL or file operation, failed */
-        M64ERR_UNSUPPORTED, /* Function call is not supported (ie, core not built with debugger) */
-        M64ERR_WRONG_TYPE /* A given input type parameter cannot be used for desired operation */
+        M64ErrSuccess = 0,
+        M64ErrNotInit, /* Function is disallowed before InitMupen64Plus() is called */
+        M64ErrAlreadyInit, /* InitMupen64Plus() was called twice */
+        M64ErrIncompatible, /* API versions between components are incompatible */
+        M64ErrInputAssert, /* Invalid parameters for function call, such as ParamValue=NULL for GetCoreParameter() */
+        M64ErrInputInvalid, /* Invalid input data, such as ParamValue="maybe" for SetCoreParameter() to set a BOOL-type value */
+        M64ErrInputNotFound, /* The input parameter(s) specified a particular item which was not found */
+        M64ErrNoMemory, /* Memory allocation failed */
+        M64ErrFiles, /* Error opening, creating, reading, or writing to a file */
+        M64ErrPublic, /* public error (bug) */
+        M64ErrInvalidState, /* Current program state does not allow operation */
+        M64ErrPluginFail, /* A plugin function returned a fatal error */
+        M64ErrSystemFail, /* A system function call, such as an SDL or file operation, failed */
+        M64ErrUnsupported, /* Function call is not supported (ie, core not built with debugger) */
+        M64ErrWrongType /* A given input type parameter cannot be used for desired operation */
     }
 
     public enum EmulatorSystemTypes
     {
-        SYSTEM_NTSC = 0,
-        SYSTEM_PAL,
-        SYSTEM_MPAL
+        SystemNtsc = 0,
+        SystemPal,
+        SystemMpal
     }
 
     public enum EmulatorTypes
     {
-        M64TYPE_INT = 1,
-        M64TYPE_FLOAT,
-        M64TYPE_BOOL,
-        M64TYPE_STRING
+        M64TypeInt = 1,
+        M64TypeFloat,
+        M64TypeBool,
+        M64TypeString
     }
 
     public enum EmulatorVideoFlags
     {
-        M64VIDEOFLAG_SUPPORT_RESIZING = 1
+        M64VideoflagSupportResizing = 1
     }
 
     public enum EmulatorVideoModes
     {
-        M64VIDEO_NONE = 1,
-        M64VIDEO_WINDOWED,
-        M64VIDEO_FULLSCREEN
+        M64VideoNone = 1,
+        M64VideoWindowed,
+        M64VideoFullscreen
     }
 
     public enum PlayModes
@@ -219,8 +219,8 @@ public static class Mupen64PlusTypes
 
     public struct EmulatorSize
     {
-        public uint uiWidth;
-        public uint uiHeight;
+        public uint UiWidth;
+        public uint UiHeight;
     }
 
     public unsafe struct EmulatorVideoExtensionFunctions
@@ -232,13 +232,13 @@ public static class Mupen64PlusTypes
         public delegate* unmanaged[Cdecl]<EmulatorSize, int*, int*, EmulatorStatus> VidExtFuncListRates;
         public delegate* unmanaged[Cdecl]<int, int, int, int, int, EmulatorStatus> VidExtFuncSetMode;
         public delegate* unmanaged[Cdecl]<int, int, int, int, int, int, EmulatorStatus> VidExtFuncSetModeWithRate;
-        public delegate* unmanaged[Cdecl]<char*, delegate* unmanaged<void>> VidExtFuncGLGetProc;
-        public delegate* unmanaged[Cdecl]<EmulatorGLAttributes, int, EmulatorStatus> VidExtFuncGLSetAttr;
-        public delegate* unmanaged[Cdecl]<EmulatorGLAttributes, int*, EmulatorStatus> VidExtFuncGLGetAttr;
-        public delegate* unmanaged[Cdecl]<EmulatorStatus> VidExtFuncGLSwapBuf;
+        public delegate* unmanaged[Cdecl]<char*, delegate* unmanaged<void>> VidExtFuncGlGetProc;
+        public delegate* unmanaged[Cdecl]<EmulatorGlAttributes, int, EmulatorStatus> VidExtFuncGlSetAttr;
+        public delegate* unmanaged[Cdecl]<EmulatorGlAttributes, int*, EmulatorStatus> VidExtFuncGlGetAttr;
+        public delegate* unmanaged[Cdecl]<EmulatorStatus> VidExtFuncGlSwapBuf;
         public delegate* unmanaged[Cdecl]<char*, EmulatorStatus> VidExtFuncSetCaption;
-        public delegate* unmanaged[Cdecl]<EmulatorStatus> VidExtFuncToggleFS;
+        public delegate* unmanaged[Cdecl]<EmulatorStatus> VidExtFuncToggleFs;
         public delegate* unmanaged[Cdecl]<int, int, EmulatorStatus> VidExtFuncResizeWindow;
-        public delegate* unmanaged[Cdecl]<uint> VidExtFuncGLGetDefaultFramebuffer;
+        public delegate* unmanaged[Cdecl]<uint> VidExtFuncGlGetDefaultFramebuffer;
     }
 }

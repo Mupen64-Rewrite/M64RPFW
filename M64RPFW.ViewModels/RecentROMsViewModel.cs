@@ -8,13 +8,13 @@ namespace M64RPFW.ViewModels;
 
 public partial class RecentRomsViewModel : ObservableObject, IRecentRomsProvider
 {
-    private readonly GeneralDependencyContainer generalDependencyContainer;
+    private readonly GeneralDependencyContainer _generalDependencyContainer;
 
-    [ObservableProperty] private ObservableCollection<RomViewModel> recentRoms = new();
+    [ObservableProperty] private ObservableCollection<RomViewModel> _recentRoms = new();
 
     internal RecentRomsViewModel(GeneralDependencyContainer generalDependencyContainer)
     {
-        this.generalDependencyContainer = generalDependencyContainer;
+        this._generalDependencyContainer = generalDependencyContainer;
 
         if (generalDependencyContainer.SettingsService.Get<string[]>("RecentRomPaths") == null)
             generalDependencyContainer.SettingsService.Set("RecentRomPaths", Array.Empty<string>());
@@ -23,8 +23,8 @@ public partial class RecentRomsViewModel : ObservableObject, IRecentRomsProvider
                      .ToList())
             try
             {
-                RomViewModel Rom = new(File.ReadAllBytes(recentRomPath), recentRomPath);
-                Add(Rom);
+                RomViewModel rom = new(File.ReadAllBytes(recentRomPath), recentRomPath);
+                Add(rom);
             }
             catch
             {
@@ -34,28 +34,28 @@ public partial class RecentRomsViewModel : ObservableObject, IRecentRomsProvider
 
     ObservableCollection<RomViewModel> IRecentRomsProvider.Get()
     {
-        return recentRoms;
+        return _recentRoms;
     }
 
-    public void Add(RomViewModel Rom)
+    public void Add(RomViewModel rom)
     {
         // sanity checks
-        if (!Rom.IsValid) return;
+        if (!rom.IsValid) return;
 
         // don't add the Rom if any duplicates are found
-        if (recentRoms.Contains(Rom)) return;
+        if (_recentRoms.Contains(rom)) return;
 
-        foreach (var _ in recentRoms.Where(item => item.Path == Rom.Path).Select(item => new { })) return;
+        foreach (var _ in _recentRoms.Where(item => item.Path == rom.Path).Select(item => new { })) return;
 
-        recentRoms.Add(Rom);
+        _recentRoms.Add(rom);
 
         RegenerateRecentRomPathsSetting();
     }
 
     [RelayCommand]
-    private void RemoveRecentRom(RomViewModel Rom)
+    private void RemoveRecentRom(RomViewModel rom)
     {
-        _ = recentRoms.Remove(Rom);
+        _ = _recentRoms.Remove(rom);
         RegenerateRecentRomPathsSetting();
     }
 
@@ -63,20 +63,20 @@ public partial class RecentRomsViewModel : ObservableObject, IRecentRomsProvider
     {
         // recreate recent Rom list in settings
 
-        generalDependencyContainer.SettingsService.Set("RecentRomPaths", Array.Empty<string>());
+        _generalDependencyContainer.SettingsService.Set("RecentRomPaths", Array.Empty<string>());
 
-        foreach (var item in recentRoms)
+        foreach (var item in _recentRoms)
         {
-            var paths = generalDependencyContainer.SettingsService.Get<string[]>("RecentRomPaths").ToList();
+            var paths = _generalDependencyContainer.SettingsService.Get<string[]>("RecentRomPaths").ToList();
             paths.Add(item.Path);
-            generalDependencyContainer.SettingsService.Set("RecentRomPaths", paths.ToArray());
+            _generalDependencyContainer.SettingsService.Set("RecentRomPaths", paths.ToArray());
         }
 
-        generalDependencyContainer.SettingsService.Save();
+        _generalDependencyContainer.SettingsService.Save();
     }
 
     public ObservableCollection<RomViewModel> GetRecentRoms()
     {
-        return recentRoms;
+        return _recentRoms;
     }
 }

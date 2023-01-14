@@ -1,6 +1,6 @@
 ﻿namespace M64RPFW.Models.Tests;
 
-internal static class TestIOProvider
+internal static class TestIoProvider
 {
     internal static string ToBundledPath(this string fileName)
     {

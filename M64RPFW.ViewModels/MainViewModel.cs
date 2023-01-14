@@ -7,11 +7,11 @@ namespace M64RPFW.ViewModels;
 
 public partial class MainViewModel : ObservableObject, IAppExitEventProvider
 {
-    private readonly GeneralDependencyContainer generalDependencyContainer;
+    private readonly GeneralDependencyContainer _generalDependencyContainer;
 
     public MainViewModel(GeneralDependencyContainer generalDependencyContainer)
     {
-        this.generalDependencyContainer = generalDependencyContainer;
+        this._generalDependencyContainer = generalDependencyContainer;
 
         RecentRomsViewModel = new RecentRomsViewModel(generalDependencyContainer);
 
@@ -23,15 +23,15 @@ public partial class MainViewModel : ObservableObject, IAppExitEventProvider
 
     void IAppExitEventProvider.Register(Action action)
     {
-        onWindowExit += action;
+        OnWindowExit += action;
     }
 
-    private event Action onWindowExit;
+    private event Action OnWindowExit;
 
 
     [RelayCommand]
     private void Exit()
     {
-        onWindowExit?.Invoke();
+        OnWindowExit?.Invoke();
     }
 }

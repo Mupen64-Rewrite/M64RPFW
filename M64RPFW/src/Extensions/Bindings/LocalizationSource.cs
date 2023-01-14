@@ -8,20 +8,20 @@ namespace M64RPFW.src.Extensions.Bindings;
 // No ObservableObject. We must implement this manually to call invoke on PC event with instance as parameter, couldn't figure out how to do it with MVVM Toolkit.
 public class LocalizationSource : INotifyPropertyChanged
 {
-    private readonly ResourceManager resManager = Resources.ResourceManager;
-    private CultureInfo? currentCulture;
+    private readonly ResourceManager _resManager = Resources.ResourceManager;
+    private CultureInfo? _currentCulture;
     public static LocalizationSource Instance { get; } = new();
 
-    public string this[string key] => resManager.GetString(key, currentCulture);
+    public string this[string key] => _resManager.GetString(key, _currentCulture);
 
     public CultureInfo CurrentCulture
     {
-        get => currentCulture;
+        get => _currentCulture;
         set
         {
-            if (currentCulture != value)
+            if (_currentCulture != value)
             {
-                currentCulture = value;
+                _currentCulture = value;
                 var @event = PropertyChanged;
                 @event?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
             }

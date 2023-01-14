@@ -51,6 +51,6 @@ internal class CorePlugin : Plugin
     internal ConfigSaveFileDelegate ConfigSaveFile { get; private set; }
 
     internal CoreDoCommandFrameCallbackDelegate DoCommandFrameCallback { get; private set; }
-    internal CoreDoCommandVICallbackDelegate DoCommandVICallback { get; private set; }
+    internal CoreDoCommandViCallbackDelegate DoCommandViCallback { get; private set; }
     internal CoreDoCommandRenderCallbackDelegate DoCommandRenderCallback { get; private set; }
 }
