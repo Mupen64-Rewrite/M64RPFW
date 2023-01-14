@@ -1,4 +1,6 @@
-﻿namespace M64RPFW.Services.Abstractions;
+﻿using M64RPFW.Services.Abstractions;
+
+namespace M64RPFW.Services.Extensions;
 
 /// <summary>
 ///     An extension <see cref="class" /> which provides wrapper functions for <see cref="IFile" />

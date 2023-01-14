@@ -1,12 +1,16 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using M64RPFW.Services.Extensions;
 using M64RPFW.ViewModels.Containers;
 using M64RPFW.ViewModels.Interfaces;
+using M64RPFW.ViewModels.Messages;
 
 namespace M64RPFW.ViewModels;
 
-public partial class RecentRomsViewModel : ObservableObject, IRecentRomsProvider
+public partial class RecentRomsViewModel : ObservableObject, IRecipient<RomLoadedMessage>
 {
     private readonly GeneralDependencyContainer _generalDependencyContainer;
 
@@ -16,67 +20,72 @@ public partial class RecentRomsViewModel : ObservableObject, IRecentRomsProvider
     {
         this._generalDependencyContainer = generalDependencyContainer;
 
-        if (generalDependencyContainer.SettingsService.Get<string[]>("RecentRomPaths") == null)
+        if (!generalDependencyContainer.SettingsService.TryGet<string[]>("RecentRomPaths", out var recentRomPaths))
+        {
             generalDependencyContainer.SettingsService.Set("RecentRomPaths", Array.Empty<string>());
-
+        }
+        
         foreach (var recentRomPath in generalDependencyContainer.SettingsService.Get<string[]>("RecentRomPaths")
                      .ToList())
             try
             {
                 RomViewModel rom = new(File.ReadAllBytes(recentRomPath), recentRomPath);
-                Add(rom);
+                Add(rom, false);
             }
             catch
             {
                 ; // just... dont add it
             }
+        
+        WeakReferenceMessenger.Default.RegisterAll(this);
     }
 
-    ObservableCollection<RomViewModel> IRecentRomsProvider.Get()
-    {
-        return _recentRoms;
-    }
-
-    public void Add(RomViewModel rom)
+    public void Add(RomViewModel rom, bool doSave = true)
     {
         // sanity checks
         if (!rom.IsValid) return;
 
-        // don't add the Rom if any duplicates are found
+        // check for duplicates
+        
+        // reference duplication check 
         if (_recentRoms.Contains(rom)) return;
 
-        foreach (var _ in _recentRoms.Where(item => item.Path == rom.Path).Select(item => new { })) return;
+        // path duplication check
+        if (_recentRoms.Any(x => x.Path == rom.Path))
+        {
+            return;
+        }
 
-        _recentRoms.Add(rom);
+        // no duplicates found, add it
+        _recentRoms.Insert(0, rom);
 
-        RegenerateRecentRomPathsSetting();
+        SyncSettingWithInternalArray(doSave);
     }
 
     [RelayCommand]
     private void RemoveRecentRom(RomViewModel rom)
     {
         _ = _recentRoms.Remove(rom);
-        RegenerateRecentRomPathsSetting();
+        SyncSettingWithInternalArray();
     }
 
-    private void RegenerateRecentRomPathsSetting()
+    private void SyncSettingWithInternalArray(bool doSave = true)
     {
-        // recreate recent Rom list in settings
-
-        _generalDependencyContainer.SettingsService.Set("RecentRomPaths", Array.Empty<string>());
-
-        foreach (var item in _recentRoms)
+        var paths = _recentRoms.Select(x => x.Path);
+        _generalDependencyContainer.SettingsService.Set("RecentRomPaths", paths.ToArray());
+        if (doSave)
         {
-            var paths = _generalDependencyContainer.SettingsService.Get<string[]>("RecentRomPaths").ToList();
-            paths.Add(item.Path);
-            _generalDependencyContainer.SettingsService.Set("RecentRomPaths", paths.ToArray());
+            _generalDependencyContainer.SettingsService.Save();
         }
-
-        _generalDependencyContainer.SettingsService.Save();
     }
 
     public ObservableCollection<RomViewModel> GetRecentRoms()
     {
         return _recentRoms;
+    }
+
+    public void Receive(RomLoadedMessage message)
+    {
+        Add(message.Value);
     }
 }

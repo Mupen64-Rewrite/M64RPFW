@@ -15,7 +15,7 @@ public partial class MainViewModel : ObservableObject, IAppExitEventProvider
 
         RecentRomsViewModel = new RecentRomsViewModel(generalDependencyContainer);
 
-        EmulatorViewModel = new EmulatorViewModel(generalDependencyContainer, this, RecentRomsViewModel);
+        EmulatorViewModel = new EmulatorViewModel(generalDependencyContainer, this);
     }
 
     public EmulatorViewModel EmulatorViewModel { get; }

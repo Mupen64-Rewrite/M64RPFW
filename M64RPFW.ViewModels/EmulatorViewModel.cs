@@ -1,11 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Emulation.API;
 using M64RPFW.Services.Abstractions;
+using M64RPFW.Services.Extensions;
 using M64RPFW.ViewModels.Containers;
 using M64RPFW.ViewModels.Helpers;
 using M64RPFW.ViewModels.Interfaces;
+using M64RPFW.ViewModels.Messages;
 
 namespace M64RPFW.ViewModels;
 
@@ -13,15 +16,13 @@ public partial class EmulatorViewModel : ObservableObject
 {
     private readonly Emulator _emulator;
     private readonly GeneralDependencyContainer _generalDependencyContainer;
-    private readonly IRecentRomsProvider _recentRomsProvider;
 
     private int _saveStateSlot;
 
     internal EmulatorViewModel(GeneralDependencyContainer generalDependencyContainer,
-        IAppExitEventProvider appExitEventProvider, IRecentRomsProvider recentRomsProvider)
+        IAppExitEventProvider appExitEventProvider)
     {
         this._generalDependencyContainer = generalDependencyContainer;
-        this._recentRomsProvider = recentRomsProvider;
 
         appExitEventProvider.Register(delegate { CloseRomCommand.ExecuteIfPossible(); });
 
@@ -87,8 +88,9 @@ public partial class EmulatorViewModel : ObservableObject
             ShowInvalidFileError();
             return;
         }
-
-        _recentRomsProvider.Add(romViewModel);
+        
+        WeakReferenceMessenger.Default.Send(new RomLoadedMessage(romViewModel));
+        
 
         if (IsRunning) _emulator.Stop();
 
