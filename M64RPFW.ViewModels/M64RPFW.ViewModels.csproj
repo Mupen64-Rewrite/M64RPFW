@@ -16,4 +16,8 @@
         <ProjectReference Include="..\M64RPFW.Services\M64RPFW.Services.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Interfaces" />
+    </ItemGroup>
+
 </Project>

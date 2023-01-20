@@ -14,6 +14,6 @@
 
         <TextBox Text="{Binding ElementName=root, Path=Path, Mode=TwoWay}" />
         <Button Grid.Column="1" Content="{iconPacks:Material Kind=DotsHorizontal}"
-                Command="{Binding ElementName=root, Path=BrowseCommand}" />
+                Command="{Binding ElementName=root, Path=BrowseCommand}" CommandParameter="{Binding ElementName=root, Path=BrowseCommandParameter}" />
     </Grid>
 </UserControl>

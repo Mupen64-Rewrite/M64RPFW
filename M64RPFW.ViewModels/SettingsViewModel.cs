@@ -55,45 +55,24 @@ public partial class SettingsViewModel : ObservableObject
         _generalDependencyContainer.ThemeService.Set(themeString);
     }
 
-    private async Task<(bool Succeeded, string Path)> ShowFileDialogAndPickPath()
+    private async Task<(bool Succeeded, string Path)> ShowLibraryFileDialog()
     {
         var file = await _generalDependencyContainer.FilesService.TryPickOpenFileAsync(new[] { "dll" });
         return file != null ? (true, file.Path) : ((bool Succeeded, string Path))(false, null);
     }
 
     [RelayCommand]
-    private async void BrowseCoreLibraryPath()
+    private async void BrowseLibraryPath(string key)
     {
-        var result = await ShowFileDialogAndPickPath();
-        if (result.Succeeded) _generalDependencyContainer.SettingsService.Set("CoreLibraryPath", result.Path, true);
-    }
-
-
-    [RelayCommand]
-    private async void BrowseVideoPluginPath()
-    {
-        var result = await ShowFileDialogAndPickPath();
-        if (result.Succeeded) _generalDependencyContainer.SettingsService.Set("VideoPluginPath", result.Path, true);
-    }
-
-    [RelayCommand]
-    private async void BrowseAudioPluginPath()
-    {
-        var result = await ShowFileDialogAndPickPath();
-        if (result.Succeeded) _generalDependencyContainer.SettingsService.Set("AudioPluginPath", result.Path, true);
-    }
-
-    [RelayCommand]
-    private async void BrowseInputPluginPath()
-    {
-        var result = await ShowFileDialogAndPickPath();
-        if (result.Succeeded) _generalDependencyContainer.SettingsService.Set("InputPluginPath", result.Path, true);
-    }
-
-    [RelayCommand]
-    private async void BrowseRspPluginPath()
-    {
-        var result = await ShowFileDialogAndPickPath();
-        if (result.Succeeded) _generalDependencyContainer.SettingsService.Set("RspPluginPath", result.Path, true);
+        var file = await _generalDependencyContainer.FilesService.TryPickOpenFileAsync(new[] { "dll" });
+        if (file != null)
+        {
+            _generalDependencyContainer.SettingsService.Set(key, file.Path, true);
+        }
+        else
+        {
+            // we failed
+            // TODO: maybe notify the user? not an important failure though
+        }
     }
 }

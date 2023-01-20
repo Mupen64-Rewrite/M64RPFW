@@ -275,4 +275,7 @@
     <data name="Yes" xml:space="preserve">
     <value>Ja</value>
   </data>
+    <data name="RecentRoms" xml:space="preserve">
+      <value>Aktuelle Roms</value>
+    </data>
 </root>

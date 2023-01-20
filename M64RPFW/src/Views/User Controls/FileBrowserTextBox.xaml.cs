@@ -17,6 +17,10 @@ public partial class FileBrowserTextBox : UserControl
             new PropertyMetadata(default));
 
 
+    public static readonly DependencyProperty BrowseCommandParameterProperty =
+        DependencyProperty.Register("BrowseCommandParameter", typeof(object), typeof(FileBrowserTextBox),
+            new PropertyMetadata(default));
+    
     public FileBrowserTextBox()
     {
         InitializeComponent();
@@ -33,5 +37,11 @@ public partial class FileBrowserTextBox : UserControl
     {
         get => (ICommand)GetValue(BrowseCommandProperty);
         set => SetValue(BrowseCommandProperty, value);
+    }
+    
+    public object BrowseCommandParameter
+    {
+        get => (object)GetValue(BrowseCommandParameterProperty);
+        set => SetValue(BrowseCommandParameterProperty, value);
     }
 }

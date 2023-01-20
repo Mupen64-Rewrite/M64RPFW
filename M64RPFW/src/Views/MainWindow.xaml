@@ -54,8 +54,8 @@
                     <MenuItem Header="{extbin:LocalizationBinding File}">
                         <MenuItem Header="{extbin:LocalizationBinding LoadRom}"
                                   Command="{Binding EmulatorViewModel.BrowseRomCommand, IsAsync=True}" />
-                        <MenuItem Header="Recent Roms"
-                                  ItemsSource="{Binding RecentRomsViewModel.RecentRoms, UpdateSourceTrigger=PropertyChanged}"
+                        <MenuItem Header="{extbin:LocalizationBinding RecentRoms}"
+                                  ItemsSource="{Binding RecentRomsViewModel.RecentRomViewModels, UpdateSourceTrigger=PropertyChanged}"
                                   UsesItemContainerTemplate="True">
                             <MenuItem.Resources>
 

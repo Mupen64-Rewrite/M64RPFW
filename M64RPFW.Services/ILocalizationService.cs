@@ -17,8 +17,7 @@ public interface ILocalizationService
     /// </summary>
     /// <param name="localeKey">
     ///     The locale key, formatted according to
-    ///     <see
-    ///         href="https://learn.microsoft.com/en-us/dotnet/api/system.globalization.cultureinfo#culture-names-and-identifiers" />
+    ///     <see href="https://learn.microsoft.com/en-us/dotnet/api/system.globalization.cultureinfo#culture-names-and-identifiers" />
     /// </param>
     public void SetLocale(string localeKey);
 }

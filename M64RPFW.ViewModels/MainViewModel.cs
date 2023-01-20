@@ -1,11 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using M64RPFW.ViewModels.Containers;
-using M64RPFW.ViewModels.Interfaces;
+using M64RPFW.ViewModels.Messages;
 
 namespace M64RPFW.ViewModels;
 
-public partial class MainViewModel : ObservableObject, IAppExitEventProvider
+public partial class MainViewModel : ObservableObject
 {
     private readonly GeneralDependencyContainer _generalDependencyContainer;
 
@@ -13,25 +14,16 @@ public partial class MainViewModel : ObservableObject, IAppExitEventProvider
     {
         this._generalDependencyContainer = generalDependencyContainer;
 
+        EmulatorViewModel = new EmulatorViewModel(generalDependencyContainer);
         RecentRomsViewModel = new RecentRomsViewModel(generalDependencyContainer);
-
-        EmulatorViewModel = new EmulatorViewModel(generalDependencyContainer, this);
     }
 
     public EmulatorViewModel EmulatorViewModel { get; }
     public RecentRomsViewModel RecentRomsViewModel { get; }
-
-    void IAppExitEventProvider.Register(Action action)
-    {
-        OnWindowExit += action;
-    }
-
-    private event Action OnWindowExit;
-
-
+    
     [RelayCommand]
     private void Exit()
     {
-        OnWindowExit?.Invoke();
+        WeakReferenceMessenger.Default.Send(new ApplicationExitingMessage(DateTime.Now));
     }
 }

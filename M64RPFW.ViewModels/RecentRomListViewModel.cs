@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using M64RPFW.Services.Extensions;
 using M64RPFW.ViewModels.Containers;
-using M64RPFW.ViewModels.Interfaces;
 using M64RPFW.ViewModels.Messages;
 
 namespace M64RPFW.ViewModels;
@@ -14,7 +13,11 @@ public partial class RecentRomsViewModel : ObservableObject, IRecipient<RomLoade
 {
     private readonly GeneralDependencyContainer _generalDependencyContainer;
 
-    [ObservableProperty] private ObservableCollection<RomViewModel> _recentRoms = new();
+    public ObservableCollection<RomViewModel> RecentRomViewModels
+    {
+        get;
+        private set;
+    } = new();
 
     internal RecentRomsViewModel(GeneralDependencyContainer generalDependencyContainer)
     {
@@ -30,10 +33,11 @@ public partial class RecentRomsViewModel : ObservableObject, IRecipient<RomLoade
             try
             {
                 RomViewModel rom = new(File.ReadAllBytes(recentRomPath), recentRomPath);
-                Add(rom, false);
+                Add(rom);
             }
             catch
             {
+                Debug.WriteLine($"Skipping adding rom {recentRomPath}");
                 ; // just... dont add it
             }
         
@@ -48,16 +52,16 @@ public partial class RecentRomsViewModel : ObservableObject, IRecipient<RomLoade
         // check for duplicates
         
         // reference duplication check 
-        if (_recentRoms.Contains(rom)) return;
+        if (RecentRomViewModels.Contains(rom)) return;
 
         // path duplication check
-        if (_recentRoms.Any(x => x.Path == rom.Path))
+        if (RecentRomViewModels.Any(x => x.Path == rom.Path))
         {
             return;
         }
 
         // no duplicates found, add it
-        _recentRoms.Insert(0, rom);
+        RecentRomViewModels.Insert(0, rom);
 
         SyncSettingWithInternalArray(doSave);
     }
@@ -65,23 +69,18 @@ public partial class RecentRomsViewModel : ObservableObject, IRecipient<RomLoade
     [RelayCommand]
     private void RemoveRecentRom(RomViewModel rom)
     {
-        _ = _recentRoms.Remove(rom);
+        _ = RecentRomViewModels.Remove(rom);
         SyncSettingWithInternalArray();
     }
 
     private void SyncSettingWithInternalArray(bool doSave = true)
     {
-        var paths = _recentRoms.Select(x => x.Path);
+        var paths = RecentRomViewModels.Select(x => x.Path);
         _generalDependencyContainer.SettingsService.Set("RecentRomPaths", paths.ToArray());
         if (doSave)
         {
             _generalDependencyContainer.SettingsService.Save();
         }
-    }
-
-    public ObservableCollection<RomViewModel> GetRecentRoms()
-    {
-        return _recentRoms;
     }
 
     public void Receive(RomLoadedMessage message)

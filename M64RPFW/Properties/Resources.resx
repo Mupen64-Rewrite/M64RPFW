@@ -289,4 +289,7 @@
     <data name="No" xml:space="preserve">
     <value>No</value>
   </data>
+    <data name="RecentRoms" xml:space="preserve">
+      <value>Recent Roms</value>
+    </data>
 </root>

@@ -1,5 +1,4 @@
 ﻿using M64RPFW.Services;
-using M64RPFW.ViewModels.Configurations;
 
 namespace M64RPFW.ViewModels.Containers;
 
@@ -25,7 +24,4 @@ public class GeneralDependencyContainer
     internal IBitmapDrawingService BitmapDrawingService { get; }
     internal IDispatcherService DispatcherService { get; }
     internal IFilesService FilesService { get; }
-
-    internal FileExtensionsConfiguration RomFileExtensionsConfiguration { get; } = new();
-    internal SavestateConfiguration SavestateBoundsConfiguration { get; } = new();
 }

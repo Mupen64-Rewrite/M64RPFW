@@ -30,6 +30,10 @@ internal sealed partial class AppSettings
 
     [ObservableProperty] private int _screenHeight = 600;
 
+    [ObservableProperty] private int _savestateSlots = 10;
+    
+    [ObservableProperty] private string[] _romExtensions = new[] { "n64", "z64", "rom", "eu", "usa" };
+
     #endregion
 
     #region Appearance

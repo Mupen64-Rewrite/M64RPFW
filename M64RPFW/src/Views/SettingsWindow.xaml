@@ -87,34 +87,34 @@
                                     </Grid.RowDefinitions>
 
                                     <TextBlock VerticalAlignment="Center" Grid.Row="0" Grid.Column="0"
-                                               Padding="{StaticResource SmallPadding}" Text="Core" />
+                                               Padding="{StaticResource SmallPadding}" Text="{extbin:LocalizationBinding Core}" />
                                     <ucs:FileBrowserTextBox Grid.Row="0" Grid.Column="1"
                                                             Path="{extbin:SettingsBinding CoreLibraryPath, Mode=TwoWay}"
-                                                            BrowseCommand="{Binding BrowseCoreLibraryPathCommand}" />
+                                                            BrowseCommand="{Binding BrowseLibraryPathCommand}" BrowseCommandParameter="CoreLibraryPath" />
 
                                     <TextBlock VerticalAlignment="Center" Grid.Row="1" Grid.Column="0"
-                                               Padding="{StaticResource SmallPadding}" Text="Video Plugin" />
+                                               Padding="{StaticResource SmallPadding}" Text="{extbin:LocalizationBinding Video}" />
                                     <ucs:FileBrowserTextBox Grid.Row="1" Grid.Column="1"
                                                             Path="{extbin:SettingsBinding VideoPluginPath, Mode=TwoWay}"
-                                                            BrowseCommand="{Binding BrowseVideoPluginPathCommand}" />
+                                                            BrowseCommand="{Binding BrowseLibraryPathCommand}" BrowseCommandParameter="VideoPluginPath" />
 
                                     <TextBlock VerticalAlignment="Center" Grid.Row="2" Grid.Column="0"
-                                               Padding="{StaticResource SmallPadding}" Text="Audio Plugin" />
+                                               Padding="{StaticResource SmallPadding}" Text="{extbin:LocalizationBinding Audio}" />
                                     <ucs:FileBrowserTextBox Grid.Row="2" Grid.Column="1"
                                                             Path="{extbin:SettingsBinding AudioPluginPath, Mode=TwoWay}"
-                                                            BrowseCommand="{Binding BrowseAudioPluginPathCommand}" />
+                                                            BrowseCommand="{Binding BrowseLibraryPathCommand}" BrowseCommandParameter="AudioPluginPath" />
 
                                     <TextBlock VerticalAlignment="Center" Grid.Row="3" Grid.Column="0"
-                                               Padding="{StaticResource SmallPadding}" Text="Input Plugin" />
+                                               Padding="{StaticResource SmallPadding}" Text="{extbin:LocalizationBinding Input}" />
                                     <ucs:FileBrowserTextBox Grid.Row="3" Grid.Column="1"
                                                             Path="{extbin:SettingsBinding InputPluginPath, Mode=TwoWay}"
-                                                            BrowseCommand="{Binding BrowseInputPluginPathCommand}" />
+                                                            BrowseCommand="{Binding BrowseLibraryPathCommand}" BrowseCommandParameter="InputPluginPath" />
 
                                     <TextBlock VerticalAlignment="Center" Grid.Row="4" Grid.Column="0"
-                                               Padding="{StaticResource SmallPadding}" Text="Rsp Plugin" />
+                                               Padding="{StaticResource SmallPadding}" Text="{extbin:LocalizationBinding Rsp}" />
                                     <ucs:FileBrowserTextBox Grid.Row="4" Grid.Column="1"
                                                             Path="{extbin:SettingsBinding RspPluginPath, Mode=TwoWay}"
-                                                            BrowseCommand="{Binding BrowseRspPluginPathCommand}" />
+                                                            BrowseCommand="{Binding BrowseLibraryPathCommand}" BrowseCommandParameter="RspPluginPath" />
 
                                 </Grid>
                             </ucs:SettingsSection.Content>

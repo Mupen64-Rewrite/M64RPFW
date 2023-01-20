@@ -3,31 +3,28 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Emulation.API;
-using M64RPFW.Services.Abstractions;
 using M64RPFW.Services.Extensions;
 using M64RPFW.ViewModels.Containers;
 using M64RPFW.ViewModels.Helpers;
-using M64RPFW.ViewModels.Interfaces;
 using M64RPFW.ViewModels.Messages;
 
 namespace M64RPFW.ViewModels;
 
-public partial class EmulatorViewModel : ObservableObject
+public partial class EmulatorViewModel : ObservableObject, IRecipient<ApplicationExitingMessage>
 {
     private readonly Emulator _emulator;
     private readonly GeneralDependencyContainer _generalDependencyContainer;
 
     private int _saveStateSlot;
 
-    internal EmulatorViewModel(GeneralDependencyContainer generalDependencyContainer,
-        IAppExitEventProvider appExitEventProvider)
+    internal EmulatorViewModel(GeneralDependencyContainer generalDependencyContainer)
     {
         this._generalDependencyContainer = generalDependencyContainer;
 
-        appExitEventProvider.Register(delegate { CloseRomCommand.ExecuteIfPossible(); });
-
         _emulator = new Emulator(generalDependencyContainer.FilesService);
         _emulator.PlayModeChanged += PlayModeChanged;
+        
+        WeakReferenceMessenger.Default.RegisterAll(this);
     }
 
     public bool IsRunning => _emulator.PlayMode != Mupen64PlusTypes.PlayModes.Stopped;
@@ -42,7 +39,7 @@ public partial class EmulatorViewModel : ObservableObject
     {
         get => _saveStateSlot;
         set => SetProperty(ref _saveStateSlot,
-            Math.Clamp(value, 0, _generalDependencyContainer.SavestateBoundsConfiguration.Slots));
+            Math.Clamp(value, 0, _generalDependencyContainer.SettingsService.Get<int>("SavestateSlots")));
     }
 
     private void PlayModeChanged()
@@ -61,7 +58,7 @@ public partial class EmulatorViewModel : ObservableObject
     private async void BrowseRom()
     {
         var file = await _generalDependencyContainer.FilesService.TryPickOpenFileAsync(_generalDependencyContainer
-            .RomFileExtensionsConfiguration.RomExtensions);
+            .SettingsService.Get<string[]>("RomExtensions"));
 
         if (file != null)
         {
@@ -77,11 +74,9 @@ public partial class EmulatorViewModel : ObservableObject
 
         if (!hasAllDependencies) return;
 
-        void ShowInvalidFileError()
-        {
+        void ShowInvalidFileError() =>
             _generalDependencyContainer.DialogService.ShowError(
                 _generalDependencyContainer.LocalizationService.GetString("InvalidFile"));
-        }
 
         if (!romViewModel.IsValid)
         {
@@ -198,5 +193,11 @@ public partial class EmulatorViewModel : ObservableObject
 
         hasAllDependencies = coreLibraryExists && videoPluginExists && audioPluginExists && inputPluginExists &&
                              rspPluginExists;
+    }
+
+    public void Receive(ApplicationExitingMessage message)
+    {
+        // close the application 
+        this.CloseRomCommand.ExecuteIfPossible(null);
     }
 }

@@ -11,8 +11,6 @@ public class RomViewModel : ObservableObject
     {
         _rom = new Rom(data);
         Path = path;
-
-        OnPropertyChanged(); // just notify that this entire vm changed
     }
 
     public string Path { get; }
@@ -30,6 +28,6 @@ public class RomViewModel : ObservableObject
 
     public override string ToString()
     {
-        return _rom.FriendlyName;
+        return $"{_rom.FriendlyName} ({CountryCode})";
     }
 }
