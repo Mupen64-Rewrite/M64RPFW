@@ -44,15 +44,15 @@ public partial class SettingsViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void SetCulture(string cultureString)
+    private void SetCulture(string culture)
     {
-        _generalDependencyContainer.LocalizationService.SetLocale(cultureString);
+        _generalDependencyContainer.SettingsService.Set("Culture", culture, true);
     }
 
     [RelayCommand]
-    private void SetTheme(string themeString)
+    private void SetTheme(string theme)
     {
-        _generalDependencyContainer.ThemeService.Set(themeString);
+        _generalDependencyContainer.SettingsService.Set("Theme", theme, true);
     }
 
     private async Task<(bool Succeeded, string Path)> ShowLibraryFileDialog()

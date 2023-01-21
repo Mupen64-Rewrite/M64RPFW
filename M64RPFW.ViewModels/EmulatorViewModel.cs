@@ -10,7 +10,7 @@ using M64RPFW.ViewModels.Messages;
 
 namespace M64RPFW.ViewModels;
 
-public partial class EmulatorViewModel : ObservableObject, IRecipient<ApplicationExitingMessage>
+public partial class EmulatorViewModel : ObservableObject, IRecipient<ApplicationClosingMessage>
 {
     private readonly Emulator _emulator;
     private readonly GeneralDependencyContainer _generalDependencyContainer;
@@ -39,7 +39,7 @@ public partial class EmulatorViewModel : ObservableObject, IRecipient<Applicatio
     {
         get => _saveStateSlot;
         set => SetProperty(ref _saveStateSlot,
-            Math.Clamp(value, 0, _generalDependencyContainer.SettingsService.Get<int>("SavestateSlots")));
+            Math.Clamp(value, 0, _generalDependencyContainer.SettingsService.Get<int>("SavestateSlotCount")));
     }
 
     private void PlayModeChanged()
@@ -76,7 +76,7 @@ public partial class EmulatorViewModel : ObservableObject, IRecipient<Applicatio
 
         void ShowInvalidFileError() =>
             _generalDependencyContainer.DialogService.ShowError(
-                _generalDependencyContainer.LocalizationService.GetString("InvalidFile"));
+                _generalDependencyContainer.LocalizationService.GetStringOrDefault("InvalidFile"));
 
         if (!romViewModel.IsValid)
         {
@@ -172,30 +172,30 @@ public partial class EmulatorViewModel : ObservableObject, IRecipient<Applicatio
 
         if (!coreLibraryExists)
             _generalDependencyContainer.DialogService.ShowError(
-                _generalDependencyContainer.LocalizationService.GetString("CoreLibraryNotFound"));
+                _generalDependencyContainer.LocalizationService.GetStringOrDefault("CoreLibraryNotFound"));
 
         var videoPluginExists = File.Exists(_generalDependencyContainer.SettingsService.Get<string>("VideoPluginPath"));
         var audioPluginExists = File.Exists(_generalDependencyContainer.SettingsService.Get<string>("AudioPluginPath"));
         var inputPluginExists = File.Exists(_generalDependencyContainer.SettingsService.Get<string>("InputPluginPath"));
         var rspPluginExists = File.Exists(_generalDependencyContainer.SettingsService.Get<string>("RspPluginPath"));
-        if (!videoPluginExists) missingPlugins.Add(_generalDependencyContainer.LocalizationService.GetString("Video"));
+        if (!videoPluginExists) missingPlugins.Add(_generalDependencyContainer.LocalizationService.GetStringOrDefault("Video"));
 
-        if (!audioPluginExists) missingPlugins.Add(_generalDependencyContainer.LocalizationService.GetString("Audio"));
+        if (!audioPluginExists) missingPlugins.Add(_generalDependencyContainer.LocalizationService.GetStringOrDefault("Audio"));
 
-        if (!inputPluginExists) missingPlugins.Add(_generalDependencyContainer.LocalizationService.GetString("Input"));
+        if (!inputPluginExists) missingPlugins.Add(_generalDependencyContainer.LocalizationService.GetStringOrDefault("Input"));
 
-        if (!rspPluginExists) missingPlugins.Add(_generalDependencyContainer.LocalizationService.GetString("Rsp"));
+        if (!rspPluginExists) missingPlugins.Add(_generalDependencyContainer.LocalizationService.GetStringOrDefault("Rsp"));
 
         if (!videoPluginExists || !audioPluginExists || !inputPluginExists || (!rspPluginExists && coreLibraryExists))
             _generalDependencyContainer.DialogService.ShowError(string.Format(
-                _generalDependencyContainer.LocalizationService.GetString("PluginNotFoundSeries"),
+                _generalDependencyContainer.LocalizationService.GetStringOrDefault("PluginNotFoundSeries"),
                 string.Join(", ", missingPlugins)));
 
         hasAllDependencies = coreLibraryExists && videoPluginExists && audioPluginExists && inputPluginExists &&
                              rspPluginExists;
     }
 
-    public void Receive(ApplicationExitingMessage message)
+    public void Receive(ApplicationClosingMessage message)
     {
         // close the application 
         this.CloseRomCommand.ExecuteIfPossible(null);

@@ -10,8 +10,8 @@ public class BooleanToStringConverter : IValueConverter
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         return (bool)value
-            ? MainWindow.LocalizationService.GetString("Yes")
-            : MainWindow.LocalizationService.GetString("No");
+            ? MainWindow.LocalizationService.GetStringOrDefault("Yes")
+            : MainWindow.LocalizationService.GetStringOrDefault("No");
     }
 
     public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

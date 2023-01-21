@@ -12,17 +12,12 @@
         d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
         mc:Ignorable="d"
         Title="{extbin:LocalizationBinding AppName}"
+        Closing="MainWindow_OnClosing"
         Width="800"
         Height="450"
         MinHeight="{StaticResource MenuHeight}"
         ui:TitleBar.IsIconVisible="True"
         ui:WindowHelper.UseModernWindowStyle="True">
-
-    <behaviors:Interaction.Triggers>
-        <behaviors:EventTrigger EventName="Closing">
-            <behaviors:InvokeCommandAction Command="{Binding AtExitCommand, ElementName=root}" />
-        </behaviors:EventTrigger>
-    </behaviors:Interaction.Triggers>
 
     <Window.Resources>
         <extbin:BindingProxy x:Key="MainViewModelProxy" Data="{Binding}" />

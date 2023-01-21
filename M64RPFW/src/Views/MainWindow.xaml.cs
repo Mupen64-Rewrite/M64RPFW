@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text.Json;
@@ -32,14 +34,20 @@ namespace M64RPFW.src.Views;
 public partial class MainWindow :
     Window,
     IDialogService,
-    IThemeService,
     ILocalizationService,
     ISettingsService,
     IBitmapDrawingService,
-    IDispatcherService
+    IDispatcherService,
+    IApplicationClosingEventService
 {
+    internal static AppSettings AppSettings { get; private set; }
+    internal static ILocalizationService LocalizationService { get; private set; }
+    internal static FilesService FilesService { get; private set; }
+    
+    bool IBitmapDrawingService.IsReady => _writeableBitmap != null;
+    public event Action? OnApplicationClosing;
+
     private const string AppSettingsPath = "appsettings.json";
-    private readonly AppSettings _appSettings;
     private readonly GeneralDependencyContainer _generalDependencyContainer;
 
     private readonly MainViewModel _mainViewModel;
@@ -51,100 +59,106 @@ public partial class MainWindow :
     {
         LocalizationService = this;
 
-        // todo: move appsettings logic to vm
-        if (!File.Exists(AppSettingsPath))
+        // TODO: rewrite settings system (see Ambie)
+
+        // load settings from file or create from defaults
+        try
         {
-            // create settings
-            _appSettings = new AppSettings();
+            AppSettings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(AppSettingsPath));
+            if (AppSettings == null)
+            {
+                throw new Exception();
+            }
+        }
+        catch
+        {
+            Debug.WriteLine("Failed to load settings, falling back to defaults...");
+            AppSettings = new AppSettings();
             Save();
         }
-        else
-        {
-            _appSettings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(AppSettingsPath));
-        }
-
-        AppSettings = _appSettings;
-
+        
         InitializeComponent();
 
-        (this as ILocalizationService).SetLocale((this as ISettingsService).Get<string>("Culture"));
-        (this as IThemeService).Set(Get<string>("Theme"));
+        FilesService = new();
+        
+        AppSettings.PropertyChanged += delegate(object? sender, PropertyChangedEventArgs args)
+        {
+            if (args.PropertyName == nameof(AppSettings.Theme))
+            {
+                if (AppSettings.Theme.Equals("Light", StringComparison.InvariantCultureIgnoreCase))
+                    ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
+                else if (AppSettings.Theme.Equals("Dark", StringComparison.InvariantCultureIgnoreCase))
+                    ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
+                else
+                    throw new ArgumentException("Couldn't resolve theme");
+            }
 
+            if (args.PropertyName == nameof(AppSettings.Culture))
+            {
+                (this as IDispatcherService).Execute(delegate
+                {
+                    var culture = CultureInfo.GetCultureInfo(AppSettings.Culture);
+                    Thread.CurrentThread.CurrentCulture =
+                        Thread.CurrentThread.CurrentUICulture =
+                            LocalizationSource.Instance.CurrentCulture = culture;
+                });
+            }
+        };
+        
         _generalDependencyContainer =
-            new GeneralDependencyContainer(this, this, this, this, this, this, new FilesService());
+            new GeneralDependencyContainer(this, this, this, this, this, FilesService, this);
 
         _mainViewModel = new MainViewModel(_generalDependencyContainer);
 
         DataContext = _mainViewModel;
+        
+        AppSettings.NotifyAllPropertiesChanged();
     }
-
-    internal static AppSettings AppSettings { get; private set; }
-    internal static ILocalizationService LocalizationService { get; private set; }
-    bool IBitmapDrawingService.IsReady => _writeableBitmap != null;
-
-    #region Service Implementations
+    
+    #region Service Method Implementations
 
     public void ShowError(string message)
     {
         Application.Current.Dispatcher.Invoke(() =>
         {
-            _ = MessageBox.Show(message, (this as ILocalizationService).GetString("Error"), MessageBoxButton.OK,
+            _ = MessageBox.Show(message, (this as ILocalizationService).GetStringOrDefault("Error"), MessageBoxButton.OK,
                 MessageBoxImage.Error);
         });
     }
 
-    string IThemeService.Get()
-    {
-        return ((ISettingsService)this).Get<string>("Theme");
-    }
-
-    void IThemeService.Set(string themeName)
-    {
-        if (themeName.Equals("Light"))
-            ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
-        else if (themeName.Equals("Dark")) ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
-        Set("Theme", themeName, true);
-    }
-
-    public void SetLocale(string localeKey)
-    {
-        (this as IDispatcherService).Execute(delegate
-        {
-            var culture = CultureInfo.GetCultureInfo(localeKey);
-            Thread.CurrentThread.CurrentCulture =
-                Thread.CurrentThread.CurrentUICulture =
-                    LocalizationSource.Instance.CurrentCulture = culture;
-            Set("Culture", localeKey, true);
-        });
-    }
-
-
     public T Get<T>(string key)
     {
-        var prop = _appSettings.GetType().GetProperty(key);
+        var prop = AppSettings.GetType().GetProperty(key);
         if (prop == null) throw new Exception($"Could not find property {key}");
-        var val = (T)prop.GetValue(_appSettings);
+        var val = (T)prop.GetValue(AppSettings);
         if (val == null) throw new Exception($"Could not get property value {key}");
         return val;
     }
 
     public void Set<T>(string key, T value, bool saveAfter = false)
     {
-        var prop = _appSettings.GetType().GetProperty(key);
-        prop.SetValue(_appSettings, value);
+        var prop = AppSettings.GetType().GetProperty(key);
+        prop.SetValue(AppSettings, value);
         if (saveAfter) Save();
     }
 
     public void Save()
     {
-        var json = JsonSerializer.Serialize(_appSettings, typeof(AppSettings),
+        var json = JsonSerializer.Serialize(AppSettings, typeof(AppSettings),
             new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(AppSettingsPath, json);
     }
 
-    public string GetString(string key)
+    public string? GetStringOrDefault(string key, string? @default = null)
     {
-        return Properties.Resources.ResourceManager.GetString(key) ?? "?";
+        try
+        {
+            return Properties.Resources.ResourceManager.GetString(key) ?? @default;
+        }
+        catch
+        {
+            return @default;
+        }
     }
 
     void IBitmapDrawingService.Create(int width, int height)
@@ -196,13 +210,13 @@ public partial class MainWindow :
     {
         Close();
     }
+    
+    #endregion
 
-    [RelayCommand]
-    private void AtExit()
+    private void MainWindow_OnClosing(object? sender, CancelEventArgs e)
     {
-        _mainViewModel.ExitCommand.ExecuteIfPossible();
+        OnApplicationClosing?.Invoke();
         Save();
     }
 
-    #endregion
 }

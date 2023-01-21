@@ -6,7 +6,7 @@ using M64RPFW.ViewModels.Messages;
 
 namespace M64RPFW.ViewModels;
 
-public partial class MainViewModel : ObservableObject
+public sealed partial class MainViewModel : ObservableObject
 {
     private readonly GeneralDependencyContainer _generalDependencyContainer;
 
@@ -16,14 +16,20 @@ public partial class MainViewModel : ObservableObject
 
         EmulatorViewModel = new EmulatorViewModel(generalDependencyContainer);
         RecentRomsViewModel = new RecentRomsViewModel(generalDependencyContainer);
+        
+        _generalDependencyContainer.ApplicationClosingEventService.OnApplicationClosing += delegate
+        {
+            OnApplicationClosing();
+        };
     }
 
     public EmulatorViewModel EmulatorViewModel { get; }
     public RecentRomsViewModel RecentRomsViewModel { get; }
     
-    [RelayCommand]
-    private void Exit()
+    private void OnApplicationClosing()
     {
-        WeakReferenceMessenger.Default.Send(new ApplicationExitingMessage(DateTime.Now));
+        WeakReferenceMessenger.Default.Send(new ApplicationClosingMessage(DateTime.Now));
     }
+
+    
 }

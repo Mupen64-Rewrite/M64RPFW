@@ -1,11 +1,21 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace M64RPFW.src.Settings;
 
-[INotifyPropertyChanged]
-internal sealed partial class AppSettings
+internal sealed partial class AppSettings : ObservableObject
 {
+
+    public void NotifyAllPropertiesChanged()
+    {
+        foreach (var property in this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        {
+            OnPropertyChanged(property.Name);
+        }
+    }
+    
     #region Emulation
 
     [ObservableProperty] private int _coreType;
@@ -30,7 +40,7 @@ internal sealed partial class AppSettings
 
     [ObservableProperty] private int _screenHeight = 600;
 
-    [ObservableProperty] private int _savestateSlots = 10;
+    [ObservableProperty] private int _savestateSlotCount = 10;
     
     [ObservableProperty] private string[] _romExtensions = new[] { "n64", "z64", "rom", "eu", "usa" };
 
