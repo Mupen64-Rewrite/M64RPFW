@@ -13,6 +13,6 @@ public class IntegerEqualityToBooleanConverter : IValueConverter
 
     public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        return null;
+        return (int)parameter;
     }
 }
