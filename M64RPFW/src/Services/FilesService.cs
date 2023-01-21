@@ -59,6 +59,9 @@ public sealed class FilesService : IFilesService
     {
         CommonOpenFileDialog dialog = new();
         var list = string.Empty;
+
+        extensions ??= new[] { "*" };
+
         for (var i = 0; i < extensions.Length; i++) list += $"*.{extensions[i]};";
 
         dialog.Filters.Add(new CommonFileDialogFilter("Supported formats", list));

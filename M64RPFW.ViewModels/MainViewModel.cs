@@ -8,25 +8,20 @@ namespace M64RPFW.ViewModels;
 
 public sealed partial class MainViewModel : ObservableObject
 {
-    private readonly GeneralDependencyContainer _generalDependencyContainer;
+    public string Hi { get; } = "Moin!";
 
-    public MainViewModel(GeneralDependencyContainer generalDependencyContainer)
+    public MainViewModel(GeneralDependencyContainer generalDependencyContainer, SettingsViewModel settingsViewModel)
     {
-        this._generalDependencyContainer = generalDependencyContainer;
-
-        EmulatorViewModel = new EmulatorViewModel(generalDependencyContainer);
-        RecentRomsViewModel = new RecentRomsViewModel(generalDependencyContainer);
+        EmulatorViewModel = new EmulatorViewModel(generalDependencyContainer, settingsViewModel);
+        RecentRomsViewModel = new RecentRomsViewModel(settingsViewModel);
         
-        _generalDependencyContainer.ApplicationClosingEventService.OnApplicationClosing += delegate
-        {
-            OnApplicationClosing();
-        };
+        generalDependencyContainer.ApplicationClosingEventService.OnApplicationClosing += OnApplicationClosing;
     }
-
+    
     public EmulatorViewModel EmulatorViewModel { get; }
     public RecentRomsViewModel RecentRomsViewModel { get; }
     
-    private void OnApplicationClosing()
+    private static void OnApplicationClosing()
     {
         WeakReferenceMessenger.Default.Send(new ApplicationClosingMessage(DateTime.Now));
     }

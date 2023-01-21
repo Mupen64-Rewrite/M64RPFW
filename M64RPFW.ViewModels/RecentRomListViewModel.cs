@@ -11,29 +11,23 @@ namespace M64RPFW.ViewModels;
 
 public partial class RecentRomsViewModel : ObservableObject, IRecipient<RomLoadedMessage>
 {
-    private readonly GeneralDependencyContainer _generalDependencyContainer;
+    private readonly SettingsViewModel _settingsViewModel;
 
     public ObservableCollection<RomViewModel> RecentRomViewModels
     {
         get;
-        private set;
     } = new();
 
-    internal RecentRomsViewModel(GeneralDependencyContainer generalDependencyContainer)
+    internal RecentRomsViewModel(SettingsViewModel settingsViewModel)
     {
-        this._generalDependencyContainer = generalDependencyContainer;
-
-        if (!generalDependencyContainer.SettingsService.TryGet<string[]>("RecentRomPaths", out var recentRomPaths))
-        {
-            generalDependencyContainer.SettingsService.Set("RecentRomPaths", Array.Empty<string>());
-        }
+        _settingsViewModel = settingsViewModel;
         
-        foreach (var recentRomPath in generalDependencyContainer.SettingsService.Get<string[]>("RecentRomPaths")
+        foreach (var recentRomPath in _settingsViewModel.RecentRomPaths
                      .ToList())
             try
             {
                 RomViewModel rom = new(File.ReadAllBytes(recentRomPath), recentRomPath);
-                Add(rom);
+                Add(rom, false);
             }
             catch
             {
@@ -44,7 +38,7 @@ public partial class RecentRomsViewModel : ObservableObject, IRecipient<RomLoade
         WeakReferenceMessenger.Default.RegisterAll(this);
     }
 
-    public void Add(RomViewModel rom, bool doSave = true)
+    public void Add(RomViewModel rom, bool addAtHead = true)
     {
         // sanity checks
         if (!rom.IsValid) return;
@@ -61,11 +55,18 @@ public partial class RecentRomsViewModel : ObservableObject, IRecipient<RomLoade
             return;
             //RecentRomViewModels.Remove(rom);
         }
+
+        if (addAtHead)
+        {
+            RecentRomViewModels.Insert(0, rom);
+        }
+        else
+        {
+            RecentRomViewModels.Add(rom);
+        }
         
-        // add it to the head of the list
-        RecentRomViewModels.Insert(0, rom);
         
-        SyncSettingWithInternalArray(doSave);
+        SyncSettingWithInternalArray();
     }
 
     [RelayCommand]
@@ -75,14 +76,9 @@ public partial class RecentRomsViewModel : ObservableObject, IRecipient<RomLoade
         SyncSettingWithInternalArray();
     }
 
-    private void SyncSettingWithInternalArray(bool doSave = true)
+    private void SyncSettingWithInternalArray()
     {
-        var paths = RecentRomViewModels.Select(x => x.Path);
-        _generalDependencyContainer.SettingsService.Set("RecentRomPaths", paths.ToArray());
-        if (doSave)
-        {
-            _generalDependencyContainer.SettingsService.Save();
-        }
+        _settingsViewModel.RecentRomPaths = RecentRomViewModels.Select(x => x.Path).ToArray();
     }
 
     public void Receive(RomLoadedMessage message)

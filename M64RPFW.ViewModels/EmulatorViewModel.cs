@@ -14,12 +14,14 @@ public partial class EmulatorViewModel : ObservableObject, IRecipient<Applicatio
 {
     private readonly Emulator _emulator;
     private readonly GeneralDependencyContainer _generalDependencyContainer;
+    private readonly SettingsViewModel _settingsViewModel;
 
     private int _saveStateSlot;
 
-    internal EmulatorViewModel(GeneralDependencyContainer generalDependencyContainer)
+    internal EmulatorViewModel(GeneralDependencyContainer generalDependencyContainer, SettingsViewModel settingsViewModel)
     {
         this._generalDependencyContainer = generalDependencyContainer;
+        this._settingsViewModel = settingsViewModel;
 
         _emulator = new Emulator(generalDependencyContainer.FilesService);
         _emulator.PlayModeChanged += PlayModeChanged;
@@ -39,7 +41,7 @@ public partial class EmulatorViewModel : ObservableObject, IRecipient<Applicatio
     {
         get => _saveStateSlot;
         set => SetProperty(ref _saveStateSlot,
-            Math.Clamp(value, 0, _generalDependencyContainer.SettingsService.Get<int>("SavestateSlotCount")));
+            Math.Clamp(value, 0, 10));
     }
 
     private void PlayModeChanged()
@@ -57,8 +59,7 @@ public partial class EmulatorViewModel : ObservableObject, IRecipient<Applicatio
     [RelayCommand]
     private async void BrowseRom()
     {
-        var file = await _generalDependencyContainer.FilesService.TryPickOpenFileAsync(_generalDependencyContainer
-            .SettingsService.Get<string[]>("RomExtensions"));
+        var file = await _generalDependencyContainer.FilesService.TryPickOpenFileAsync(_settingsViewModel.RomExtensions);
 
         if (file != null)
         {
@@ -91,26 +92,26 @@ public partial class EmulatorViewModel : ObservableObject, IRecipient<Applicatio
 
         var coreLibraryFile =
             await _generalDependencyContainer.FilesService.GetFileFromPathAsync(
-                _generalDependencyContainer.SettingsService.Get<string>("CoreLibraryPath"));
+                _settingsViewModel.CoreLibraryPath);
         var videoPluginFile =
             await _generalDependencyContainer.FilesService.GetFileFromPathAsync(
-                _generalDependencyContainer.SettingsService.Get<string>("VideoPluginPath"));
+                _settingsViewModel.VideoPluginPath);
         var audioPluginFile =
             await _generalDependencyContainer.FilesService.GetFileFromPathAsync(
-                _generalDependencyContainer.SettingsService.Get<string>("AudioPluginPath"));
+                _settingsViewModel.AudioPluginPath);
         var inputPluginFile =
             await _generalDependencyContainer.FilesService.GetFileFromPathAsync(
-                _generalDependencyContainer.SettingsService.Get<string>("InputPluginPath"));
+                _settingsViewModel.InputPluginPath);
         var rspPluginFile =
             await _generalDependencyContainer.FilesService.GetFileFromPathAsync(
-                _generalDependencyContainer.SettingsService.Get<string>("RspPluginPath"));
+                _settingsViewModel.RspPluginPath);
 
-        Mupen64PlusConfig config = new(_generalDependencyContainer.SettingsService.Get<int>("CoreType"),
-            _generalDependencyContainer.SettingsService.Get<int>("ScreenWidth"),
-            _generalDependencyContainer.SettingsService.Get<int>("ScreenHeight"));
+        Mupen64PlusConfig config = new(_settingsViewModel.CoreType,
+            _settingsViewModel.ScreenWidth,
+            _settingsViewModel.ScreenHeight);
         Mupen64PlusLaunchParameters launchParameters = new(romViewModel.RawData,
             config,
-            _generalDependencyContainer.SettingsService.Get<int>("DefaultSlot"),
+            0,
             coreLibraryFile,
             videoPluginFile,
             audioPluginFile,
@@ -120,12 +121,12 @@ public partial class EmulatorViewModel : ObservableObject, IRecipient<Applicatio
 
         _emulator.Api.OnFrameBufferCreate += delegate
         {
-            _generalDependencyContainer.BitmapDrawingService.Create(_emulator.Api.BufferWidth,
+            _generalDependencyContainer.GameBitmapDrawingService.Create(_emulator.Api.BufferWidth,
                 _emulator.Api.BufferHeight);
         };
         _emulator.Api.OnFrameBufferUpdate += delegate
         {
-            _generalDependencyContainer.BitmapDrawingService.Draw(_emulator.Api.FrameBuffer, _emulator.Api.BufferWidth,
+            _generalDependencyContainer.GameBitmapDrawingService.Draw(_emulator.Api.FrameBuffer, _emulator.Api.BufferWidth,
                 _emulator.Api.BufferHeight);
         };
     }
@@ -145,8 +146,7 @@ public partial class EmulatorViewModel : ObservableObject, IRecipient<Applicatio
     [RelayCommand(CanExecute = nameof(IsRunning))]
     private void FrameAdvance()
     {
-        if (_generalDependencyContainer.SettingsService.Get<bool>("PauseOnFrameAdvance"))
-            _emulator.PlayMode = Mupen64PlusTypes.PlayModes.Paused;
+        _emulator.PlayMode = Mupen64PlusTypes.PlayModes.Paused;
 
         _emulator.Api.FrameAdvance();
     }
@@ -165,19 +165,19 @@ public partial class EmulatorViewModel : ObservableObject, IRecipient<Applicatio
 
         List<string> missingPlugins = new();
 
-        var coreLibraryExists = File.Exists(_generalDependencyContainer.SettingsService.Get<string>("CoreLibraryPath"));
+        var coreLibraryExists = File.Exists(_settingsViewModel.CoreLibraryPath);
 
-        if (!Path.GetExtension(_generalDependencyContainer.SettingsService.Get<string>("CoreLibraryPath"))
+        if (!Path.GetExtension(_settingsViewModel.CoreLibraryPath)
                 .Equals(".dll", StringComparison.InvariantCultureIgnoreCase)) coreLibraryExists = false;
 
         if (!coreLibraryExists)
             _generalDependencyContainer.DialogService.ShowError(
                 _generalDependencyContainer.LocalizationService.GetStringOrDefault("CoreLibraryNotFound"));
 
-        var videoPluginExists = File.Exists(_generalDependencyContainer.SettingsService.Get<string>("VideoPluginPath"));
-        var audioPluginExists = File.Exists(_generalDependencyContainer.SettingsService.Get<string>("AudioPluginPath"));
-        var inputPluginExists = File.Exists(_generalDependencyContainer.SettingsService.Get<string>("InputPluginPath"));
-        var rspPluginExists = File.Exists(_generalDependencyContainer.SettingsService.Get<string>("RspPluginPath"));
+        var videoPluginExists = File.Exists(_settingsViewModel.VideoPluginPath);
+        var audioPluginExists = File.Exists(_settingsViewModel.AudioPluginPath);
+        var inputPluginExists = File.Exists(_settingsViewModel.InputPluginPath);
+        var rspPluginExists = File.Exists(_settingsViewModel.RspPluginPath);
         if (!videoPluginExists) missingPlugins.Add(_generalDependencyContainer.LocalizationService.GetStringOrDefault("Video"));
 
         if (!audioPluginExists) missingPlugins.Add(_generalDependencyContainer.LocalizationService.GetStringOrDefault("Audio"));

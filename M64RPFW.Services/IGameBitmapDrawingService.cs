@@ -1,9 +1,9 @@
 ﻿namespace M64RPFW.Services;
 
 /// <summary>
-///     The default <see langword="interface" /> for a service that draws to a bitmap
+///     The default <see langword="interface" /> for a service that draws the game screen to a bitmap
 /// </summary>
-public interface IBitmapDrawingService
+public interface IGameBitmapDrawingService
 {
     /// <summary>
     ///     Whether this bitmap has been created and is ready for drawing

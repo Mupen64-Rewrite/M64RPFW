@@ -8,5 +8,5 @@ public interface IApplicationClosingEventService
     /// <summary>
     /// The application closing event, which should fire when the application begins closing
     /// </summary>
-    public event Action OnApplicationClosing;
+    event Action OnApplicationClosing;
 }

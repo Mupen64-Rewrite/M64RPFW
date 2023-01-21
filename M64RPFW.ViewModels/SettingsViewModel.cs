@@ -1,5 +1,7 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Runtime.CompilerServices;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using M64RPFW.Services;
 using M64RPFW.ViewModels.Containers;
 using M64RPFW.ViewModels.Helpers;
 
@@ -7,67 +9,116 @@ namespace M64RPFW.ViewModels;
 
 public partial class SettingsViewModel : ObservableObject
 {
-    private readonly GeneralDependencyContainer _generalDependencyContainer;
+    private readonly IFilesService _filesService;
+    private readonly ILocalSettingsService _localSettingsService;
 
-    public SettingsViewModel(GeneralDependencyContainer generalDependencyContainer)
+    #region Properties
+    public string[] RecentRomPaths
     {
-        this._generalDependencyContainer = generalDependencyContainer;
+        get => _localSettingsService.Get<string[]>(nameof(RecentRomPaths));
+        set => SetSettingsProperty(nameof(RecentRomPaths), value);
     }
 
-    // TODO: rewrite
-    // this is unmaintainable!!!
-
-    [RelayCommand]
-    private void SetSettingsPropertyInteger(string virtualArguments)
+    public string[] RomExtensions
     {
-        SetSettingsProperty<int>(virtualArguments);
+        get => _localSettingsService.Get<string[]>(nameof(RomExtensions));
+        set => SetSettingsProperty(nameof(RomExtensions), value);
+    }
+    
+    public string CoreLibraryPath
+    {
+        get => _localSettingsService.Get<string>(nameof(CoreLibraryPath));
+        set => SetSettingsProperty(nameof(CoreLibraryPath), value);
+    }
+    
+    public string VideoPluginPath
+    {
+        get => _localSettingsService.Get<string>(nameof(VideoPluginPath));
+        set => SetSettingsProperty(nameof(VideoPluginPath), value);
+    }
+    
+    public string AudioPluginPath
+    {
+        get => _localSettingsService.Get<string>(nameof(AudioPluginPath));
+        set => SetSettingsProperty(nameof(AudioPluginPath), value);
+    }
+    
+    public string InputPluginPath
+    {
+        get => _localSettingsService.Get<string>(nameof(InputPluginPath));
+        set => SetSettingsProperty(nameof(InputPluginPath), value);
+    }
+    
+    public string RspPluginPath
+    {
+        get => _localSettingsService.Get<string>(nameof(RspPluginPath));
+        set => SetSettingsProperty(nameof(RspPluginPath), value);
+    }
+    
+    public int CoreType
+    {
+        get => _localSettingsService.Get<int>(nameof(CoreType));
+        set => SetSettingsProperty(nameof(CoreType), value);
+    }
+    
+    public int ScreenWidth
+    {
+        get => _localSettingsService.Get<int>(nameof(ScreenWidth));
+        set => SetSettingsProperty(nameof(ScreenWidth), value);
+    }
+    
+    public int ScreenHeight
+    {
+        get => _localSettingsService.Get<int>(nameof(ScreenHeight));
+        set => SetSettingsProperty(nameof(ScreenHeight), value);
     }
 
-    [RelayCommand]
-    private void SetSettingsPropertyBool(string virtualArguments)
+    public bool IsStatusbarVisible
     {
-        SetSettingsProperty<bool>(virtualArguments);
+        get => _localSettingsService.Get<bool>(nameof(IsStatusbarVisible));
+        set => SetSettingsProperty(nameof(IsStatusbarVisible), value);
     }
-
-    private void SetSettingsProperty<T>(string virtualArguments)
+    
+    public string Culture
     {
-        var vParams = SettingsVirtualArgumentHelper.ParseVirtualArgument(virtualArguments);
-
-        if (typeof(T) == typeof(bool))
-            _generalDependencyContainer.SettingsService.Set(vParams[0], bool.Parse(vParams[1]));
-        else if (typeof(T) == typeof(int))
-            _generalDependencyContainer.SettingsService.Set(vParams[0], int.Parse(vParams[1]));
-        else if (typeof(T) == typeof(string))
-            _generalDependencyContainer.SettingsService.Set(vParams[0], vParams[1]);
-        else
-            throw new Exception("Could not resolve VirtualArgument");
+        get => _localSettingsService.Get<string>(nameof(Culture));
+        set => SetSettingsProperty(nameof(Culture), value);
     }
-
-    [RelayCommand]
-    private void SetCulture(string culture)
+    
+    public string Theme
     {
-        _generalDependencyContainer.SettingsService.Set("Culture", culture, true);
+        get => _localSettingsService.Get<string>(nameof(Theme));
+        set => SetSettingsProperty(nameof(Theme), value);
     }
+    
+    #endregion
 
-    [RelayCommand]
-    private void SetTheme(string theme)
+    private void SetSettingsProperty<T>(string key, T value, [CallerMemberName] string? callerMemberName = null)
     {
-        _generalDependencyContainer.SettingsService.Set("Theme", theme, true);
+        ArgumentNullException.ThrowIfNull(callerMemberName);
+        _localSettingsService.Set(key, value);
+        OnPropertyChanged(callerMemberName);
+    }
+    
+    public SettingsViewModel(GeneralDependencyContainer generalDependencyContainer, ILocalSettingsService localSettingsService)
+    {
+        this._filesService = generalDependencyContainer.FilesService;
+        _localSettingsService = localSettingsService;
     }
 
     private async Task<(bool Succeeded, string Path)> ShowLibraryFileDialog()
     {
-        var file = await _generalDependencyContainer.FilesService.TryPickOpenFileAsync(new[] { "dll" });
+        var file = await _filesService.TryPickOpenFileAsync(new[] { "dll" });
         return file != null ? (true, file.Path) : ((bool Succeeded, string Path))(false, null);
     }
 
     [RelayCommand]
     private async void BrowseLibraryPath(string key)
     {
-        var file = await _generalDependencyContainer.FilesService.TryPickOpenFileAsync(new[] { "dll" });
+        var file = await _filesService.TryPickOpenFileAsync(new[] { "dll" });
         if (file != null)
         {
-            _generalDependencyContainer.SettingsService.Set(key, file.Path, true);
+            _localSettingsService.Set(key, file.Path);
         }
         else
         {

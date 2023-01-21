@@ -12,7 +12,6 @@ using CommunityToolkit.Mvvm.Input;
 using M64RPFW.Services;
 using M64RPFW.src.Extensions.Bindings;
 using M64RPFW.src.Services;
-using M64RPFW.src.Settings;
 using M64RPFW.ViewModels;
 using M64RPFW.ViewModels.Containers;
 using M64RPFW.ViewModels.Helpers;
@@ -35,25 +34,24 @@ public partial class MainWindow :
     Window,
     IDialogService,
     ILocalizationService,
-    ISettingsService,
-    IBitmapDrawingService,
+    IGameBitmapDrawingService,
     IDispatcherService,
     IApplicationClosingEventService
 {
-    internal static AppSettings AppSettings { get; private set; }
+    private const string LocalSettingsPath = "appsettings.json";
+
+    internal static LocalSettings LocalSettings { get; private set; }
     internal static ILocalizationService LocalizationService { get; private set; }
     internal static FilesService FilesService { get; private set; }
     
-    bool IBitmapDrawingService.IsReady => _writeableBitmap != null;
-    public event Action? OnApplicationClosing;
-
-    private const string AppSettingsPath = "appsettings.json";
-    private readonly GeneralDependencyContainer _generalDependencyContainer;
-
-    private readonly MainViewModel _mainViewModel;
+    public MainViewModel MainViewModel { get; private set; }
+    public SettingsViewModel SettingsViewModel { get; private set; }
 
     private SettingsWindow? _settingsWindow;
-    private WriteableBitmap _writeableBitmap;
+    private WriteableBitmap? _gameWriteableBitmap;
+
+    public event Action? OnApplicationClosing;
+    bool IGameBitmapDrawingService.IsReady => _gameWriteableBitmap != null;
 
     public MainWindow()
     {
@@ -64,40 +62,44 @@ public partial class MainWindow :
         // load settings from file or create from defaults
         try
         {
-            AppSettings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(AppSettingsPath));
-            if (AppSettings == null)
-            {
-                throw new Exception();
-            }
+            LocalSettings = LocalSettings.FromJson(File.ReadAllText(LocalSettingsPath));
         }
         catch
         {
             Debug.WriteLine("Failed to load settings, falling back to defaults...");
-            AppSettings = new AppSettings();
-            Save();
+            LocalSettings = LocalSettings.Default;
         }
         
         InitializeComponent();
 
-        FilesService = new();
+        FilesService = new FilesService();
         
-        AppSettings.PropertyChanged += delegate(object? sender, PropertyChangedEventArgs args)
+        
+
+        var generalDependencyContainer =
+            new GeneralDependencyContainer(this, this, this, this, FilesService, this);
+
+
+        SettingsViewModel = new SettingsViewModel(generalDependencyContainer, LocalSettings);
+        MainViewModel = new MainViewModel(generalDependencyContainer, SettingsViewModel);
+        
+        LocalSettings.OnSettingChanged += delegate(object? sender, string key)
         {
-            if (args.PropertyName == nameof(AppSettings.Theme))
+            if (key == nameof(SettingsViewModel.Theme))
             {
-                if (AppSettings.Theme.Equals("Light", StringComparison.InvariantCultureIgnoreCase))
+                if (SettingsViewModel.Theme.Equals("Light", StringComparison.InvariantCultureIgnoreCase))
                     ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
-                else if (AppSettings.Theme.Equals("Dark", StringComparison.InvariantCultureIgnoreCase))
+                else if (SettingsViewModel.Theme.Equals("Dark", StringComparison.InvariantCultureIgnoreCase))
                     ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
                 else
                     throw new ArgumentException("Couldn't resolve theme");
             }
-
-            if (args.PropertyName == nameof(AppSettings.Culture))
+            
+            if (key == nameof(SettingsViewModel.Culture))
             {
                 (this as IDispatcherService).Execute(delegate
                 {
-                    var culture = CultureInfo.GetCultureInfo(AppSettings.Culture);
+                    var culture = CultureInfo.GetCultureInfo(SettingsViewModel.Culture);
                     Thread.CurrentThread.CurrentCulture =
                         Thread.CurrentThread.CurrentUICulture =
                             LocalizationSource.Instance.CurrentCulture = culture;
@@ -105,15 +107,9 @@ public partial class MainWindow :
             }
         };
         
-        _generalDependencyContainer =
-            new GeneralDependencyContainer(this, this, this, this, this, FilesService, this);
+		DataContext = this;
 
-        _mainViewModel = new MainViewModel(_generalDependencyContainer);
-
-        DataContext = _mainViewModel;
-        
-        AppSettings.NotifyAllPropertiesChanged();
-    }
+	}
     
     #region Service Method Implementations
 
@@ -124,29 +120,6 @@ public partial class MainWindow :
             _ = MessageBox.Show(message, (this as ILocalizationService).GetStringOrDefault("Error"), MessageBoxButton.OK,
                 MessageBoxImage.Error);
         });
-    }
-
-    public T Get<T>(string key)
-    {
-        var prop = AppSettings.GetType().GetProperty(key);
-        if (prop == null) throw new Exception($"Could not find property {key}");
-        var val = (T)prop.GetValue(AppSettings);
-        if (val == null) throw new Exception($"Could not get property value {key}");
-        return val;
-    }
-
-    public void Set<T>(string key, T value, bool saveAfter = false)
-    {
-        var prop = AppSettings.GetType().GetProperty(key);
-        prop.SetValue(AppSettings, value);
-        if (saveAfter) Save();
-    }
-
-    public void Save()
-    {
-        var json = JsonSerializer.Serialize(AppSettings, typeof(AppSettings),
-            new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(AppSettingsPath, json);
     }
 
     public string? GetStringOrDefault(string key, string? @default = null)
@@ -161,21 +134,22 @@ public partial class MainWindow :
         }
     }
 
-    void IBitmapDrawingService.Create(int width, int height)
+    void IGameBitmapDrawingService.Create(int width, int height)
     {
         Application.Current.Dispatcher.Invoke(delegate
         {
-            _writeableBitmap = new WriteableBitmap(width, height, VisualTreeHelper.GetDpi(this).PixelsPerInchX,
+            _gameWriteableBitmap = new WriteableBitmap(width, height, VisualTreeHelper.GetDpi(this).PixelsPerInchX,
                 VisualTreeHelper.GetDpi(this).PixelsPerInchY, PixelFormats.Cmyk32, null);
-            Main_Image.Source = _writeableBitmap;
+            //Main_Image.Source = _gameWriteableBitmap;
         });
     }
 
-    void IBitmapDrawingService.Draw(Array buffer, int width, int height)
+    void IGameBitmapDrawingService.Draw(Array buffer, int width, int height)
     {
         Application.Current.Dispatcher.Invoke(delegate
         {
-            _writeableBitmap.WritePixels(new Int32Rect(0, 0, width, height), buffer, width * sizeof(int), 0);
+            Trace.Assert(_gameWriteableBitmap != null, nameof(_gameWriteableBitmap) + " != null");
+            _gameWriteableBitmap.WritePixels(new Int32Rect(0, 0, width, height), buffer, width * sizeof(int), 0);
         });
     }
 
@@ -193,7 +167,7 @@ public partial class MainWindow :
     {
         // store reference and check against it being null because WPF accelerators are a dick and eat child window's events
         if (_settingsWindow != null) return;
-        _settingsWindow = new SettingsWindow { DataContext = new SettingsViewModel(_generalDependencyContainer) };
+        _settingsWindow = new SettingsWindow { DataContext = SettingsViewModel };
         _ = _settingsWindow.ShowDialog();
         _settingsWindow = null; // this is okay, because ShowDialog() blocks
     }
@@ -216,7 +190,8 @@ public partial class MainWindow :
     private void MainWindow_OnClosing(object? sender, CancelEventArgs e)
     {
         OnApplicationClosing?.Invoke();
-        Save();
+        File.WriteAllText(LocalSettingsPath, LocalSettings.ToJson());
     }
 
+    
 }
