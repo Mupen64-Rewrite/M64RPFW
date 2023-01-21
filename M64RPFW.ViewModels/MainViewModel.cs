@@ -8,8 +8,6 @@ namespace M64RPFW.ViewModels;
 
 public sealed partial class MainViewModel : ObservableObject
 {
-    public string Hi { get; } = "Moin!";
-
     public MainViewModel(GeneralDependencyContainer generalDependencyContainer, SettingsViewModel settingsViewModel)
     {
         EmulatorViewModel = new EmulatorViewModel(generalDependencyContainer, settingsViewModel);
