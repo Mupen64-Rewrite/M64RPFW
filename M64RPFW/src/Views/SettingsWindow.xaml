@@ -36,12 +36,6 @@
                                     <ComboBoxItem Tag="en-US">English</ComboBoxItem>
                                     <ComboBoxItem Tag="de-DE">Deutsch</ComboBoxItem>
                                 </ComboBox>
-                                <!-- <StackPanel Orientation="Vertical"> -->
-                                <!--     <RadioButton Content="English" -->
-                                <!--                  IsChecked="{Binding Path=Culture, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=en-US, Mode=TwoWay}" /> -->
-                                <!--     <RadioButton Content="Deutsch" -->
-                                <!--                  IsChecked="{Binding Path=Culture, Converter={StaticResource StringEqualityToBooleanConverter}, ConverterParameter=de-DE, Mode=TwoWay}" /> -->
-                                <!-- </StackPanel> -->
                             </ucs:SettingsSection.Content>
                         </ucs:SettingsSection>
                     </StackPanel>
@@ -54,12 +48,11 @@
                         <ucs:SettingsSection Header="{extbin:LocalizationBinding Core}">
                             <ucs:SettingsSection.Content>
                                 <StackPanel Orientation="Vertical">
-                                    <RadioButton Content="{extbin:LocalizationBinding PureInterpreter}"
-                                                 IsChecked="{Binding CoreType, Converter={StaticResource IntegerEqualityToBooleanConverter}, ConverterParameter={ext:Int32 0}, Mode=TwoWay}" />
-                                    <RadioButton Content="{extbin:LocalizationBinding CachedInterpreter}"
-                                                 IsChecked="{Binding CoreType, Converter={StaticResource IntegerEqualityToBooleanConverter}, ConverterParameter={ext:Int32 1}, Mode=TwoWay}" />
-                                    <RadioButton Content="{extbin:LocalizationBinding DynamicRecompiler}"
-                                                 IsChecked="{Binding CoreType, Converter={StaticResource IntegerEqualityToBooleanConverter}, ConverterParameter={ext:Int32 2}, Mode=TwoWay}" />
+                                    <ComboBox SelectedValue="{Binding Path=CoreType, Mode=TwoWay}" SelectedValuePath="Tag">
+                                        <ComboBoxItem Tag="{ext:Int32 0}" Content="{extbin:LocalizationBinding PureInterpreter}"/>
+                                        <ComboBoxItem Tag="{ext:Int32 1}" Content="{extbin:LocalizationBinding CachedInterpreter}"/>
+                                        <ComboBoxItem Tag="{ext:Int32 2}" Content="{extbin:LocalizationBinding DynamicRecompiler}"/>
+                                    </ComboBox>
                                 </StackPanel>
                             </ucs:SettingsSection.Content>
                         </ucs:SettingsSection>

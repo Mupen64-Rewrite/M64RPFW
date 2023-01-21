@@ -109,6 +109,7 @@ public partial class EmulatorViewModel : ObservableObject, IRecipient<Applicatio
         Mupen64PlusConfig config = new(_settingsViewModel.CoreType,
             _settingsViewModel.ScreenWidth,
             _settingsViewModel.ScreenHeight);
+        
         Mupen64PlusLaunchParameters launchParameters = new(romViewModel.RawData,
             config,
             0,
@@ -117,6 +118,7 @@ public partial class EmulatorViewModel : ObservableObject, IRecipient<Applicatio
             audioPluginFile,
             inputPluginFile,
             rspPluginFile);
+        
         _emulator.Start(launchParameters);
 
         _emulator.Api.OnFrameBufferCreate += delegate
