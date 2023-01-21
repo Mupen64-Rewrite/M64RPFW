@@ -107,6 +107,8 @@ public partial class MainWindow :
             }
         };
         
+        LocalSettings.InvokeOnSettingChangedForAllKeys();
+        
 		DataContext = this;
 
 	}

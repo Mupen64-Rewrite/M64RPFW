@@ -36,6 +36,14 @@ internal sealed class LocalSettings : ILocalSettingsService
 
     public event EventHandler<string>? OnSettingChanged;
 
+    public void InvokeOnSettingChangedForAllKeys()
+    {
+        foreach (var keyValuePair in _settings)
+        {
+            OnSettingChanged?.Invoke(this, keyValuePair.Key);
+        }
+    }
+    
     public T Get<T>(string key)
     {
         if (key == null) throw new ArgumentNullException(nameof(key));
