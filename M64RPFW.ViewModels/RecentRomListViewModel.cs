@@ -50,19 +50,21 @@ public partial class RecentRomsViewModel : ObservableObject, IRecipient<RomLoade
         if (!rom.IsValid) return;
 
         // check for duplicates
-        
-        // reference duplication check 
-        if (RecentRomViewModels.Contains(rom)) return;
+        bool alreadyExists = RecentRomViewModels.Contains(rom) || RecentRomViewModels.Any(x => x.Path == rom.Path);
 
-        // path duplication check
-        if (RecentRomViewModels.Any(x => x.Path == rom.Path))
+        if (alreadyExists)
         {
+            // duplicate found
+            // should we:
+            // A - remove it from the list and later add it back to the head
+            // B - cease adding it and don't move anything
             return;
+            //RecentRomViewModels.Remove(rom);
         }
-
-        // no duplicates found, add it
+        
+        // add it to the head of the list
         RecentRomViewModels.Insert(0, rom);
-
+        
         SyncSettingWithInternalArray(doSave);
     }
 
