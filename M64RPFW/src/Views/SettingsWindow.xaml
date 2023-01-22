@@ -70,42 +70,31 @@
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
-
-                                    <TextBlock VerticalAlignment="Center" Grid.Row="0" Grid.Column="0"
-                                               Padding="{StaticResource SmallPadding}"
-                                               Text="{extbin:LocalizationBinding Core}" />
+                                    <iconPacks:PackIconMaterial Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Kind="Memory"></iconPacks:PackIconMaterial>
                                     <ucs:FileBrowserTextBox Grid.Row="0" Grid.Column="1"
                                                             Path="{Binding CoreLibraryPath, Mode=TwoWay}"
                                                             BrowseCommand="{Binding BrowseLibraryPathCommand}"
                                                             BrowseCommandParameter="CoreLibraryPath" />
 
-                                    <TextBlock VerticalAlignment="Center" Grid.Row="1" Grid.Column="0"
-                                               Padding="{StaticResource SmallPadding}"
-                                               Text="{extbin:LocalizationBinding Video}" />
+                                    <iconPacks:PackIconMaterial Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Kind="Monitor"></iconPacks:PackIconMaterial>
                                     <ucs:FileBrowserTextBox Grid.Row="1" Grid.Column="1"
                                                             Path="{Binding VideoPluginPath, Mode=TwoWay}"
                                                             BrowseCommand="{Binding BrowseLibraryPathCommand}"
                                                             BrowseCommandParameter="VideoPluginPath" />
 
-                                    <TextBlock VerticalAlignment="Center" Grid.Row="2" Grid.Column="0"
-                                               Padding="{StaticResource SmallPadding}"
-                                               Text="{extbin:LocalizationBinding Audio}" />
+                                    <iconPacks:PackIconMaterial Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Kind="Speaker"></iconPacks:PackIconMaterial>
                                     <ucs:FileBrowserTextBox Grid.Row="2" Grid.Column="1"
                                                             Path="{Binding AudioPluginPath, Mode=TwoWay}"
                                                             BrowseCommand="{Binding BrowseLibraryPathCommand}"
                                                             BrowseCommandParameter="AudioPluginPath" />
 
-                                    <TextBlock VerticalAlignment="Center" Grid.Row="3" Grid.Column="0"
-                                               Padding="{StaticResource SmallPadding}"
-                                               Text="{extbin:LocalizationBinding Input}" />
+                                    <iconPacks:PackIconMaterial Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Kind="ControllerClassic"></iconPacks:PackIconMaterial>
                                     <ucs:FileBrowserTextBox Grid.Row="3" Grid.Column="1"
                                                             Path="{Binding InputPluginPath, Mode=TwoWay}"
                                                             BrowseCommand="{Binding BrowseLibraryPathCommand}"
                                                             BrowseCommandParameter="InputPluginPath" />
 
-                                    <TextBlock VerticalAlignment="Center" Grid.Row="4" Grid.Column="0"
-                                               Padding="{StaticResource SmallPadding}"
-                                               Text="{extbin:LocalizationBinding Rsp}" />
+                                    <iconPacks:PackIconMaterial Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Kind="Chip"></iconPacks:PackIconMaterial>
                                     <ucs:FileBrowserTextBox Grid.Row="4" Grid.Column="1"
                                                             Path="{Binding RspPluginPath, Mode=TwoWay}"
                                                             BrowseCommand="{Binding BrowseLibraryPathCommand}"
