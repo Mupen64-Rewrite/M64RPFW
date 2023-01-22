@@ -105,7 +105,7 @@
                             <MenuItem Header="{extbin:LocalizationBinding Rsp}" />
                         </MenuItem>
                         <Separator />
-                        <MenuItem x:Name="ShowStatusbar_MenuItem" Header="{extbin:LocalizationBinding ShowStatusbar}"
+                        <MenuItem x:Name="ShowStatusbar_MenuItem" Header="{extbin:LocalizationBinding ShowStatusbar}" IsChecked="{Binding SettingsViewModel.IsStatusbarVisible, Mode=TwoWay}"
                                   IsCheckable="True" />
                         <Separator />
                         <MenuItem Header="{extbin:LocalizationBinding ProgramSettings}"
