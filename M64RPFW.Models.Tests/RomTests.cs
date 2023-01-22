@@ -5,9 +5,9 @@ namespace M64RPFW.Models.Tests;
 [TestClass]
 public class RomTests
 {
-    private Rom GetTestRom()
+    private static Rom GetTestRom()
     {
-        return new Rom(File.ReadAllBytes("m64p_test_Rom.v64".ToBundledPath()));
+        return new Rom(File.ReadAllBytes("m64p_test_rom.v64".ToBundledPath()));
     }
 
     [TestMethod]
@@ -20,9 +20,9 @@ public class RomTests
         Assert.IsTrue(rom.IsBigEndian,
             "Rom has wrongly identified endiandiness. Expected Big Endian, got Little Endian");
         Assert.IsTrue(rom.PrimaryCrc == 0xE54DBADD,
-            $"Rom has mismatched primary CRC. Expected {string.Format("0x{0:X8}", 0xE54DBADD)}, got {string.Format("0x{0:X8}", rom.PrimaryCrc)}");
+            $"Rom has mismatched primary CRC. Expected 0x{0xE54DBADD:X8}, got 0x{rom.PrimaryCrc:X8}");
         Assert.IsTrue(rom.SecondaryCrc == 0x4A0007B1,
-            $"Rom has mismatched secondary CRC. Expected {string.Format("0x{0:X8}", 0x4A0007B1)}, got {string.Format("0x{0:X8}", rom.SecondaryCrc)}");
+            $"Rom has mismatched secondary CRC. Expected 0x{0x4A0007B1:X8}, got 0x{rom.SecondaryCrc:X8}");
         Assert.IsTrue(rom.CountryCode == 0, $"Rom has a mismatched country code. Expected {0}, got {rom.CountryCode}");
         Assert.IsTrue(rom.RawData.Length == 0x100000,
             $"Rom has a mismatched raw data length. Expected {0x100000}, got {rom.RawData.Length}");
