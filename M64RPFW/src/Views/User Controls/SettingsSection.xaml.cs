@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace M64RPFW.src.Views.User_Controls;
+namespace M64RPFW.Views.User_Controls;
 
 /// <summary>
 ///     Interaction logic for SettingsSection.xaml

@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace M64RPFW.src.Converters;
+namespace M64RPFW.Converters;
 
 public class BooleanToVisibilityConverter : IValueConverter
 {

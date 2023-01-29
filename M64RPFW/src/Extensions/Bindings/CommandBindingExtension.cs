@@ -1,5 +1,4 @@
-﻿namespace M64RPFW.src.Extensions.Bindings;
-
+﻿namespace M64RPFW.Extensions.Bindings;
 
 //[MarkupExtensionReturnType(typeof(RelayCommand))]
 //public class CommandBindingExtension : MarkupExtension

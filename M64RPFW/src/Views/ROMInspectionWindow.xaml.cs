@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace M64RPFW.src.Views;
+namespace M64RPFW.Views;
 
 /// <summary>
 ///     Interaction logic for RomInspectionWindow.xaml

@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace M64RPFW.src.Extensions.Bindings;
+namespace M64RPFW.Extensions.Bindings;
 
 public class BindingProxy : Freezable
 {

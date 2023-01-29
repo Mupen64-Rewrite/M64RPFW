@@ -1,26 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
-using System.Text.Json;
 using System.Threading;
 using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.Input;
+using M64RPFW.Extensions.Bindings;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
-using M64RPFW.src.Extensions.Bindings;
-using M64RPFW.src.Services;
-using M64RPFW.src.Services.Abstractions;
 using M64RPFW.ViewModels;
 using M64RPFW.ViewModels.Containers;
-using M64RPFW.ViewModels.Helpers;
 using ModernWpf;
 using File = System.IO.File;
 
-namespace M64RPFW.src.Views;
+namespace M64RPFW.Views;
 
 /// <summary>
 ///     Code-behind for MainWindow.xaml.cs
@@ -43,21 +36,12 @@ public partial class MainWindow :
 {
     private const string LocalSettingsPath = "appsettings.json";
 
-    internal static LocalSettings LocalSettings { get; private set; }
-    internal static ILocalizationService LocalizationService { get; private set; }
-    internal static FilesService FilesService { get; private set; }
-    
-    public MainViewModel MainViewModel { get; private set; }
-    public SettingsViewModel SettingsViewModel { get; private set; }
-
     private SettingsWindow? _settingsWindow;
-
-    public event Action? OnApplicationClosing;
 
     public MainWindow()
     {
         LocalizationService = this;
-        
+
         // load settings from file or create from defaults
         try
         {
@@ -68,12 +52,11 @@ public partial class MainWindow :
             Debug.WriteLine("Failed to load settings, falling back to defaults...");
             LocalSettings = LocalSettings.Default;
         }
-        
+
         InitializeComponent();
 
         FilesService = new FilesService();
-        
-        
+
 
         var generalDependencyContainer =
             new GeneralDependencyContainer(this, this, this, this, FilesService, this);
@@ -81,7 +64,7 @@ public partial class MainWindow :
 
         SettingsViewModel = new SettingsViewModel(generalDependencyContainer, LocalSettings);
         MainViewModel = new MainViewModel(generalDependencyContainer, SettingsViewModel);
-        
+
         LocalSettings.OnSettingChanged += delegate(object? sender, string key)
         {
             if (key == nameof(SettingsViewModel.Theme))
@@ -93,9 +76,8 @@ public partial class MainWindow :
                 else
                     throw new ArgumentException("Couldn't resolve theme");
             }
-            
+
             if (key == nameof(SettingsViewModel.Culture))
-            {
                 (this as IDispatcherService).Execute(delegate
                 {
                     var culture = CultureInfo.GetCultureInfo(SettingsViewModel.Culture);
@@ -103,22 +85,36 @@ public partial class MainWindow :
                         Thread.CurrentThread.CurrentUICulture =
                             LocalizationSource.Instance.CurrentCulture = culture;
                 });
-            }
         };
-        
-        LocalSettings.InvokeOnSettingChangedForAllKeys();
-        
-		DataContext = this;
 
-	}
-    
+        LocalSettings.InvokeOnSettingChangedForAllKeys();
+
+        DataContext = this;
+    }
+
+    internal static LocalSettings LocalSettings { get; private set; }
+    internal static ILocalizationService LocalizationService { get; private set; }
+    internal static FilesService FilesService { get; private set; }
+
+    public MainViewModel MainViewModel { get; private set; }
+    public SettingsViewModel SettingsViewModel { get; }
+
+    public event Action? OnApplicationClosing;
+
+    private void MainWindow_OnClosing(object? sender, CancelEventArgs e)
+    {
+        OnApplicationClosing?.Invoke();
+        File.WriteAllText(LocalSettingsPath, LocalSettings.ToJson());
+    }
+
     #region Service Method Implementations
 
     public void ShowError(string message)
     {
         Application.Current.Dispatcher.Invoke(() =>
         {
-            _ = MessageBox.Show(message, (this as ILocalizationService).GetStringOrDefault("Error"), MessageBoxButton.OK,
+            _ = MessageBox.Show(message, (this as ILocalizationService).GetStringOrDefault("Error"),
+                MessageBoxButton.OK,
                 MessageBoxImage.Error);
         });
     }
@@ -134,7 +130,7 @@ public partial class MainWindow :
             return @default;
         }
     }
-    
+
     IBitmap IBitmapsService.Create(IBitmapsService.BitmapTargets bitmapTarget, int width, int height)
     {
         Trace.Assert(Thread.CurrentThread.ManagedThreadId == Dispatcher.Thread.ManagedThreadId);
@@ -142,18 +138,14 @@ public partial class MainWindow :
         Bitmap bitmap;
 
         if (bitmapTarget == IBitmapsService.BitmapTargets.Game)
-        {
             bitmap = new Bitmap(Main_Image, width, height);
-        }
         else
-        {
             throw new InvalidEnumArgumentException($"Couldn't resolve target \"{bitmapTarget}\"");
-        }
-        
+
         return bitmap;
     }
-    
-    
+
+
     // void IBitmapsService.Create(int width, int height)
     // {
     //     
@@ -205,15 +197,6 @@ public partial class MainWindow :
     {
         Close();
     }
-    
+
     #endregion
-
-    private void MainWindow_OnClosing(object? sender, CancelEventArgs e)
-    {
-        OnApplicationClosing?.Invoke();
-        File.WriteAllText(LocalSettingsPath, LocalSettings.ToJson());
-    }
-
-
-    
 }

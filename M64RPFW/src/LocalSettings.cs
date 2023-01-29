@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Text.Json;
 using M64RPFW.Services;
 
@@ -9,10 +8,6 @@ namespace M64RPFW;
 
 internal sealed class LocalSettings : ILocalSettingsService
 {
-    private LocalSettings()
-    {
-    }
-
     public static LocalSettings Default = new()
     {
         _settings = new Dictionary<string, object>
@@ -35,16 +30,12 @@ internal sealed class LocalSettings : ILocalSettingsService
 
     private Dictionary<string, object> _settings = new();
 
+    private LocalSettings()
+    {
+    }
+
     public event EventHandler<string>? OnSettingChanged;
 
-    public void InvokeOnSettingChangedForAllKeys()
-    {
-        foreach (var keyValuePair in _settings)
-        {
-            OnSettingChanged?.Invoke(this, keyValuePair.Key);
-        }
-    }
-    
     public T Get<T>(string key)
     {
         if (key == null) throw new ArgumentNullException(nameof(key));
@@ -65,6 +56,11 @@ internal sealed class LocalSettings : ILocalSettingsService
 
         _settings[key] = value;
         OnSettingChanged?.Invoke(this, key);
+    }
+
+    public void InvokeOnSettingChangedForAllKeys()
+    {
+        foreach (var keyValuePair in _settings) OnSettingChanged?.Invoke(this, keyValuePair.Key);
     }
 
     public static LocalSettings FromJson(string json)

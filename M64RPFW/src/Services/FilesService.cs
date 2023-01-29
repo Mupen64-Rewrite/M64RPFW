@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
-using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using File = M64RPFW.src.Services.Abstractions.File;
+using File = M64RPFW.Services.Abstractions.File;
 
-namespace M64RPFW.src.Services;
+namespace M64RPFW.Services;
 
 /// <summary>
 ///     A <see langword="class" /> that implements the <see cref="IFilesService" /> <see langword="interface" /> using WPF

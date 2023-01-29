@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace M64RPFW.src.Views.User_Controls;
+namespace M64RPFW.Views.User_Controls;
 
 /// <summary>
 ///     Interaction logic for FileBrowserTextBox.xaml
@@ -20,7 +20,7 @@ public partial class FileBrowserTextBox : UserControl
     public static readonly DependencyProperty BrowseCommandParameterProperty =
         DependencyProperty.Register("BrowseCommandParameter", typeof(object), typeof(FileBrowserTextBox),
             new PropertyMetadata(default));
-    
+
     public FileBrowserTextBox()
     {
         InitializeComponent();
@@ -38,10 +38,10 @@ public partial class FileBrowserTextBox : UserControl
         get => (ICommand)GetValue(BrowseCommandProperty);
         set => SetValue(BrowseCommandProperty, value);
     }
-    
+
     public object BrowseCommandParameter
     {
-        get => (object)GetValue(BrowseCommandParameterProperty);
+        get => GetValue(BrowseCommandParameterProperty);
         set => SetValue(BrowseCommandParameterProperty, value);
     }
 }

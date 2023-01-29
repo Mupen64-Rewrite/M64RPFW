@@ -1,14 +1,14 @@
-﻿<Window x:Class="M64RPFW.src.Views.SettingsWindow"
+﻿<Window x:Class="M64RPFW.Views.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:ucs="clr-namespace:M64RPFW.src.Views.User_Controls"
-        xmlns:ext="clr-namespace:M64RPFW.src.Extensions"
-        xmlns:extbin="clr-namespace:M64RPFW.src.Extensions.Bindings"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         xmlns:viewmodels="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels"
+        xmlns:userControls="clr-namespace:M64RPFW.Views.User_Controls"
+        xmlns:bindings="clr-namespace:M64RPFW.Extensions.Bindings"
+        xmlns:extensions="clr-namespace:M64RPFW.Extensions"
         d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
@@ -22,22 +22,22 @@
             <TabItem Header="{iconPacks:Material Kind=Monitor, Width={StaticResource SmallIconSize}}">
                 <ScrollViewer>
                     <StackPanel Orientation="Vertical" Margin="{StaticResource MediumContentMargin}">
-                        <ucs:SettingsSection Header="{extbin:LocalizationBinding Theme}">
-                            <ucs:SettingsSection.Content>
+                        <userControls:SettingsSection Header="{bindings:LocalizationBinding Theme}">
+                            <userControls:SettingsSection.Content>
                                 <ComboBox SelectedValue="{Binding Path=Theme, Mode=TwoWay}" SelectedValuePath="Tag">
-                                    <ComboBoxItem Tag="Light" Content="{extbin:LocalizationBinding Light}"/>
-                                    <ComboBoxItem Tag="Dark" Content="{extbin:LocalizationBinding Dark}"/>
+                                    <ComboBoxItem Tag="Light" Content="{bindings:LocalizationBinding Light}" />
+                                    <ComboBoxItem Tag="Dark" Content="{bindings:LocalizationBinding Dark}" />
                                 </ComboBox>
-                            </ucs:SettingsSection.Content>
-                        </ucs:SettingsSection>
-                        <ucs:SettingsSection Header="{extbin:LocalizationBinding Language}">
-                            <ucs:SettingsSection.Content>
+                            </userControls:SettingsSection.Content>
+                        </userControls:SettingsSection>
+                        <userControls:SettingsSection Header="{bindings:LocalizationBinding Language}">
+                            <userControls:SettingsSection.Content>
                                 <ComboBox SelectedValue="{Binding Path=Culture, Mode=TwoWay}" SelectedValuePath="Tag">
                                     <ComboBoxItem Tag="en-US">English</ComboBoxItem>
                                     <ComboBoxItem Tag="de-DE">Deutsch</ComboBoxItem>
                                 </ComboBox>
-                            </ucs:SettingsSection.Content>
-                        </ucs:SettingsSection>
+                            </userControls:SettingsSection.Content>
+                        </userControls:SettingsSection>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
@@ -45,19 +45,23 @@
 
                 <ScrollViewer>
                     <StackPanel Orientation="Vertical" Margin="{StaticResource MediumContentMargin}">
-                        <ucs:SettingsSection Header="{extbin:LocalizationBinding Core}">
-                            <ucs:SettingsSection.Content>
+                        <userControls:SettingsSection Header="{bindings:LocalizationBinding Core}">
+                            <userControls:SettingsSection.Content>
                                 <StackPanel Orientation="Vertical">
-                                    <ComboBox SelectedValue="{Binding Path=CoreType, Mode=TwoWay}" SelectedValuePath="Tag">
-                                        <ComboBoxItem Tag="{ext:Int32 0}" Content="{extbin:LocalizationBinding PureInterpreter}"/>
-                                        <ComboBoxItem Tag="{ext:Int32 1}" Content="{extbin:LocalizationBinding CachedInterpreter}"/>
-                                        <ComboBoxItem Tag="{ext:Int32 2}" Content="{extbin:LocalizationBinding DynamicRecompiler}"/>
+                                    <ComboBox SelectedValue="{Binding Path=CoreType, Mode=TwoWay}"
+                                              SelectedValuePath="Tag">
+                                        <ComboBoxItem Tag="{extensions:Int32 0}"
+                                                      Content="{bindings:LocalizationBinding PureInterpreter}" />
+                                        <ComboBoxItem Tag="{extensions:Int32 1}"
+                                                      Content="{bindings:LocalizationBinding CachedInterpreter}" />
+                                        <ComboBoxItem Tag="{extensions:Int32 2}"
+                                                      Content="{bindings:LocalizationBinding DynamicRecompiler}" />
                                     </ComboBox>
                                 </StackPanel>
-                            </ucs:SettingsSection.Content>
-                        </ucs:SettingsSection>
-                        <ucs:SettingsSection Header="{extbin:LocalizationBinding Paths}">
-                            <ucs:SettingsSection.Content>
+                            </userControls:SettingsSection.Content>
+                        </userControls:SettingsSection>
+                        <userControls:SettingsSection Header="{bindings:LocalizationBinding Paths}">
+                            <userControls:SettingsSection.Content>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
@@ -70,39 +74,44 @@
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
-                                    <iconPacks:PackIconMaterial Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Kind="Memory"></iconPacks:PackIconMaterial>
-                                    <ucs:FileBrowserTextBox Grid.Row="0" Grid.Column="1"
-                                                            Path="{Binding CoreLibraryPath, Mode=TwoWay}"
-                                                            BrowseCommand="{Binding BrowseLibraryPathCommand}"
-                                                            BrowseCommandParameter="CoreLibraryPath" />
+                                    <iconPacks:PackIconMaterial Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"
+                                                                Kind="Memory" />
+                                    <userControls:FileBrowserTextBox Grid.Row="0" Grid.Column="1"
+                                                                     Path="{Binding CoreLibraryPath, Mode=TwoWay}"
+                                                                     BrowseCommand="{Binding BrowseLibraryPathCommand}"
+                                                                     BrowseCommandParameter="CoreLibraryPath" />
 
-                                    <iconPacks:PackIconMaterial Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Kind="Monitor"></iconPacks:PackIconMaterial>
-                                    <ucs:FileBrowserTextBox Grid.Row="1" Grid.Column="1"
-                                                            Path="{Binding VideoPluginPath, Mode=TwoWay}"
-                                                            BrowseCommand="{Binding BrowseLibraryPathCommand}"
-                                                            BrowseCommandParameter="VideoPluginPath" />
+                                    <iconPacks:PackIconMaterial Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"
+                                                                Kind="Monitor" />
+                                    <userControls:FileBrowserTextBox Grid.Row="1" Grid.Column="1"
+                                                                     Path="{Binding VideoPluginPath, Mode=TwoWay}"
+                                                                     BrowseCommand="{Binding BrowseLibraryPathCommand}"
+                                                                     BrowseCommandParameter="VideoPluginPath" />
 
-                                    <iconPacks:PackIconMaterial Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Kind="Speaker"></iconPacks:PackIconMaterial>
-                                    <ucs:FileBrowserTextBox Grid.Row="2" Grid.Column="1"
-                                                            Path="{Binding AudioPluginPath, Mode=TwoWay}"
-                                                            BrowseCommand="{Binding BrowseLibraryPathCommand}"
-                                                            BrowseCommandParameter="AudioPluginPath" />
+                                    <iconPacks:PackIconMaterial Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"
+                                                                Kind="Speaker" />
+                                    <userControls:FileBrowserTextBox Grid.Row="2" Grid.Column="1"
+                                                                     Path="{Binding AudioPluginPath, Mode=TwoWay}"
+                                                                     BrowseCommand="{Binding BrowseLibraryPathCommand}"
+                                                                     BrowseCommandParameter="AudioPluginPath" />
 
-                                    <iconPacks:PackIconMaterial Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Kind="ControllerClassic"></iconPacks:PackIconMaterial>
-                                    <ucs:FileBrowserTextBox Grid.Row="3" Grid.Column="1"
-                                                            Path="{Binding InputPluginPath, Mode=TwoWay}"
-                                                            BrowseCommand="{Binding BrowseLibraryPathCommand}"
-                                                            BrowseCommandParameter="InputPluginPath" />
+                                    <iconPacks:PackIconMaterial Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"
+                                                                Kind="ControllerClassic" />
+                                    <userControls:FileBrowserTextBox Grid.Row="3" Grid.Column="1"
+                                                                     Path="{Binding InputPluginPath, Mode=TwoWay}"
+                                                                     BrowseCommand="{Binding BrowseLibraryPathCommand}"
+                                                                     BrowseCommandParameter="InputPluginPath" />
 
-                                    <iconPacks:PackIconMaterial Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Kind="Chip"></iconPacks:PackIconMaterial>
-                                    <ucs:FileBrowserTextBox Grid.Row="4" Grid.Column="1"
-                                                            Path="{Binding RspPluginPath, Mode=TwoWay}"
-                                                            BrowseCommand="{Binding BrowseLibraryPathCommand}"
-                                                            BrowseCommandParameter="RspPluginPath" />
+                                    <iconPacks:PackIconMaterial Grid.Row="4" Grid.Column="0" VerticalAlignment="Center"
+                                                                Kind="Chip" />
+                                    <userControls:FileBrowserTextBox Grid.Row="4" Grid.Column="1"
+                                                                     Path="{Binding RspPluginPath, Mode=TwoWay}"
+                                                                     BrowseCommand="{Binding BrowseLibraryPathCommand}"
+                                                                     BrowseCommandParameter="RspPluginPath" />
 
                                 </Grid>
-                            </ucs:SettingsSection.Content>
-                        </ucs:SettingsSection>
+                            </userControls:SettingsSection.Content>
+                        </userControls:SettingsSection>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>

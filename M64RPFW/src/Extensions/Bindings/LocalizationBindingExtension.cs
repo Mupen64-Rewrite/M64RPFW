@@ -1,6 +1,6 @@
 ﻿using System.Windows.Data;
 
-namespace M64RPFW.src.Extensions.Bindings;
+namespace M64RPFW.Extensions.Bindings;
 
 public class LocalizationBindingExtension : Binding
 {

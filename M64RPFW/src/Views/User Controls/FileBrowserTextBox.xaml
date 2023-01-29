@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="M64RPFW.src.Views.User_Controls.FileBrowserTextBox"
+﻿<UserControl x:Class="M64RPFW.Views.User_Controls.FileBrowserTextBox"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -14,6 +14,7 @@
 
         <TextBox Text="{Binding ElementName=root, Path=Path, Mode=TwoWay}" />
         <Button Grid.Column="1" Content="{iconPacks:Material Kind=DotsHorizontal}"
-                Command="{Binding ElementName=root, Path=BrowseCommand}" CommandParameter="{Binding ElementName=root, Path=BrowseCommandParameter}" />
+                Command="{Binding ElementName=root, Path=BrowseCommand}"
+                CommandParameter="{Binding ElementName=root, Path=BrowseCommandParameter}" />
     </Grid>
 </UserControl>

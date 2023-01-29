@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
-using M64RPFW.src.Views;
+using M64RPFW.Views;
 
-namespace M64RPFW.src.Converters;
+namespace M64RPFW.Converters;
 
 public class BooleanToStringConverter : IValueConverter
 {

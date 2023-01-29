@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="M64RPFW.src.Views.User_Controls.SettingsSection"
+﻿<UserControl x:Class="M64RPFW.Views.User_Controls.SettingsSection"
              x:Name="root"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

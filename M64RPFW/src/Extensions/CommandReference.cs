@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 
-namespace M64RPFW.src.Extensions;
+namespace M64RPFW.Extensions;
 
 /// <summary>
 ///     This class facilitates associating a key binding in XAML markup to  a command
