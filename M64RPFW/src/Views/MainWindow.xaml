@@ -17,7 +17,8 @@
         Height="450"
         ui:TitleBar.IsIconVisible="True"
         ui:WindowHelper.UseModernWindowStyle="True"
-        d:DataContext="{d:DesignInstance Type={x:Type views1:MainWindow}}">
+        d:DataContext="{d:DesignInstance Type={x:Type views1:MainWindow}}"
+        Loaded="MainWindow_OnLoaded">
 
     <Window.Resources>
         <bindings:BindingProxy x:Key="MainViewModelProxy" Data="{Binding MainViewModel}" />

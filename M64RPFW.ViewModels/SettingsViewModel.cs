@@ -113,7 +113,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private async void BrowseLibraryPath(string key)
+    private async Task BrowseLibraryPath(string key)
     {
         var file = await _filesService.TryPickOpenFileAsync(new[] { "dll" });
         if (file != null)

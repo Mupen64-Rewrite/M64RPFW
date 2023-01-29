@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Globalization;
+using CommunityToolkit.Mvvm.ComponentModel;
 using M64RPFW.Models.Emulation;
 
 namespace M64RPFW.ViewModels;
@@ -19,7 +20,7 @@ public class RomViewModel : ObservableObject
     public bool IsValid => _rom.IsValid;
     public bool IsBigEndian => _rom.IsBigEndian;
     public string InternalName => _rom.InternalName;
-    public string FriendlyName => _rom.FriendlyName;
+    public string FriendlyName => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(InternalName.Trim().ToLowerInvariant());
     public uint PrimaryCrc => _rom.PrimaryCrc;
     public uint SecondaryCrc => _rom.SecondaryCrc;
     public uint MediaFormat => _rom.MediaFormat;
@@ -28,6 +29,6 @@ public class RomViewModel : ObservableObject
 
     public override string ToString()
     {
-        return $"{_rom.FriendlyName} ({CountryCode})";
+        return $"{FriendlyName} ({CountryCode})";
     }
 }

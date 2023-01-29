@@ -73,8 +73,6 @@ public partial class MainWindow :
                     ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
                 else if (SettingsViewModel.Theme.Equals("Dark", StringComparison.InvariantCultureIgnoreCase))
                     ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
-                else
-                    throw new ArgumentException("Couldn't resolve theme");
             }
 
             if (key == nameof(SettingsViewModel.Culture))
@@ -145,27 +143,6 @@ public partial class MainWindow :
         return bitmap;
     }
 
-
-    // void IBitmapsService.Create(int width, int height)
-    // {
-    //     
-    //     Application.Current.Dispatcher.Invoke(delegate
-    //     {
-    //         _gameWriteableBitmap = new WriteableBitmap(width, height, VisualTreeHelper.GetDpi(this).PixelsPerInchX,
-    //             VisualTreeHelper.GetDpi(this).PixelsPerInchY, PixelFormats.Cmyk32, null);
-    //         //Main_Image.Source = _gameWriteableBitmap;
-    //     });
-    // }
-    //
-    // void IBitmapsService.Draw(Array buffer, int width, int height)
-    // {
-    //     Application.Current.Dispatcher.Invoke(delegate
-    //     {
-    //         Trace.Assert(_gameWriteableBitmap != null, nameof(_gameWriteableBitmap) + " != null");
-    //         _gameWriteableBitmap.WritePixels(new Int32Rect(0, 0, width, height), buffer, width * sizeof(int), 0);
-    //     });
-    // }
-
     void IDispatcherService.Execute(Action action)
     {
         Application.Current.Dispatcher.Invoke(action);
@@ -199,4 +176,10 @@ public partial class MainWindow :
     }
 
     #endregion
+
+    private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
+    {
+        // fire and forget
+        MainViewModel.RecentRomsViewModel.LoadCommand.ExecuteAsync(null);
+    }
 }

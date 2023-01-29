@@ -4,6 +4,7 @@ using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using M64RPFW.Services;
 using M64RPFW.Services.Extensions;
 using M64RPFW.ViewModels.Containers;
 using M64RPFW.ViewModels.Messages;
@@ -13,30 +14,36 @@ namespace M64RPFW.ViewModels;
 public sealed partial class RecentRomsViewModel : ObservableObject, IRecipient<RomLoadedMessage>, IDisposable
 {
     private readonly SettingsViewModel _settingsViewModel;
+    private readonly IFilesService _filesService;
 
     public ObservableCollection<RomViewModel> RecentRomViewModels { get; } = new();
 
-    internal RecentRomsViewModel(SettingsViewModel settingsViewModel)
+    internal RecentRomsViewModel(SettingsViewModel settingsViewModel, IFilesService filesService)
     {
         _settingsViewModel = settingsViewModel;
-
+        _filesService = filesService;
+        
         RecentRomViewModels.CollectionChanged += OnRecentRomViewModelsCollectionChanged;
-
-        foreach (var recentRomPath in _settingsViewModel.RecentRomPaths)
-            try
-            {
-                RomViewModel rom = new(File.ReadAllBytes(recentRomPath), recentRomPath);
-                AppendRomViewModel(rom, false);
-            }
-            catch
-            {
-                Debug.Print($"Skipping adding rom {recentRomPath}");
-                ; // just... dont add it
-            }
 
         WeakReferenceMessenger.Default.RegisterAll(this);
     }
 
+    [RelayCommand]
+    private async Task Load()
+    {
+        foreach (var recentRomPath in _settingsViewModel.RecentRomPaths)
+        {
+            var file = await _filesService.TryGetFileFromPathAsync(recentRomPath);
+            if (file == null) continue;
+
+            var bytes = await file.ReadAllBytes();
+            if (bytes == null) continue;
+
+            RomViewModel rom = new(bytes, recentRomPath);
+            AppendRomViewModel(rom, false);
+        }
+    }
+    
     public void Dispose()
     {
         RecentRomViewModels.CollectionChanged -= OnRecentRomViewModelsCollectionChanged;

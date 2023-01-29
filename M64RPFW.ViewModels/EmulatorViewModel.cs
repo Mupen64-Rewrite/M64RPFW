@@ -33,7 +33,7 @@ public sealed partial class EmulatorViewModel : ObservableObject, IRecipient<App
 
         WeakReferenceMessenger.Default.RegisterAll(this);
     }
-
+    
     public bool IsRunning => _emulator.PlayMode != Mupen64PlusTypes.PlayModes.Stopped;
 
     public bool IsResumed
@@ -62,7 +62,7 @@ public sealed partial class EmulatorViewModel : ObservableObject, IRecipient<App
 
 
     [RelayCommand]
-    private async void BrowseRom()
+    private async Task BrowseRom()
     {
         var file =
             await _generalDependencyContainer.FilesService.TryPickOpenFileAsync(_settingsViewModel.RomExtensions);
@@ -75,11 +75,9 @@ public sealed partial class EmulatorViewModel : ObservableObject, IRecipient<App
     }
 
     [RelayCommand]
-    private async void LoadRom(RomViewModel romViewModel)
+    private async Task LoadRom(RomViewModel romViewModel)
     {
-        TryVerifyDependencies(out var hasAllDependencies);
-
-        if (!hasAllDependencies) return;
+        if (!await TryVerifyDependencies()) return;
 
         void ShowInvalidFileError()
         {
@@ -183,13 +181,14 @@ public sealed partial class EmulatorViewModel : ObservableObject, IRecipient<App
             : Mupen64PlusTypes.PlayModes.Running;
     }
 
-    private void TryVerifyDependencies(out bool hasAllDependencies)
+    private async Task<bool> TryVerifyDependencies()
     {
         // TODO: clean this up
 
+        
         List<string> missingPlugins = new();
 
-        var coreLibraryExists = File.Exists(_settingsViewModel.CoreLibraryPath);
+        var coreLibraryExists = await _generalDependencyContainer.FilesService.IsAccessible(_settingsViewModel.CoreLibraryPath);
 
         if (!Path.GetExtension(_settingsViewModel.CoreLibraryPath)
                 .Equals(".dll", StringComparison.InvariantCultureIgnoreCase)) coreLibraryExists = false;
@@ -198,10 +197,11 @@ public sealed partial class EmulatorViewModel : ObservableObject, IRecipient<App
             _generalDependencyContainer.DialogService.ShowError(
                 _generalDependencyContainer.LocalizationService.GetStringOrDefault("CoreLibraryNotFound"));
 
-        var videoPluginExists = File.Exists(_settingsViewModel.VideoPluginPath);
-        var audioPluginExists = File.Exists(_settingsViewModel.AudioPluginPath);
-        var inputPluginExists = File.Exists(_settingsViewModel.InputPluginPath);
-        var rspPluginExists = File.Exists(_settingsViewModel.RspPluginPath);
+        var videoPluginExists = await _generalDependencyContainer.FilesService.IsAccessible(_settingsViewModel.VideoPluginPath);
+        var audioPluginExists = await _generalDependencyContainer.FilesService.IsAccessible(_settingsViewModel.AudioPluginPath);
+        var inputPluginExists = await _generalDependencyContainer.FilesService.IsAccessible(_settingsViewModel.InputPluginPath);
+        var rspPluginExists = await _generalDependencyContainer.FilesService.IsAccessible(_settingsViewModel.RspPluginPath);
+        
         if (!videoPluginExists)
             missingPlugins.Add(_generalDependencyContainer.LocalizationService.GetStringOrDefault("Video"));
 
@@ -219,7 +219,7 @@ public sealed partial class EmulatorViewModel : ObservableObject, IRecipient<App
                 _generalDependencyContainer.LocalizationService.GetStringOrDefault("PluginNotFoundSeries"),
                 string.Join(", ", missingPlugins)));
 
-        hasAllDependencies = coreLibraryExists && videoPluginExists && audioPluginExists && inputPluginExists &&
+        return coreLibraryExists && videoPluginExists && audioPluginExists && inputPluginExists &&
                              rspPluginExists;
     }
 

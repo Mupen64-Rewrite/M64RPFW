@@ -60,4 +60,11 @@ public interface IFilesService
     /// </summary>
     /// <returns>An <see cref="IAsyncEnumerable{T}" /> sequence of available files.</returns>
     IAsyncEnumerable<(IFile File, string Metadata)> GetFutureAccessFilesAsync();
+
+    /// <summary>
+    ///     Tries to get a target file at the specified path 
+    /// </summary>
+    /// <param name="path">The path of the file to retrieve</param>
+    /// <returns>Whether the file is accessible</returns>
+    Task<bool> IsAccessible(string path);
 }

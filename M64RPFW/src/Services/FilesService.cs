@@ -89,4 +89,22 @@ public sealed class FilesService : IFilesService
         yield return await Task.FromResult<(IFile, string)>((null, null));
         throw new NotImplementedException();
     }
+
+    /// <inheritdoc />
+    public async Task<bool> IsAccessible(string path)
+    {
+        try
+        {
+            await using (_ = System.IO.File.Open(path, FileMode.Open))
+            {
+                ;
+            }
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 }
