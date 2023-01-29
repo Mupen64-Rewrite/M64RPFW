@@ -16,7 +16,7 @@ public interface ILocalSettingsService
     /// <param name="key">The setting's key</param>
     /// <typeparam name="T">The setting value's type</typeparam>
     /// <returns>If the operation succeeds, the setting value, otherwise an exception will be thrown</returns>
-    public T Get<T>(string key);
+    T Get<T>(string key);
 
     /// <summary>
     ///     Sets a setting of type <typeparamref name="T" />
@@ -27,5 +27,5 @@ public interface ILocalSettingsService
     ///     The setting as type <typeparamref name="T" />, or throws an exception when the
     ///     <paramref name="key" /> is not found
     /// </returns>
-    public void Set<T>(string key, T value);
+    void Set<T>(string key, T value);
 }

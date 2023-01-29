@@ -9,5 +9,5 @@ public interface IDispatcherService
     ///     Queues an <see cref="Action" /> on the dispatcher
     /// </summary>
     /// <param name="action">The action to be invoked by the dispatcher</param>
-    public void Execute(Action action);
+    void Execute(Action action);
 }

@@ -9,5 +9,5 @@ public interface IDialogService
     ///     Shows an error dialog
     /// </summary>
     /// <param name="content">The dialog's content</param>
-    public void ShowError(string content);
+    void ShowError(string content);
 }

@@ -10,5 +10,5 @@ public interface ILocalizationService
     /// </summary>
     /// <param name="key">A resource value's <paramref name="key" /></param>
     /// <returns>The resource value, or the default value if the <paramref name="key" /> is not present</returns>
-    public string? GetStringOrDefault(string key, string? @default = null);
+    string? GetStringOrDefault(string key, string? @default = null);
 }

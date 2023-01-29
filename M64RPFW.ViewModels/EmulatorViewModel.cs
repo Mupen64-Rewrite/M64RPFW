@@ -3,6 +3,8 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Emulation.API;
+using M64RPFW.Services;
+using M64RPFW.Services.Abstractions;
 using M64RPFW.Services.Extensions;
 using M64RPFW.ViewModels.Containers;
 using M64RPFW.ViewModels.Helpers;
@@ -16,16 +18,19 @@ public sealed partial class EmulatorViewModel : ObservableObject, IRecipient<App
     private readonly GeneralDependencyContainer _generalDependencyContainer;
     private readonly SettingsViewModel _settingsViewModel;
 
+    private IBitmap? _bitmap = null;
+
     private int _saveStateSlot;
 
-    internal EmulatorViewModel(GeneralDependencyContainer generalDependencyContainer, SettingsViewModel settingsViewModel)
+    internal EmulatorViewModel(GeneralDependencyContainer generalDependencyContainer,
+        SettingsViewModel settingsViewModel)
     {
-        this._generalDependencyContainer = generalDependencyContainer;
-        this._settingsViewModel = settingsViewModel;
+        _generalDependencyContainer = generalDependencyContainer;
+        _settingsViewModel = settingsViewModel;
 
         _emulator = new Emulator(generalDependencyContainer.FilesService);
         _emulator.PlayModeChanged += PlayModeChanged;
-        
+
         WeakReferenceMessenger.Default.RegisterAll(this);
     }
 
@@ -59,7 +64,8 @@ public sealed partial class EmulatorViewModel : ObservableObject, IRecipient<App
     [RelayCommand]
     private async void BrowseRom()
     {
-        var file = await _generalDependencyContainer.FilesService.TryPickOpenFileAsync(_settingsViewModel.RomExtensions);
+        var file =
+            await _generalDependencyContainer.FilesService.TryPickOpenFileAsync(_settingsViewModel.RomExtensions);
 
         if (file != null)
         {
@@ -75,9 +81,11 @@ public sealed partial class EmulatorViewModel : ObservableObject, IRecipient<App
 
         if (!hasAllDependencies) return;
 
-        void ShowInvalidFileError() =>
+        void ShowInvalidFileError()
+        {
             _generalDependencyContainer.DialogService.ShowError(
                 _generalDependencyContainer.LocalizationService.GetStringOrDefault("InvalidFile"));
+        }
 
         if (!romViewModel.IsValid)
         {
@@ -108,7 +116,7 @@ public sealed partial class EmulatorViewModel : ObservableObject, IRecipient<App
         Mupen64PlusConfig config = new(_settingsViewModel.CoreType,
             _settingsViewModel.ScreenWidth,
             _settingsViewModel.ScreenHeight);
-        
+
         Mupen64PlusLaunchParameters launchParameters = new(romViewModel.RawData,
             config,
             0,
@@ -117,18 +125,33 @@ public sealed partial class EmulatorViewModel : ObservableObject, IRecipient<App
             audioPluginFile,
             inputPluginFile,
             rspPluginFile);
-        
+
         _emulator.Start(launchParameters);
 
+        // _generalDependencyContainer.DispatcherService.Execute(() =>
+        // {
+        //     _bitmap = _generalDependencyContainer.BitmapsService.Create(6,
+        //         6);
+        //     _bitmap.Draw(Enumerable.Repeat(0xFF0000, 6 * 6).ToArray(), 6,
+        //         6);
+        // });
+        
         _emulator.Api.OnFrameBufferCreate += delegate
         {
-            _generalDependencyContainer.GameBitmapDrawingService.Create(_emulator.Api.BufferWidth,
-                _emulator.Api.BufferHeight);
+            _generalDependencyContainer.DispatcherService.Execute(() =>
+                {
+                    _bitmap ??= _generalDependencyContainer.BitmapsService.Create(IBitmapsService.BitmapTargets.Game, _emulator.Api.BufferWidth,
+                        _emulator.Api.BufferHeight);
+                }
+            );
         };
         _emulator.Api.OnFrameBufferUpdate += delegate
         {
-            _generalDependencyContainer.GameBitmapDrawingService.Draw(_emulator.Api.FrameBuffer, _emulator.Api.BufferWidth,
-                _emulator.Api.BufferHeight);
+            _generalDependencyContainer.DispatcherService.Execute(() =>
+            {
+                _bitmap.Draw(_emulator.Api.FrameBuffer, _emulator.Api.BufferWidth,
+                    _emulator.Api.BufferHeight);
+            });
         };
     }
 
@@ -179,13 +202,17 @@ public sealed partial class EmulatorViewModel : ObservableObject, IRecipient<App
         var audioPluginExists = File.Exists(_settingsViewModel.AudioPluginPath);
         var inputPluginExists = File.Exists(_settingsViewModel.InputPluginPath);
         var rspPluginExists = File.Exists(_settingsViewModel.RspPluginPath);
-        if (!videoPluginExists) missingPlugins.Add(_generalDependencyContainer.LocalizationService.GetStringOrDefault("Video"));
+        if (!videoPluginExists)
+            missingPlugins.Add(_generalDependencyContainer.LocalizationService.GetStringOrDefault("Video"));
 
-        if (!audioPluginExists) missingPlugins.Add(_generalDependencyContainer.LocalizationService.GetStringOrDefault("Audio"));
+        if (!audioPluginExists)
+            missingPlugins.Add(_generalDependencyContainer.LocalizationService.GetStringOrDefault("Audio"));
 
-        if (!inputPluginExists) missingPlugins.Add(_generalDependencyContainer.LocalizationService.GetStringOrDefault("Input"));
+        if (!inputPluginExists)
+            missingPlugins.Add(_generalDependencyContainer.LocalizationService.GetStringOrDefault("Input"));
 
-        if (!rspPluginExists) missingPlugins.Add(_generalDependencyContainer.LocalizationService.GetStringOrDefault("Rsp"));
+        if (!rspPluginExists)
+            missingPlugins.Add(_generalDependencyContainer.LocalizationService.GetStringOrDefault("Rsp"));
 
         if (!videoPluginExists || !audioPluginExists || !inputPluginExists || (!rspPluginExists && coreLibraryExists))
             _generalDependencyContainer.DialogService.ShowError(string.Format(

@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Text.Json;
 using System.Threading;
 using System.Windows;
@@ -10,12 +10,15 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.Input;
 using M64RPFW.Services;
+using M64RPFW.Services.Abstractions;
 using M64RPFW.src.Extensions.Bindings;
 using M64RPFW.src.Services;
+using M64RPFW.src.Services.Abstractions;
 using M64RPFW.ViewModels;
 using M64RPFW.ViewModels.Containers;
 using M64RPFW.ViewModels.Helpers;
 using ModernWpf;
+using File = System.IO.File;
 
 namespace M64RPFW.src.Views;
 
@@ -34,7 +37,7 @@ public partial class MainWindow :
     Window,
     IDialogService,
     ILocalizationService,
-    IGameBitmapDrawingService,
+    IBitmapsService,
     IDispatcherService,
     IApplicationClosingEventService
 {
@@ -48,17 +51,13 @@ public partial class MainWindow :
     public SettingsViewModel SettingsViewModel { get; private set; }
 
     private SettingsWindow? _settingsWindow;
-    private WriteableBitmap? _gameWriteableBitmap;
 
     public event Action? OnApplicationClosing;
-    bool IGameBitmapDrawingService.IsReady => _gameWriteableBitmap != null;
 
     public MainWindow()
     {
         LocalizationService = this;
-
-        // TODO: rewrite settings system (see Ambie)
-
+        
         // load settings from file or create from defaults
         try
         {
@@ -135,25 +134,45 @@ public partial class MainWindow :
             return @default;
         }
     }
-
-    void IGameBitmapDrawingService.Create(int width, int height)
+    
+    IBitmap IBitmapsService.Create(IBitmapsService.BitmapTargets bitmapTarget, int width, int height)
     {
-        Application.Current.Dispatcher.Invoke(delegate
-        {
-            _gameWriteableBitmap = new WriteableBitmap(width, height, VisualTreeHelper.GetDpi(this).PixelsPerInchX,
-                VisualTreeHelper.GetDpi(this).PixelsPerInchY, PixelFormats.Cmyk32, null);
-            //Main_Image.Source = _gameWriteableBitmap;
-        });
-    }
+        Trace.Assert(Thread.CurrentThread.ManagedThreadId == Dispatcher.Thread.ManagedThreadId);
 
-    void IGameBitmapDrawingService.Draw(Array buffer, int width, int height)
-    {
-        Application.Current.Dispatcher.Invoke(delegate
+        Bitmap bitmap;
+
+        if (bitmapTarget == IBitmapsService.BitmapTargets.Game)
         {
-            Trace.Assert(_gameWriteableBitmap != null, nameof(_gameWriteableBitmap) + " != null");
-            _gameWriteableBitmap.WritePixels(new Int32Rect(0, 0, width, height), buffer, width * sizeof(int), 0);
-        });
+            bitmap = new Bitmap(Main_Image, width, height);
+        }
+        else
+        {
+            throw new InvalidEnumArgumentException($"Couldn't resolve target \"{bitmapTarget}\"");
+        }
+        
+        return bitmap;
     }
+    
+    
+    // void IBitmapsService.Create(int width, int height)
+    // {
+    //     
+    //     Application.Current.Dispatcher.Invoke(delegate
+    //     {
+    //         _gameWriteableBitmap = new WriteableBitmap(width, height, VisualTreeHelper.GetDpi(this).PixelsPerInchX,
+    //             VisualTreeHelper.GetDpi(this).PixelsPerInchY, PixelFormats.Cmyk32, null);
+    //         //Main_Image.Source = _gameWriteableBitmap;
+    //     });
+    // }
+    //
+    // void IBitmapsService.Draw(Array buffer, int width, int height)
+    // {
+    //     Application.Current.Dispatcher.Invoke(delegate
+    //     {
+    //         Trace.Assert(_gameWriteableBitmap != null, nameof(_gameWriteableBitmap) + " != null");
+    //         _gameWriteableBitmap.WritePixels(new Int32Rect(0, 0, width, height), buffer, width * sizeof(int), 0);
+    //     });
+    // }
 
     void IDispatcherService.Execute(Action action)
     {
@@ -194,6 +213,7 @@ public partial class MainWindow :
         OnApplicationClosing?.Invoke();
         File.WriteAllText(LocalSettingsPath, LocalSettings.ToJson());
     }
+
 
     
 }
