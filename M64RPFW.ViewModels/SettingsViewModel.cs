@@ -7,15 +7,15 @@ using M64RPFW.ViewModels.Helpers;
 
 namespace M64RPFW.ViewModels;
 
-public partial class SettingsViewModel : ObservableObject
+public sealed partial class SettingsViewModel : ObservableObject
 {
     private readonly IFilesService _filesService;
     private readonly ILocalSettingsService _localSettingsService;
 
     #region Properties
-    public string[] RecentRomPaths
+    public List<string> RecentRomPaths
     {
-        get => _localSettingsService.Get<string[]>(nameof(RecentRomPaths));
+        get => _localSettingsService.Get<List<string>>(nameof(RecentRomPaths));
         set => SetSettingsProperty(nameof(RecentRomPaths), value);
     }
 

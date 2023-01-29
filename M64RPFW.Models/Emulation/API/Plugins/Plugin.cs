@@ -5,7 +5,7 @@ using static M64RPFW.Models.Emulation.API.Mupen64PlusTypes;
 
 namespace M64RPFW.Models.Emulation.API.Plugins;
 
-internal abstract class Plugin : IDisposable
+internal class Plugin : IDisposable
 {
     internal Plugin(EmulatorPluginType type, IntPtr handle)
     {
@@ -19,12 +19,12 @@ internal abstract class Plugin : IDisposable
         Debug.Print($"Loaded {Type}");
     }
 
-    internal IntPtr Handle { get; }
-    internal EmulatorPluginType Type { get; }
-    internal bool IsAttached { get; private set; }
+    public IntPtr Handle { get; }
+    public EmulatorPluginType Type { get; }
+    public bool IsAttached { get; private set; }
 
-    internal PluginStartupDelegate? PluginStartup { get; }
-    internal PluginShutdownDelegate? PluginShutdown { get; }
+    public PluginStartupDelegate? PluginStartup { get; }
+    public PluginShutdownDelegate? PluginShutdown { get; }
 
     void IDisposable.Dispose()
     {

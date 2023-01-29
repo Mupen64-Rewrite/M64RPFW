@@ -10,7 +10,7 @@ using M64RPFW.ViewModels.Messages;
 
 namespace M64RPFW.ViewModels;
 
-public partial class EmulatorViewModel : ObservableObject, IRecipient<ApplicationClosingMessage>
+public sealed partial class EmulatorViewModel : ObservableObject, IRecipient<ApplicationClosingMessage>
 {
     private readonly Emulator _emulator;
     private readonly GeneralDependencyContainer _generalDependencyContainer;
@@ -84,9 +84,8 @@ public partial class EmulatorViewModel : ObservableObject, IRecipient<Applicatio
             ShowInvalidFileError();
             return;
         }
-        
+
         WeakReferenceMessenger.Default.Send(new RomLoadedMessage(romViewModel));
-        
 
         if (IsRunning) _emulator.Stop();
 

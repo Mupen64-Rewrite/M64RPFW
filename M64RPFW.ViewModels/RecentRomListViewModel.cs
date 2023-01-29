@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -9,42 +10,45 @@ using M64RPFW.ViewModels.Messages;
 
 namespace M64RPFW.ViewModels;
 
-public partial class RecentRomsViewModel : ObservableObject, IRecipient<RomLoadedMessage>
+public sealed partial class RecentRomsViewModel : ObservableObject, IRecipient<RomLoadedMessage>, IDisposable
 {
     private readonly SettingsViewModel _settingsViewModel;
 
-    public ObservableCollection<RomViewModel> RecentRomViewModels
-    {
-        get;
-    } = new();
+    public ObservableCollection<RomViewModel> RecentRomViewModels { get; } = new();
 
     internal RecentRomsViewModel(SettingsViewModel settingsViewModel)
     {
         _settingsViewModel = settingsViewModel;
-        
-        foreach (var recentRomPath in _settingsViewModel.RecentRomPaths
-                     .ToList())
+
+        RecentRomViewModels.CollectionChanged += OnRecentRomViewModelsCollectionChanged;
+
+        foreach (var recentRomPath in _settingsViewModel.RecentRomPaths)
             try
             {
                 RomViewModel rom = new(File.ReadAllBytes(recentRomPath), recentRomPath);
-                Add(rom, false);
+                AppendRomViewModel(rom, false);
             }
             catch
             {
-                Debug.WriteLine($"Skipping adding rom {recentRomPath}");
+                Debug.Print($"Skipping adding rom {recentRomPath}");
                 ; // just... dont add it
             }
-        
+
         WeakReferenceMessenger.Default.RegisterAll(this);
     }
 
-    public void Add(RomViewModel rom, bool addAtHead = true)
+    public void Dispose()
     {
-        // sanity checks
+        RecentRomViewModels.CollectionChanged -= OnRecentRomViewModelsCollectionChanged;
+    }
+
+    private void AppendRomViewModel(RomViewModel rom, bool addAtHead = true)
+    {
+        // we don't want invalid roms in the recent rom list
         if (!rom.IsValid) return;
 
-        // check for duplicates
-        bool alreadyExists = RecentRomViewModels.Contains(rom) || RecentRomViewModels.Any(x => x.Path == rom.Path);
+        // reference or path equality = duplicate
+        var alreadyExists = RecentRomViewModels.Contains(rom) || RecentRomViewModels.Any(x => x.Path == rom.Path);
 
         if (alreadyExists)
         {
@@ -53,7 +57,6 @@ public partial class RecentRomsViewModel : ObservableObject, IRecipient<RomLoade
             // A - remove it from the list and later add it back to the head
             // B - cease adding it and don't move anything
             return;
-            //RecentRomViewModels.Remove(rom);
         }
 
         if (addAtHead)
@@ -64,25 +67,25 @@ public partial class RecentRomsViewModel : ObservableObject, IRecipient<RomLoade
         {
             RecentRomViewModels.Add(rom);
         }
-        
-        
-        SyncSettingWithInternalArray();
     }
 
     [RelayCommand]
     private void RemoveRecentRom(RomViewModel rom)
     {
         _ = RecentRomViewModels.Remove(rom);
-        SyncSettingWithInternalArray();
     }
 
-    private void SyncSettingWithInternalArray()
+    private void OnRecentRomViewModelsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs args)
     {
-        _settingsViewModel.RecentRomPaths = RecentRomViewModels.Select(x => x.Path).ToArray();
+        _settingsViewModel.RecentRomPaths = RecentRomViewModels.Select(x => x.Path).ToList();
+        Debug.Print($"Synchronized recent rom paths with {RecentRomViewModels.Count} recent rom vms");
     }
 
-    public void Receive(RomLoadedMessage message)
+
+    void IRecipient<RomLoadedMessage>.Receive(RomLoadedMessage message)
     {
-        Add(message.Value);
+        AppendRomViewModel(message.Value);
     }
+
+
 }

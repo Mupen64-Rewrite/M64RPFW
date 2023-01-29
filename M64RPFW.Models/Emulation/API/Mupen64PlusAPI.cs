@@ -115,11 +115,11 @@ public sealed class Mupen64PlusApi : IDisposable
                    NativeLibrary.Load(launchParameters.CoreLibrary.Path)))
         using (_videoPlugin = new VideoPlugin(EmulatorPluginType.M64PluginGfx,
                    NativeLibrary.Load(launchParameters.VideoPlugin.Path)))
-        using (_audioPlugin = new AudioPlugin(EmulatorPluginType.M64PluginAudio,
+        using (_audioPlugin = new Plugin(EmulatorPluginType.M64PluginAudio,
                    NativeLibrary.Load(launchParameters.AudioPlugin.Path)))
-        using (_inputPlugin = new InputPlugin(EmulatorPluginType.M64PluginInput,
+        using (_inputPlugin = new Plugin(EmulatorPluginType.M64PluginInput,
                    NativeLibrary.Load(launchParameters.InputPlugin.Path)))
-        using (_rspPlugin = new RspPlugin(EmulatorPluginType.M64PluginRsp,
+        using (_rspPlugin = new Plugin(EmulatorPluginType.M64PluginRsp,
                    NativeLibrary.Load(launchParameters.RspPlugin.Path)))
         {
             _corePlugin.Attach(null);
@@ -222,9 +222,9 @@ public sealed class Mupen64PlusApi : IDisposable
 
     private CorePlugin _corePlugin;
     private VideoPlugin _videoPlugin;
-    private AudioPlugin _audioPlugin;
-    private InputPlugin _inputPlugin;
-    private RspPlugin _rspPlugin;
+    private Plugin _audioPlugin;
+    private Plugin _inputPlugin;
+    private Plugin _rspPlugin;
 
     #endregion
 
