@@ -161,13 +161,7 @@ public partial class MainWindow :
         _ = _settingsWindow.ShowDialog();
         _settingsWindow = null; // this is okay, because ShowDialog() blocks
     }
-
-    [RelayCommand]
-    private void ShowRomInspectionWindow(object dataContext)
-    {
-        RomInspectionWindow romInspectionWindow = new() { DataContext = dataContext };
-        romInspectionWindow.Show();
-    }
+    
 
     [RelayCommand]
     private void DoExit()
@@ -179,7 +173,5 @@ public partial class MainWindow :
 
     private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
     {
-        // fire and forget
-        MainViewModel.RecentRomsViewModel.LoadCommand.ExecuteAsync(null);
     }
 }

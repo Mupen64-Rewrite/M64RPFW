@@ -1,21 +1,31 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using M64RPFW.Services;
 using M64RPFW.ViewModels.Containers;
 using M64RPFW.ViewModels.Helpers;
+using M64RPFW.ViewModels.Messages;
 
 namespace M64RPFW.ViewModels;
 
-public sealed partial class SettingsViewModel : ObservableObject
+public sealed partial class SettingsViewModel : ObservableObject, IRecipient<RomLoadingMessage>
 {
+    public SettingsViewModel(GeneralDependencyContainer generalDependencyContainer, ILocalSettingsService localSettingsService)
+    {
+        this._filesService = generalDependencyContainer.FilesService;
+        _localSettingsService = localSettingsService;
+        WeakReferenceMessenger.Default.RegisterAll(this);
+    }
+    
     private readonly IFilesService _filesService;
     private readonly ILocalSettingsService _localSettingsService;
 
     #region Properties
-    public List<string> RecentRomPaths
+    public ObservableCollection<string> RecentRomPaths
     {
-        get => _localSettingsService.Get<List<string>>(nameof(RecentRomPaths));
+        get => _localSettingsService.Get<ObservableCollection<string>>(nameof(RecentRomPaths));
         set => SetSettingsProperty(nameof(RecentRomPaths), value);
     }
 
@@ -93,6 +103,18 @@ public sealed partial class SettingsViewModel : ObservableObject
     
     #endregion
 
+    [RelayCommand]
+    private void RemoveRecentRomPath(string path)
+    {
+        RecentRomPaths.Remove(path);
+    } 
+
+    void IRecipient<RomLoadingMessage>.Receive(RomLoadingMessage message)
+    {
+        RecentRomPaths.Remove(message.Value);
+        RecentRomPaths.Insert(0, message.Value);
+    }
+    
     private void SetSettingsProperty<T>(string key, T value, [CallerMemberName] string? callerMemberName = null)
     {
         ArgumentNullException.ThrowIfNull(callerMemberName);
@@ -100,11 +122,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         OnPropertyChanged(callerMemberName);
     }
     
-    public SettingsViewModel(GeneralDependencyContainer generalDependencyContainer, ILocalSettingsService localSettingsService)
-    {
-        this._filesService = generalDependencyContainer.FilesService;
-        _localSettingsService = localSettingsService;
-    }
+   
 
     private async Task<(bool Succeeded, string Path)> ShowLibraryFileDialog()
     {
@@ -126,4 +144,6 @@ public sealed partial class SettingsViewModel : ObservableObject
             // TODO: maybe notify the user? not an important failure though
         }
     }
+
+    
 }

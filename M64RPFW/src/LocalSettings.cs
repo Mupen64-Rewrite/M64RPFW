@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text.Json;
 using M64RPFW.Services;
@@ -12,7 +13,7 @@ internal sealed class LocalSettings : ILocalSettingsService
     {
         _settings = new Dictionary<string, object>
         {
-            { "RecentRomPaths", new List<string>() },
+            { "RecentRomPaths", new ObservableCollection<string>() },
             { "RomExtensions", new[] { "n64", "z64", "rom", "eu", "usa", "jp" } },
             { "CoreLibraryPath", "m64p/mupen64plus.dll" },
             { "VideoPluginPath", "m64p/mupen64plus-video-rice.dll" },

@@ -69,21 +69,31 @@ public sealed partial class EmulatorViewModel : ObservableObject, IRecipient<App
 
         if (file != null)
         {
-            var bytes = await file.ReadAllBytes();
-            LoadRomCommand.ExecuteIfPossible(new RomViewModel(bytes, file.Path));
+            LoadRomFromPathCommand.ExecuteIfPossible(file.Path);
         }
     }
 
     [RelayCommand]
-    private async Task LoadRom(RomViewModel romViewModel)
+    private async Task LoadRomFromPath(string path)
     {
-        if (!await TryVerifyDependencies()) return;
-
         void ShowInvalidFileError()
         {
             _generalDependencyContainer.DialogService.ShowError(
                 _generalDependencyContainer.LocalizationService.GetStringOrDefault("InvalidFile"));
         }
+        
+        if (!await TryVerifyDependencies()) return;
+
+        var file =
+            await _generalDependencyContainer.FilesService.TryGetFileFromPathAsync(path);
+
+        if (file == null)
+        {
+            ShowInvalidFileError();
+            return;
+        }
+
+        var romViewModel = new RomViewModel(await file.ReadAllBytes(), path);
 
         if (!romViewModel.IsValid)
         {
@@ -91,8 +101,8 @@ public sealed partial class EmulatorViewModel : ObservableObject, IRecipient<App
             return;
         }
 
-        WeakReferenceMessenger.Default.Send(new RomLoadedMessage(romViewModel));
-
+        WeakReferenceMessenger.Default.Send(new RomLoadingMessage(path));
+        
         if (IsRunning) _emulator.Stop();
 
         var coreLibraryFile =

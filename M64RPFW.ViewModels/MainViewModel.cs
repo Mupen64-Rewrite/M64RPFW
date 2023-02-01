@@ -11,13 +11,11 @@ public sealed partial class MainViewModel : ObservableObject
     public MainViewModel(GeneralDependencyContainer generalDependencyContainer, SettingsViewModel settingsViewModel)
     {
         EmulatorViewModel = new EmulatorViewModel(generalDependencyContainer, settingsViewModel);
-        RecentRomsViewModel = new RecentRomsViewModel(settingsViewModel, generalDependencyContainer.FilesService);
         
         generalDependencyContainer.ApplicationClosingEventService.OnApplicationClosing += OnApplicationClosing;
     }
     
     public EmulatorViewModel EmulatorViewModel { get; }
-    public RecentRomsViewModel RecentRomsViewModel { get; }
     
     private static void OnApplicationClosing()
     {

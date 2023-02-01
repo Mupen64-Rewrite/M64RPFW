@@ -9,6 +9,7 @@
         xmlns:bindings="clr-namespace:M64RPFW.Extensions.Bindings"
         xmlns:views1="clr-namespace:M64RPFW.Views"
         xmlns:extensions="clr-namespace:M64RPFW.Extensions"
+        xmlns:system="clr-namespace:System;assembly=System.Runtime"
         mc:Ignorable="d"
         Title="{bindings:LocalizationBinding AppName}"
         MinHeight="{StaticResource MenuHeight}"
@@ -21,12 +22,11 @@
         Loaded="MainWindow_OnLoaded">
 
     <Window.Resources>
-        <bindings:BindingProxy x:Key="MainViewModelProxy" Data="{Binding MainViewModel}" />
         <bindings:BindingProxy x:Key="CodeBehindProxy" Data="{Binding Path=.}" />
         <extensions:CommandReference x:Key="TogglePauseCommandReference"
-                                     Command="{Binding Source={StaticResource MainViewModelProxy}, Path=Data.EmulatorViewModel.TogglePauseCommand}" />
+                                     Command="{Binding Source={StaticResource CodeBehindProxy}, Path=Data.MainViewModel.EmulatorViewModel.TogglePauseCommand}" />
         <extensions:CommandReference x:Key="FrameAdvanceCommandReference"
-                                     Command="{Binding Source={StaticResource MainViewModelProxy}, Path=Data.EmulatorViewModel.FrameAdvanceCommand}" />
+                                     Command="{Binding Source={StaticResource CodeBehindProxy}, Path=Data.MainViewModel.EmulatorViewModel.FrameAdvanceCommand}" />
         <extensions:CommandReference x:Key="ShowSettingsWindowCommandReference"
                                      Command="{Binding Source={StaticResource CodeBehindProxy}, Path=Data.ShowSettingsWindowCommand}" />
     </Window.Resources>
@@ -51,24 +51,21 @@
                         <MenuItem Header="{bindings:LocalizationBinding LoadRom}"
                                   Command="{Binding MainViewModel.EmulatorViewModel.BrowseRomCommand, IsAsync=True}" />
                         <MenuItem Header="{bindings:LocalizationBinding RecentRoms}"
-                                  ItemsSource="{Binding MainViewModel.RecentRomsViewModel.RecentRomViewModels, UpdateSourceTrigger=PropertyChanged}"
+                                  ItemsSource="{Binding SettingsViewModel.RecentRomPaths, UpdateSourceTrigger=PropertyChanged}"
                                   UsesItemContainerTemplate="True">
                             <MenuItem.Resources>
                                 <!--  x:Key vs DataType menuitem issue here: https://github.com/dotnet/wpf/issues/2404  -->
                                 <ItemContainerTemplate
-                                    x:Key="{ItemContainerTemplateKey {x:Type viewmodels:RomViewModel}}">
+                                    x:Key="{ItemContainerTemplateKey {x:Type system:String}}">
                                     <MenuItem
-                                        Command="{Binding Source={StaticResource MainViewModelProxy}, Path=Data.EmulatorViewModel.LoadRomCommand}"
+                                        Command="{Binding Source={StaticResource CodeBehindProxy}, Path=Data.MainViewModel.EmulatorViewModel.LoadRomFromPathCommand}"
                                         CommandParameter="{Binding}"
                                         Header="{Binding}">
                                         <MenuItem.ContextMenu>
                                             <ContextMenu>
+                                                <!-- TODO: implement deleting, possibly using attached behaviours? -->
                                                 <MenuItem Header="{bindings:LocalizationBinding Remove}"
-                                                          Command="{Binding Source={StaticResource MainViewModelProxy}, Path=Data.RecentRomsViewModel.RemoveRecentRomCommand}"
-                                                          CommandParameter="{Binding}" />
-                                                <Separator />
-                                                <MenuItem Header="{bindings:LocalizationBinding Inspect}"
-                                                          Command="{Binding Source={StaticResource CodeBehindProxy}, Path=Data.ShowRomInspectionWindowCommand}"
+                                                          Command="{Binding Source={StaticResource CodeBehindProxy}, Path=Data.SettingsViewModel.RemoveRecentRomPathCommand}"
                                                           CommandParameter="{Binding}" />
                                             </ContextMenu>
                                         </MenuItem.ContextMenu>
