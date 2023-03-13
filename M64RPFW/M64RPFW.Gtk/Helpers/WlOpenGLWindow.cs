@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using M64RPFW.Gtk.Interfaces;
-using M64RPFW.Gtk.Interfaces.Wayland;
+using WaylandSharp;
 using M64RPFW.Misc;
 using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 
