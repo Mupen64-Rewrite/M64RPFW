@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using M64RPFW.Models.Helpers;
+using M64RPFW.Models.Types;
 
 namespace M64RPFW.Models.Emulation;
 
@@ -28,14 +29,14 @@ public static partial class Mupen64Plus
         _debugCallback = OnLogMessage;
         _stateCallback = OnStateChange;
 
-        Error err = _fnCoreStartup(
-            0x020000, null, expectedPath, (IntPtr) (int) PluginType.Core,
+        Mupen64PlusTypes.Error err = _fnCoreStartup(
+            0x020000, null, expectedPath, (IntPtr) (int) Mupen64PlusTypes.PluginType.Core,
             _debugCallback, IntPtr.Zero, _stateCallback);
         ThrowForError(err);
 
 
         _frameCallback = OnFrameComplete;
-        err = _fnCoreDoCommand(Command.SetFrameCallback, 0,
+        err = _fnCoreDoCommand(Mupen64PlusTypes.Command.SetFrameCallback, 0,
             Marshal.GetFunctionPointerForDelegate(_frameCallback).ToPointer());
         ThrowForError(err);
 
@@ -46,7 +47,7 @@ public static partial class Mupen64Plus
             GCHandle.Alloc(_frameCallback, GCHandleType.Normal),
         };
 
-        _pluginDict = new Dictionary<PluginType, IntPtr>();
+        _pluginDict = new Dictionary<Mupen64PlusTypes.PluginType, IntPtr>();
 
         AppDomain.CurrentDomain.ProcessExit += (_, _) =>
         {
@@ -56,49 +57,49 @@ public static partial class Mupen64Plus
             ConfigSaveFile();
 
             // ReSharper disable once VariableHidesOuterVariable
-            Error err = _fnCoreShutdown!();
+            Mupen64PlusTypes.Error err = _fnCoreShutdown!();
             ThrowForError(err);
 
             NativeLibrary.Free(_libHandle);
         };
     }
 
-    private static void ThrowForError(Error err)
+    private static void ThrowForError(Mupen64PlusTypes.Error err)
     {
-        if (err == Error.Success)
+        if (err == Mupen64PlusTypes.Error.Success)
             return;
 
         var errType = err switch
         {
-            Error.NotInit => typeof(InvalidOperationException),
-            Error.AlreadyInit => typeof(InvalidOperationException),
-            Error.InvalidState => typeof(InvalidOperationException),
-            Error.Incompatible => typeof(InvalidOperationException),
-            Error.InputAssert => typeof(ArgumentException),
-            Error.InputInvalid => typeof(ArgumentException),
-            Error.InputNotFound => typeof(ArgumentException),
-            Error.WrongType => typeof(ArgumentException),
-            Error.PluginFail => typeof(ApplicationException),
-            Error.SystemFail => typeof(ApplicationException),
-            Error.Internal => typeof(ApplicationException),
-            Error.Files => typeof(IOException),
-            Error.NoMemory => typeof(OutOfMemoryException),
+            Mupen64PlusTypes.Error.NotInit => typeof(InvalidOperationException),
+            Mupen64PlusTypes.Error.AlreadyInit => typeof(InvalidOperationException),
+            Mupen64PlusTypes.Error.InvalidState => typeof(InvalidOperationException),
+            Mupen64PlusTypes.Error.Incompatible => typeof(InvalidOperationException),
+            Mupen64PlusTypes.Error.InputAssert => typeof(ArgumentException),
+            Mupen64PlusTypes.Error.InputInvalid => typeof(ArgumentException),
+            Mupen64PlusTypes.Error.InputNotFound => typeof(ArgumentException),
+            Mupen64PlusTypes.Error.WrongType => typeof(ArgumentException),
+            Mupen64PlusTypes.Error.PluginFail => typeof(ApplicationException),
+            Mupen64PlusTypes.Error.SystemFail => typeof(ApplicationException),
+            Mupen64PlusTypes.Error.Internal => typeof(ApplicationException),
+            Mupen64PlusTypes.Error.Files => typeof(IOException),
+            Mupen64PlusTypes.Error.NoMemory => typeof(OutOfMemoryException),
             _ => typeof(ApplicationException)
         };
         throw (Exception) Activator.CreateInstance(errType, $"M64+ {_fnCoreErrorMessage(err)}")!;
     }
 
-    private static void OnLogMessage(IntPtr context, MessageLevel level, string message)
+    private static void OnLogMessage(IntPtr context, Mupen64PlusTypes.MessageLevel level, string message)
     {
         var type = (int) context;
 
         string typeString = type switch
         {
-            (int) PluginType.Core => "CORE  ",
-            (int) PluginType.Graphics => "VIDEO ",
-            (int) PluginType.Audio => "AUDIO ",
-            (int) PluginType.Input => "INPUT ",
-            (int) PluginType.RSP => "RSP   ",
+            (int) Mupen64PlusTypes.PluginType.Core => "CORE  ",
+            (int) Mupen64PlusTypes.PluginType.Graphics => "VIDEO ",
+            (int) Mupen64PlusTypes.PluginType.Audio => "AUDIO ",
+            (int) Mupen64PlusTypes.PluginType.Input => "INPUT ",
+            (int) Mupen64PlusTypes.PluginType.RSP => "RSP   ",
             (int) LogSources.App => "APP   ",
             (int) LogSources.Vidext => "VIDXT ",
             _ => "??    "
@@ -106,18 +107,18 @@ public static partial class Mupen64Plus
 
         string levelString = level switch
         {
-            MessageLevel.Error => "ERROR",
-            MessageLevel.Warning => "WARN ",
-            MessageLevel.Info => "INFO ",
-            MessageLevel.Status => "STAT ",
-            MessageLevel.Verbose => "TRACE",
+            Mupen64PlusTypes.MessageLevel.Error => "ERROR",
+            Mupen64PlusTypes.MessageLevel.Warning => "WARN ",
+            Mupen64PlusTypes.MessageLevel.Info => "INFO ",
+            Mupen64PlusTypes.MessageLevel.Status => "STAT ",
+            Mupen64PlusTypes.MessageLevel.Verbose => "TRACE",
             _ => "??   "
         };
 
         Console.WriteLine($"[M64+ {typeString}{levelString}] {message}");
     }
 
-    private static void OnStateChange(IntPtr context, CoreParam param, int newValue)
+    private static void OnStateChange(IntPtr context, Mupen64PlusTypes.CoreParam param, int newValue)
     {
         StateChanged?.Invoke(null, new StateChangeEventArgs { Param = param, NewValue = newValue });
     }
@@ -131,7 +132,7 @@ public static partial class Mupen64Plus
 
     public class StateChangeEventArgs : EventArgs
     {
-        public CoreParam Param { get; init; }
+        public Mupen64PlusTypes.CoreParam Param { get; init; }
         public int NewValue { get; init; }
     }
 
@@ -149,7 +150,7 @@ public static partial class Mupen64Plus
 
         fixed (byte* bytesPtr = bytes)
         {
-            Error err = _fnCoreDoCommand(Command.RomOpen, bytes.Length, bytesPtr);
+            Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.RomOpen, bytes.Length, bytesPtr);
             ThrowForError(err);
         }
     }
@@ -163,7 +164,7 @@ public static partial class Mupen64Plus
     {
         fixed (byte* dataPtr = romData)
         {
-            Error err = _fnCoreDoCommand(Command.RomOpen, romData.Length, dataPtr);
+            Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.RomOpen, romData.Length, dataPtr);
             ThrowForError(err);
         }
     }
@@ -173,7 +174,7 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void CloseRom()
     {
-        Error err = _fnCoreDoCommand(Command.RomClose, 0, null);
+        Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.RomClose, 0, null);
         ThrowForError(err);
     }
 
@@ -181,15 +182,15 @@ public static partial class Mupen64Plus
     /// Get the ROM header of the currently open ROM.
     /// </summary>
     /// <returns>the ROM header of the currently open ROM</returns>
-    public static unsafe RomHeader GetRomHeader()
+    public static unsafe Mupen64PlusTypes.RomHeader GetRomHeader()
     {
-        int size = Marshal.SizeOf<RomHeader>();
+        int size = Marshal.SizeOf<Mupen64PlusTypes.RomHeader>();
         IntPtr alloc = Marshal.AllocHGlobal(size);
         try
         {
-            Error err = _fnCoreDoCommand(Command.RomGetHeader, size, alloc.ToPointer());
+            Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.RomGetHeader, size, alloc.ToPointer());
             ThrowForError(err);
-            var res = Marshal.PtrToStructure<RomHeader>(alloc);
+            var res = Marshal.PtrToStructure<Mupen64PlusTypes.RomHeader>(alloc);
             return res;
         }
         finally
@@ -203,15 +204,15 @@ public static partial class Mupen64Plus
     /// open ROM.
     /// </summary>
     /// <returns>The ROM settings for the currently open ROM</returns>
-    public static unsafe RomSettings GetRomSettings()
+    public static unsafe Mupen64PlusTypes.RomSettings GetRomSettings()
     {
-        int size = Marshal.SizeOf<RomSettings>();
+        int size = Marshal.SizeOf<Mupen64PlusTypes.RomSettings>();
         IntPtr alloc = Marshal.AllocHGlobal(size);
         try
         {
-            Error err = _fnCoreDoCommand(Command.RomGetSettings, size, alloc.ToPointer());
+            Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.RomGetSettings, size, alloc.ToPointer());
             ThrowForError(err);
-            var res = Marshal.PtrToStructure<RomSettings>(alloc);
+            var res = Marshal.PtrToStructure<Mupen64PlusTypes.RomSettings>(alloc);
             return res;
         }
         finally
@@ -225,7 +226,7 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void Execute()
     {
-        Error err = _fnCoreDoCommand(Command.Execute, 0, null);
+        Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.Execute, 0, null);
         ThrowForError(err);
     }
 
@@ -234,7 +235,7 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void Stop()
     {
-        Error err = _fnCoreDoCommand(Command.Stop, 0, null);
+        Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.Stop, 0, null);
         ThrowForError(err);
     }
 
@@ -243,7 +244,7 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void Pause()
     {
-        Error err = _fnCoreDoCommand(Command.Pause, 0, null);
+        Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.Pause, 0, null);
         ThrowForError(err);
     }
 
@@ -252,7 +253,7 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void Resume()
     {
-        Error err = _fnCoreDoCommand(Command.Resume, 0, null);
+        Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.Resume, 0, null);
         ThrowForError(err);
     }
 
@@ -261,10 +262,10 @@ public static partial class Mupen64Plus
     /// </summary>
     /// <param name="param">the parameter to query</param>
     /// <returns>the parameter's value</returns>
-    public static unsafe int CoreStateQuery(CoreParam param)
+    public static unsafe int CoreStateQuery(Mupen64PlusTypes.CoreParam param)
     {
         int res = 0;
-        Error err = _fnCoreDoCommand(Command.CoreStateQuery, (int) param, &res);
+        Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.CoreStateQuery, (int) param, &res);
         ThrowForError(err);
 
         return res;
@@ -275,13 +276,13 @@ public static partial class Mupen64Plus
     /// </summary>
     /// <param name="param">the parameter to set</param>
     /// <param name="value">the value to set to the parameter</param>
-    public static unsafe void CoreStateSet(CoreParam param, int value)
+    public static unsafe void CoreStateSet(Mupen64PlusTypes.CoreParam param, int value)
     {
-        Error err = _fnCoreDoCommand(Command.CoreStateSet, (int) param, &value);
+        Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.CoreStateSet, (int) param, &value);
         ThrowForError(err);
     }
 
-    public static unsafe void CoreStateSet(CoreParam param, uint value)
+    public static unsafe void CoreStateSet(Mupen64PlusTypes.CoreParam param, uint value)
     {
         CoreStateSet(param, (int) value);
     }
@@ -297,7 +298,7 @@ public static partial class Mupen64Plus
         IntPtr alloc = Marshal.StringToHGlobalAnsi(path);
         try
         {
-            Error err = _fnCoreDoCommand(Command.StateLoad, 0, alloc.ToPointer());
+            Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.StateLoad, 0, alloc.ToPointer());
             ThrowForError(err);
         }
         finally
@@ -311,7 +312,7 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void LoadStateFromCurrentSlot()
     {
-        Error err = _fnCoreDoCommand(Command.StateLoad, 0, null);
+        Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.StateLoad, 0, null);
         ThrowForError(err);
     }
 
@@ -320,7 +321,7 @@ public static partial class Mupen64Plus
     /// </summary>
     /// <param name="path">The path to save the savestate</param>
     /// <param name="type"></param>
-    public static unsafe void SaveStateToFile(string path, SavestateType type = SavestateType.Mupen64Plus)
+    public static unsafe void SaveStateToFile(string path, Mupen64PlusTypes.SavestateType type = Mupen64PlusTypes.SavestateType.Mupen64Plus)
     {
         ArgumentNullException.ThrowIfNull(path);
 
@@ -328,7 +329,7 @@ public static partial class Mupen64Plus
         IntPtr alloc = Marshal.StringToHGlobalAnsi(fullPath);
         try
         {
-            Error err = _fnCoreDoCommand(Command.StateSave, (int) type, alloc.ToPointer());
+            Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.StateSave, (int) type, alloc.ToPointer());
             ThrowForError(err);
         }
         finally
@@ -342,7 +343,7 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void SaveStateToCurrentSlot()
     {
-        Error err = _fnCoreDoCommand(Command.StateSave, 0, null);
+        Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.StateSave, 0, null);
         ThrowForError(err);
     }
 
@@ -356,7 +357,7 @@ public static partial class Mupen64Plus
     {
         if (slot < 0 || slot > 9)
             throw new ArgumentOutOfRangeException(nameof(slot), "Savestate slots range from 0-9 (inclusive)");
-        Error err = _fnCoreDoCommand(Command.StateSetSlot, slot, null);
+        Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.StateSetSlot, slot, null);
         ThrowForError(err);
     }
 
@@ -366,7 +367,7 @@ public static partial class Mupen64Plus
     /// <param name="hard">If true, performs a hard reset. Otherwise, performs a soft reset.</param>
     public static unsafe void Reset(bool hard = true)
     {
-        Error err = _fnCoreDoCommand(Command.Reset, hard ? 1 : 0, null);
+        Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.Reset, hard ? 1 : 0, null);
         ThrowForError(err);
     }
 
@@ -375,19 +376,19 @@ public static partial class Mupen64Plus
     /// </summary>
     public static unsafe void AdvanceFrame()
     {
-        Error err = _fnCoreDoCommand(Command.AdvanceFrame, 0, null);
+        Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.AdvanceFrame, 0, null);
         ThrowForError(err);
     }
 
     public static unsafe void SendSDLKeyDown(uint combined)
     {
-        Error err = _fnCoreDoCommand(Command.SendSDLKeyDown, (int) combined, null);
+        Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.SendSDLKeyDown, (int) combined, null);
         ThrowForError(err);
     }
 
     public static unsafe void SendSDLKeyUp(uint combined)
     {
-        Error err = _fnCoreDoCommand(Command.SendSDLKeyUp, (int) combined, null);
+        Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.SendSDLKeyUp, (int) combined, null);
         ThrowForError(err);
     }
 
@@ -400,14 +401,14 @@ public static partial class Mupen64Plus
     /// management for the video plugin.
     /// </summary>
     /// <param name="vidext">The video extension functions to use, or null to remove it.</param>
-    public static void OverrideVidExt(VideoExtensionFunctions? vidext)
+    public static void OverrideVidExt(Mupen64PlusTypes.VideoExtensionFunctions? vidext)
     {
         _currentVidext = vidext;
-        Error err = _fnCoreOverrideVidExt(vidext ?? VideoExtensionFunctions.Empty);
+        Mupen64PlusTypes.Error err = _fnCoreOverrideVidExt(vidext ?? Mupen64PlusTypes.VideoExtensionFunctions.Empty);
         ThrowForError(err);
     }
 
-    private static VideoExtensionFunctions? _currentVidext;
+    private static Mupen64PlusTypes.VideoExtensionFunctions? _currentVidext;
 
     /// <summary>
     /// Attaches a plugin to the core.
@@ -427,7 +428,7 @@ public static partial class Mupen64Plus
         // Implicitly
         var getVersion = NativeLibHelper.GetFunction<DPluginGetVersion>(pluginLib, "PluginGetVersion");
 
-        Error err = getVersion(out var type, out _, out _, out _, out _);
+        Mupen64PlusTypes.Error err = getVersion(out var type, out _, out _, out _, out _);
         ThrowForError(err);
 
         if (!_pluginDict.TryAdd(type, pluginLib))
@@ -462,11 +463,11 @@ public static partial class Mupen64Plus
     /// any sort of order.
     /// </summary>
     /// <param name="type">The plugin type to detach</param>
-    public static void DetachPlugin(PluginType type)
+    public static void DetachPlugin(Mupen64PlusTypes.PluginType type)
     {
         if (!_pluginDict.Remove(type, out var pluginLib))
             return;
-        Error err = _fnCoreDetachPlugin(type);
+        Mupen64PlusTypes.Error err = _fnCoreDetachPlugin(type);
         ThrowForError(err);
 
         var shutdown = NativeLibHelper.GetFunction<DPluginShutdown>(pluginLib, "PluginShutdown");
@@ -488,7 +489,7 @@ public static partial class Mupen64Plus
 
     public static unsafe CoreVersion GetVersionInfo()
     {
-        Error err = _fnCorePluginGetVersion(out _, out var version, out var apiVersion, out var name, out _);
+        Mupen64PlusTypes.Error err = _fnCorePluginGetVersion(out _, out var version, out var apiVersion, out var name, out _);
         ThrowForError(err);
 
         return new CoreVersion
@@ -509,7 +510,7 @@ public static partial class Mupen64Plus
         Vidext,
     }
 
-    public static void Log(LogSources source, MessageLevel level, string message, params object[] args)
+    public static void Log(LogSources source, Mupen64PlusTypes.MessageLevel level, string message, params object[] args)
     {
         OnLogMessage((IntPtr) source, level, string.Format(message, args));
     }

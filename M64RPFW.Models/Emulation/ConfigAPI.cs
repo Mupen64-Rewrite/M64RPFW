@@ -1,5 +1,6 @@
 using System.Diagnostics.Contracts;
 using System.Runtime.InteropServices;
+using M64RPFW.Models.Types;
 
 namespace M64RPFW.Models.Emulation;
 
@@ -10,7 +11,7 @@ public static partial class Mupen64Plus
         
         
         List<string> res = new();
-        Error err = _fnConfigListSections(IntPtr.Zero, (_, name) => res.Add(name));
+        Mupen64PlusTypes.Error err = _fnConfigListSections(IntPtr.Zero, (_, name) => res.Add(name));
         ThrowForError(err);
         
         return res;
@@ -18,7 +19,7 @@ public static partial class Mupen64Plus
 
     public static IntPtr ConfigOpenSection(string name)
     {
-        Error err = _fnConfigOpenSection(name, out IntPtr handle);
+        Mupen64PlusTypes.Error err = _fnConfigOpenSection(name, out IntPtr handle);
         ThrowForError(err);
 
         return handle;
@@ -29,7 +30,7 @@ public static partial class Mupen64Plus
         
 
         List<(string name, Type type)> res = new();
-        Error err = _fnConfigListParameters(handle, IntPtr.Zero, (_, name, type) => res.Add((name, type)));
+        Mupen64PlusTypes.Error err = _fnConfigListParameters(handle, IntPtr.Zero, (_, name, type) => res.Add((name, type)));
         ThrowForError(err);
 
         return res;
@@ -38,14 +39,14 @@ public static partial class Mupen64Plus
     public static void ConfigSaveFile()
     {
         
-        Error err = _fnConfigSaveFile();
+        Mupen64PlusTypes.Error err = _fnConfigSaveFile();
         ThrowForError(err);
     }
 
     public static void ConfigSaveSection(string name)
     {
         
-        Error err = _fnConfigSaveSection(name);
+        Mupen64PlusTypes.Error err = _fnConfigSaveSection(name);
         ThrowForError(err);
     }
 
@@ -58,14 +59,14 @@ public static partial class Mupen64Plus
     public static void ConfigDeleteSection(string name)
     {
         
-        Error err = _fnConfigDeleteSection(name);
+        Mupen64PlusTypes.Error err = _fnConfigDeleteSection(name);
         ThrowForError(err);
     }
 
     public static void ConfigRevertChanges(string name)
     {
         
-        Error err = _fnConfigRevertChanges(name);
+        Mupen64PlusTypes.Error err = _fnConfigRevertChanges(name);
         ThrowForError(err);
     }
 
@@ -73,7 +74,7 @@ public static partial class Mupen64Plus
     {
         
 
-        Error err = _fnConfigSetParameter(handle, name, Type.Int, new IntPtr(&x));
+        Mupen64PlusTypes.Error err = _fnConfigSetParameter(handle, name, Mupen64PlusTypes.Type.Int, new IntPtr(&x));
         ThrowForError(err);
     }
     
@@ -81,7 +82,7 @@ public static partial class Mupen64Plus
     {
         
 
-        Error err = _fnConfigSetParameter(handle, name, Type.Float, new IntPtr(&x));
+        Mupen64PlusTypes.Error err = _fnConfigSetParameter(handle, name, Mupen64PlusTypes.Type.Float, new IntPtr(&x));
         ThrowForError(err);
     }
     
@@ -89,7 +90,7 @@ public static partial class Mupen64Plus
     {
         
 
-        Error err = _fnConfigSetParameter(handle, name, Type.Bool, new IntPtr(&x));
+        Mupen64PlusTypes.Error err = _fnConfigSetParameter(handle, name, Mupen64PlusTypes.Type.Bool, new IntPtr(&x));
         ThrowForError(err);
     }
 
@@ -100,7 +101,7 @@ public static partial class Mupen64Plus
         IntPtr alloc = Marshal.StringToHGlobalAnsi(value);
         try
         {
-            Error err = _fnConfigSetParameter(handle, name, Type.String, alloc);
+            Mupen64PlusTypes.Error err = _fnConfigSetParameter(handle, name, Mupen64PlusTypes.Type.String, alloc);
             ThrowForError(err);
         }
         finally
@@ -113,7 +114,7 @@ public static partial class Mupen64Plus
     {
         
 
-        Error err = _fnConfigSetParameterHelp(handle, name, help);
+        Mupen64PlusTypes.Error err = _fnConfigSetParameterHelp(handle, name, help);
         ThrowForError(err);
     }
 
@@ -121,8 +122,8 @@ public static partial class Mupen64Plus
     {
         
 
-        Error err = _fnConfigGetParameterType(handle, name, out Type type);
-        if (err == Error.InputNotFound)
+        Mupen64PlusTypes.Error err = _fnConfigGetParameterType(handle, name, out Type type);
+        if (err == Mupen64PlusTypes.Error.InputNotFound)
             throw new ArgumentOutOfRangeException(nameof(name), "Value not found in this config section");
         ThrowForError(err);
 

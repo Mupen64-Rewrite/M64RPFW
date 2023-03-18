@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M64RPFW.ViewModels", "M64RP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M64RPFW.Models", "M64RPFW.Models\M64RPFW.Models.csproj", "{4D5B413F-E005-41E3-A316-D2404E9F11BB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M64RPFW.Models.Types", "M64RPFW.Models.Types\M64RPFW.Models.Types.csproj", "{6EDD71B7-6238-4778-8885-998EBDF3349E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{4D5B413F-E005-41E3-A316-D2404E9F11BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D5B413F-E005-41E3-A316-D2404E9F11BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D5B413F-E005-41E3-A316-D2404E9F11BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EDD71B7-6238-4778-8885-998EBDF3349E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EDD71B7-6238-4778-8885-998EBDF3349E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EDD71B7-6238-4778-8885-998EBDF3349E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EDD71B7-6238-4778-8885-998EBDF3349E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

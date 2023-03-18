@@ -6,6 +6,7 @@ using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Platform;
 using M64RPFW.Models.Emulation;
+using M64RPFW.Models.Types;
 using M64RPFW.ViewModels.Interfaces;
 using Mupen64PlusRR.Controls.Helpers;
 using Silk.NET.OpenGL;
@@ -68,12 +69,12 @@ public unsafe class VidextControl : NativeControlHost, IVidextSurfaceService
         SDL.QuitSubSystem(Sdl.InitVideo);
     }
 
-    public void SetGLAttribute(Mupen64Plus.GLAttribute attr, int value)
+    public void SetGLAttribute(Mupen64PlusTypes.GLAttribute attr, int value)
     {
         SDL.SetMupenGLAttribute(attr, value);
     }
 
-    public int GetGLAttribute(Mupen64Plus.GLAttribute attr)
+    public int GetGLAttribute(Mupen64PlusTypes.GLAttribute attr)
     {
         return SDL.GetMupenGLAttribute(attr);
     }
