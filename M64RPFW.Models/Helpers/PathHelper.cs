@@ -20,7 +20,6 @@ public static class PathHelper
         {
             return false;
         }
-
         return true;
     }
 }

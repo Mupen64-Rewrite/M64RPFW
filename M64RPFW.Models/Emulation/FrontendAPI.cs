@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -8,18 +7,19 @@ namespace M64RPFW.Models.Emulation;
 
 public static partial class Mupen64Plus
 {
+    
     private static readonly DebugCallback _debugCallback;
     private static readonly StateCallback _stateCallback;
     private static readonly FrameCallback _frameCallback;
 
-    private static readonly GCHandle[] _callbackGCHandles;
-
+    private static GCHandle[] _callbackGCHandles;
+    
     // Public API
     // ========================================================
 #pragma warning disable CS8618, CS8602
     static unsafe Mupen64Plus()
     {
-        var expectedPath = GetBundledLibraryPath();
+        string expectedPath = GetBundledLibraryPath();
         _libHandle = NativeLibrary.Load(Path.Join(expectedPath, NativeLibHelper.AsDLL("mupen64plus")));
 
         ResolveFrontendFunctions();
@@ -28,9 +28,9 @@ public static partial class Mupen64Plus
         _debugCallback = OnLogMessage;
         _stateCallback = OnStateChange;
 
-        var err = _fnCoreStartup(
-            0x020000, null, expectedPath, (int)PluginType.Core,
-            _debugCallback, nint.Zero, _stateCallback);
+        Error err = _fnCoreStartup(
+            0x020000, null, expectedPath, (IntPtr) (int) PluginType.Core,
+            _debugCallback, IntPtr.Zero, _stateCallback);
         ThrowForError(err);
 
 
@@ -43,20 +43,20 @@ public static partial class Mupen64Plus
         {
             GCHandle.Alloc(_debugCallback, GCHandleType.Normal),
             GCHandle.Alloc(_stateCallback, GCHandleType.Normal),
-            GCHandle.Alloc(_frameCallback, GCHandleType.Normal)
+            GCHandle.Alloc(_frameCallback, GCHandleType.Normal),
         };
 
-        _pluginDict = new Dictionary<PluginType, nint>();
+        _pluginDict = new Dictionary<PluginType, IntPtr>();
 
         AppDomain.CurrentDomain.ProcessExit += (_, _) =>
         {
             foreach (var handle in _callbackGCHandles)
                 handle.Free();
-
+            
             ConfigSaveFile();
 
             // ReSharper disable once VariableHidesOuterVariable
-            var err = _fnCoreShutdown!();
+            Error err = _fnCoreShutdown!();
             ThrowForError(err);
 
             NativeLibrary.Free(_libHandle);
@@ -85,26 +85,26 @@ public static partial class Mupen64Plus
             Error.NoMemory => typeof(OutOfMemoryException),
             _ => typeof(ApplicationException)
         };
-        throw (Exception)Activator.CreateInstance(errType, $"M64+ {_fnCoreErrorMessage(err)}")!;
+        throw (Exception) Activator.CreateInstance(errType, $"M64+ {_fnCoreErrorMessage(err)}")!;
     }
 
-    private static void OnLogMessage(nint context, MessageLevel level, string message)
+    private static void OnLogMessage(IntPtr context, MessageLevel level, string message)
     {
-        var type = (int)context;
+        var type = (int) context;
 
-        var typeString = type switch
+        string typeString = type switch
         {
-            (int)PluginType.Core => "CORE  ",
-            (int)PluginType.Graphics => "VIDEO ",
-            (int)PluginType.Audio => "AUDIO ",
-            (int)PluginType.Input => "INPUT ",
-            (int)PluginType.RSP => "RSP   ",
-            (int)LogSources.App => "APP   ",
-            (int)LogSources.Vidext => "VIDXT ",
+            (int) PluginType.Core => "CORE  ",
+            (int) PluginType.Graphics => "VIDEO ",
+            (int) PluginType.Audio => "AUDIO ",
+            (int) PluginType.Input => "INPUT ",
+            (int) PluginType.RSP => "RSP   ",
+            (int) LogSources.App => "APP   ",
+            (int) LogSources.Vidext => "VIDXT ",
             _ => "??    "
         };
 
-        var levelString = level switch
+        string levelString = level switch
         {
             MessageLevel.Error => "ERROR",
             MessageLevel.Warning => "WARN ",
@@ -114,11 +114,10 @@ public static partial class Mupen64Plus
             _ => "??   "
         };
 
-        // Console.WriteLine($"[M64+ {typeString}{levelString}] {message}");
-        Debug.Print($"[M64+ {typeString}{levelString}] {message}");
+        Console.WriteLine($"[M64+ {typeString}{levelString}] {message}");
     }
 
-    private static void OnStateChange(nint context, CoreParam param, int newValue)
+    private static void OnStateChange(IntPtr context, CoreParam param, int newValue)
     {
         StateChanged?.Invoke(null, new StateChangeEventArgs { Param = param, NewValue = newValue });
     }
@@ -145,50 +144,50 @@ public static partial class Mupen64Plus
     {
         ArgumentNullException.ThrowIfNull(path);
 
-        var bytes = File.ReadAllBytes(path);
+        byte[] bytes = File.ReadAllBytes(path);
         RomHelper.AdaptiveByteSwap(ref bytes);
 
         fixed (byte* bytesPtr = bytes)
         {
-            var err = _fnCoreDoCommand(Command.RomOpen, bytes.Length, bytesPtr);
+            Error err = _fnCoreDoCommand(Command.RomOpen, bytes.Length, bytesPtr);
             ThrowForError(err);
         }
     }
 
     /// <summary>
-    ///     Opens a ROM that is already loaded into memory. Assumes that said ROM is in the
-    ///     correct byte order.
+    /// Opens a ROM that is already loaded into memory. Assumes that said ROM is in the
+    /// correct byte order.
     /// </summary>
     /// <param name="romData">The ROM to load</param>
     public static unsafe void OpenRomBinary(ReadOnlySpan<byte> romData)
     {
         fixed (byte* dataPtr = romData)
         {
-            var err = _fnCoreDoCommand(Command.RomOpen, romData.Length, dataPtr);
+            Error err = _fnCoreDoCommand(Command.RomOpen, romData.Length, dataPtr);
             ThrowForError(err);
         }
     }
 
     /// <summary>
-    ///     Close the currently open ROM.
+    /// Close the currently open ROM.
     /// </summary>
     public static unsafe void CloseRom()
     {
-        var err = _fnCoreDoCommand(Command.RomClose, 0, null);
+        Error err = _fnCoreDoCommand(Command.RomClose, 0, null);
         ThrowForError(err);
     }
 
     /// <summary>
-    ///     Get the ROM header of the currently open ROM.
+    /// Get the ROM header of the currently open ROM.
     /// </summary>
     /// <returns>the ROM header of the currently open ROM</returns>
     public static unsafe RomHeader GetRomHeader()
     {
-        var size = Marshal.SizeOf<RomHeader>();
-        var alloc = Marshal.AllocHGlobal(size);
+        int size = Marshal.SizeOf<RomHeader>();
+        IntPtr alloc = Marshal.AllocHGlobal(size);
         try
         {
-            var err = _fnCoreDoCommand(Command.RomGetHeader, size, alloc.ToPointer());
+            Error err = _fnCoreDoCommand(Command.RomGetHeader, size, alloc.ToPointer());
             ThrowForError(err);
             var res = Marshal.PtrToStructure<RomHeader>(alloc);
             return res;
@@ -200,17 +199,17 @@ public static partial class Mupen64Plus
     }
 
     /// <summary>
-    ///     Get the ROM "settings" (internal M64+ data) for the currently
-    ///     open ROM.
+    /// Get the ROM "settings" (internal M64+ data) for the currently
+    /// open ROM.
     /// </summary>
     /// <returns>The ROM settings for the currently open ROM</returns>
     public static unsafe RomSettings GetRomSettings()
     {
-        var size = Marshal.SizeOf<RomSettings>();
-        var alloc = Marshal.AllocHGlobal(size);
+        int size = Marshal.SizeOf<RomSettings>();
+        IntPtr alloc = Marshal.AllocHGlobal(size);
         try
         {
-            var err = _fnCoreDoCommand(Command.RomGetSettings, size, alloc.ToPointer());
+            Error err = _fnCoreDoCommand(Command.RomGetSettings, size, alloc.ToPointer());
             ThrowForError(err);
             var res = Marshal.PtrToStructure<RomSettings>(alloc);
             return res;
@@ -222,83 +221,83 @@ public static partial class Mupen64Plus
     }
 
     /// <summary>
-    ///     Run the current ROM in this thread. This function blocks until the emulator is stopped.
+    /// Run the current ROM in this thread. This function blocks until the emulator is stopped.
     /// </summary>
     public static unsafe void Execute()
     {
-        var err = _fnCoreDoCommand(Command.Execute, 0, null);
+        Error err = _fnCoreDoCommand(Command.Execute, 0, null);
         ThrowForError(err);
     }
 
     /// <summary>
-    ///     Stops the emulator. The emulator must not be stopped.
+    /// Stops the emulator. The emulator must not be stopped.
     /// </summary>
     public static unsafe void Stop()
     {
-        var err = _fnCoreDoCommand(Command.Stop, 0, null);
+        Error err = _fnCoreDoCommand(Command.Stop, 0, null);
         ThrowForError(err);
     }
 
     /// <summary>
-    ///     Pauses the emulator. The emulator must be running.
+    /// Pauses the emulator. The emulator must be running.
     /// </summary>
     public static unsafe void Pause()
     {
-        var err = _fnCoreDoCommand(Command.Pause, 0, null);
+        Error err = _fnCoreDoCommand(Command.Pause, 0, null);
         ThrowForError(err);
     }
 
     /// <summary>
-    ///     Resumes the emulator. The emulator must be paused.
+    /// Resumes the emulator. The emulator must be paused.
     /// </summary>
     public static unsafe void Resume()
     {
-        var err = _fnCoreDoCommand(Command.Resume, 0, null);
+        Error err = _fnCoreDoCommand(Command.Resume, 0, null);
         ThrowForError(err);
     }
 
     /// <summary>
-    ///     Gets one of the emulator parameters.
+    /// Gets one of the emulator parameters.
     /// </summary>
     /// <param name="param">the parameter to query</param>
     /// <returns>the parameter's value</returns>
     public static unsafe int CoreStateQuery(CoreParam param)
     {
-        var res = 0;
-        var err = _fnCoreDoCommand(Command.CoreStateQuery, (int)param, &res);
+        int res = 0;
+        Error err = _fnCoreDoCommand(Command.CoreStateQuery, (int) param, &res);
         ThrowForError(err);
 
         return res;
     }
 
     /// <summary>
-    ///     Sets one of the emulator parameters.
+    /// Sets one of the emulator parameters.
     /// </summary>
     /// <param name="param">the parameter to set</param>
     /// <param name="value">the value to set to the parameter</param>
     public static unsafe void CoreStateSet(CoreParam param, int value)
     {
-        var err = _fnCoreDoCommand(Command.CoreStateSet, (int)param, &value);
+        Error err = _fnCoreDoCommand(Command.CoreStateSet, (int) param, &value);
         ThrowForError(err);
     }
 
-    public static void CoreStateSet(CoreParam param, uint value)
+    public static unsafe void CoreStateSet(CoreParam param, uint value)
     {
-        CoreStateSet(param, (int)value);
+        CoreStateSet(param, (int) value);
     }
 
     /// <summary>
-    ///     Loads the emulator's state from a file.
+    /// Loads the emulator's state from a file.
     /// </summary>
     /// <param name="path">path to the file</param>
     public static unsafe void LoadStateFromFile(string path)
     {
         ArgumentNullException.ThrowIfNull(path);
 
-        var alloc = Marshal.StringToHGlobalAnsi(path);
+        IntPtr alloc = Marshal.StringToHGlobalAnsi(path);
         try
         {
-            var err = _fnCoreDoCommand(Command.StateLoad, 0, alloc.ToPointer());
+            Error err = _fnCoreDoCommand(Command.StateLoad, 0, alloc.ToPointer());
             ThrowForError(err);
         }
         finally
@@ -308,16 +307,16 @@ public static partial class Mupen64Plus
     }
 
     /// <summary>
-    ///     Loads the emulator's state in the current slot.
+    /// Loads the emulator's state in the current slot.
     /// </summary>
     public static unsafe void LoadStateFromCurrentSlot()
     {
-        var err = _fnCoreDoCommand(Command.StateLoad, 0, null);
+        Error err = _fnCoreDoCommand(Command.StateLoad, 0, null);
         ThrowForError(err);
     }
 
     /// <summary>
-    ///     Saves the emulator's state as a file.
+    /// Saves the emulator's state as a file.
     /// </summary>
     /// <param name="path">The path to save the savestate</param>
     /// <param name="type"></param>
@@ -325,11 +324,11 @@ public static partial class Mupen64Plus
     {
         ArgumentNullException.ThrowIfNull(path);
 
-        var fullPath = Path.GetFullPath(path);
-        var alloc = Marshal.StringToHGlobalAnsi(fullPath);
+        string fullPath = Path.GetFullPath(path);
+        IntPtr alloc = Marshal.StringToHGlobalAnsi(fullPath);
         try
         {
-            var err = _fnCoreDoCommand(Command.StateSave, (int)type, alloc.ToPointer());
+            Error err = _fnCoreDoCommand(Command.StateSave, (int) type, alloc.ToPointer());
             ThrowForError(err);
         }
         finally
@@ -339,110 +338,110 @@ public static partial class Mupen64Plus
     }
 
     /// <summary>
-    ///     Saves the emulator's state to the current slot.
+    /// Saves the emulator's state to the current slot.
     /// </summary>
     public static unsafe void SaveStateToCurrentSlot()
     {
-        var err = _fnCoreDoCommand(Command.StateSave, 0, null);
+        Error err = _fnCoreDoCommand(Command.StateSave, 0, null);
         ThrowForError(err);
     }
 
     /// <summary>
-    ///     Sets the current savestate slot of the emulator.
-    ///     The slot indices range between 0-9 (inclusive).
+    /// Sets the current savestate slot of the emulator.
+    /// The slot indices range between 0-9 (inclusive).
     /// </summary>
     /// <param name="slot">the savestate slot to use</param>
-    /// <exception cref="ArgumentOutOfRangeException">If <paramref name="slot" /> is not between 0 and 9</exception>
+    /// <exception cref="ArgumentOutOfRangeException">If <paramref name="slot"/> is not between 0 and 9</exception>
     public static unsafe void SetSavestateSlot(int slot)
     {
         if (slot < 0 || slot > 9)
             throw new ArgumentOutOfRangeException(nameof(slot), "Savestate slots range from 0-9 (inclusive)");
-        var err = _fnCoreDoCommand(Command.StateSetSlot, slot, null);
+        Error err = _fnCoreDoCommand(Command.StateSetSlot, slot, null);
         ThrowForError(err);
     }
 
     /// <summary>
-    ///     Resets the emulator.
+    /// Resets the emulator.
     /// </summary>
     /// <param name="hard">If true, performs a hard reset. Otherwise, performs a soft reset.</param>
     public static unsafe void Reset(bool hard = true)
     {
-        var err = _fnCoreDoCommand(Command.Reset, hard ? 1 : 0, null);
+        Error err = _fnCoreDoCommand(Command.Reset, hard ? 1 : 0, null);
         ThrowForError(err);
     }
 
     /// <summary>
-    ///     Advances the emulator by a single frame.
+    /// Advances the emulator by a single frame.
     /// </summary>
     public static unsafe void AdvanceFrame()
     {
-        var err = _fnCoreDoCommand(Command.AdvanceFrame, 0, null);
+        Error err = _fnCoreDoCommand(Command.AdvanceFrame, 0, null);
         ThrowForError(err);
     }
 
     public static unsafe void SendSDLKeyDown(uint combined)
     {
-        var err = _fnCoreDoCommand(Command.SendSDLKeyDown, (int)combined, null);
+        Error err = _fnCoreDoCommand(Command.SendSDLKeyDown, (int) combined, null);
         ThrowForError(err);
     }
 
     public static unsafe void SendSDLKeyUp(uint combined)
     {
-        var err = _fnCoreDoCommand(Command.SendSDLKeyUp, (int)combined, null);
+        Error err = _fnCoreDoCommand(Command.SendSDLKeyUp, (int) combined, null);
         ThrowForError(err);
     }
 
     #endregion
 
     #region Miscellaneous core functions
-
+    
     /// <summary>
-    ///     Overrides the core "video extension" functions. These handle window
-    ///     management for the video plugin.
+    /// Overrides the core "video extension" functions. These handle window
+    /// management for the video plugin.
     /// </summary>
     /// <param name="vidext">The video extension functions to use, or null to remove it.</param>
     public static void OverrideVidExt(VideoExtensionFunctions? vidext)
     {
         _currentVidext = vidext;
-        var err = _fnCoreOverrideVidExt(vidext ?? VideoExtensionFunctions.Empty);
+        Error err = _fnCoreOverrideVidExt(vidext ?? VideoExtensionFunctions.Empty);
         ThrowForError(err);
     }
 
     private static VideoExtensionFunctions? _currentVidext;
 
     /// <summary>
-    ///     Attaches a plugin to the core.
-    ///     Mupen64Plus demands that they are attached in the following order:
-    ///     <list type="number">
-    ///         <item>Graphics</item>
-    ///         <item>Audio</item>
-    ///         <item>Input</item>
-    ///         <item>RSP</item>
-    ///     </list>
+    /// Attaches a plugin to the core.
+    /// Mupen64Plus demands that they are attached in the following order:
+    /// <list type="number">
+    ///     <item>Graphics</item>
+    ///     <item>Audio</item>
+    ///     <item>Input</item>
+    ///     <item>RSP</item>
+    /// </list>
     /// </summary>
     /// <param name="path">Path to the plugin's .so file</param>
     /// <exception cref="InvalidOperationException">If the located plugin's type already has an attached plugin</exception>
     public static unsafe void AttachPlugin(string path)
     {
-        var pluginLib = NativeLibrary.Load(path);
+        IntPtr pluginLib = NativeLibrary.Load(path);
         // Implicitly
         var getVersion = NativeLibHelper.GetFunction<DPluginGetVersion>(pluginLib, "PluginGetVersion");
 
-        var err = getVersion(out var type, out _, out _, out _, out _);
+        Error err = getVersion(out var type, out _, out _, out _, out _);
         ThrowForError(err);
 
         if (!_pluginDict.TryAdd(type, pluginLib))
         {
-            var oldLib = _pluginDict[type];
+            IntPtr oldLib = _pluginDict[type];
             var oldLibGetVersion = NativeLibHelper.GetFunction<DPluginGetVersion>(pluginLib, "PluginGetVersion");
 
             err = oldLibGetVersion(out _, out _, out _, out var oldNameBytes, out _);
             ThrowForError(err);
 
             // Manually strlen() oldNameBytes, then convert to string
-            var oldNameLen = 0;
+            int oldNameLen = 0;
             while (oldNameBytes[oldNameLen] != 0) oldNameLen++;
-            var oldName = Encoding.ASCII.GetString(oldNameBytes, oldNameLen);
+            string oldName = Encoding.ASCII.GetString(oldNameBytes, oldNameLen);
 
             NativeLibrary.Free(pluginLib);
             throw new InvalidOperationException(
@@ -451,7 +450,7 @@ public static partial class Mupen64Plus
 
 
         var startup = NativeLibHelper.GetFunction<DPluginStartup>(pluginLib, "PluginStartup");
-        err = startup(_libHandle, (int)type, OnLogMessage);
+        err = startup(_libHandle, (IntPtr) (int) type, OnLogMessage);
         ThrowForError(err);
 
         err = _fnCoreAttachPlugin(type, pluginLib);
@@ -459,15 +458,15 @@ public static partial class Mupen64Plus
     }
 
     /// <summary>
-    ///     Detaches a plugin from the core. Unlike <see cref="AttachPlugin" />, does not mandate
-    ///     any sort of order.
+    /// Detaches a plugin from the core. Unlike <see cref="AttachPlugin"/>, does not mandate
+    /// any sort of order.
     /// </summary>
     /// <param name="type">The plugin type to detach</param>
     public static void DetachPlugin(PluginType type)
     {
         if (!_pluginDict.Remove(type, out var pluginLib))
             return;
-        var err = _fnCoreDetachPlugin(type);
+        Error err = _fnCoreDetachPlugin(type);
         ThrowForError(err);
 
         var shutdown = NativeLibHelper.GetFunction<DPluginShutdown>(pluginLib, "PluginShutdown");
@@ -489,14 +488,14 @@ public static partial class Mupen64Plus
 
     public static unsafe CoreVersion GetVersionInfo()
     {
-        var err = _fnCorePluginGetVersion(out _, out var version, out var apiVersion, out var name, out _);
+        Error err = _fnCorePluginGetVersion(out _, out var version, out var apiVersion, out var name, out _);
         ThrowForError(err);
 
         return new CoreVersion
         {
-            Version = (uint)version,
-            APIVersion = (uint)apiVersion,
-            Name = Marshal.PtrToStringAnsi((nint)name) ?? ""
+            Version = (uint) version,
+            APIVersion = (uint) apiVersion,
+            Name = Marshal.PtrToStringAnsi((IntPtr) name) ?? ""
         };
     }
 
@@ -507,12 +506,12 @@ public static partial class Mupen64Plus
     public enum LogSources
     {
         App = 0x4201,
-        Vidext
+        Vidext,
     }
 
     public static void Log(LogSources source, MessageLevel level, string message, params object[] args)
     {
-        OnLogMessage((nint)source, level, string.Format(message, args));
+        OnLogMessage((IntPtr) source, level, string.Format(message, args));
     }
 
     #endregion
@@ -521,11 +520,11 @@ public static partial class Mupen64Plus
     // =================================
     public static string GetBundledLibraryPath()
     {
-        var path = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location) ??
-                   throw new ApplicationException("Could not retrieve .exe path");
+        string path = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location) ??
+                      throw new ApplicationException("Could not retrieve .exe path");
 
         return Path.Join(new[] { path, "Libraries" });
     }
 
-    private static readonly nint _libHandle;
+    private static IntPtr _libHandle;
 }

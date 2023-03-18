@@ -9,29 +9,28 @@ public static partial class Mupen64Plus
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate void ListSectionsCallback(nint context, string name);
+    private delegate void ListSectionsCallback(IntPtr context, string name);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate void ListParametersCallback(nint context, string name, Type type);
+    private delegate void ListParametersCallback(IntPtr context, string name, Type type);
 
     #endregion
-
     #region Delegates for config functions
 
     #region Section manipulation
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate Error DConfigListSections(nint context, ListSectionsCallback callback);
+    private delegate Error DConfigListSections(IntPtr context, ListSectionsCallback callback);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate Error DConfigOpenSection(string name, out nint handle);
+    private delegate Error DConfigOpenSection(string name, out IntPtr handle);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate Error DConfigListParameters(nint handle, nint context, ListParametersCallback callback);
+    private delegate Error DConfigListParameters(IntPtr handle, IntPtr context, ListParametersCallback callback);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
@@ -59,42 +58,42 @@ public static partial class Mupen64Plus
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate Error DConfigSetParameter(nint handle, string param, Type type, nint value);
+    private delegate Error DConfigSetParameter(IntPtr handle, string param, Type type, IntPtr value);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate Error DConfigSetParameterHelp(nint handle, string param, string help);
+    private delegate Error DConfigSetParameterHelp(IntPtr handle, string param, string help);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate Error DConfigGetParameterType(nint handle, string param, out Type type);
+    private delegate Error DConfigGetParameterType(IntPtr handle, string param, out Type type);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate string? DConfigGetParameterHelp(nint handle, string param);
+    private delegate string? DConfigGetParameterHelp(IntPtr handle, string param);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate int DConfigGetParamInt(nint handle, string param);
-
+    private delegate int DConfigGetParamInt(IntPtr handle, string param);
+    
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate float DConfigGetParamFloat(nint handle, string param);
-
+    private delegate float DConfigGetParamFloat(IntPtr handle, string param);
+    
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate bool DConfigGetParamBool(nint handle, string param);
-
+    private delegate bool DConfigGetParamBool(IntPtr handle, string param);
+    
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate string DConfigGetParamString(nint handle, string param);
+    private delegate string DConfigGetParamString(IntPtr handle, string param);
 
     #endregion
 
     #endregion
-
-#pragma warning disable CS8618
-
+    
+    #pragma warning disable CS8618
+    
     private static DConfigListSections _fnConfigListSections;
     private static DConfigOpenSection _fnConfigOpenSection;
     private static DConfigListParameters _fnConfigListParameters;
@@ -111,9 +110,9 @@ public static partial class Mupen64Plus
     private static DConfigGetParamFloat _fnConfigGetParamFloat;
     private static DConfigGetParamBool _fnConfigGetParamBool;
     private static DConfigGetParamString _fnConfigGetParamString;
-
-#pragma warning restore CS8168
-
+    
+    #pragma warning restore CS8168
+    
     private static void ResolveConfigFunctions()
     {
         NativeLibHelper.ResolveDelegate(_libHandle, out _fnConfigListSections);
