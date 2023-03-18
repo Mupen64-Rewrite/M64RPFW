@@ -8,7 +8,7 @@ using PluginType = Mupen64PlusTypes.PluginType;
 using LogSources = Mupen64Plus.LogSources;
 using MessageLevel = Mupen64PlusTypes.MessageLevel;
 
-public partial class MainWindowViewModel
+public partial class EmulatorViewModel
 {
     #region Emulator thread
 

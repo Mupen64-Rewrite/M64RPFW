@@ -1,18 +1,12 @@
 using System;
-using System.Runtime.InteropServices;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
-using Avalonia.Media;
 using Avalonia.Platform;
-using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Types;
 using M64RPFW.Services;
 using Mupen64PlusRR.Controls.Helpers;
 using Silk.NET.OpenGL;
 using Silk.NET.SDL;
 using static Mupen64PlusRR.Controls.Helpers.SilkGlobals;
-using Mutex = System.Threading.Mutex;
 using SDL_Window = Silk.NET.SDL.Window;
 
 namespace Mupen64PlusRR.Controls;

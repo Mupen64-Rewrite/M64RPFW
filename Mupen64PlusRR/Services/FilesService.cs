@@ -4,11 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
-using Mupen64PlusRR.Views;
 
 namespace Mupen64PlusRR.Services;
 
@@ -58,7 +58,7 @@ public sealed class FilesService : IFilesService
     
     private static Window GetWindow()
     {
-        var lifetime = Avalonia.Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+        var lifetime = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
         return lifetime?.MainWindow!;
     }
     
