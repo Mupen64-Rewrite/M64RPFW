@@ -155,7 +155,7 @@ public unsafe partial class MainWindowViewModel : IVideoExtensionService
 
     #endregion
 
-    private void OnSizeChanged()
+    partial void OnSizeChanged()
     {
         if (!MupenIsActive)
             return;
