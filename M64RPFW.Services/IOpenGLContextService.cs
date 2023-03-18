@@ -1,4 +1,3 @@
-
 using M64RPFW.Models.Types;
 
 namespace M64RPFW.Services;
@@ -8,18 +7,68 @@ namespace M64RPFW.Services;
 /// </summary>
 public interface IOpenGLContextService
 {
+    /// <summary>
+    ///     Initializes the window
+    /// </summary>
     void InitWindow();
+
+    /// <summary>
+    ///     Destroys the window
+    /// </summary>
     void QuitWindow();
 
+    /// <summary>
+    ///     Sets an OpenGL attribute's value
+    /// </summary>
+    /// <param name="attr">The OpenGL attribute</param>
+    /// <param name="value">The new value</param>
     void SetGLAttribute(Mupen64PlusTypes.GLAttribute attr, int value);
+
+    /// <summary>
+    ///     Gets an OpenGL attribute's value
+    /// </summary>
+    /// <param name="attr">The OpenGL attribute</param>
+    /// <returns>The attribute's value</returns>
     int GetGLAttribute(Mupen64PlusTypes.GLAttribute attr);
 
+    /// <summary>
+    ///     Creates the window
+    /// </summary>
+    /// <param name="width">The window's width</param>
+    /// <param name="height">The window's height</param>
+    /// <param name="bitsPerPixel">The amount of bits used to represent one pixel</param>
     void CreateWindow(int width, int height, int bitsPerPixel);
+
+    /// <summary>
+    ///     Resizes the window
+    /// </summary>
+    /// <param name="width">The window's width</param>
+    /// <param name="height">The window's height</param>
     void ResizeWindow(int width, int height);
 
+    /// <summary>
+    ///     Activates this OpenGL context
+    /// </summary>
     void MakeCurrent();
+
+    /// <summary>
+    ///     Swaps the front and back buffers
+    /// </summary>
     void SwapBuffers();
 
-    IntPtr GetProcAddress(IntPtr strSymbol);
+    /// <summary>
+    ///     Gets a symbol's address
+    /// </summary>
+    /// <param name="strSymbol">A pointer to the desired symbol's name</param>
+    /// <returns>A pointer to the symbol</returns>
+    nint GetProcAddress(nint strSymbol);
+
+    /// <summary>
+    ///     Gets a GPU handle to the default framebuffer
+    /// </summary>
+    /// <returns>The default framebuffer's GPU handle</returns>
+    /// <remarks>
+    ///     Might be non-0 on some devices
+    /// </remarks>
     int GetDefaultFramebuffer();
 }
