@@ -67,7 +67,7 @@ public static partial class Mupen64Plus
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate Mupen64PlusTypes.Error DConfigGetParameterType(IntPtr handle, string param, out Type type);
+    private delegate Mupen64PlusTypes.Error DConfigGetParameterType(IntPtr handle, string param, out Mupen64PlusTypes.Type type);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]

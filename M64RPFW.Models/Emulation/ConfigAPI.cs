@@ -118,11 +118,9 @@ public static partial class Mupen64Plus
         ThrowForError(err);
     }
 
-    public static Type ConfigGetType(IntPtr handle, string name)
+    public static Mupen64PlusTypes.Type ConfigGetType(IntPtr handle, string name)
     {
-        
-
-        Mupen64PlusTypes.Error err = _fnConfigGetParameterType(handle, name, out Type type);
+        Mupen64PlusTypes.Error err = _fnConfigGetParameterType(handle, name, out var type);
         if (err == Mupen64PlusTypes.Error.InputNotFound)
             throw new ArgumentOutOfRangeException(nameof(name), "Value not found in this config section");
         ThrowForError(err);
