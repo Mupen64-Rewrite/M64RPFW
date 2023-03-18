@@ -1,11 +1,12 @@
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Interfaces;
+using M64RPFW.Models.Types;
 
 namespace M64RPFW.ViewModels;
 
 using LogSources = Mupen64Plus.LogSources;
-using MessageLevel = Mupen64Plus.MessageLevel;
-using Error = Mupen64Plus.Error;
+using MessageLevel = Mupen64PlusTypes.MessageLevel;
+using Error = Mupen64PlusTypes.Error;
 
 public unsafe partial class MainWindowViewModel : IVideoExtensionService
 {
@@ -38,30 +39,30 @@ public unsafe partial class MainWindowViewModel : IVideoExtensionService
         }
     }
 
-    public Error VidextListFullscreenModes(Span<Mupen64Plus.Size2D> sizes, ref int len)
+    public Error VidextListFullscreenModes(Span<Mupen64PlusTypes.Size2D> sizes, ref int len)
     {
         // FUTURE: support fullscreen
         return Error.Unsupported;
     }
 
-    public Error VidextListFullscreenRates(Mupen64Plus.Size2D size, Span<int> output, ref int len)
+    public Error VidextListFullscreenRates(Mupen64PlusTypes.Size2D size, Span<int> output, ref int len)
     {
         // FUTURE: support fullscreen
         return Error.Unsupported;
     }
 
-    public Error VidextSetVideoMode(int width, int height, int bpp, Mupen64Plus.VideoMode mode, Mupen64Plus.VideoFlags flags)
+    public Error VidextSetVideoMode(int width, int height, int bpp, Mupen64PlusTypes.VideoMode mode, Mupen64PlusTypes.VideoFlags flags)
     {
         // FUTURE: support fullscreen
         try
         {
-            if (mode != Mupen64Plus.VideoMode.Windowed)
+            if (mode != Mupen64PlusTypes.VideoMode.Windowed)
                 return Error.Unsupported;
             
             Mupen64Plus.Log(LogSources.Vidext, MessageLevel.Info, $"Setting video mode {width}x{height}");
             WindowWidth = width;
             WindowHeight = height + MenuHeight;
-            if ((flags & Mupen64Plus.VideoFlags.SupportResizing) == 0)
+            if ((flags & Mupen64PlusTypes.VideoFlags.SupportResizing) == 0)
                 Resizable = false;
 
             _vidextSurfaceService.CreateWindow(width, height, bpp);
@@ -73,7 +74,7 @@ public unsafe partial class MainWindowViewModel : IVideoExtensionService
         }
     }
 
-    public Error VidextSetVideoModeWithRate(int width, int height, int refreshRate, int bpp, Mupen64Plus.VideoMode mode, Mupen64Plus.VideoFlags flags)
+    public Error VidextSetVideoModeWithRate(int width, int height, int refreshRate, int bpp, Mupen64PlusTypes.VideoMode mode, Mupen64PlusTypes.VideoFlags flags)
     {
         return Error.Unsupported;
     }
@@ -83,7 +84,7 @@ public unsafe partial class MainWindowViewModel : IVideoExtensionService
         return _vidextSurfaceService.GetProcAddress((IntPtr) symbol);
     }
 
-    public Error VidextGLSetAttr(Mupen64Plus.GLAttribute attr, int value)
+    public Error VidextGLSetAttr(Mupen64PlusTypes.GLAttribute attr, int value)
     {
         try
         {
@@ -96,7 +97,7 @@ public unsafe partial class MainWindowViewModel : IVideoExtensionService
         }
     }
 
-    public Error VidextGLGetAttr(Mupen64Plus.GLAttribute attr, out int value)
+    public Error VidextGLGetAttr(Mupen64PlusTypes.GLAttribute attr, out int value)
     {
         try
         {
@@ -161,6 +162,6 @@ public unsafe partial class MainWindowViewModel : IVideoExtensionService
             return;
         var width = Math.Min((uint) WindowWidth, 65535);
         var height = Math.Min((uint) WindowHeight, 65535);
-        Mupen64Plus.CoreStateSet(Mupen64Plus.CoreParam.VideoSize, (width << 16) | height);
+        Mupen64Plus.CoreStateSet(Mupen64PlusTypes.CoreParam.VideoSize, (width << 16) | height);
     }
 }

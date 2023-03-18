@@ -1,4 +1,5 @@
 using M64RPFW.Models.Emulation;
+using M64RPFW.Models.Types;
 
 namespace M64RPFW.ViewModels.Interfaces;
 
@@ -10,8 +11,8 @@ public interface IVidextSurfaceService
     void InitWindow();
     void QuitWindow();
 
-    void SetGLAttribute(Mupen64Plus.GLAttribute attr, int value);
-    int GetGLAttribute(Mupen64Plus.GLAttribute attr);
+    void SetGLAttribute(Mupen64PlusTypes.GLAttribute attr, int value);
+    int GetGLAttribute(Mupen64PlusTypes.GLAttribute attr);
 
     void CreateWindow(int width, int height, int bitsPerPixel);
     void ResizeWindow(int width, int height);
