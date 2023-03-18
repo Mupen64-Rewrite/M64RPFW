@@ -48,8 +48,7 @@ public partial class EmulatorViewModel
         {
             new("N64 ROMs (.n64, .z64, .v64)", Patterns: new[] { "*.n64", "*.z64", "*.v64" }),
         }, allowMultiple: false);
-
-        if (files == null)
+        if (files == null || files.Length == 0)
             return;
 
         _emuThread = new Thread(EmulatorThreadRun);
