@@ -41,6 +41,9 @@ public partial class EmulatorViewModel : ObservableObject
                 {
                     OpenRomCommand.NotifyCanExecuteChanged();
                     CloseRomCommand.NotifyCanExecuteChanged();
+                    ResetRomCommand.NotifyCanExecuteChanged();
+                    PauseOrResumeCommand.NotifyCanExecuteChanged();
+                    FrameAdvanceCommand.NotifyCanExecuteChanged();
                 });
                 break;
         }

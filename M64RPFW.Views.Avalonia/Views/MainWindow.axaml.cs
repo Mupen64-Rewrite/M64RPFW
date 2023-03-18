@@ -15,13 +15,12 @@ public partial class MainWindow : Window
     {
         AvaloniaXamlLoader.Load(this);
         
-        var serviceCollection = ((App)Application.Current!).ServiceProvider.GetService<IServiceCollection>();
-        
-        serviceCollection.AddSingleton<IOpenGLContextService>(this.Find<VidextControl>("EmulatorWindow"));
-        
-        ((App)Application.Current!).ServiceProvider = serviceCollection.BuildServiceProvider();
-        
-        DataContext = ((App)Application.Current!).ServiceProvider.GetService<MainViewModel>().EmulatorViewModel;
+        var serviceCollection = ((App) Application.Current!).ServiceProvider.GetService<IServiceCollection>()!;
+        // Add VidextControl as IOpenGLContextService
+        serviceCollection.AddSingleton<IOpenGLContextService>(this.Find<VidextControl>("EmulatorWindow")!);
+        // Initialize view model via constructor injection
+        ((App) Application.Current).ServiceProvider = serviceCollection.BuildServiceProvider();
+        DataContext = ((App) Application.Current).ServiceProvider.GetService<MainViewModel>()!.EmulatorViewModel;
     }
 
     private EmulatorViewModel ViewModel => (EmulatorViewModel) DataContext!;

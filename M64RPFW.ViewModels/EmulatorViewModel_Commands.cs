@@ -2,8 +2,10 @@ using CommunityToolkit.Mvvm.Input;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Helpers;
 using M64RPFW.Models.Types;
+using M64RPFW.Services.Abstractions;
 
 namespace M64RPFW.ViewModels;
+
 using PluginType = Mupen64PlusTypes.PluginType;
 using LogSources = Mupen64Plus.LogSources;
 using MessageLevel = Mupen64PlusTypes.MessageLevel;
@@ -42,16 +44,16 @@ public partial class EmulatorViewModel
     [RelayCommand(CanExecute = nameof(MupenIsStopped))]
     private async void OpenRom()
     {
-        var file = await _filesService.TryPickOpenFileAsync(new[]
+        var files = await _filesService.ShowOpenFilePickerAsync(options: new FilePickerOption[]
         {
-            "n64", "z64", "v64"
-        });
-        
-        if (file == null)
+            new("N64 ROMs (.n64, .z64, .v64)", Patterns: new[] { "*.n64", "*.z64", "*.v64" }),
+        }, allowMultiple: false);
+
+        if (files == null)
             return;
 
         _emuThread = new Thread(EmulatorThreadRun);
-        _emuThread.Start(file.Path);
+        _emuThread.Start(files[0].Path);
     }
 
     [RelayCommand(CanExecute = nameof(MupenIsActive))]

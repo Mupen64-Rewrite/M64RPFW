@@ -1,7 +1,7 @@
 ﻿namespace M64RPFW.Services.Abstractions;
 
 /// <summary>
-///     An extension <see cref="class" /> which provides wrapper functions for <see cref="IFile" />
+///     An extension <see langword="class"/> which provides wrapper functions for <see cref="IFile" />
 /// </summary>
 public static class FileExtensions
 {
