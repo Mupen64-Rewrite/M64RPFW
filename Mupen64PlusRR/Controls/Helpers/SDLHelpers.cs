@@ -1,5 +1,4 @@
 using System;
-using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Types;
 using Silk.NET.SDL;
 

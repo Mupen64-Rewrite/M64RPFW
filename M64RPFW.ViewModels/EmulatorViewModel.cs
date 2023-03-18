@@ -6,23 +6,23 @@ using M64RPFW.Services;
 
 namespace M64RPFW.ViewModels;
 
-public partial class MainWindowViewModel : ObservableObject
+public partial class EmulatorViewModel : ObservableObject
 {
     [ObservableProperty] private double _windowWidth = 640;
     [ObservableProperty] private double _windowHeight = 480;
     [ObservableProperty] private double _menuHeight;
     [ObservableProperty] private bool _resizable = true;
-
-
+    
     private readonly IOpenGLContextService _openGlContextService;
     private readonly IDispatcherService _dispatcherService;
     private readonly IFilesService _filesService;
     
-    public MainWindowViewModel(IOpenGLContextService openGlContextService, IDispatcherService dispatcherService, IFilesService filesService)
+    public EmulatorViewModel(IOpenGLContextService openGlContextService, IDispatcherService dispatcherService, IFilesService filesService)
     {
         _openGlContextService = openGlContextService;
         _dispatcherService = dispatcherService;
         _filesService = filesService;
+
         var version = Mupen64Plus.GetVersionInfo();
         Mupen64Plus.Log(Mupen64Plus.LogSources.App, Mupen64PlusTypes.MessageLevel.Info,
             $"Loaded M64+ v{version.VersionMajor}.{version.VersionMinor}.{version.VersionPatch}");

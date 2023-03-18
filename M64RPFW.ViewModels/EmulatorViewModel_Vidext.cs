@@ -9,7 +9,7 @@ using LogSources = Mupen64Plus.LogSources;
 using MessageLevel = Mupen64PlusTypes.MessageLevel;
 using Error = Mupen64PlusTypes.Error;
 
-public unsafe partial class MainWindowViewModel : IVideoExtensionService
+public unsafe partial class EmulatorViewModel : IVideoExtensionService
 {
     #region Video Extension Functions
 
