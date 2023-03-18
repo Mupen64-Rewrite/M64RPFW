@@ -3,7 +3,7 @@ using M64RPFW.Models.Emulation;
 namespace M64RPFW.ViewModels.Interfaces;
 
 /// <summary>
-///     Represents view-specific portions of a video extension implementation.
+/// Represents view-specific portions of a video extension implementation.
 /// </summary>
 public interface IVidextSurfaceService
 {
@@ -19,6 +19,6 @@ public interface IVidextSurfaceService
     void MakeCurrent();
     void SwapBuffers();
 
-    nint GetProcAddress(nint strSymbol);
+    IntPtr GetProcAddress(IntPtr strSymbol);
     int GetDefaultFramebuffer();
 }

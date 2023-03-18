@@ -7,8 +7,4 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\M64RPFW.Services\M64RPFW.Services.csproj" />
-    </ItemGroup>
-
 </Project>
