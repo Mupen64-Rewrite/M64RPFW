@@ -8,31 +8,31 @@ namespace M64RPFW.Services;
 public interface IOpenGLContextService
 {
     /// <summary>
-    ///     Initializes the window
+    ///     Initializes the window.
     /// </summary>
     void InitWindow();
 
     /// <summary>
-    ///     Destroys the window
+    ///     Destroys the window.
     /// </summary>
     void QuitWindow();
 
     /// <summary>
-    ///     Sets an OpenGL attribute's value
+    ///     Sets an OpenGL attribute's value.
     /// </summary>
     /// <param name="attr">The OpenGL attribute</param>
     /// <param name="value">The new value</param>
     void SetGLAttribute(Mupen64PlusTypes.GLAttribute attr, int value);
 
     /// <summary>
-    ///     Gets an OpenGL attribute's value
+    ///     Gets an OpenGL attribute's value.
     /// </summary>
     /// <param name="attr">The OpenGL attribute</param>
     /// <returns>The attribute's value</returns>
     int GetGLAttribute(Mupen64PlusTypes.GLAttribute attr);
 
     /// <summary>
-    ///     Creates the window
+    ///     Creates the window.
     /// </summary>
     /// <param name="width">The window's width</param>
     /// <param name="height">The window's height</param>
@@ -40,14 +40,14 @@ public interface IOpenGLContextService
     void CreateWindow(int width, int height, int bitsPerPixel);
 
     /// <summary>
-    ///     Resizes the window
+    ///     Notifies the window that it's being resized.
     /// </summary>
     /// <param name="width">The window's width</param>
     /// <param name="height">The window's height</param>
     void ResizeWindow(int width, int height);
 
     /// <summary>
-    ///     Activates this OpenGL context
+    ///     Makes this window's OpenGL context current on this thread.
     /// </summary>
     void MakeCurrent();
 
@@ -57,16 +57,16 @@ public interface IOpenGLContextService
     void SwapBuffers();
 
     /// <summary>
-    ///     Gets a symbol's address
+    ///     Gets an OpenGL symbol's address.
     /// </summary>
     /// <param name="strSymbol">A pointer to the desired symbol's name</param>
     /// <returns>A pointer to the symbol</returns>
     nint GetProcAddress(nint strSymbol);
 
     /// <summary>
-    ///     Gets a GPU handle to the default framebuffer
+    ///     Returns the default OpenGL framebuffer's ID.
     /// </summary>
-    /// <returns>The default framebuffer's GPU handle</returns>
+    /// <returns>the default OpenGL framebuffer's ID</returns>
     /// <remarks>
     ///     Might be non-0 on some devices
     /// </remarks>

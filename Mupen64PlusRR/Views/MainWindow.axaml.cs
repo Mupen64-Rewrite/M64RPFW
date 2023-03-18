@@ -1,3 +1,5 @@
+using System;
+using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -21,8 +23,12 @@ public partial class MainWindow : Window
         ((App)Application.Current!).ServiceProvider = serviceCollection.BuildServiceProvider();
         
         DataContext = ((App)Application.Current!).ServiceProvider.GetService<MainViewModel>().EmulatorViewModel;
-        
     }
 
+    private EmulatorViewModel ViewModel => (EmulatorViewModel) DataContext!;
 
+    private void Window_OnClosed(object? sender, EventArgs eventArgs)
+    {
+        ViewModel.OnWindowClosed();
+    }
 }
