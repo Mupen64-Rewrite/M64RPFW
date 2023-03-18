@@ -1,7 +1,7 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using M64RPFW.Gtk.Interfaces.Wayland;
+using WaylandSharp;
 
 namespace M64RPFW.Gtk.Interfaces;
 
@@ -9,7 +9,7 @@ namespace M64RPFW.Gtk.Interfaces;
 /// Wrapper class for wl_egl_window, which isn't a traditional Wayland type.
 /// Practically the entire interface of <c>libwayland-egl.so</c>.
 /// </summary>
-public class WlEGLWindow : IDisposable
+public class WlEglWindow : IDisposable
 {
     private const string LibName = "libwayland-egl.so";
     
@@ -34,7 +34,7 @@ public class WlEGLWindow : IDisposable
     private readonly IntPtr _pointer;
     public IntPtr RawPointer => _pointer;
 
-    public WlEGLWindow(WlSurface surface, Size size)
+    public WlEglWindow(WlSurface surface, Size size)
     {
         _pointer = wl_egl_window_create(surface.RawPointer, size.Width, size.Height);
         if (_pointer == IntPtr.Zero)
@@ -70,7 +70,7 @@ public class WlEGLWindow : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    ~WlEGLWindow()
+    ~WlEglWindow()
     {
         ReleaseUnmanagedResources();
     }

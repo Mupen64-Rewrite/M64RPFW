@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using M64RPFW.Gtk.Interfaces;
-using M64RPFW.Gtk.Interfaces.Wayland;
+using WaylandSharp;
 using M64RPFW.Misc;
+using OpenTK.Graphics.Egl;
 using static M64RPFW.Models.Emulation.Core.Mupen64Plus;
 
 namespace M64RPFW.Gtk.Helpers;
@@ -38,7 +39,7 @@ public class WlOpenGLWindow : IOpenGLWindow
             inputRegion.Destroy();
         }
         
-        _wlEGLWindow = new WlEGLWindow(_surface, size);
+        _wlEGLWindow = new WlEglWindow(_surface, size);
 
         EGLHelpers.InitEGL(
             WlGlobals.Display.RawPointer, _wlEGLWindow.RawPointer, 
@@ -52,7 +53,7 @@ public class WlOpenGLWindow : IOpenGLWindow
     }
     public void MakeCurrent()
     {
-        if (!LibEGL.MakeCurrent(_eglDisplay, _eglSurface, _eglSurface, _eglContext))
+        if (!Egl.MakeCurrent(_eglDisplay, _eglSurface, _eglSurface, _eglContext))
         {
             throw new ApplicationException("EGL error at eglMakeCurrent()");
         }
@@ -60,7 +61,7 @@ public class WlOpenGLWindow : IOpenGLWindow
 
     public void SwapBuffers()
     {
-        if (!LibEGL.SwapBuffers(_eglDisplay, _eglSurface))
+        if (!Egl.SwapBuffers(_eglDisplay, _eglSurface))
         {
             throw new ApplicationException("EGL error at eglSwapBuffers()");
         }
@@ -94,12 +95,12 @@ public class WlOpenGLWindow : IOpenGLWindow
 
     public IntPtr GetProcAddress(string symbol)
     {
-        return LibEGL.GetProcAddress(symbol);
+        return Egl.GetProcAddress(symbol);
     }
 
     private WlSurface _surface;
     private WlSubsurface _subsurface;
-    private WlEGLWindow _wlEGLWindow;
+    private WlEglWindow _wlEGLWindow;
     
     private IntPtr _eglDisplay;
     private IntPtr _eglConfig;
@@ -108,8 +109,8 @@ public class WlOpenGLWindow : IOpenGLWindow
 
     private void ReleaseUnmanagedResources()
     {
-        LibEGL.DestroySurface(_eglDisplay, _eglSurface);
-        LibEGL.DestroyContext(_eglDisplay, _eglContext);
+        Egl.DestroySurface(_eglDisplay, _eglSurface);
+        Egl.DestroyContext(_eglDisplay, _eglContext);
 
         _wlEGLWindow.Dispose();
         _subsurface.Destroy();

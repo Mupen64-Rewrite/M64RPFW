@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Gdk;
-using M64RPFW.Gtk.Interfaces.Wayland;
+using WaylandSharp;
 
 namespace M64RPFW.Gtk.Interfaces;
 

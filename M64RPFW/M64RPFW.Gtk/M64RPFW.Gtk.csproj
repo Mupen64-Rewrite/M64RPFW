@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Nullable>enable</Nullable>
         <RootNamespace>M64RPFW.Gtk</RootNamespace>
@@ -18,13 +18,19 @@
         <PackageReference Include="Eto.Platform.Gtk" Version="2.7.0" />
         <PackageReference Include="GdkSharp" Version="3.24.24.38" />
         <PackageReference Include="GtkSharp" Version="3.24.24.38" />
-        <PackageReference Include="OpenTK" Version="4.7.4" />
+        <PackageReference Include="OpenTK" Version="4.7.7" />
+        <PackageReference Include="WaylandSharp" Version="0.2.1" />
         <PackageReference Include="X11" Version="1.0.6" />
     </ItemGroup>
     
     <ItemGroup>
         <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="WaylandProtocol" />
-        <AdditionalFiles Include="Interfaces\Wayland\wayland.xml" WaylandProtocol="client" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <AdditionalFiles Include="WaylandProtocols\wayland.xml">
+        <WaylandProtocol>client</WaylandProtocol>
+      </AdditionalFiles>
     </ItemGroup>
     
     <Target Name="CopyCustomLibraries" AfterTargets="AfterBuild">
@@ -41,4 +47,10 @@
         </ItemGroup>
         <Copy SourceFiles="@(LibraryList)" DestinationFolder="$(PublishDir)/Libraries" />
     </Target>
+
+    <ItemGroup>
+        <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="WaylandProtocol" />
+        <AdditionalFiles Include="WaylandProtocols\wayland.xml" WaylandProtocol="client" />
+        <!-- Add additional protocol files with more AdditionalFiles tags -->
+    </ItemGroup>
 </Project>

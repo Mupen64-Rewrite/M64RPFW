@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using M64RPFW.Gtk.Interfaces;
 using M64RPFW.Misc;
+using OpenTK.Graphics.Egl;
 using X11;
 using static X11.Xlib;
 using static M64RPFW.Gtk.Interfaces.LibXlib;
@@ -59,7 +60,7 @@ public class X11OpenGLWindow : IOpenGLWindow
 
     public void MakeCurrent()
     {
-        if (!LibEGL.MakeCurrent(_eglDisplay, _eglSurface, _eglSurface, _eglContext))
+        if (!Egl.MakeCurrent(_eglDisplay, _eglSurface, _eglSurface, _eglContext))
         {
             throw new ApplicationException("EGL error at eglMakeCurrent()");
         }
@@ -67,7 +68,7 @@ public class X11OpenGLWindow : IOpenGLWindow
 
     public void SwapBuffers()
     {
-        if (!LibEGL.SwapBuffers(_eglDisplay, _eglSurface))
+        if (!Egl.SwapBuffers(_eglDisplay, _eglSurface))
         {
             throw new ApplicationException("EGL error at eglSwapBuffers()");
         }
@@ -98,7 +99,7 @@ public class X11OpenGLWindow : IOpenGLWindow
 
     public IntPtr GetProcAddress(string symbol)
     {
-        return LibEGL.GetProcAddress(symbol);
+        return Egl.GetProcAddress(symbol);
     }
 
     private static IntPtr _xDisplay = IntPtr.Zero;

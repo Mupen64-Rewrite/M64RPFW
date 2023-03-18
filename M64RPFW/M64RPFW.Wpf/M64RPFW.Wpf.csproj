@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net6.0-windows</TargetFramework>
+        <TargetFramework>net7.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <RootNamespace>M64RPFW.Wpf</RootNamespace>
@@ -19,7 +19,7 @@
         <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.2.63-beta">
           <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="OpenTK" Version="4.7.5" />
+        <PackageReference Include="OpenTK" Version="4.7.7" />
     </ItemGroup>
 
     <ItemGroup>
