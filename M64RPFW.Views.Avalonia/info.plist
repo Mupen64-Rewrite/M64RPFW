@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--This is the bundle information for MacOS, in case ANYONE ever tries to use it.-->
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>io.github.mupen64-rewrite.Mupen64PlusRR</string>
+	<key>CFBundleName</key>
+	<string>Mupen64Plus-RR</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.1</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.14</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en_CA</string>
+</dict>
+</plist>
