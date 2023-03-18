@@ -46,15 +46,17 @@ public partial class MainWindowViewModel : ObservableObject
         }
     }
 
-    // public void OnWindowWidthChanged(double value)
-    // {
-    //     OnSizeChanged();
-    // }
-    //
-    // public void OnWindowHeightChanged(double value)
-    // {
-    //     OnSizeChanged();
-    // }
+    partial void OnSizeChanged();
+
+    partial void OnWindowWidthChanged(double value)
+    {
+        OnSizeChanged();
+    }
+    
+    partial void OnWindowHeightChanged(double value)
+    {
+        OnSizeChanged();
+    }
 
     #region Tracker properties and events
 
