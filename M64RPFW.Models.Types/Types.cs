@@ -1,8 +1,8 @@
 using System.Runtime.InteropServices;
 
-namespace M64RPFW.Models.Emulation;
+namespace M64RPFW.Models.Types;
 
-public static partial class Mupen64Plus
+public static class Mupen64PlusTypes
 {
     public enum Error
     {

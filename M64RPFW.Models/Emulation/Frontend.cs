@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using M64RPFW.Models.Helpers;
+using M64RPFW.Models.Types;
 using static M64RPFW.Models.Helpers.NativeLibHelper;
 using IntPtr = System.IntPtr;
 
@@ -19,7 +20,7 @@ public static partial class Mupen64Plus
     /// <param name="level">the message's logging level</param>
     /// <param name="message">the message to log</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void DebugCallback(IntPtr context, MessageLevel level, string message);
+    public delegate void DebugCallback(IntPtr context, Mupen64PlusTypes.MessageLevel level, string message);
 
     /// <summary>
     /// Responds to a Mupen64Plus core parameter changing.
@@ -28,7 +29,7 @@ public static partial class Mupen64Plus
     /// <param name="param">the core parameter that changed</param>
     /// <param name="newValue">the core parameter's new value</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void StateCallback(IntPtr context, CoreParam param, int newValue);
+    public delegate void StateCallback(IntPtr context, Mupen64PlusTypes.CoreParam param, int newValue);
     
     /// <summary>
     /// Responds to the emulator completing a frame.
@@ -44,36 +45,36 @@ public static partial class Mupen64Plus
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [return : MarshalAs(UnmanagedType.LPStr)]
     [RuntimeDllImport]
-    private delegate string DCoreErrorMessage(Error code);
+    private delegate string DCoreErrorMessage(Mupen64PlusTypes.Error code);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [RuntimeDllImport]
-    private delegate Error DCoreStartup(int apiVersion, string? configPath, string? dataPath,
+    private delegate Mupen64PlusTypes.Error DCoreStartup(int apiVersion, string? configPath, string? dataPath,
         IntPtr debugContext, DebugCallback? debugCallback, IntPtr stateContext, StateCallback? stateCallback);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [RuntimeDllImport]
-    private delegate Error DCoreShutdown();
+    private delegate Mupen64PlusTypes.Error DCoreShutdown();
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [RuntimeDllImport]
-    private delegate Error DCoreAttachPlugin(PluginType pluginType, IntPtr pluginLibHandle);
+    private delegate Mupen64PlusTypes.Error DCoreAttachPlugin(Mupen64PlusTypes.PluginType pluginType, IntPtr pluginLibHandle);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [RuntimeDllImport]
-    private delegate Error DCoreDetachPlugin(PluginType pluginType);
+    private delegate Mupen64PlusTypes.Error DCoreDetachPlugin(Mupen64PlusTypes.PluginType pluginType);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [RuntimeDllImport]
-    private unsafe delegate Error DCoreDoCommand(Command cmd, int paramInt, void* paramPtr);
+    private unsafe delegate Mupen64PlusTypes.Error DCoreDoCommand(Mupen64PlusTypes.Command cmd, int paramInt, void* paramPtr);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [RuntimeDllImport]
-    private delegate Error DCoreOverrideVidExt(VideoExtensionFunctions videoFunctionStruct);
+    private delegate Mupen64PlusTypes.Error DCoreOverrideVidExt(Mupen64PlusTypes.VideoExtensionFunctions videoFunctionStruct);
     
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [RuntimeDllImport]
-    private unsafe delegate Error DPluginGetVersion(out PluginType type, out int version, out int apiVersion, out byte* name,
+    private unsafe delegate Mupen64PlusTypes.Error DPluginGetVersion(out Mupen64PlusTypes.PluginType type, out int version, out int apiVersion, out byte* name,
         out int caps);
 
     #endregion
@@ -81,13 +82,13 @@ public static partial class Mupen64Plus
     // Plugin delegates
     // ========================================================
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate Error DPluginStartup(IntPtr library, IntPtr debugContext, DebugCallback? debugCallback);
+    private delegate Mupen64PlusTypes.Error DPluginStartup(IntPtr library, IntPtr debugContext, DebugCallback? debugCallback);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate Error DPluginShutdown();
+    private delegate Mupen64PlusTypes.Error DPluginShutdown();
 
 #pragma warning disable CS8618
-    private static Dictionary<PluginType, IntPtr> _pluginDict;
+    private static Dictionary<Mupen64PlusTypes.PluginType, IntPtr> _pluginDict;
     
     // Frontend function utilities
     // ========================================================

@@ -1,11 +1,12 @@
 using CommunityToolkit.Mvvm.Input;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Helpers;
+using M64RPFW.Models.Types;
 
 namespace M64RPFW.ViewModels;
-using PluginType = Mupen64Plus.PluginType;
+using PluginType = Mupen64PlusTypes.PluginType;
 using LogSources = Mupen64Plus.LogSources;
-using MessageLevel = Mupen64Plus.MessageLevel;
+using MessageLevel = Mupen64PlusTypes.MessageLevel;
 
 public partial class MainWindowViewModel
 {
@@ -56,7 +57,7 @@ public partial class MainWindowViewModel
     [RelayCommand(CanExecute = nameof(MupenIsActive))]
     private void CloseRom()
     {
-        Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Stopping M64+");
+        Mupen64Plus.Log(Mupen64Plus.LogSources.App, MessageLevel.Info, "Stopping M64+");
         Mupen64Plus.Stop();
     }
 

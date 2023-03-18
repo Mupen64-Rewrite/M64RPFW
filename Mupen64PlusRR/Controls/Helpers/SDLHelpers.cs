@@ -1,45 +1,46 @@
 using System;
 using M64RPFW.Models.Emulation;
+using M64RPFW.Models.Types;
 using Silk.NET.SDL;
 
 namespace Mupen64PlusRR.Controls.Helpers;
 
 public static class SDLHelpers
 {
-    public static GLattr ToSdlAttr(Mupen64Plus.GLAttribute attr)
+    public static GLattr ToSdlAttr(Mupen64PlusTypes.GLAttribute attr)
     {
         return attr switch
         {
-            Mupen64Plus.GLAttribute.DoubleBuffer => GLattr.Doublebuffer,
-            Mupen64Plus.GLAttribute.BufferSize => GLattr.BufferSize,
-            Mupen64Plus.GLAttribute.DepthSize => GLattr.DepthSize,
-            Mupen64Plus.GLAttribute.RedSize => GLattr.RedSize,
-            Mupen64Plus.GLAttribute.GreenSize => GLattr.GreenSize,
-            Mupen64Plus.GLAttribute.BlueSize => GLattr.BlueSize,
-            Mupen64Plus.GLAttribute.AlphaSize => GLattr.AlphaSize,
-            Mupen64Plus.GLAttribute.MultisampleBuffers => GLattr.Multisamplebuffers,
-            Mupen64Plus.GLAttribute.MultisampleSamples => GLattr.Multisamplesamples,
-            Mupen64Plus.GLAttribute.ContextMajorVersion => GLattr.ContextMajorVersion,
-            Mupen64Plus.GLAttribute.ContextMinorVersion => GLattr.ContextMinorVersion,
+            Mupen64PlusTypes.GLAttribute.DoubleBuffer => GLattr.Doublebuffer,
+            Mupen64PlusTypes.GLAttribute.BufferSize => GLattr.BufferSize,
+            Mupen64PlusTypes.GLAttribute.DepthSize => GLattr.DepthSize,
+            Mupen64PlusTypes.GLAttribute.RedSize => GLattr.RedSize,
+            Mupen64PlusTypes.GLAttribute.GreenSize => GLattr.GreenSize,
+            Mupen64PlusTypes.GLAttribute.BlueSize => GLattr.BlueSize,
+            Mupen64PlusTypes.GLAttribute.AlphaSize => GLattr.AlphaSize,
+            Mupen64PlusTypes.GLAttribute.MultisampleBuffers => GLattr.Multisamplebuffers,
+            Mupen64PlusTypes.GLAttribute.MultisampleSamples => GLattr.Multisamplesamples,
+            Mupen64PlusTypes.GLAttribute.ContextMajorVersion => GLattr.ContextMajorVersion,
+            Mupen64PlusTypes.GLAttribute.ContextMinorVersion => GLattr.ContextMinorVersion,
             _ => (GLattr) (-1)
         };
     }
 
-    public static unsafe int GetMupenGLAttribute(this Sdl sdl, Mupen64Plus.GLAttribute attr)
+    public static unsafe int GetMupenGLAttribute(this Sdl sdl, Mupen64PlusTypes.GLAttribute attr)
     {
         switch (attr)
         {
-            case Mupen64Plus.GLAttribute.SwapControl:
+            case Mupen64PlusTypes.GLAttribute.SwapControl:
                 return sdl.GLGetSwapInterval();
-            case Mupen64Plus.GLAttribute.ContextProfileMask:
+            case Mupen64PlusTypes.GLAttribute.ContextProfileMask:
             {
                 GLprofile profile = GLprofile.None;
                 sdl.GLGetAttribute(GLattr.ContextProfileMask, (int*) &profile);
                 return profile switch
                 {
-                    GLprofile.Core => (int) Mupen64Plus.GLContextType.Core,
-                    GLprofile.Compatibility => (int) Mupen64Plus.GLContextType.Compatibilty,
-                    GLprofile.ES => (int) Mupen64Plus.GLContextType.ES,
+                    GLprofile.Core => (int) Mupen64PlusTypes.GLContextType.Core,
+                    GLprofile.Compatibility => (int) Mupen64PlusTypes.GLContextType.Compatibilty,
+                    GLprofile.ES => (int) Mupen64PlusTypes.GLContextType.ES,
                     _ => 0
                 };
             }
@@ -57,20 +58,20 @@ public static class SDLHelpers
         }
     }
 
-    public static void SetMupenGLAttribute(this Sdl sdl, Mupen64Plus.GLAttribute attr, int value)
+    public static void SetMupenGLAttribute(this Sdl sdl, Mupen64PlusTypes.GLAttribute attr, int value)
     {
         switch (attr)
         {
-            case Mupen64Plus.GLAttribute.SwapControl:
+            case Mupen64PlusTypes.GLAttribute.SwapControl:
                 sdl.GLSetSwapInterval(value);
                 return;
-            case Mupen64Plus.GLAttribute.ContextProfileMask:
+            case Mupen64PlusTypes.GLAttribute.ContextProfileMask:
             {
-                GLprofile profile = (Mupen64Plus.GLContextType) value switch
+                GLprofile profile = (Mupen64PlusTypes.GLContextType) value switch
                 {
-                    Mupen64Plus.GLContextType.Core => GLprofile.Core,
-                    Mupen64Plus.GLContextType.Compatibilty => GLprofile.Compatibility,
-                    Mupen64Plus.GLContextType.ES => GLprofile.ES,
+                    Mupen64PlusTypes.GLContextType.Core => GLprofile.Core,
+                    Mupen64PlusTypes.GLContextType.Compatibilty => GLprofile.Compatibility,
+                    Mupen64PlusTypes.GLContextType.ES => GLprofile.ES,
                     _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
                 };
                 sdl.GLSetAttribute(GLattr.ContextProfileMask, (int) profile);
