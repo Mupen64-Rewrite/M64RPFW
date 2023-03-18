@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         x:Class="M64RPFW.Views.Avalonia.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
-        Title="M64RPFW.Views.Avalonia"
+        Title="M64RPFW"
         Width="{Binding WindowWidth,Mode=TwoWay}" 
         Height="{Binding WindowHeight,Mode=TwoWay}"
         CanResize="{Binding Resizable,Mode=OneWay}"
@@ -21,7 +21,7 @@
                 <MenuItem Header="_Close ROM" Command="{Binding CloseRomCommand}"/>
                 <MenuItem Header="_Reset ROM" Command="{Binding ResetRomCommand}"/>
                 <Separator/>
-                <MenuItem Header="_Settings..."/>
+                <MenuItem Header="_Settings..." Click="ShowSettingsDialogMenuItem_OnClick"/>
             </MenuItem>
             <MenuItem Header="_Emulator">
                 <MenuItem Header="_Pause/Resume" Command="{Binding PauseOrResumeCommand}"/>

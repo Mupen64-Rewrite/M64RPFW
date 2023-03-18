@@ -2,17 +2,24 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels"
+        xmlns:system="clr-namespace:System;assembly=System.Runtime"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="M64RPFW.Views.Avalonia.Views.SettingsDialog"
+        d:DataContext="{x:Type viewModels:SettingsViewModel}"
+        x:Class="Mupen64PlusRR.Views.SettingsDialog"
         Title="Settings">
-    
+    <Window.Resources>
+    </Window.Resources>
     <TabControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <TabItem Header="General">
             <StackPanel Orientation="Vertical">
-                <TextBlock Text="Emulator type:"/>
-                <RadioButton GroupName="EmulatorType" Content="Pure Interpreter"/>
-                <RadioButton GroupName="EmulatorType" Content="Cached Interpreter"/>
-                <RadioButton GroupName="EmulatorType" Content="Dynamic Recompiler"/>
+                <ComboBox SelectedItem="{Binding Path=CoreType, Mode=TwoWay}">
+                    <ComboBox.Items>
+                        <system:Int32>0</system:Int32>
+                        <system:Int32>1</system:Int32>
+                        <system:Int32>2</system:Int32>
+                    </ComboBox.Items>
+                </ComboBox>
                 
                 <CheckBox Content="Disable Expansion Pak memory"/>
                 <CheckBox Content="Randomize interrupt timings"/>
