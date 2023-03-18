@@ -1,0 +1,32 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Mupen64PlusRR.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Mupen64PlusRR.Views.SettingsDialog"
+        Title="Settings">
+    
+    <Design.DataContext>
+        <vm:SettingsDialogViewModel/>
+    </Design.DataContext>
+    
+    <TabControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <TabItem Header="General">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Emulator type:"/>
+                <RadioButton GroupName="EmulatorType" Content="Pure Interpreter"/>
+                <RadioButton GroupName="EmulatorType" Content="Cached Interpreter"/>
+                <RadioButton GroupName="EmulatorType" Content="Dynamic Recompiler"/>
+                
+                <CheckBox Content="Disable Expansion Pak memory"/>
+                <CheckBox Content="Randomize interrupt timings"/>
+            </StackPanel>
+        </TabItem>
+        <TabItem Header="Plugins">
+            
+        </TabItem>
+        <TabItem Header="Video">
+        </TabItem>
+    </TabControl>
+</Window>
