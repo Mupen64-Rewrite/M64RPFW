@@ -20,8 +20,8 @@ class Program
             .UsePlatformDetect()
             .LogToTrace();
         // Native file dialogs on Linux broke, so...
-        if (OperatingSystem.IsLinux())
-            builder = builder.UseManagedSystemDialogs();
+        // if (OperatingSystem.IsLinux())
+        //     builder = builder.UseManagedSystemDialogs();
         return builder;
     }
 }

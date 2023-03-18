@@ -42,19 +42,23 @@ public interface IFilesService
     Task<IFile> CreateOrOpenFileFromPathAsync(string path);
 
     /// <summary>
-    ///     Tries to pick a file to open with a specified extension
+    /// Shows a file picker to open a file with the specified options.
     /// </summary>
-    /// <param name="extensions">The extensions to use</param>
-    /// <returns>A <see cref="IFile" /> to open, if available</returns>
-    Task<IFile?> TryPickOpenFileAsync(string[] extensions);
+    /// <param name="title">The dialog's title.</param>
+    /// <param name="options">The options that may be used.</param>
+    /// <param name="allowMultiple">If true, allow multiple files to be selected.</param>
+    /// <returns>An <see cref="IFile" /> to open, if available</returns>
+    Task<IFile[]?> ShowOpenFilePickerAsync(string title = "Open file...",
+        IReadOnlyList<FilePickerOption>? options = null, bool allowMultiple = false);
 
     /// <summary>
-    ///     Tries to pick a file to save to with the specified parameters
+    /// Shows a file picker to open a file with the specified options.
     /// </summary>
-    /// <param name="filename">The suggested filename to use</param>
-    /// <param name="fileType">The info on the file type to save to</param>
-    /// <returns>A <see cref="IFile" /> to use to save data to, if available</returns>
-    Task<IFile?> TryPickSaveFileAsync(string filename, (string Name, string[] Extensions) fileType);
+    /// <param name="title">The dialog's title.</param>
+    /// <param name="options">The options that may be used.</param>
+    /// <returns>An <see cref="IFile" /> to open, if available</returns>
+    Task<IFile?> ShowSaveFilePickerAsync(string title = "Open file...",
+        IReadOnlyList<FilePickerOption>? options = null);
 
     /// <summary>
     ///     Enumerates all the available files from the future access list.
