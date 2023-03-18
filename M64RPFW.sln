@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mupen64PlusRR", "Mupen64PlusRR\Mupen64PlusRR.csproj", "{3B3DC371-41BA-4BD0-B0ED-00F462A4E14C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M64RPFW.Views.Avalonia", "M64RPFW.Views.Avalonia\M64RPFW.Views.Avalonia.csproj", "{3B3DC371-41BA-4BD0-B0ED-00F462A4E14C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M64RPFW.Services", "M64RPFW.Services\M64RPFW.Services.csproj", "{A9060ED0-1E31-48EA-A7FD-6D43D52C1B1A}"
 EndProject

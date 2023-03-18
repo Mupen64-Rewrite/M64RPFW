@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using M64RPFW.Services.Abstractions;
 
-namespace Mupen64PlusRR.Services.Abstractions;
+namespace M64RPFW.Views.Avalonia.Services.Abstractions;
 
 /// <summary>
 ///     A <see langword="class" /> implementing an Avalonia version of <see cref="IFile" />.

@@ -2,7 +2,7 @@ using System;
 using M64RPFW.Models.Types;
 using Silk.NET.SDL;
 
-namespace Mupen64PlusRR.Controls.Helpers;
+namespace M64RPFW.Views.Avalonia.Controls.Helpers;
 
 public static class SDLHelpers
 {

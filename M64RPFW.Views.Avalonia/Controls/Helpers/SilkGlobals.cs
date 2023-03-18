@@ -1,6 +1,6 @@
 using Silk.NET.SDL;
 
-namespace Mupen64PlusRR.Controls.Helpers;
+namespace M64RPFW.Views.Avalonia.Controls.Helpers;
 
 public static class SilkGlobals
 {

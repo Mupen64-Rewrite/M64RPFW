@@ -5,11 +5,11 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using M64RPFW.Services;
 using M64RPFW.ViewModels;
+using M64RPFW.Views.Avalonia.Services;
+using M64RPFW.Views.Avalonia.Views;
 using Microsoft.Extensions.DependencyInjection;
-using Mupen64PlusRR.Services;
-using Mupen64PlusRR.Views;
 
-namespace Mupen64PlusRR;
+namespace M64RPFW.Views.Avalonia;
 
 public partial class App : Application, IDispatcherService
 {

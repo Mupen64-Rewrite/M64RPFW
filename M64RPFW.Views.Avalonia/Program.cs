@@ -2,7 +2,7 @@
 using Avalonia;
 using Avalonia.Dialogs;
 
-namespace Mupen64PlusRR;
+namespace M64RPFW.Views.Avalonia;
 
 class Program
 {

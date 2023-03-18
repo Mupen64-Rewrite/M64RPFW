@@ -3,13 +3,13 @@ using Avalonia.Controls;
 using Avalonia.Platform;
 using M64RPFW.Models.Types;
 using M64RPFW.Services;
-using Mupen64PlusRR.Controls.Helpers;
+using M64RPFW.Views.Avalonia.Controls.Helpers;
 using Silk.NET.OpenGL;
 using Silk.NET.SDL;
-using static Mupen64PlusRR.Controls.Helpers.SilkGlobals;
+using static M64RPFW.Views.Avalonia.Controls.Helpers.SilkGlobals;
 using SDL_Window = Silk.NET.SDL.Window;
 
-namespace Mupen64PlusRR.Controls;
+namespace M64RPFW.Views.Avalonia.Controls;
 
 public unsafe class VidextControl : NativeControlHost, IOpenGLContextService
 {

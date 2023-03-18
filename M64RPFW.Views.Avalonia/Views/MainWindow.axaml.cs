@@ -1,14 +1,13 @@
 using System;
-using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using M64RPFW.Services;
 using M64RPFW.ViewModels;
+using M64RPFW.Views.Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
-using Mupen64PlusRR.Controls;
 
-namespace Mupen64PlusRR.Views;
+namespace M64RPFW.Views.Avalonia.Views;
 
 public partial class MainWindow : Window
 {

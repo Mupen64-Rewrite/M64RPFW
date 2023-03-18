@@ -10,7 +10,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
 
-namespace Mupen64PlusRR.Services;
+namespace M64RPFW.Views.Avalonia.Services;
 
 /// <summary>
 ///     A <see langword="class" /> that implements the <see cref="IFilesService" /> <see langword="interface" /> using
