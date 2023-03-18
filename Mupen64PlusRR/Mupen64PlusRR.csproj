@@ -31,6 +31,12 @@
         <PackageReference Include="XamlNameReferenceGenerator" Version="1.3.4" />
     </ItemGroup>
     
+    <PropertyGroup>
+        <!-- For Microsoft.CodeAnalysis -->
+        <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
+    </PropertyGroup>
+    
     <!--======================================
     TARGETS USED FOR COPYING OS-SPECIFIC FILES
     =======================================-->
