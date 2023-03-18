@@ -71,10 +71,21 @@ public static class NativeLibHelper
 
     public static string AsDLL(string name)
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            return $"{name}.dll";
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            return $"{name}.so";
-        throw new PlatformNotSupportedException("Only Windows and Linux are supported at the moment");
+        return $"{name}{LibraryExtension}";
+    }
+
+    private static string? _platformLibExtension;
+    public static string LibraryExtension
+    {
+        get
+        {
+            if (_platformLibExtension != null)
+                return _platformLibExtension;
+            if (OperatingSystem.IsWindows())
+                return _platformLibExtension = ".dll";
+            if (OperatingSystem.IsLinux())
+                return _platformLibExtension = ".so";
+            throw new PlatformNotSupportedException("Only Windows and Linux are supported at the moment");
+        }
     }
 }
