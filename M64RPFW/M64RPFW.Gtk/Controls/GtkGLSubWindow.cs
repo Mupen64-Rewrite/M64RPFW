@@ -69,6 +69,8 @@ public class GtkGLSubWindow : Widget
         _windowSize = size;
 
         InitGLWindow();
+        
+        this.QueueDraw();
 
         return Error.Success;
     }
