@@ -17,14 +17,17 @@ namespace Mupen64PlusRR.Views;
 
 public partial class MainWindow : Window, IDispatcherService
 {
-    
-    public MainWindowViewModel MainWindowViewModel { get; }
+
+    public MainWindowViewModel MainWindowViewModel
+    {
+        set => DataContext = value;
+        get => (MainWindowViewModel) DataContext!;
+    }
     
     public MainWindow()
     {
         AvaloniaXamlLoader.Load(this);
         MainWindowViewModel = new(this.Find<VidextControl>("EmulatorWindow"), this, new FilesService());
-        DataContext = MainWindowViewModel;
     }
 
     // public Task<string[]?> ShowOpenDialog(string title, List<FileDialogFilter> filters, bool allowMulti)
