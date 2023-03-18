@@ -1,15 +1,17 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:vm="using:M64RPFW.ViewModels"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:Mupen64PlusRR.Controls"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d"
         x:Class="Mupen64PlusRR.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="Mupen64PlusRR"
         Width="{Binding WindowWidth,Mode=TwoWay}" 
         Height="{Binding WindowHeight,Mode=TwoWay}"
-        CanResize="{Binding Resizable,Mode=OneWay}">
+        CanResize="{Binding Resizable,Mode=OneWay}"
+        Closed="Window_OnClosed">
 
     <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" LastChildFill="True">
         <Menu DockPanel.Dock="Top" Height="{Binding MenuHeight,Mode=OneWayToSource}">
@@ -17,13 +19,13 @@
                 <!-- Opening a ROM depends on the window, thus it's part of view -->
                 <MenuItem Header="_Open ROM" Command="{Binding OpenRomCommand}"/>
                 <MenuItem Header="_Close ROM" Command="{Binding CloseRomCommand}"/>
-                <MenuItem Header="_Reset ROM"/>
+                <MenuItem Header="_Reset ROM" Command="{Binding ResetRomCommand}"/>
                 <Separator/>
-                <MenuItem Header="_Settings..." Command="{Binding ShowSettingsCommand}"/>
+                <MenuItem Header="_Settings..."/>
             </MenuItem>
             <MenuItem Header="_Emulator">
-                <MenuItem Header="_Pause/Resume"/>
-                <MenuItem Header="_Frame Advance"/>
+                <MenuItem Header="_Pause/Resume" Command="{Binding PauseOrResumeCommand}"/>
+                <MenuItem Header="_Frame Advance" Command="{Binding FrameAdvanceCommand}"/>
             </MenuItem>
             <MenuItem Header="_Movie">
                 <MenuItem Header="_Load Movie" />

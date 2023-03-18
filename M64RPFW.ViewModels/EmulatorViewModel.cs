@@ -58,6 +58,12 @@ public partial class EmulatorViewModel : ObservableObject
         OnSizeChanged();
     }
 
+    public void OnWindowClosed()
+    {
+        if (MupenIsActive)
+            Mupen64Plus.Stop();
+    }
+
     #region Tracker properties and events
 
     private Mupen64PlusTypes.EmuState MupenEmuState =>

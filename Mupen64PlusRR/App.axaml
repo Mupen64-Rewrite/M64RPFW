@@ -1,8 +1,6 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:M64RPFW.Views.Avalonia"
              x:Class="Mupen64PlusRR.App">
-
     <Application.Styles>
         <FluentTheme Mode="Light"/>
     </Application.Styles>

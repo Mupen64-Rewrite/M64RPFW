@@ -48,7 +48,7 @@ public static class Settings
 
             return m64pDir.FullName;
         }
-        if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
+        if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS() || OperatingSystem.IsFreeBSD())
         {
             DirectoryInfo? dir = null;
             {
@@ -68,6 +68,6 @@ public static class Settings
 
             return dir.FullName;
         }
-        throw new NotSupportedException("You're daily-driving a very esoteric OS.");
+        throw new NotSupportedException("Are you seriously trying to run this on a phone?");
     }
 }
