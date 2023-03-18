@@ -3,7 +3,9 @@ using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using M64RPFW.Models.Helpers;
 using M64RPFW.Services;
+using M64RPFW.Services.Abstractions;
 using M64RPFW.ViewModels.Messages;
 
 namespace M64RPFW.ViewModels;
@@ -124,25 +126,34 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
     
    
 
-    private async Task<(bool Succeeded, string Path)> ShowLibraryFileDialog()
+    private async Task<string?> ShowLibraryFileDialog()
     {
-        var file = await _filesService.TryPickOpenFileAsync(new[] { "dll" });
-        return file != null ? (true, file.Path) : ((bool Succeeded, string Path))(false, null);
+        var files = await _filesService.ShowOpenFilePickerAsync(options: new FilePickerOption[]
+        {
+            new($"Plugins ({NativeLibHelper.LibraryExtension})", Patterns: new[]
+            {
+                $"*{NativeLibHelper.LibraryExtension}"
+            })
+        });
+        // return file != null ? (true, file.Path) : ((bool Succeeded, string Path))(false, null);
+        return files != null && files.Length > 0 ? files[0].Path : null;
     }
 
     [RelayCommand]
     private async Task BrowseLibraryPath(string key)
     {
-        var file = await _filesService.TryPickOpenFileAsync(new[] { "dll" });
-        if (file != null)
+        var files = await _filesService.ShowOpenFilePickerAsync(options: new FilePickerOption[]
         {
-            _localSettingsService.Set(key, file.Path);
-        }
-        else
+            new($"Plugins ({NativeLibHelper.LibraryExtension})", Patterns: new[]
+            {
+                $"*{NativeLibHelper.LibraryExtension}"
+            })
+        });
+        if (files != null && files.Length > 0)
         {
-            // we failed
-            // TODO: maybe notify the user? not an important failure though
+            _localSettingsService.Set(key, files[0].Path);
         }
+        // notify user of cancelling?
     }
 
     

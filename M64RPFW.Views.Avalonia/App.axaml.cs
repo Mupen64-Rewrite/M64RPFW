@@ -9,6 +9,7 @@ using M64RPFW.ViewModels;
 using M64RPFW.Views.Avalonia.Services;
 using M64RPFW.Views.Avalonia.Views;
 using Microsoft.Extensions.DependencyInjection;
+using Mupen64PlusRR.Services;
 
 namespace M64RPFW.Views.Avalonia;
 
