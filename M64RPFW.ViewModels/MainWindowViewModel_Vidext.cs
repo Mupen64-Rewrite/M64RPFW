@@ -1,6 +1,7 @@
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Interfaces;
 using M64RPFW.Models.Types;
+using M64RPFW.Services;
 
 namespace M64RPFW.ViewModels;
 
@@ -16,7 +17,7 @@ public unsafe partial class MainWindowViewModel : IVideoExtensionService
     {
         try
         {
-            _vidextSurfaceService.InitWindow();
+            _openGlContextService.InitWindow();
             return Error.Success;
         }
         catch (Exception)
@@ -29,7 +30,7 @@ public unsafe partial class MainWindowViewModel : IVideoExtensionService
     {
         try
         {
-            _vidextSurfaceService.QuitWindow();
+            _openGlContextService.QuitWindow();
             Resizable = true;
             return Error.Success;
         }
@@ -65,7 +66,7 @@ public unsafe partial class MainWindowViewModel : IVideoExtensionService
             if ((flags & Mupen64PlusTypes.VideoFlags.SupportResizing) == 0)
                 Resizable = false;
 
-            _vidextSurfaceService.CreateWindow(width, height, bpp);
+            _openGlContextService.CreateWindow(width, height, bpp);
             return Error.Success;
         }
         catch (Exception)
@@ -81,14 +82,14 @@ public unsafe partial class MainWindowViewModel : IVideoExtensionService
 
     public IntPtr VidextGLGetProcAddress(byte* symbol)
     {
-        return _vidextSurfaceService.GetProcAddress((IntPtr) symbol);
+        return _openGlContextService.GetProcAddress((IntPtr) symbol);
     }
 
     public Error VidextGLSetAttr(Mupen64PlusTypes.GLAttribute attr, int value)
     {
         try
         {
-            _vidextSurfaceService.SetGLAttribute(attr, value);
+            _openGlContextService.SetGLAttribute(attr, value);
             return Error.Success;
         }
         catch (Exception)
@@ -101,7 +102,7 @@ public unsafe partial class MainWindowViewModel : IVideoExtensionService
     {
         try
         {
-            value = _vidextSurfaceService.GetGLAttribute(attr);
+            value = _openGlContextService.GetGLAttribute(attr);
             return Error.Success;
         }
         catch (Exception)
@@ -115,7 +116,7 @@ public unsafe partial class MainWindowViewModel : IVideoExtensionService
     {
         try
         {
-            _vidextSurfaceService.ResizeWindow(width, height);
+            _openGlContextService.ResizeWindow(width, height);
             return Error.Success;
         }
         catch (Exception)
@@ -140,7 +141,7 @@ public unsafe partial class MainWindowViewModel : IVideoExtensionService
     {
         try
         {
-            _vidextSurfaceService.SwapBuffers();
+            _openGlContextService.SwapBuffers();
             return Error.Success;
         }
         catch (Exception)

@@ -3,7 +3,6 @@ using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Interfaces;
 using M64RPFW.Models.Types;
 using M64RPFW.Services;
-using M64RPFW.ViewModels.Interfaces;
 
 namespace M64RPFW.ViewModels;
 
@@ -15,13 +14,13 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private bool _resizable = true;
 
 
-    private readonly IVidextSurfaceService _vidextSurfaceService;
+    private readonly IOpenGLContextService _openGlContextService;
     private readonly IDispatcherService _dispatcherService;
     private readonly IFilesService _filesService;
     
-    public MainWindowViewModel(IVidextSurfaceService vidextSurfaceService, IDispatcherService dispatcherService, IFilesService filesService)
+    public MainWindowViewModel(IOpenGLContextService openGlContextService, IDispatcherService dispatcherService, IFilesService filesService)
     {
-        _vidextSurfaceService = vidextSurfaceService;
+        _openGlContextService = openGlContextService;
         _dispatcherService = dispatcherService;
         _filesService = filesService;
         var version = Mupen64Plus.GetVersionInfo();

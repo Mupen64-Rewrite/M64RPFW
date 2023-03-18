@@ -7,7 +7,7 @@ using Avalonia.Media;
 using Avalonia.Platform;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Types;
-using M64RPFW.ViewModels.Interfaces;
+using M64RPFW.Services;
 using Mupen64PlusRR.Controls.Helpers;
 using Silk.NET.OpenGL;
 using Silk.NET.SDL;
@@ -17,7 +17,7 @@ using SDL_Window = Silk.NET.SDL.Window;
 
 namespace Mupen64PlusRR.Controls;
 
-public unsafe class VidextControl : NativeControlHost, IVidextSurfaceService
+public unsafe class VidextControl : NativeControlHost, IOpenGLContextService
 {
     public VidextControl()
     {

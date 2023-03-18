@@ -1,12 +1,12 @@
-using M64RPFW.Models.Emulation;
+
 using M64RPFW.Models.Types;
 
-namespace M64RPFW.ViewModels.Interfaces;
+namespace M64RPFW.Services;
 
 /// <summary>
-/// Represents view-specific portions of a video extension implementation.
+///     The default <see langword="interface" /> for a service that provides access to an OpenGL context
 /// </summary>
-public interface IVidextSurfaceService
+public interface IOpenGLContextService
 {
     void InitWindow();
     void QuitWindow();
