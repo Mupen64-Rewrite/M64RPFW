@@ -1,6 +1,7 @@
 using System;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using M64RPFW.Services;
 using M64RPFW.ViewModels;
@@ -28,5 +29,11 @@ public partial class MainWindow : Window
     private void Window_OnClosed(object? sender, EventArgs eventArgs)
     {
         ViewModel.OnWindowClosed();
+    }
+
+    private void ShowSettingsDialogMenuItem_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var dialog = new SettingsDialog();
+        dialog.ShowDialog(this);
     }
 }

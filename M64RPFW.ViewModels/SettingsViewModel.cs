@@ -3,7 +3,11 @@ using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Helpers;
+using M64RPFW.Models.Settings;
+using M64RPFW.Models.Types;
+using M64RPFW.Models.Types.Settings;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
 using M64RPFW.ViewModels.Messages;
@@ -67,22 +71,22 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         set => SetSettingsProperty(nameof(RspPluginPath), value);
     }
     
-    public int CoreType
+    public EmulatorType CoreType
     {
-        get => _localSettingsService.Get<int>(nameof(CoreType));
-        set => SetSettingsProperty(nameof(CoreType), value);
+        get => Settings.Core.R4300Emulator;
+        set => Settings.Core.R4300Emulator = value;
     }
     
     public int ScreenWidth
     {
-        get => _localSettingsService.Get<int>(nameof(ScreenWidth));
-        set => SetSettingsProperty(nameof(ScreenWidth), value);
+        get => Settings.VideoGeneral.ScreenWidth;
+        set => Settings.VideoGeneral.ScreenWidth = value;
     }
     
     public int ScreenHeight
     {
-        get => _localSettingsService.Get<int>(nameof(ScreenHeight));
-        set => SetSettingsProperty(nameof(ScreenHeight), value);
+        get => Settings.VideoGeneral.ScreenHeight;
+        set => Settings.VideoGeneral.ScreenHeight = value;
     }
 
     public bool IsStatusbarVisible
@@ -123,7 +127,6 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         _localSettingsService.Set(key, value);
         OnPropertyChanged(callerMemberName);
     }
-    
    
 
     private async Task<string?> ShowLibraryFileDialog()
