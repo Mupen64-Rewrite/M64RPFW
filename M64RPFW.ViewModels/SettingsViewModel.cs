@@ -107,6 +107,12 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         set => SetSettingsProperty(nameof(Theme), value);
     }
     
+    // Save on dialog closing, otherwise it won't affect Mupen64Plus
+    public void OnClosed()
+    {
+        Mupen64Plus.ConfigSaveFile();
+    }
+    
     #endregion
 
     [RelayCommand]

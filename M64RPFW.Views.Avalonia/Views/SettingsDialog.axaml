@@ -8,7 +8,8 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         d:DataContext="{x:Type viewModels:SettingsViewModel}"
         x:Class="M64RPFW.Views.Avalonia.Views.SettingsDialog"
-        Title="Settings">
+        Title="Settings"
+        Closed="TopLevel_OnClosed">
     <Window.Resources>
     </Window.Resources>
     <TabControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch">

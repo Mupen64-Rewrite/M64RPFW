@@ -1,3 +1,4 @@
+using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -12,5 +13,12 @@ public partial class SettingsDialog : Window
     {
         AvaloniaXamlLoader.Load(this);
         DataContext = ((App)Application.Current!).ServiceProvider.GetService<SettingsViewModel>();
+    }
+
+    private SettingsViewModel ViewModel => (SettingsViewModel) DataContext!;
+    
+    private void TopLevel_OnClosed(object? sender, EventArgs e)
+    {
+        ViewModel.OnClosed();
     }
 }
