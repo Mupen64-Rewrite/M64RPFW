@@ -1,4 +1,5 @@
 using M64RPFW.Models.Emulation;
+using M64RPFW.Models.Types.Settings;
 
 // ReSharper disable UnusedMember.Global
 
@@ -31,12 +32,7 @@ public class CoreSettings
         Mupen64Plus.ConfigSaveSection(eventsSection);
     }
     
-    public enum EmulatorType
-    {
-        PureInterpreter = 0,
-        CachedInterpreter = 1,
-        DynamicRecompiler = 2
-    }
+    
 
     public EmulatorType R4300Emulator
     {

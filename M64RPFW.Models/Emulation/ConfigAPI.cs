@@ -1,5 +1,6 @@
 using System.Diagnostics.Contracts;
 using System.Runtime.InteropServices;
+using M64RPFW.Models.Helpers;
 using M64RPFW.Models.Types;
 
 namespace M64RPFW.Models.Emulation;
@@ -161,4 +162,45 @@ public static partial class Mupen64Plus
         ConfigGetType(handle, name);
         return _fnConfigGetParamString(handle, name);
     }
+
+    #region Generic config get/set
+
+    /// <summary>
+    /// Retrieves a config value of generic type.
+    /// </summary>
+    /// <param name="handle">Handle to a config section.</param>
+    /// <param name="name">The name of the parameter to retrieve.</param>
+    /// <typeparam name="T">the type of data to retrieve.</typeparam>
+    /// <returns>The value of the </returns>
+    /// <exception cref="ArgumentException">If <typeparamref name="T"/> cannot be stored or retrieved from config.</exception>
+    public static T ConfigGetGeneric<T>(IntPtr handle, string name)
+    {
+        var t = typeof(T);
+        if (t == typeof(int) || (t.IsEnum && t.UnderlyingSystemType.IsIntegerType()))
+            return (T) Convert.ChangeType(ConfigGetInt(handle, name), typeof(T));
+        if (t == typeof(float) || t == typeof(double))
+            return (T) Convert.ChangeType(ConfigGetFloat(handle, name), typeof(T));
+        if (t == typeof(bool))
+            return (T) Convert.ChangeType(ConfigGetBool(handle, name), typeof(T));
+        if (t == typeof(string))
+            return (T) Convert.ChangeType(ConfigGetString(handle, name), typeof(T));
+        throw new ArgumentException("Unknown type, cannot get generic config");
+    }
+
+    public static void ConfigSetGeneric<T>(IntPtr handle, string name, T value)
+    {
+        var t = typeof(T);
+        if (t == typeof(int) || (t.IsEnum && t.UnderlyingSystemType.IsIntegerType()))
+            ConfigSetInt(handle, name, (int) Convert.ChangeType(value, typeof(int))!);
+        else if (t == typeof(float) || t == typeof(double))
+            ConfigSetFloat(handle, name, (float) Convert.ChangeType(value, typeof(float))!);
+        else if (t == typeof(bool))
+            ConfigSetBool(handle, name, (bool) Convert.ChangeType(value, typeof(bool))!);
+        else if (t == typeof(string))
+            ConfigSetString(handle, name, (string) Convert.ChangeType(value, typeof(string))!);
+        else
+            throw new ArgumentException("Unknown type, cannot get generic config");
+    }
+
+    #endregion
 }
