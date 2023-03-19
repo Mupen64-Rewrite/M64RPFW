@@ -2,30 +2,29 @@ using M64RPFW.Models.Emulation;
 
 namespace M64RPFW.Models.Settings;
 
-public static class Settings
+/// <summary>
+/// Static class that holds settings handles for Mupen64Plus.
+/// </summary>
+public static class MupenSettings
 {
-    static Settings()
+    static MupenSettings()
     {
-
-        Core = new CoreSettings();
-        VideoGeneral = new VideoGeneralSettings();
+        Core = Mupen64Plus.ConfigOpenSection("Core");
+        VideoGeneral = Mupen64Plus.ConfigOpenSection("Video-General");
     }
-    
+
     /// <summary>
-    /// Does absolutely nothing except ensure
-    /// that the static constructor is called.
+    /// The "Core" section of the Mupen64Plus settings. Contains
+    /// settings relating to the emulator itself.
     /// </summary>
-    public static void Init() {}
+    public static IntPtr Core { get; }
 
-    public static void EnsureSaved()
-    {
-        
-        Mupen64Plus.ConfigSaveFile();
-    }
+    /// <summary>
+    /// The "Video-General" section of Mupen64Plus settings. Contains
+    /// settings for basic video output.
+    /// </summary>
+    public static IntPtr VideoGeneral { get; }
 
-    public static CoreSettings Core { get; }
-    public static VideoGeneralSettings VideoGeneral { get; }
-    
     /// <summary>
     /// Does the exact same thing as Mupen64Plus's <c>ConfigGetUserConfigPath().</c>
     /// Resolves to %APPDATA%\Mupen64Plus on Windows, and ~/.config/mupen64plus on
@@ -36,9 +35,9 @@ public static class Settings
     /// Thrown on Unix-based systems if neither $HOME or $XDG_CONFIG_HOME is set.
     /// </exception>
     /// <exception cref="NotSupportedException">
-    /// Thrown if the system is neither Windows nor Unix.
+    /// Thrown if the system is not supported.
     /// </exception>
-    private static string GetUserConfigPath()
+    internal static string GetUserConfigPath()
     {
         if (OperatingSystem.IsWindows())
         {
@@ -48,6 +47,7 @@ public static class Settings
 
             return m64pDir.FullName;
         }
+
         if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS() || OperatingSystem.IsFreeBSD())
         {
             DirectoryInfo? dir = null;
@@ -68,6 +68,7 @@ public static class Settings
 
             return dir.FullName;
         }
+
         throw new NotSupportedException("Are you seriously trying to run this on a phone?");
     }
 }

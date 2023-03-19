@@ -19,7 +19,7 @@ class Program
         var builder = AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .LogToTrace();
-        // Native file dialogs on Linux broke, so...
+        // Native file dialogs on Linux broke in Avalonia 10, so...
         // if (OperatingSystem.IsLinux())
         //     builder = builder.UseManagedSystemDialogs();
         return builder;
