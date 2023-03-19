@@ -49,7 +49,7 @@ public class StorageFileWrapper : IFile
     public async Task DeleteAsync()
     {
         var path = _file.Path.LocalPath;
-        await Task.Run(() => System.IO.File.Delete(path));
+        await Task.Run(() => File.Delete(path));
     }
 
     /// <inheritdoc />

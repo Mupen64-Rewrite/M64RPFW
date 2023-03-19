@@ -173,7 +173,7 @@ public static partial class Mupen64Plus
     /// <typeparam name="T">the type of data to retrieve.</typeparam>
     /// <returns>The value of the </returns>
     /// <exception cref="ArgumentException">If <typeparamref name="T"/> cannot be stored or retrieved from config.</exception>
-    public static T ConfigGetGeneric<T>(IntPtr handle, string name)
+    public static T ConfigGet<T>(IntPtr handle, string name)
     {
         var t = typeof(T);
         if (t == typeof(int) || (t.IsEnum && t.UnderlyingSystemType.IsIntegerType()))
@@ -187,7 +187,7 @@ public static partial class Mupen64Plus
         throw new ArgumentException("Unknown type, cannot get generic config");
     }
 
-    public static void ConfigSetGeneric<T>(IntPtr handle, string name, T value)
+    public static void ConfigSet<T>(IntPtr handle, string name, T value)
     {
         var t = typeof(T);
         if (t == typeof(int) || (t.IsEnum && t.UnderlyingSystemType.IsIntegerType()))

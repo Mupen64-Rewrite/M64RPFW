@@ -22,7 +22,7 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
     {
         _filesService = filesService;
         _localSettingsService = localSettingsService;
-        WeakReferenceMessenger.Default.RegisterAll(this);
+        // WeakReferenceMessenger.Default.RegisterAll(this);
     }
     
     private readonly IFilesService _filesService;
@@ -73,20 +73,20 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
     
     public EmulatorType CoreType
     {
-        get => Settings.Core.R4300Emulator;
-        set => Settings.Core.R4300Emulator = value;
+        get => Mupen64Plus.ConfigGet<EmulatorType>(MupenSettings.Core, "R4300Emulator");
+        set => SetMupenSetting(MupenSettings.Core, "R4300Emulator", value);
     }
     
     public int ScreenWidth
     {
-        get => Settings.VideoGeneral.ScreenWidth;
-        set => Settings.VideoGeneral.ScreenWidth = value;
+        get => Mupen64Plus.ConfigGet<int>(MupenSettings.VideoGeneral, "ScreenWidth");
+        set => SetMupenSetting(MupenSettings.VideoGeneral, "ScreenWidth", value);
     }
     
     public int ScreenHeight
     {
-        get => Settings.VideoGeneral.ScreenHeight;
-        set => Settings.VideoGeneral.ScreenHeight = value;
+        get => Mupen64Plus.ConfigGet<int>(MupenSettings.VideoGeneral, "ScreenHeight");
+        set => SetMupenSetting(MupenSettings.VideoGeneral, "ScreenHeight", value);
     }
 
     public bool IsStatusbarVisible
@@ -125,6 +125,13 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
     {
         ArgumentNullException.ThrowIfNull(callerMemberName);
         _localSettingsService.Set(key, value);
+        OnPropertyChanged(callerMemberName);
+    }
+
+    private void SetMupenSetting<T>(IntPtr section, string key, T value, [CallerMemberName] string? callerMemberName = null)
+    {
+        ArgumentNullException.ThrowIfNull(callerMemberName);
+        Mupen64Plus.ConfigSet(section, key, value);
         OnPropertyChanged(callerMemberName);
     }
    
