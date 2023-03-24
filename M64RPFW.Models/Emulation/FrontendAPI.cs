@@ -102,6 +102,7 @@ public static partial class Mupen64Plus
             (int) Mupen64PlusTypes.PluginType.RSP => "RSP   ",
             (int) LogSources.App => "APP   ",
             (int) LogSources.Vidext => "VIDXT ",
+            (int) LogSources.Config => "CONF  ",
             _ => "??    "
         };
 
@@ -508,6 +509,7 @@ public static partial class Mupen64Plus
     {
         App = 0x4201,
         Vidext,
+        Config
     }
 
     public static void Log(LogSources source, Mupen64PlusTypes.MessageLevel level, string message, params object[] args)
