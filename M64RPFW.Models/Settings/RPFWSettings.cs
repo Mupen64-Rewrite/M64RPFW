@@ -39,7 +39,7 @@ public static class RPFWSettings
         {
             _settingsRoot = JsonSerializer.Deserialize<JsonObject>(file);
         }
-        catch (JsonException exc)
+        catch (JsonException)
         {
             _settingsRoot = null;
         }

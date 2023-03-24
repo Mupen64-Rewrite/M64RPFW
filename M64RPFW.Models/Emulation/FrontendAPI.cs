@@ -95,14 +95,14 @@ public static partial class Mupen64Plus
 
         string typeString = type switch
         {
-            (int) Mupen64PlusTypes.PluginType.Core => "CORE  ",
-            (int) Mupen64PlusTypes.PluginType.Graphics => "VIDEO ",
-            (int) Mupen64PlusTypes.PluginType.Audio => "AUDIO ",
-            (int) Mupen64PlusTypes.PluginType.Input => "INPUT ",
-            (int) Mupen64PlusTypes.PluginType.RSP => "RSP   ",
-            (int) LogSources.App => "APP   ",
-            (int) LogSources.Vidext => "VIDXT ",
-            (int) LogSources.Config => "CONF  ",
+            (int) Mupen64PlusTypes.PluginType.Core => "CORE ",
+            (int) Mupen64PlusTypes.PluginType.Graphics => "VIDEO",
+            (int) Mupen64PlusTypes.PluginType.Audio => "AUDIO",
+            (int) Mupen64PlusTypes.PluginType.Input => "INPUT",
+            (int) Mupen64PlusTypes.PluginType.RSP => "RSP  ",
+            (int) LogSources.App => "APP  ",
+            (int) LogSources.Vidext => "VIDXT",
+            (int) LogSources.Config => "CONF ",
             _ => "??    "
         };
 
@@ -116,7 +116,7 @@ public static partial class Mupen64Plus
             _ => "??   "
         };
 
-        Console.WriteLine($"[M64+ {typeString}{levelString}] {message}");
+        Console.WriteLine($"[M64+ {typeString} {levelString}] {message}");
     }
 
     private static void OnStateChange(IntPtr context, Mupen64PlusTypes.CoreParam param, int newValue)
