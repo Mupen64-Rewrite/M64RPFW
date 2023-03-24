@@ -26,6 +26,8 @@ public class App : Application, IDispatcherService
         ConfigureServices(services);
         ServiceProvider = services.BuildServiceProvider();
     }
+    
+    
 
 
     public void ConfigureServices(IServiceCollection services)
