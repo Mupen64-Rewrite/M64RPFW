@@ -16,7 +16,7 @@ namespace M64RPFW.Views.Avalonia;
 public class App : Application, IDispatcherService
 {
     internal const string LocalSettingsPath = "settings.json";
-    public ServiceProvider ServiceProvider { get; set; }
+    public ServiceProvider ServiceProvider { get; set; } = null!;
 
 
     public override void Initialize()
