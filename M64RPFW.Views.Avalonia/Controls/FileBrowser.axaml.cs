@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Data;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
@@ -21,7 +22,8 @@ public partial class FileBrowser : UserControl
     }
 
     public static readonly StyledProperty<string> CurrentPathProperty =
-        AvaloniaProperty.Register<FileBrowser, string>(nameof(CurrentPath), "");
+        AvaloniaProperty.Register<FileBrowser, string>(nameof(CurrentPath), defaultValue: "",
+            defaultBindingMode: BindingMode.TwoWay);
 
     public string CurrentPath
     {
