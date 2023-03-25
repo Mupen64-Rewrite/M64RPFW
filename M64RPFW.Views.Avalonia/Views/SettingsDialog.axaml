@@ -3,20 +3,25 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels"
+        xmlns:ctrls="clr-namespace:M64RPFW.Views.Avalonia.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         d:DataContext="{x:Type viewModels:SettingsViewModel}"
         x:Class="M64RPFW.Views.Avalonia.Views.SettingsDialog"
-        Title="Settings"
+        Title="Settings" Width="500" Height="500"
         Closed="TopLevel_OnClosed">
     <Window.Resources>
         <Thickness x:Key="SpaceBelowThickness">0,10,0,20</Thickness>
+        <Thickness x:Key="TabItemPadding">10,10,10,10</Thickness>
     </Window.Resources>
     <Window.Styles>
         <Style Selector="ComboBox.space-below">
             <Setter Property="Margin" Value="{StaticResource SpaceBelowThickness}"/>
         </Style>
+        <!-- <Style Selector="TabItem > StackPanel"> -->
+        <!--     <Setter Property="Padd"/> -->
+        <!-- </Style> -->
     </Window.Styles>
-    <TabControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+    <TabControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TabStripPlacement="Left">
         <TabItem Header="General">
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="Core type:"/>
@@ -29,7 +34,12 @@
             </StackPanel>
         </TabItem>
         <TabItem Header="Plugins">
-            
+            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                <ctrls:FileBrowser/>
+                <ctrls:FileBrowser/>
+                <ctrls:FileBrowser/>
+                <ctrls:FileBrowser/>
+            </StackPanel>
         </TabItem>
         <TabItem Header="Video">
         </TabItem>

@@ -19,38 +19,16 @@ namespace M64RPFW.ViewModels;
 public sealed partial class SettingsViewModel : ObservableObject, IRecipient<RomLoadingMessage>
 {
     
-    public SettingsViewModel(IFilePickerService filePickerService, ILocalSettingsService localSettingsService)
+    public SettingsViewModel(IFilePickerService filePickerService)
     {
         _filePickerService = filePickerService;
-        _localSettingsService = localSettingsService;
         // WeakReferenceMessenger.Default.RegisterAll(this);
         RPFWSettings.Load();
     }
     
     private readonly IFilePickerService _filePickerService;
-    private readonly ILocalSettingsService _localSettingsService;
 
     #region Properties
-    // to Aurumaker: why is this here?
-    public ObservableCollection<string> RecentRomPaths
-    {
-        get => _localSettingsService.Get<ObservableCollection<string>>(nameof(RecentRomPaths));
-        set => SetSettingsProperty(nameof(RecentRomPaths), value);
-    }
-    
-    // to Aurumaker: what's this for?
-    public string[] RomExtensions
-    {
-        get => _localSettingsService.Get<string[]>(nameof(RomExtensions));
-        set => SetSettingsProperty(nameof(RomExtensions), value);
-    }
-    
-    // maybe do this later
-    public string CoreLibraryPath
-    {
-        get => _localSettingsService.Get<string>(nameof(CoreLibraryPath));
-        set => SetSettingsProperty(nameof(CoreLibraryPath), value);
-    }
     
     public string VideoPluginPath
     {
@@ -94,23 +72,18 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         set => SetMupenSetting(MupenSettings.VideoGeneral, "ScreenHeight", value);
     }
 
-    public bool IsStatusbarVisible
+    public bool IsStatusBarVisible
     {
-        get => _localSettingsService.Get<bool>(nameof(IsStatusbarVisible));
-        set => SetSettingsProperty(nameof(IsStatusbarVisible), value);
+        get => RPFWSettings.Instance.General.IsStatusBarVisible;
+        set => SetRPFWSetting((inst, val) => inst.General.IsStatusBarVisible = val, value);
     }
     
-    public string Culture
+    public string Locale
     {
-        get => _localSettingsService.Get<string>(nameof(Culture));
-        set => SetSettingsProperty(nameof(Culture), value);
+        get => RPFWSettings.Instance.General.Locale;
+        set => SetRPFWSetting((inst, val) => inst.General.Locale = val, value);
     }
     
-    public string Theme
-    {
-        get => _localSettingsService.Get<string>(nameof(Theme));
-        set => SetSettingsProperty(nameof(Theme), value);
-    }
     // Save on dialog closing, otherwise it won't affect Mupen64Plus
     public void OnClosed()
     {
@@ -126,24 +99,17 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
 
     #endregion
     
-    [RelayCommand]
-    private void RemoveRecentRomPath(string path)
-    {
-        RecentRomPaths.Remove(path);
-    } 
-
-    void IRecipient<RomLoadingMessage>.Receive(RomLoadingMessage message)
-    {
-        RecentRomPaths.Remove(message.Value);
-        RecentRomPaths.Insert(0, message.Value);
-    }
-    
-    private void SetSettingsProperty<T>(string key, T value, [CallerMemberName] string? callerMemberName = null)
-    {
-        ArgumentNullException.ThrowIfNull(callerMemberName);
-        _localSettingsService.Set(key, value);
-        OnPropertyChanged(callerMemberName);
-    }
+    // [RelayCommand]
+    // private void RemoveRecentRomPath(string path)
+    // {
+    //     RecentRomPaths.Remove(path);
+    // } 
+    //
+    // void IRecipient<RomLoadingMessage>.Receive(RomLoadingMessage message)
+    // {
+    //     RecentRomPaths.Remove(message.Value);
+    //     RecentRomPaths.Insert(0, message.Value);
+    // }
 
     private void SetMupenSetting<T>(IntPtr section, string key, T value, [CallerMemberName] string? callerMemberName = null)
     {
@@ -173,22 +139,8 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         return files?[0];
     }
 
-    [RelayCommand]
-    private async Task BrowseLibraryPath(string key)
+    public void Receive(RomLoadingMessage message)
     {
-        var files = await _filePickerService.ShowOpenFilePickerAsync(options: new FilePickerOption[]
-        {
-            new($"Plugins ({NativeLibHelper.LibraryExtension})", Patterns: new[]
-            {
-                $"*{NativeLibHelper.LibraryExtension}"
-            })
-        });
-        if (files != null)
-        {
-            _localSettingsService.Set(key, files[0]);
-        }
-        // notify user of cancelling?
+        
     }
-
-    
 }
