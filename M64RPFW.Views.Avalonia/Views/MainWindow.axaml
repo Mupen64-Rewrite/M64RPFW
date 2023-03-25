@@ -6,7 +6,7 @@
         xmlns:controls="clr-namespace:M64RPFW.Views.Avalonia.Controls"
         mc:Ignorable="d"
         x:Class="M64RPFW.Views.Avalonia.Views.MainWindow"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/rpfw.ico"
         Title="M64RPFW"
         Width="{Binding WindowWidth,Mode=TwoWay}" 
         Height="{Binding WindowHeight,Mode=TwoWay}"
