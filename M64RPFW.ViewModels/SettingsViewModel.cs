@@ -32,25 +32,25 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
     
     public string VideoPluginPath
     {
-        get => RPFWSettings.Instance.Plugins.VideoPath;
+        get => PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.VideoPath);
         set => SetRPFWSetting((inst, val) => inst.Plugins.VideoPath = val, PathHelper.ResolveAppRelative(value));
     }
     
     public string AudioPluginPath
     {
-        get => RPFWSettings.Instance.Plugins.AudioPath;
+        get => PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.AudioPath);
         set => SetRPFWSetting((inst, val) => inst.Plugins.AudioPath = val, PathHelper.ResolveAppRelative(value));
     }
     
     public string InputPluginPath
     {
-        get => RPFWSettings.Instance.Plugins.InputPath;
+        get => PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.InputPath);
         set => SetRPFWSetting((inst, val) => inst.Plugins.InputPath = val, PathHelper.ResolveAppRelative(value));
     }
     
     public string RspPluginPath
     {
-        get => RPFWSettings.Instance.Plugins.RspPath;
+        get => PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.RspPath);
         set => SetRPFWSetting((inst, val) => inst.Plugins.RspPath = val, PathHelper.ResolveAppRelative(value));
     }
     
@@ -123,20 +123,6 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         ArgumentNullException.ThrowIfNull(callerMemberName);
         setter(RPFWSettings.Instance, value);
         OnPropertyChanged(callerMemberName);
-    }
-   
-
-    private async Task<string?> ShowLibraryFileDialog()
-    {
-        var files = await _filePickerService.ShowOpenFilePickerAsync(options: new FilePickerOption[]
-        {
-            new($"Plugins ({NativeLibHelper.LibraryExtension})", Patterns: new[]
-            {
-                $"*{NativeLibHelper.LibraryExtension}"
-            })
-        });
-        // return file != null ? (true, file.Path) : ((bool Succeeded, string Path))(false, null);
-        return files?[0];
     }
 
     public void Receive(RomLoadingMessage message)

@@ -14,12 +14,15 @@
         <Thickness x:Key="TabItemPadding">10,10,10,10</Thickness>
     </Window.Resources>
     <Window.Styles>
-        <Style Selector="ComboBox.space-below">
+        <Style Selector="ComboBox">
             <Setter Property="Margin" Value="{StaticResource SpaceBelowThickness}"/>
         </Style>
-        <!-- <Style Selector="TabItem > StackPanel"> -->
-        <!--     <Setter Property="Padd"/> -->
-        <!-- </Style> -->
+        <Style Selector="ctrls|FileBrowser">
+            <Setter Property="Margin" Value="{StaticResource SpaceBelowThickness}"/>
+        </Style>
+        <Style Selector="TabItem > StackPanel">
+            <Setter Property="Margin" Value="{StaticResource TabItemPadding}"/>
+        </Style>
     </Window.Styles>
     <TabControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TabStripPlacement="Left">
         <TabItem Header="General">
@@ -27,18 +30,21 @@
                 <TextBlock Text="Core type:"/>
                 <ComboBox 
                     Items="{Binding EmulatorTypes,Mode=OneTime}" 
-                    SelectedItem="{Binding CoreType,Mode=TwoWay}"
-                    Classes="space-below"/>
+                    SelectedItem="{Binding CoreType,Mode=TwoWay}"/>
                 <CheckBox Content="Disable Expansion Pak memory"/>
                 <CheckBox Content="Randomize interrupt timings"/>
             </StackPanel>
         </TabItem>
         <TabItem Header="Plugins">
             <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                <ctrls:FileBrowser/>
-                <ctrls:FileBrowser/>
-                <ctrls:FileBrowser/>
-                <ctrls:FileBrowser/>
+                <TextBlock Text="Video plugin"/>
+                <ctrls:FileBrowser CurrentPath="{Binding VideoPluginPath}"/>
+                <TextBlock Text="Audio plugin"/>
+                <ctrls:FileBrowser CurrentPath="{Binding AudioPluginPath}"/>
+                <TextBlock Text="Input plugin"/>
+                <ctrls:FileBrowser CurrentPath="{Binding InputPluginPath}"/>
+                <TextBlock Text="RSP plugin"/>
+                <ctrls:FileBrowser CurrentPath="{Binding RspPluginPath}"/>
             </StackPanel>
         </TabItem>
         <TabItem Header="Video">
