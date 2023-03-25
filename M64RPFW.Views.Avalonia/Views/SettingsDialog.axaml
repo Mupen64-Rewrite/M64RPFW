@@ -3,8 +3,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels"
-        xmlns:st="clr-namespace:M64RPFW.Models.Types.Settings;assembly=M64RPFW.Models.Types"
-        xmlns:system="clr-namespace:System;assembly=System.Runtime"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         d:DataContext="{x:Type viewModels:SettingsViewModel}"
         x:Class="M64RPFW.Views.Avalonia.Views.SettingsDialog"
@@ -15,13 +13,7 @@
     <TabControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <TabItem Header="General">
             <StackPanel Orientation="Vertical">
-                <ComboBox SelectedItem="{Binding Path=CoreType, Mode=TwoWay}">
-                    <ComboBox.Items>
-                        <st:EmulatorType>PureInterpreter</st:EmulatorType>
-                        <st:EmulatorType>CachedInterpreter</st:EmulatorType>
-                        <st:EmulatorType>DynamicRecompiler</st:EmulatorType>
-                    </ComboBox.Items>
-                </ComboBox>
+                <ComboBox Items="{Binding EmulatorTypes,Mode=OneTime}" SelectedItem="{Binding CoreType,Mode=TwoWay}"/>
                 
                 <CheckBox Content="Disable Expansion Pak memory"/>
                 <CheckBox Content="Randomize interrupt timings"/>

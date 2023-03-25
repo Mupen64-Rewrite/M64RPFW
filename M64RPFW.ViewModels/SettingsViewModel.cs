@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -23,24 +24,28 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         _filesService = filesService;
         _localSettingsService = localSettingsService;
         // WeakReferenceMessenger.Default.RegisterAll(this);
+        RPFWSettings.Load();
     }
     
     private readonly IFilesService _filesService;
     private readonly ILocalSettingsService _localSettingsService;
 
     #region Properties
+    // to Aurumaker: why is this here?
     public ObservableCollection<string> RecentRomPaths
     {
         get => _localSettingsService.Get<ObservableCollection<string>>(nameof(RecentRomPaths));
         set => SetSettingsProperty(nameof(RecentRomPaths), value);
     }
-
+    
+    // to Aurumaker: what's this for?
     public string[] RomExtensions
     {
         get => _localSettingsService.Get<string[]>(nameof(RomExtensions));
         set => SetSettingsProperty(nameof(RomExtensions), value);
     }
     
+    // maybe do this later
     public string CoreLibraryPath
     {
         get => _localSettingsService.Get<string>(nameof(CoreLibraryPath));
@@ -50,25 +55,25 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
     public string VideoPluginPath
     {
         get => _localSettingsService.Get<string>(nameof(VideoPluginPath));
-        set => SetSettingsProperty(nameof(VideoPluginPath), value);
+        set => SetRPFWSetting((inst, val) => inst.Plugins.VideoPath = val, PathHelper.ResolveAppRelative(value));
     }
     
     public string AudioPluginPath
     {
         get => _localSettingsService.Get<string>(nameof(AudioPluginPath));
-        set => SetSettingsProperty(nameof(AudioPluginPath), value);
+        set => SetRPFWSetting((inst, val) => inst.Plugins.AudioPath = val, PathHelper.ResolveAppRelative(value));
     }
     
     public string InputPluginPath
     {
         get => _localSettingsService.Get<string>(nameof(InputPluginPath));
-        set => SetSettingsProperty(nameof(InputPluginPath), value);
+        set => SetRPFWSetting((inst, val) => inst.Plugins.InputPath = val, PathHelper.ResolveAppRelative(value));
     }
     
     public string RspPluginPath
     {
         get => _localSettingsService.Get<string>(nameof(RspPluginPath));
-        set => SetSettingsProperty(nameof(RspPluginPath), value);
+        set => SetRPFWSetting((inst, val) => inst.Plugins.RspPath = val, PathHelper.ResolveAppRelative(value));
     }
     
     public EmulatorType CoreType
@@ -106,15 +111,21 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         get => _localSettingsService.Get<string>(nameof(Theme));
         set => SetSettingsProperty(nameof(Theme), value);
     }
-    
     // Save on dialog closing, otherwise it won't affect Mupen64Plus
     public void OnClosed()
     {
         Mupen64Plus.ConfigSaveFile();
+        RPFWSettings.Save();
     }
     
     #endregion
 
+    #region Constants
+
+    public EmulatorType[] EmulatorTypes => Enum.GetValues<EmulatorType>();
+
+    #endregion
+    
     [RelayCommand]
     private void RemoveRecentRomPath(string path)
     {
@@ -138,6 +149,13 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
     {
         ArgumentNullException.ThrowIfNull(callerMemberName);
         Mupen64Plus.ConfigSet(section, key, value);
+        OnPropertyChanged(callerMemberName);
+    }
+
+    private void SetRPFWSetting<T>(Action<RPFWSettings, T> setter, T value, [CallerMemberName] string? callerMemberName = null)
+    {
+        ArgumentNullException.ThrowIfNull(callerMemberName);
+        setter(RPFWSettings.Instance, value);
         OnPropertyChanged(callerMemberName);
     }
    

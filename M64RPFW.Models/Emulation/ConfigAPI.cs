@@ -177,13 +177,13 @@ public static partial class Mupen64Plus
     {
         var t = typeof(T);
         if (t == typeof(int) || (t.IsEnum && t.UnderlyingSystemType.IsIntegerType()))
-            return (T) Convert.ChangeType(ConfigGetInt(handle, name), typeof(T));
+            return (T) Convert.ChangeType(ConfigGetInt(handle, name), typeof(int));
         if (t == typeof(float) || t == typeof(double))
-            return (T) Convert.ChangeType(ConfigGetFloat(handle, name), typeof(T));
+            return (T) Convert.ChangeType(ConfigGetFloat(handle, name), typeof(float));
         if (t == typeof(bool))
-            return (T) Convert.ChangeType(ConfigGetBool(handle, name), typeof(T));
+            return (T) Convert.ChangeType(ConfigGetBool(handle, name), typeof(bool));
         if (t == typeof(string))
-            return (T) Convert.ChangeType(ConfigGetString(handle, name), typeof(T));
+            return (T) Convert.ChangeType(ConfigGetString(handle, name), typeof(string));
         throw new ArgumentException("Unknown type, cannot get generic config");
     }
 

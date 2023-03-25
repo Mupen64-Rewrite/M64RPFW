@@ -26,9 +26,6 @@ public class App : Application, IDispatcherService
         ConfigureServices(services);
         ServiceProvider = services.BuildServiceProvider();
     }
-    
-    
-
 
     public void ConfigureServices(IServiceCollection services)
     {
@@ -60,9 +57,12 @@ public class App : Application, IDispatcherService
 
         base.OnFrameworkInitializationCompleted();
     }
+    
+    
 
     public void Execute(Action action)
     {
         Dispatcher.UIThread.Post(action);
     }
+    
 }
