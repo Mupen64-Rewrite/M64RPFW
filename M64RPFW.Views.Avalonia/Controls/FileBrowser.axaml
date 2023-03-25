@@ -6,7 +6,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="M64RPFW.Views.Avalonia.Controls.FileBrowser">
     <DockPanel LastChildFill="True" DataContext="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType=ctrls:FileBrowser}}">
-        <Button Content="Browse" DockPanel.Dock="Right" Click="Button_OnClick"/>
-        <TextBox Text="{Binding CurrentPath}"/>
+        <Button Content="Browse" DockPanel.Dock="Right" Click="Button_OnClick" IsEnabled="{Binding IsEnabled}"/>
+        <TextBox Text="{Binding CurrentPath}" IsEnabled="{Binding IsEnabled}"/>
     </DockPanel>
 </UserControl>

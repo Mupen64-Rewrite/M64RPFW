@@ -46,6 +46,20 @@ public static class PathHelper
         if (outPath.StartsWith($"..{Path.DirectorySeparatorChar}"))
             return Path.GetFullPath(path);
         return outPath;
+    }
 
+    public static string DerefAppRelative(string path)
+    {
+        if (Path.IsPathFullyQualified(path))
+            return path;
+        
+        string? exePath = Assembly.GetEntryAssembly()?.Location;
+        if (exePath == null)
+            throw new NotSupportedException("Can't find executing assembly's path");
+
+        exePath = Directory.GetParent(exePath)?.FullName;
+        if (exePath == null)
+            return Path.GetFullPath(path);
+        return Path.GetFullPath(Path.Join(exePath, path));
     }
 }

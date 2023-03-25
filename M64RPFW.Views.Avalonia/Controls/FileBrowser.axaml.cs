@@ -1,16 +1,14 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
-using Avalonia.VisualTree;
 using M64RPFW.Services.Abstractions;
 using M64RPFW.Views.Avalonia.Helpers;
-using M64RPFW.Views.Avalonia.Services;
 using M64RPFW.Views.Avalonia.Services.Abstractions;
 
 namespace M64RPFW.Views.Avalonia.Controls;
@@ -28,7 +26,12 @@ public partial class FileBrowser : UserControl
     public string CurrentPath
     {
         get => GetValue(CurrentPathProperty);
-        set => SetValue(CurrentPathProperty, value);
+        set
+        {
+            if (!File.Exists(value))
+                throw new ArgumentException("Provided path is invalid");
+            SetValue(CurrentPathProperty, value);
+        }
     }
 
     public static readonly StyledProperty<string> PickerTitleProperty =
@@ -62,7 +65,8 @@ public partial class FileBrowser : UserControl
         {
             Title = PickerTitle,
             AllowMultiple = false,
-            FileTypeFilter = PickerOptions?.Select(fpo => fpo.ToFilePickerFileType()).ToArray()
+            FileTypeFilter = PickerOptions?.Select(fpo => fpo.ToFilePickerFileType()).ToArray(),
+            SuggestedStartLocation = await provider.TryGetFolderFromPathAsync(Path.GetDirectoryName(CurrentPath)!)
         });
         if (storageFiles.Count == 0)
             return;

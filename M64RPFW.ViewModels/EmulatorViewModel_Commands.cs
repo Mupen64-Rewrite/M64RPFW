@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.Input;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Helpers;
+using M64RPFW.Models.Settings;
 using M64RPFW.Models.Types;
 using M64RPFW.Services.Abstractions;
 
@@ -20,10 +21,10 @@ public partial class EmulatorViewModel
         string bundlePath = Mupen64Plus.GetBundledLibraryPath();
         Mupen64Plus.OpenRom(romPath);
 
-        Mupen64Plus.AttachPlugin(Path.Join(bundlePath, NativeLibHelper.AsDLL("mupen64plus-video-rice")));
-        Mupen64Plus.AttachPlugin(Path.Join(bundlePath, NativeLibHelper.AsDLL("mupen64plus-audio-sdl")));
-        Mupen64Plus.AttachPlugin(Path.Join(bundlePath, NativeLibHelper.AsDLL("mupen64plus-input-sdl")));
-        Mupen64Plus.AttachPlugin(Path.Join(bundlePath, NativeLibHelper.AsDLL("mupen64plus-rsp-hle")));
+        Mupen64Plus.AttachPlugin(PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.VideoPath));
+        Mupen64Plus.AttachPlugin(PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.AudioPath));
+        Mupen64Plus.AttachPlugin(PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.InputPath));
+        Mupen64Plus.AttachPlugin(PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.RspPath));
 
         Mupen64Plus.Execute();
 
