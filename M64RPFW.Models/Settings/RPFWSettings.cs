@@ -25,10 +25,10 @@ public class RPFWSettings : ITomlMetadataProvider
         // storage for comments and whitespace
         TomlPropertiesMetadata? ITomlMetadataProvider.PropertiesMetadata { get; set; }
 
-        public string? VideoPath { get; set; } = $"./Libraries/mupen64plus-video-rice{NativeLibHelper.LibraryExtension}";
-        public string? AudioPath { get; set; } = $"./Libraries/mupen64plus-audio-sdl{NativeLibHelper.LibraryExtension}";
-        public string? InputPath { get; set; } = $"./Libraries/mupen64plus-input-sdl{NativeLibHelper.LibraryExtension}";
-        public string? RspPath { get; set; } = $"./Libraries/mupen64plus-rsp-hle{NativeLibHelper.LibraryExtension}";
+        public string VideoPath { get; set; } = $"./Libraries/mupen64plus-video-rice{NativeLibHelper.LibraryExtension}";
+        public string AudioPath { get; set; } = $"./Libraries/mupen64plus-audio-sdl{NativeLibHelper.LibraryExtension}";
+        public string InputPath { get; set; } = $"./Libraries/mupen64plus-input-sdl{NativeLibHelper.LibraryExtension}";
+        public string RspPath { get; set; } = $"./Libraries/mupen64plus-rsp-hle{NativeLibHelper.LibraryExtension}";
     }
 
     public PluginsSection Plugins { get; } = new();

@@ -54,25 +54,25 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
     
     public string VideoPluginPath
     {
-        get => _localSettingsService.Get<string>(nameof(VideoPluginPath));
+        get => RPFWSettings.Instance.Plugins.VideoPath;
         set => SetRPFWSetting((inst, val) => inst.Plugins.VideoPath = val, PathHelper.ResolveAppRelative(value));
     }
     
     public string AudioPluginPath
     {
-        get => _localSettingsService.Get<string>(nameof(AudioPluginPath));
+        get => RPFWSettings.Instance.Plugins.AudioPath;
         set => SetRPFWSetting((inst, val) => inst.Plugins.AudioPath = val, PathHelper.ResolveAppRelative(value));
     }
     
     public string InputPluginPath
     {
-        get => _localSettingsService.Get<string>(nameof(InputPluginPath));
+        get => RPFWSettings.Instance.Plugins.InputPath;
         set => SetRPFWSetting((inst, val) => inst.Plugins.InputPath = val, PathHelper.ResolveAppRelative(value));
     }
     
     public string RspPluginPath
     {
-        get => _localSettingsService.Get<string>(nameof(RspPluginPath));
+        get => RPFWSettings.Instance.Plugins.RspPath;
         set => SetRPFWSetting((inst, val) => inst.Plugins.RspPath = val, PathHelper.ResolveAppRelative(value));
     }
     
