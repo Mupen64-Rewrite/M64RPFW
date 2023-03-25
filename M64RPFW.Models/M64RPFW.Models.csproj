@@ -16,4 +16,33 @@
       <PackageReference Include="Tomlyn" Version="0.16.2" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Libraries" />
+    </ItemGroup>
+
+
+    <!--======================================
+    TARGETS USED FOR COPYING OS-SPECIFIC FILES
+    =======================================-->
+    <PropertyGroup>
+        <OSLibraryDir Condition="$([MSBuild]::IsOSPlatform('Linux'))">Linux</OSLibraryDir>
+        <OSLibraryDir Condition="$([MSBuild]::IsOSPlatform('Windows'))">Windows</OSLibraryDir>
+        <!-- In case we ever bother... -->
+        <OSLibraryDir Condition="$([MSBuild]::IsOSPlatform('OSX'))">MacOS</OSLibraryDir>
+    </PropertyGroup>
+
+    <Target Name="CopyCustomLibraries" AfterTargets="AfterBuild">
+        <ItemGroup>
+            <LibraryList Include="Libraries\$(OSLibraryDir)\*.*" />
+        </ItemGroup>
+        <Message Importance="high" Text="Library list: @(LibraryList)" />
+        <Copy SourceFiles="@(LibraryList)" DestinationFolder="$(OutDir)/Libraries" />
+    </Target>
+
+    <Target Name="CopyCustomLibrariesPublish" AfterTargets="AfterPublish">
+        <ItemGroup>
+            <LibraryList Include="Libraries\$(OSLibraryDir)\*.*" />
+        </ItemGroup>
+        <Copy SourceFiles="@(LibraryList)" DestinationFolder="$(PublishDir)/Libraries" />
+    </Target>
 </Project>
