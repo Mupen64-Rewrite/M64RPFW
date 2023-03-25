@@ -19,15 +19,15 @@ namespace M64RPFW.ViewModels;
 public sealed partial class SettingsViewModel : ObservableObject, IRecipient<RomLoadingMessage>
 {
     
-    public SettingsViewModel(IFilesService filesService, ILocalSettingsService localSettingsService)
+    public SettingsViewModel(IFilePickerService filePickerService, ILocalSettingsService localSettingsService)
     {
-        _filesService = filesService;
+        _filePickerService = filePickerService;
         _localSettingsService = localSettingsService;
         // WeakReferenceMessenger.Default.RegisterAll(this);
         RPFWSettings.Load();
     }
     
-    private readonly IFilesService _filesService;
+    private readonly IFilePickerService _filePickerService;
     private readonly ILocalSettingsService _localSettingsService;
 
     #region Properties
@@ -162,7 +162,7 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
 
     private async Task<string?> ShowLibraryFileDialog()
     {
-        var files = await _filesService.ShowOpenFilePickerAsync(options: new FilePickerOption[]
+        var files = await _filePickerService.ShowOpenFilePickerAsync(options: new FilePickerOption[]
         {
             new($"Plugins ({NativeLibHelper.LibraryExtension})", Patterns: new[]
             {
@@ -170,22 +170,22 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
             })
         });
         // return file != null ? (true, file.Path) : ((bool Succeeded, string Path))(false, null);
-        return files != null && files.Length > 0 ? files[0].Path : null;
+        return files?[0];
     }
 
     [RelayCommand]
     private async Task BrowseLibraryPath(string key)
     {
-        var files = await _filesService.ShowOpenFilePickerAsync(options: new FilePickerOption[]
+        var files = await _filePickerService.ShowOpenFilePickerAsync(options: new FilePickerOption[]
         {
             new($"Plugins ({NativeLibHelper.LibraryExtension})", Patterns: new[]
             {
                 $"*{NativeLibHelper.LibraryExtension}"
             })
         });
-        if (files != null && files.Length > 0)
+        if (files != null)
         {
-            _localSettingsService.Set(key, files[0].Path);
+            _localSettingsService.Set(key, files[0]);
         }
         // notify user of cancelling?
     }
