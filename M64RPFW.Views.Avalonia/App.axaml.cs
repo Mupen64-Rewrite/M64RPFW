@@ -42,7 +42,7 @@ public class App : Application, IDispatcherService
         services.AddSingleton(services);
 
         services.AddSingleton<IDispatcherService>(this);
-        services.AddSingleton<IFilesService>(new FilesService());
+        services.AddSingleton<IFilePickerService>(new FilePickerService());
         services.AddSingleton<ILocalSettingsService>(localSettings ?? LocalSettings.Default);
 
         services.AddSingleton<MainViewModel>();

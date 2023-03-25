@@ -44,15 +44,15 @@ public partial class EmulatorViewModel
     [RelayCommand(CanExecute = nameof(MupenIsStopped))]
     private async void OpenRom()
     {
-        var files = await _filesService.ShowOpenFilePickerAsync(options: new FilePickerOption[]
+        var files = await _filePickerService.ShowOpenFilePickerAsync(options: new FilePickerOption[]
         {
             new("N64 ROMs (.n64, .z64, .v64)", Patterns: new[] { "*.n64", "*.z64", "*.v64" }),
         }, allowMultiple: false);
-        if (files == null || files.Length == 0)
+        if (files == null)
             return;
 
         _emuThread = new Thread(EmulatorThreadRun);
-        _emuThread.Start(files[0].Path);
+        _emuThread.Start(files[0]);
     }
 
     [RelayCommand(CanExecute = nameof(MupenIsActive))]

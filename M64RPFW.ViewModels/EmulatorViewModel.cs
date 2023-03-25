@@ -15,13 +15,13 @@ public partial class EmulatorViewModel : ObservableObject
     
     private readonly IOpenGLContextService _openGlContextService;
     private readonly IDispatcherService _dispatcherService;
-    private readonly IFilesService _filesService;
+    private readonly IFilePickerService _filePickerService;
     
-    public EmulatorViewModel(IOpenGLContextService openGlContextService, IDispatcherService dispatcherService, IFilesService filesService)
+    public EmulatorViewModel(IOpenGLContextService openGlContextService, IDispatcherService dispatcherService, IFilePickerService filePickerService)
     {
         _openGlContextService = openGlContextService;
         _dispatcherService = dispatcherService;
-        _filesService = filesService;
+        _filePickerService = filePickerService;
 
         var version = Mupen64Plus.GetVersionInfo();
         Mupen64Plus.Log(Mupen64Plus.LogSources.App, Mupen64PlusTypes.MessageLevel.Info,
