@@ -25,35 +25,13 @@
     <ItemGroup>
       <ProjectReference Include="..\M64RPFW.ViewModels\M64RPFW.ViewModels.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Libraries" />
+    </ItemGroup>
     
     <PropertyGroup>
         <!-- For Microsoft.CodeAnalysis -->
         <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
         <ApplicationManifest>app.manifest</ApplicationManifest>
     </PropertyGroup>
-    
-    <!--======================================
-    TARGETS USED FOR COPYING OS-SPECIFIC FILES
-    =======================================-->
-    <PropertyGroup>
-        <OSLibraryDir Condition="$([MSBuild]::IsOSPlatform('Linux'))">Linux</OSLibraryDir>
-        <OSLibraryDir Condition="$([MSBuild]::IsOSPlatform('Windows'))">Windows</OSLibraryDir>
-        <!-- In case we ever bother... -->
-        <OSLibraryDir Condition="$([MSBuild]::IsOSPlatform('OSX'))">MacOS</OSLibraryDir>
-    </PropertyGroup>
-    
-    <Target Name="CopyCustomLibraries" AfterTargets="AfterBuild">
-        <ItemGroup>
-            <LibraryList Include="Libraries\$(OSLibraryDir)\*.*" />
-        </ItemGroup>
-        <Message Importance="high" Text="Library list: @(LibraryList)" />
-        <Copy SourceFiles="@(LibraryList)" DestinationFolder="$(OutDir)/Libraries" />
-    </Target>
-
-    <Target Name="CopyCustomLibrariesPublish" AfterTargets="AfterPublish">
-        <ItemGroup>
-            <LibraryList Include="Libraries\$(OSLibraryDir)\*.*" />
-        </ItemGroup>
-        <Copy SourceFiles="@(LibraryList)" DestinationFolder="$(PublishDir)/Libraries" />
-    </Target>
 </Project>

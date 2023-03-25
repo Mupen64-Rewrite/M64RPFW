@@ -1,37 +1,54 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:vm="using:M64RPFW.ViewModels"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:M64RPFW.Views.Avalonia.Controls"
+        xmlns:viewModels="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels"
         mc:Ignorable="d"
         x:Class="M64RPFW.Views.Avalonia.Views.MainWindow"
         Icon="/Assets/rpfw.ico"
         Title="M64RPFW"
-        Width="{Binding WindowWidth,Mode=TwoWay}" 
+        Width="{Binding WindowWidth,Mode=TwoWay}"
         Height="{Binding WindowHeight,Mode=TwoWay}"
         CanResize="{Binding Resizable,Mode=OneWay}"
-        Closed="Window_OnClosed">
-
+        Closed="Window_OnClosed"
+        d:DataContext="{x:Type viewModels:EmulatorViewModel}">
+    <Window.Styles>
+        <Style Selector="RadioButton.menu-btn">
+            <Setter Property="IsHitTestVisible" Value="False" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+    </Window.Styles>
     <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" LastChildFill="True">
         <Menu DockPanel.Dock="Top" Height="{Binding MenuHeight,Mode=OneWayToSource}">
             <MenuItem Header="_File">
                 <!-- Opening a ROM depends on the window, thus it's part of view -->
-                <MenuItem Header="_Open ROM" Command="{Binding OpenRomCommand}"/>
-                <MenuItem Header="_Close ROM" Command="{Binding CloseRomCommand}"/>
-                <MenuItem Header="_Reset ROM" Command="{Binding ResetRomCommand}"/>
-                <Separator/>
-                <MenuItem Header="_Settings..." Click="ShowSettingsDialogMenuItem_OnClick"/>
+                <MenuItem Header="_Open ROM" Command="{Binding OpenRomCommand}" />
+                <MenuItem Header="_Close ROM" Command="{Binding CloseRomCommand}" />
+                <MenuItem Header="_Reset ROM" Command="{Binding ResetRomCommand}" />
+                <Separator />
+                <MenuItem Header="_Settings..." Click="ShowSettingsDialogMenuItem_OnClick" />
             </MenuItem>
             <MenuItem Header="_Emulator">
-                <MenuItem Header="_Pause/Resume" Command="{Binding PauseOrResumeCommand}"/>
-                <MenuItem Header="_Frame Advance" Command="{Binding FrameAdvanceCommand}"/>
+                <MenuItem Header="_Pause/Resume" Command="{Binding PauseOrResumeCommand}" />
+                <MenuItem Header="Frame _Advance" Command="{Binding FrameAdvanceCommand}" />
+                <Separator />
+                <MenuItem Header="Load _From File" Command="{Binding LoadStateFromFileCommand}" />
+                <MenuItem Header="Save _To File" Command="{Binding SaveStateToFileCommand}" />
+                <MenuItem Header="_Load State" />
+                <MenuItem Header="_Save State" />
+                <Separator />
+                <!--Need to figure out how to get radio buttons in here-->
+                <MenuItem Header="_Current Save Slot"/>
             </MenuItem>
             <MenuItem Header="_Movie">
-                <MenuItem Header="_Load Movie" />
+                <MenuItem Header="_Open Movie" />
+                <MenuItem Header="_Record Movie" />
+                <MenuItem Header="_Save Movie" />
+                <MenuItem Header="_Save Movie" />
             </MenuItem>
         </Menu>
-        <controls:VidextControl Name="EmulatorWindow"/>
+        <controls:VidextControl Name="EmulatorWindow" />
     </DockPanel>
-    
+
 </Window>

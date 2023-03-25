@@ -2,14 +2,14 @@ using CommunityToolkit.Mvvm.Input;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Helpers;
 using M64RPFW.Models.Settings;
-using M64RPFW.Models.Types;
 using M64RPFW.Services.Abstractions;
+using static M64RPFW.Models.Types.Mupen64PlusTypes;
 
 namespace M64RPFW.ViewModels;
 
-using PluginType = Mupen64PlusTypes.PluginType;
+using PluginType = PluginType;
 using LogSources = Mupen64Plus.LogSources;
-using MessageLevel = Mupen64PlusTypes.MessageLevel;
+using MessageLevel = MessageLevel;
 
 public partial class EmulatorViewModel
 {
@@ -82,6 +82,46 @@ public partial class EmulatorViewModel
     private void FrameAdvance()
     {
         Mupen64Plus.AdvanceFrame();
+    }
+    
+    [RelayCommand(CanExecute = nameof(MupenIsActive))]
+    private async void LoadStateFromFile()
+    {
+        var paths = await _filePickerService.ShowOpenFilePickerAsync(options: new FilePickerOption[]
+        {
+            new("Mupen64Plus save (.st, .savestate)", Patterns: new[] { "*.st", "*.savestate" }),
+            new("Project64 save (.pj.zip)", Patterns: new[] { "*.pj.zip" }),
+            new("Project64 uncompressed save (.pj)", Patterns: new[] { "*.pj" }),
+        }, allowMultiple: false);
+        if (paths == null)
+            return;
+        
+        Mupen64Plus.LoadStateFromFile(paths[0]);
+    }
+    
+    [RelayCommand(CanExecute = nameof(MupenIsActive))]
+    private async void SaveStateToFile()
+    {
+        var path = await _filePickerService.ShowSaveFilePickerAsync(options: new FilePickerOption[]
+        {
+            new("Mupen64Plus save (.st)", Patterns: new[] { "*.st" }),
+            new("Mupen64Plus save (.savestate)", Patterns: new[] { "*.savestate" }),
+            new("Project64 save (.pj.zip)", Patterns: new[] { "*.pj.zip" }),
+            new("Project64 uncompressed save (.pj)", Patterns: new[] { "*.pj" }),
+        });
+        if (path == null)
+            return;
+        
+        // Process extensions (Avalonia doesn't tell us which option was picked)
+        var saveType = path switch
+        {
+            _ when path.EndsWith(".st") || path.EndsWith(".savestate") => SavestateType.Mupen64Plus,
+            _ when path.EndsWith(".pj.zip") => SavestateType.Project64Compressed,
+            _ when path.EndsWith(".pj") => SavestateType.Project64Uncompressed,
+            _ => SavestateType.Mupen64Plus
+        };
+        
+        Mupen64Plus.SaveStateToFile(path, saveType);
     }
 
     #endregion
