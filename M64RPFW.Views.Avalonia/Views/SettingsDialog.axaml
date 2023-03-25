@@ -9,12 +9,21 @@
         Title="Settings"
         Closed="TopLevel_OnClosed">
     <Window.Resources>
+        <Thickness x:Key="SpaceBelowThickness">0,10,0,20</Thickness>
     </Window.Resources>
+    <Window.Styles>
+        <Style Selector="ComboBox.space-below">
+            <Setter Property="Margin" Value="{StaticResource SpaceBelowThickness}"/>
+        </Style>
+    </Window.Styles>
     <TabControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <TabItem Header="General">
             <StackPanel Orientation="Vertical">
-                <ComboBox Items="{Binding EmulatorTypes,Mode=OneTime}" SelectedItem="{Binding CoreType,Mode=TwoWay}"/>
-                
+                <TextBlock Text="Core type:"/>
+                <ComboBox 
+                    Items="{Binding EmulatorTypes,Mode=OneTime}" 
+                    SelectedItem="{Binding CoreType,Mode=TwoWay}"
+                    Classes="space-below"/>
                 <CheckBox Content="Disable Expansion Pak memory"/>
                 <CheckBox Content="Randomize interrupt timings"/>
             </StackPanel>
