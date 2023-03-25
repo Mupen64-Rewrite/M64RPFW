@@ -22,7 +22,10 @@ namespace M64RPFW.Views.Avalonia.Services;
 /// </summary>
 public sealed class FilePickerService : IFilePickerService
 {
+    private FilePickerService() {}
 
+    public static FilePickerService Instance { get; } = new();
+    
     private static Window GetWindow()
     {
         var lifetime = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
@@ -50,19 +53,5 @@ public sealed class FilePickerService : IFilePickerService
             FileTypeChoices = options?.Select(FilePickerTypeExtensions.ToFilePickerFileType).ToArray()
         });
         return storageFile?.Path.LocalPath;
-    }
-
-    /// <inheritdoc />
-    public async IAsyncEnumerable<(IFile, string)> GetFutureAccessFilesAsync()
-    {
-        yield return await Task.FromResult<(IFile, string)>((null!, null!));
-        throw new NotImplementedException();
-    }
-
-    public async Task<bool> IsAccessible(string path)
-    {
-        var provider = GetWindow().StorageProvider;
-        var storageFile = await provider.TryGetFileFromPath(path);
-        return storageFile != null && storageFile.CanOpenRead;
     }
 }

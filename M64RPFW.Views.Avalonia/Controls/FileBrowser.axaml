@@ -1,16 +1,12 @@
-<Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="using:M64RPFW.Views.Avalonia.Controls">
-    <Design.PreviewWith>
-        <controls:FileBrowser />
-    </Design.PreviewWith>
-
-    <Style Selector="controls|FileBrowser">
-        <!-- TODO: control that shows a button and a readonly textbox. -->
-        <Setter Property="Template">
-            <ControlTemplate>
-                <TextBlock Text="Templated Control" />
-            </ControlTemplate>
-        </Setter>
-    </Style>
-</Styles>
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ctrls="clr-namespace:M64RPFW.Views.Avalonia.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="M64RPFW.Views.Avalonia.Controls.FileBrowser">
+    <DockPanel LastChildFill="True" DataContext="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType=ctrls:FileBrowser}}">
+        <Button Content="Browse" DockPanel.Dock="Right" Click="Button_OnClick"/>
+        <TextBox Text="{Binding CurrentPath}"/>
+    </DockPanel>
+</UserControl>

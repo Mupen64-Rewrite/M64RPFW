@@ -1,8 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Interfaces;
-using M64RPFW.Models.Types;
 using M64RPFW.Services;
+using static M64RPFW.Models.Types.Mupen64PlusTypes;
 
 namespace M64RPFW.ViewModels;
 
@@ -24,7 +25,7 @@ public partial class EmulatorViewModel : ObservableObject
         _filePickerService = filePickerService;
 
         var version = Mupen64Plus.GetVersionInfo();
-        Mupen64Plus.Log(Mupen64Plus.LogSources.App, Mupen64PlusTypes.MessageLevel.Info,
+        Mupen64Plus.Log(Mupen64Plus.LogSources.App, MessageLevel.Info,
             $"Loaded M64+ v{version.VersionMajor}.{version.VersionMinor}.{version.VersionPatch}");
 
         // Register Mupen64Plus-related listeners
@@ -36,15 +37,8 @@ public partial class EmulatorViewModel : ObservableObject
     {
         switch (args.Param)
         {
-            case Mupen64PlusTypes.CoreParam.EmuState:
-                _dispatcherService.Execute(() =>
-                {
-                    OpenRomCommand.NotifyCanExecuteChanged();
-                    CloseRomCommand.NotifyCanExecuteChanged();
-                    ResetRomCommand.NotifyCanExecuteChanged();
-                    PauseOrResumeCommand.NotifyCanExecuteChanged();
-                    FrameAdvanceCommand.NotifyCanExecuteChanged();
-                });
+            case CoreParam.EmuState:
+                _dispatcherService.Execute(OnEmuStateChanged);
                 break;
         }
     }
@@ -69,13 +63,24 @@ public partial class EmulatorViewModel : ObservableObject
 
     #region Tracker properties and events
 
-    private Mupen64PlusTypes.EmuState MupenEmuState =>
-        (Mupen64PlusTypes.EmuState)Mupen64Plus.CoreStateQuery(Mupen64PlusTypes.CoreParam.EmuState);
+    private EmuState MupenEmuState =>
+        (EmuState)Mupen64Plus.CoreStateQuery(CoreParam.EmuState);
 
-    public bool MupenIsStopped => MupenEmuState is Mupen64PlusTypes.EmuState.Stopped;
-    public bool MupenIsRunning => MupenEmuState is Mupen64PlusTypes.EmuState.Running;
-    public bool MupenIsPaused => MupenEmuState is Mupen64PlusTypes.EmuState.Paused;
-    public bool MupenIsActive => MupenEmuState is Mupen64PlusTypes.EmuState.Running or Mupen64PlusTypes.EmuState.Paused;
+    private void OnEmuStateChanged()
+    {
+        OpenRomCommand.NotifyCanExecuteChanged();
+        CloseRomCommand.NotifyCanExecuteChanged();
+        ResetRomCommand.NotifyCanExecuteChanged();
+        PauseOrResumeCommand.NotifyCanExecuteChanged();
+        FrameAdvanceCommand.NotifyCanExecuteChanged();
+    }
+
+    public bool MupenIsStopped => MupenEmuState is EmuState.Stopped;
+    public bool MupenIsRunning => MupenEmuState is EmuState.Running;
+    public bool MupenIsPaused => MupenEmuState is EmuState.Paused;
+    public bool MupenIsActive => MupenEmuState is EmuState.Running or EmuState.Paused;
+    
+    
 
     #endregion
 
