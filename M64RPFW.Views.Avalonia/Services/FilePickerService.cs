@@ -11,6 +11,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
+using M64RPFW.Views.Avalonia.Helpers;
 using M64RPFW.Views.Avalonia.Services.Abstractions;
 using File = System.IO.File;
 
@@ -25,16 +26,10 @@ public sealed class FilePickerService : IFilePickerService
     private FilePickerService() {}
 
     public static FilePickerService Instance { get; } = new();
-    
-    private static Window GetWindow()
-    {
-        var lifetime = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
-        return lifetime?.MainWindow!;
-    }
 
     public async Task<string[]?> ShowOpenFilePickerAsync(string title = "Open file...", IReadOnlyList<FilePickerOption>? options = null, bool allowMultiple = false)
     {
-        var provider = GetWindow().StorageProvider;
+        var provider = WindowHelper.GetWindow().StorageProvider;
         var storageFiles = await provider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
             Title = title,
@@ -46,7 +41,7 @@ public sealed class FilePickerService : IFilePickerService
 
     public async Task<string?> ShowSaveFilePickerAsync(string title = "Open file...", IReadOnlyList<FilePickerOption>? options = null)
     {
-        var provider = GetWindow().StorageProvider;
+        var provider = WindowHelper.GetWindow().StorageProvider;
         var storageFile = await provider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
             Title = title,
