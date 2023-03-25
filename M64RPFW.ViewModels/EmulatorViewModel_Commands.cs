@@ -58,7 +58,7 @@ public partial class EmulatorViewModel
     [RelayCommand(CanExecute = nameof(MupenIsActive))]
     private void CloseRom()
     {
-        Mupen64Plus.Log(Mupen64Plus.LogSources.App, MessageLevel.Info, "Stopping M64+");
+        Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Stopping M64+");
         Mupen64Plus.Stop();
     }
 
