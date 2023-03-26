@@ -17,6 +17,8 @@ public partial class MainWindow : Window
 
         DataContext = new EmulatorViewModel(this.Find<VidextControl>("EmulatorWindow")!, (App) Application.Current!,
             FilePickerService.Instance);
+
+        var mi = this.Find<MenuItem>("CurrentSlotMenu");
     }
 
     private EmulatorViewModel ViewModel => (EmulatorViewModel) DataContext!;
