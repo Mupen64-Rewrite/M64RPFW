@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Interfaces;
@@ -13,6 +14,7 @@ public partial class EmulatorViewModel : ObservableObject
     [ObservableProperty] private double _windowHeight = 480;
     [ObservableProperty] private double _menuHeight;
     [ObservableProperty] private bool _resizable = true;
+    [ObservableProperty] private object? _currentSlotMenuItem;
     
     private readonly IOpenGLContextService _openGlContextService;
     private readonly IDispatcherService _dispatcherService;
@@ -73,6 +75,7 @@ public partial class EmulatorViewModel : ObservableObject
         ResetRomCommand.NotifyCanExecuteChanged();
         PauseOrResumeCommand.NotifyCanExecuteChanged();
         FrameAdvanceCommand.NotifyCanExecuteChanged();
+        SetSaveSlotCommand.NotifyCanExecuteChanged();
     }
 
     public bool MupenIsStopped => MupenEmuState is EmuState.Stopped;
@@ -83,6 +86,4 @@ public partial class EmulatorViewModel : ObservableObject
     
 
     #endregion
-
-
 }

@@ -1,7 +1,11 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:M64RPFW.Views.Avalonia.Controls"
              x:Class="M64RPFW.Views.Avalonia.App">
+    <Application.Resources>
+    </Application.Resources>
     <Application.Styles>
         <FluentTheme/>
+        
     </Application.Styles>
 </Application>

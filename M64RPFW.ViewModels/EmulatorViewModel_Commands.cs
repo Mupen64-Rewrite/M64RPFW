@@ -125,9 +125,24 @@ public partial class EmulatorViewModel
     }
 
     [RelayCommand(CanExecute = nameof(MupenIsActive))]
-    private void SetSaveSlot(int id)
+    private void LoadCurrentSlot()
     {
-        Mupen64Plus.SetSavestateSlot(id);
+        Mupen64Plus.LoadStateFromCurrentSlot();
+    }
+    
+    [RelayCommand(CanExecute = nameof(MupenIsActive))]
+    private void SaveCurrentSlot()
+    {
+        Mupen64Plus.SaveStateToCurrentSlot();
+    }
+
+    [RelayCommand(CanExecute = nameof(MupenIsActive))]
+    private void SetSaveSlot()
+    {
+        Console.WriteLine($"Saving slot {CurrentSlotMenuItem}");
+        if (CurrentSlotMenuItem == null)
+            return;
+        Mupen64Plus.SetSavestateSlot((int) CurrentSlotMenuItem);
     }
 
     #endregion
