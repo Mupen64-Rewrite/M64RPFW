@@ -5,8 +5,8 @@
         xmlns:viewModels="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels"
         xmlns:ctrls="clr-namespace:M64RPFW.Views.Avalonia.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        d:DataContext="{x:Type viewModels:SettingsViewModel}"
         x:Class="M64RPFW.Views.Avalonia.Views.SettingsDialog"
+        x:DataType="viewModels:EmulatorViewModel"
         Title="Settings" Width="500" Height="500"
         Closed="TopLevel_OnClosed">
     <Window.Resources>
