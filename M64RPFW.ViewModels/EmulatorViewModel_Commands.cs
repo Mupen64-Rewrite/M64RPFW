@@ -124,5 +124,11 @@ public partial class EmulatorViewModel
         Mupen64Plus.SaveStateToFile(path, saveType);
     }
 
+    [RelayCommand(CanExecute = nameof(MupenIsActive))]
+    private void SetSaveSlot(int id)
+    {
+        Mupen64Plus.SetSavestateSlot(id);
+    }
+
     #endregion
 }
