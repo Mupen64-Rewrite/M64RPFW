@@ -35,8 +35,8 @@
                 <Separator />
                 <MenuItem Header="Load _From File" Command="{Binding LoadStateFromFileCommand}" />
                 <MenuItem Header="Save _To File" Command="{Binding SaveStateToFileCommand}" />
-                <MenuItem Header="_Load State" />
-                <MenuItem Header="_Save State" />
+                <MenuItem Header="_Load State" Command="{Binding LoadCurrentSlotCommand}"/>
+                <MenuItem Header="_Save State" Command="{Binding SaveCurrentSlotCommand}"/>
                 <Separator />
                 <!-- Jank incoming! (Avalonia doesn't have RadioMenuItem, and I can't really implement one) -->
                 <MenuItem Header="_Current Slot" SelectedItem="{Binding CurrentSlotMenuItem,Mode=OneWayToSource}">
