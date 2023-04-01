@@ -45,6 +45,26 @@ public class RPFWSettings : ITomlMetadataProvider
 
     public GeneralSection General { get; } = new();
 
+    public class HotkeysSection : ITomlMetadataProvider
+    {
+        // storage for comments and whitespace
+        TomlPropertiesMetadata? ITomlMetadataProvider.PropertiesMetadata { get; set; }
+        
+        public string OpenRom { get; set; }
+        public string CloseRom { get; set; }
+        public string ResetRom { get; set; }
+        
+        public string PauseOrResume { get; set; }
+        public string FrameAdvance { get; set; }
+        
+        public string LoadFromFile { get; set; }
+        public string SaveToFile { get; set; }
+        public string LoadCurrentSlot { get; set; }
+        public string SaveCurrentSlot { get; set; }
+    }
+
+    public HotkeysSection Hotkeys { get; } = new();
+
 
     #region Singleton definition
 

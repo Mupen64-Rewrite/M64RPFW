@@ -33,8 +33,8 @@
                 <MenuItem Header="_Pause/Resume" Command="{Binding PauseOrResumeCommand}" />
                 <MenuItem Header="Frame _Advance" Command="{Binding FrameAdvanceCommand}" />
                 <Separator />
-                <MenuItem Header="Load _From File" Command="{Binding LoadStateFromFileCommand}" />
-                <MenuItem Header="Save _To File" Command="{Binding SaveStateToFileCommand}" />
+                <MenuItem Header="Load _From File" Command="{Binding LoadFromFileCommand}" />
+                <MenuItem Header="Save _To File" Command="{Binding SaveToFileCommand}" />
                 <MenuItem Header="_Load State" Command="{Binding LoadCurrentSlotCommand}"/>
                 <MenuItem Header="_Save State" Command="{Binding SaveCurrentSlotCommand}"/>
                 <Separator />
