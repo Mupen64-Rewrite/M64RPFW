@@ -85,7 +85,7 @@ public partial class EmulatorViewModel
     }
     
     [RelayCommand(CanExecute = nameof(MupenIsActive))]
-    private async void LoadStateFromFile()
+    private async void LoadFromFile()
     {
         var paths = await _filePickerService.ShowOpenFilePickerAsync(options: new FilePickerOption[]
         {
@@ -100,7 +100,7 @@ public partial class EmulatorViewModel
     }
     
     [RelayCommand(CanExecute = nameof(MupenIsActive))]
-    private async void SaveStateToFile()
+    private async void SaveToFile()
     {
         var path = await _filePickerService.ShowSaveFilePickerAsync(options: new FilePickerOption[]
         {
