@@ -3,43 +3,63 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ctrls="clr-namespace:M64RPFW.Views.Avalonia.Controls"
-        xmlns:vm="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels"
+        xmlns:views="clr-namespace:M64RPFW.Views.Avalonia.Views"
         mc:Ignorable="d"
         x:Class="M64RPFW.Views.Avalonia.Views.MainWindow"
         Icon="/Assets/rpfw.ico"
         Title="M64RPFW"
-        Width="{Binding WindowWidth,Mode=TwoWay}"
-        Height="{Binding WindowHeight,Mode=TwoWay}"
-        CanResize="{Binding Resizable,Mode=OneWay}"
+        Width="{Binding EmulatorViewModel.WindowWidth, Mode=TwoWay}"
+        Height="{Binding EmulatorViewModel.WindowHeight,Mode=TwoWay}"
+        CanResize="{Binding EmulatorViewModel.Resizable,Mode=OneWay}"
         Closed="Window_OnClosed"
         x:CompileBindings="True"
-        x:DataType="vm:EmulatorViewModel">
+        x:DataType="views:MainWindow">
     <Window.Styles>
         <Style Selector="WrapPanel.menu-header Layoutable">
             <Setter Property="VerticalAlignment" Value="Stretch" />
         </Style>
     </Window.Styles>
     <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" LastChildFill="True">
-        <Menu DockPanel.Dock="Top" Height="{Binding MenuHeight,Mode=OneWayToSource}">
+        <Menu DockPanel.Dock="Top" Height="{Binding EmulatorViewModel.MenuHeight,Mode=OneWayToSource}">
             <MenuItem Header="_File">
                 <!-- Opening a ROM depends on the window, thus it's part of view -->
-                <MenuItem Header="_Open ROM" Command="{Binding OpenRomCommand}" />
-                <MenuItem Header="_Close ROM" Command="{Binding CloseRomCommand}" />
-                <MenuItem Header="_Reset ROM" Command="{Binding ResetRomCommand}" />
+                <!-- TODO: implement attached property or behaviour for applying both HotKey and InputGesture from a single binding value -->
+                <MenuItem Header="_Open ROM" Command="{Binding EmulatorViewModel.OpenRomCommand}"
+                          HotKey="{Binding SettingsViewModel.OpenRomHotkey, Converter={StaticResource StringToKeyGestureConverter}}"
+                          InputGesture="{Binding SettingsViewModel.OpenRomHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                <MenuItem Header="_Close ROM" Command="{Binding EmulatorViewModel.CloseRomCommand}"
+                          HotKey="{Binding SettingsViewModel.CloseRomHotkey, Converter={StaticResource StringToKeyGestureConverter}}"
+                          InputGesture="{Binding SettingsViewModel.CloseRomHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                <MenuItem Header="_Reset ROM" Command="{Binding EmulatorViewModel.ResetRomCommand}"
+                          HotKey="{Binding SettingsViewModel.ResetRomHotkey, Converter={StaticResource StringToKeyGestureConverter}}"
+                          InputGesture="{Binding SettingsViewModel.ResetRomHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
                 <Separator />
                 <MenuItem Header="_Settings..." Click="ShowSettingsDialogMenuItem_OnClick" />
             </MenuItem>
             <MenuItem Header="_Emulator">
-                <MenuItem Header="_Pause/Resume" Command="{Binding PauseOrResumeCommand}" />
-                <MenuItem Header="Frame _Advance" Command="{Binding FrameAdvanceCommand}" />
+                <MenuItem Header="_Pause/Resume" Command="{Binding EmulatorViewModel.PauseOrResumeCommand}"
+                          HotKey="{Binding SettingsViewModel.PauseOrResumeHotkey, Converter={StaticResource StringToKeyGestureConverter}}"
+                          InputGesture="{Binding SettingsViewModel.PauseOrResumeHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                <MenuItem Header="Frame _Advance" Command="{Binding EmulatorViewModel.FrameAdvanceCommand}"
+                          HotKey="{Binding SettingsViewModel.FrameAdvanceHotkey, Converter={StaticResource StringToKeyGestureConverter}}"
+                          InputGesture="{Binding SettingsViewModel.FrameAdvanceHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
                 <Separator />
-                <MenuItem Header="Load _From File" Command="{Binding LoadFromFileCommand}" />
-                <MenuItem Header="Save _To File" Command="{Binding SaveToFileCommand}" />
-                <MenuItem Header="_Load State" Command="{Binding LoadCurrentSlotCommand}"/>
-                <MenuItem Header="_Save State" Command="{Binding SaveCurrentSlotCommand}"/>
+                <MenuItem Header="Load _From File" Command="{Binding EmulatorViewModel.LoadFromFileCommand}"
+                          HotKey="{Binding SettingsViewModel.LoadFromFileHotkey, Converter={StaticResource StringToKeyGestureConverter}}"
+                          InputGesture="{Binding SettingsViewModel.LoadFromFileHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                <MenuItem Header="Save _To File" Command="{Binding EmulatorViewModel.SaveToFileCommand}"
+                          HotKey="{Binding SettingsViewModel.SaveToFileHotkey, Converter={StaticResource StringToKeyGestureConverter}}"
+                          InputGesture="{Binding SettingsViewModel.SaveToFileHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                <MenuItem Header="_Load State" Command="{Binding EmulatorViewModel.LoadCurrentSlotCommand}"
+                          HotKey="{Binding SettingsViewModel.LoadCurrentSlotHotkey, Converter={StaticResource StringToKeyGestureConverter}}"
+                          InputGesture="{Binding SettingsViewModel.LoadCurrentSlotHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                <MenuItem Header="_Save State" Command="{Binding EmulatorViewModel.SaveCurrentSlotCommand}"
+                          HotKey="{Binding SettingsViewModel.SaveCurrentSlotHotkey, Converter={StaticResource StringToKeyGestureConverter}}"
+                          InputGesture="{Binding SettingsViewModel.SaveCurrentSlotHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
                 <Separator />
                 <!-- Jank incoming! (Avalonia doesn't have RadioMenuItem, and I can't really implement one) -->
-                <MenuItem Header="_Current Slot" SelectedItem="{Binding CurrentSlotMenuItem,Mode=OneWayToSource}">
+                <MenuItem Header="_Current Slot"
+                          SelectedItem="{Binding EmulatorViewModel.CurrentSlotMenuItem,Mode=OneWayToSource}">
                     <MenuItem.Styles>
                         <Style Selector="MenuItem">
                             <Setter Property="Header">
@@ -47,11 +67,11 @@
                                     <Template>
                                         <!-- Need a way to make this actually show the current slot -->
                                         <ctrls:ClickableRadioButton IsHitTestVisible="False" Content="{Binding .}"
-                                                                    GroupName="CurrentSlotMenu"/>
+                                                                    GroupName="CurrentSlotMenu" />
                                     </Template>
                                 </Setter.Value>
                             </Setter>
-                            <Setter Property="Command" Value="{Binding SetSaveSlotCommand}"/>
+                            <Setter Property="Command" Value="{Binding EmulatorViewModel.SetSaveSlotCommand}" />
                         </Style>
                     </MenuItem.Styles>
                     <MenuItem.Items>

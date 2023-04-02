@@ -1,8 +1,10 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls="clr-namespace:M64RPFW.Views.Avalonia.Controls"
+             xmlns:converter="clr-namespace:M64RPFW.Views.Avalonia.Converter"
              x:Class="M64RPFW.Views.Avalonia.App">
     <Application.Resources>
+        <converter:StringToKeyGestureConverter x:Key="StringToKeyGestureConverter"/>
     </Application.Resources>
     <Application.Styles>
         <FluentTheme/>

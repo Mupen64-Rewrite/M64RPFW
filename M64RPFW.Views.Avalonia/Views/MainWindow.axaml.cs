@@ -15,22 +15,31 @@ public partial class MainWindow : Window
     {
         AvaloniaXamlLoader.Load(this);
 
-        DataContext = new EmulatorViewModel(this.Find<VidextControl>("EmulatorWindow")!, (App) Application.Current!,
+        EmulatorViewModel = new EmulatorViewModel(this.Find<VidextControl>("EmulatorWindow")!, (App) Application.Current!,
             FilePickerService.Instance);
+        SettingsViewModel = new SettingsViewModel(FilePickerService.Instance);
 
-        var mi = this.Find<MenuItem>("CurrentSlotMenu");
+        DataContext = this;
+        
+        // ? vvv
+        var mi = this.Find<MenuItem>("CurrentSlotMenu"); 
     }
 
-    private EmulatorViewModel ViewModel => (EmulatorViewModel) DataContext!;
+    // avalonia compiled binding resolver lives in another assembly, so these have to be public :(
+    public EmulatorViewModel EmulatorViewModel { get; }
+    public SettingsViewModel SettingsViewModel { get; }
 
     private void Window_OnClosed(object? sender, EventArgs eventArgs)
     {
-        ViewModel.OnWindowClosed();
+        EmulatorViewModel.OnWindowClosed();
     }
 
     private void ShowSettingsDialogMenuItem_OnClick(object? sender, RoutedEventArgs e)
     {
-        var dialog = new SettingsDialog();
+        var dialog = new SettingsDialog()
+        {
+            DataContext = SettingsViewModel
+        };
         dialog.ShowDialog(this);
     }
 }
