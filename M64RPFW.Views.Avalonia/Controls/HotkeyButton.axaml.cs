@@ -22,11 +22,11 @@ public partial class HotkeyButton : UserControl
         AvaloniaXamlLoader.Load(this);
     }
 
-    public static readonly StyledProperty<KeyGesture?> CurrentHotkeyProperty =
-        AvaloniaProperty.Register<HotkeyButton, KeyGesture?>(nameof(CurrentHotkey),
+    public static readonly StyledProperty<KeyGesture> CurrentHotkeyProperty =
+        AvaloniaProperty.Register<HotkeyButton, KeyGesture>(nameof(CurrentHotkey),
             defaultBindingMode: BindingMode.TwoWay);
 
-    public KeyGesture? CurrentHotkey
+    public KeyGesture CurrentHotkey
     {
         get => GetValue(CurrentHotkeyProperty);
         set => SetValue(CurrentHotkeyProperty, value);
@@ -40,18 +40,18 @@ public partial class HotkeyButton : UserControl
             return;
 
         // Similar to Minecraft, disable shortcut on pressing Escape
-        CurrentHotkey = e.Key == Key.Escape ? null : new KeyGesture(e.Key, e.KeyModifiers);
+        CurrentHotkey = e.Key == Key.Escape ? new KeyGesture(Key.None) : new KeyGesture(e.Key, e.KeyModifiers);
 
         // unfocus this element
         e.Device?.SetFocusedElement(null, NavigationMethod.Unspecified, KeyModifiers.None);
-        wasActivated = false;
+        _isAwaitingInput = false;
     }
 
     private void Button_OnClick(object? sender, RoutedEventArgs e)
     {
-        wasActivated = true;
-        this.Focus();
+        _isAwaitingInput = true;
+        Focus();
     }
 
-    private bool wasActivated = false;
+    private bool _isAwaitingInput = false;
 }
