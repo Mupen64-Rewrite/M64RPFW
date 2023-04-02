@@ -39,7 +39,8 @@ public unsafe class VidextControl : NativeControlHost, IOpenGLContextService
     {
         if (_sdlWin != null)
             return;
-        SDL.InitSubSystem(Sdl.InitVideo);
+        if (SDL.WasInit(Sdl.InitVideo) == 0)
+            SDL.InitSubSystem(Sdl.InitVideo);
         // needed to let SDL handle OpenGL context management
         SDL.SetHint("SDL_VIDEO_FOREIGN_WINDOW_OPENGL", "1");
         _sdlWin = SDL.CreateWindowFrom((void*) _winHandle);
@@ -58,8 +59,11 @@ public unsafe class VidextControl : NativeControlHost, IOpenGLContextService
             SDL.GLSwapWindow(_sdlWin);
             
             SDL.GLDeleteContext(_sdlGL);
+            _sdlGL = null;
         }
         SDL.DestroyWindow(_sdlWin);
+        _sdlWin = null;
+        
         SDL.QuitSubSystem(Sdl.InitVideo);
     }
 
