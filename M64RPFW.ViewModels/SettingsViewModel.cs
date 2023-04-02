@@ -84,6 +84,60 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         set => SetRPFWSetting((inst, val) => inst.General.Locale = val, value);
     }
     
+    public string OpenRomHotkey
+    {
+        get => RPFWSettings.Instance.Hotkeys.OpenRom;
+        set => SetRPFWSetting((inst, val) => inst.Hotkeys.OpenRom = val, value);
+    }
+    
+    public string CloseRomHotkey
+    {
+        get => RPFWSettings.Instance.Hotkeys.CloseRom;
+        set => SetRPFWSetting((inst, val) => inst.Hotkeys.CloseRom = val, value);
+    }
+    
+    public string ResetRomHotkey
+    {
+        get => RPFWSettings.Instance.Hotkeys.ResetRom;
+        set => SetRPFWSetting((inst, val) => inst.Hotkeys.ResetRom = val, value);
+    }
+    
+    public string PauseOrResumeHotkey
+    {
+        get => RPFWSettings.Instance.Hotkeys.PauseOrResume;
+        set => SetRPFWSetting((inst, val) => inst.Hotkeys.PauseOrResume = val, value);
+    }
+    
+    public string FrameAdvanceHotkey
+    {
+        get => RPFWSettings.Instance.Hotkeys.FrameAdvance;
+        set => SetRPFWSetting((inst, val) => inst.Hotkeys.FrameAdvance = val, value);
+    }
+    
+    public string LoadFromFileHotkey
+    {
+        get => RPFWSettings.Instance.Hotkeys.LoadFromFile;
+        set => SetRPFWSetting((inst, val) => inst.Hotkeys.LoadFromFile = val, value);
+    }
+    
+    public string SaveToFileHotkey
+    {
+        get => RPFWSettings.Instance.Hotkeys.SaveToFile;
+        set => SetRPFWSetting((inst, val) => inst.Hotkeys.SaveToFile = val, value);
+    }
+    
+    public string LoadCurrentSlotHotkey
+    {
+        get => RPFWSettings.Instance.Hotkeys.LoadCurrentSlot;
+        set => SetRPFWSetting((inst, val) => inst.Hotkeys.LoadCurrentSlot = val, value);
+    }
+    
+    public string SaveCurrentSlotHotkey
+    {
+        get => RPFWSettings.Instance.Hotkeys.SaveCurrentSlot;
+        set => SetRPFWSetting((inst, val) => inst.Hotkeys.SaveCurrentSlot = val, value);
+    }
+    
     // Save on dialog closing, otherwise it won't affect Mupen64Plus
     public void OnClosed()
     {

@@ -49,18 +49,18 @@ public class RPFWSettings : ITomlMetadataProvider
     {
         // storage for comments and whitespace
         TomlPropertiesMetadata? ITomlMetadataProvider.PropertiesMetadata { get; set; }
-        
-        public string OpenRom { get; set; }
-        public string CloseRom { get; set; }
-        public string ResetRom { get; set; }
-        
-        public string PauseOrResume { get; set; }
-        public string FrameAdvance { get; set; }
-        
-        public string LoadFromFile { get; set; }
-        public string SaveToFile { get; set; }
-        public string LoadCurrentSlot { get; set; }
-        public string SaveCurrentSlot { get; set; }
+
+        public string OpenRom { get; set; } = "Ctrl+O";
+        public string CloseRom { get; set; } = "Ctrl+W";
+        public string ResetRom { get; set; } = "Ctrl+R";
+
+        public string PauseOrResume { get; set; } = "P";
+        public string FrameAdvance { get; set; } = "F";
+
+        public string LoadFromFile { get; set; } = "Ctrl+Shift+O";
+        public string SaveToFile { get; set; } = "Ctrl+Shift+S";
+        public string LoadCurrentSlot { get; set; } = "P";
+        public string SaveCurrentSlot { get; set; } = "I";
     }
 
     public HotkeysSection Hotkeys { get; } = new();
