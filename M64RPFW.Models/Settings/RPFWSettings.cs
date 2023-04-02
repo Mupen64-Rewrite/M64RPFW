@@ -59,7 +59,7 @@ public class RPFWSettings : ITomlMetadataProvider
 
         public string LoadFromFile { get; set; } = "Ctrl+Shift+O";
         public string SaveToFile { get; set; } = "Ctrl+Shift+S";
-        public string LoadCurrentSlot { get; set; } = "P";
+        public string LoadCurrentSlot { get; set; } = "L";
         public string SaveCurrentSlot { get; set; } = "I";
     }
 

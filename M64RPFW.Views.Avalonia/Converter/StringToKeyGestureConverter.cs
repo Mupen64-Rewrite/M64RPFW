@@ -15,12 +15,19 @@ public class StringToKeyGestureConverter : IValueConverter
         }
         else
         {
-            throw new ArgumentException($"Expected {nameof(String)}, got {value.GetType()}");
+            throw new ArgumentException($"Expected {nameof(String)}, got {value?.GetType()}");
         }
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        if (value is KeyGesture keyGesture)
+        {
+            return keyGesture.ToString();
+        }
+        else
+        {
+            throw new ArgumentException($"Expected {nameof(KeyGesture)}, got {value?.GetType()}");
+        }
     }
 }
