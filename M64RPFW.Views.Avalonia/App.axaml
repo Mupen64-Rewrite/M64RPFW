@@ -5,6 +5,7 @@
              x:Class="M64RPFW.Views.Avalonia.App">
     <Application.Resources>
         <converter:StringToKeyGestureConverter x:Key="StringToKeyGestureConverter"/>
+        <converter:DefaultValueConverter x:Key="DefaultValueConverter"/>
     </Application.Resources>
     <Application.Styles>
         <FluentTheme/>
