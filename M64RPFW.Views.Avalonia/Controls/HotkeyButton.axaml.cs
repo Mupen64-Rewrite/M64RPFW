@@ -34,6 +34,9 @@ public partial class HotkeyButton : UserControl
 
     protected override void OnKeyDown(KeyEventArgs e)
     {
+        // Button has to have been activated for this to work
+        if (!_isAwaitingInput)
+            return;
         // modifiers don't count
         if (e.Key is Key.LeftCtrl or Key.RightCtrl or Key.LeftShift or Key.RightShift or Key.LeftAlt or Key.RightAlt
             or Key.LWin or Key.RWin)
@@ -44,6 +47,11 @@ public partial class HotkeyButton : UserControl
 
         // unfocus this element
         e.Device?.SetFocusedElement(null, NavigationMethod.Unspecified, KeyModifiers.None);
+        _isAwaitingInput = false;
+    }
+
+    protected override void OnLostFocus(RoutedEventArgs e)
+    {
         _isAwaitingInput = false;
     }
 

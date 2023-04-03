@@ -10,21 +10,20 @@ namespace M64RPFW.ViewModels;
 
 public partial class EmulatorViewModel : ObservableObject
 {
-    [ObservableProperty] private double _windowWidth = 640;
-    [ObservableProperty] private double _windowHeight = 480;
-    [ObservableProperty] private double _menuHeight;
     [ObservableProperty] private bool _resizable = true;
     [ObservableProperty] private object? _currentSlotMenuItem;
     
     private readonly IOpenGLContextService _openGlContextService;
     private readonly IDispatcherService _dispatcherService;
     private readonly IFilePickerService _filePickerService;
+    private readonly IWindowSizingService _windowSizingService;
     
-    public EmulatorViewModel(IOpenGLContextService openGlContextService, IDispatcherService dispatcherService, IFilePickerService filePickerService)
+    public EmulatorViewModel(IOpenGLContextService openGlContextService, IDispatcherService dispatcherService, IFilePickerService filePickerService, IWindowSizingService windowSizingService)
     {
         _openGlContextService = openGlContextService;
         _dispatcherService = dispatcherService;
         _filePickerService = filePickerService;
+        _windowSizingService = windowSizingService;
 
         var version = Mupen64Plus.GetVersionInfo();
         Mupen64Plus.Log(Mupen64Plus.LogSources.App, MessageLevel.Info,
@@ -43,18 +42,6 @@ public partial class EmulatorViewModel : ObservableObject
                 _dispatcherService.Execute(OnEmuStateChanged);
                 break;
         }
-    }
-
-    partial void OnSizeChanged();
-
-    partial void OnWindowWidthChanged(double value)
-    {
-        OnSizeChanged();
-    }
-    
-    partial void OnWindowHeightChanged(double value)
-    {
-        OnSizeChanged();
     }
 
     public void OnWindowClosed()
