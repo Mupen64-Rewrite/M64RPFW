@@ -1,6 +1,8 @@
 using System.Runtime.InteropServices;
 using M64RPFW.Models.Helpers;
 using M64RPFW.Models.Types;
+using static M64RPFW.Models.Types.Mupen64PlusTypes;
+using Type = System.Type;
 
 namespace M64RPFW.Models.Emulation;
 
@@ -23,23 +25,23 @@ public static partial class Mupen64Plus
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate Mupen64PlusTypes.Error DConfigListSections(IntPtr context, ListSectionsCallback callback);
+    private delegate Error DConfigListSections(IntPtr context, ListSectionsCallback callback);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate Mupen64PlusTypes.Error DConfigOpenSection(string name, out IntPtr handle);
+    private delegate Error DConfigOpenSection(string name, out IntPtr handle);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate Mupen64PlusTypes.Error DConfigListParameters(IntPtr handle, IntPtr context, ListParametersCallback callback);
+    private delegate Error DConfigListParameters(IntPtr handle, IntPtr context, ListParametersCallback callback);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate Mupen64PlusTypes.Error DConfigSaveFile();
+    private delegate Error DConfigSaveFile();
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate Mupen64PlusTypes.Error DConfigSaveSection(string name);
+    private delegate Error DConfigSaveSection(string name);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
@@ -47,11 +49,11 @@ public static partial class Mupen64Plus
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate Mupen64PlusTypes.Error DConfigDeleteSection(string name);
+    private delegate Error DConfigDeleteSection(string name);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate Mupen64PlusTypes.Error DConfigRevertChanges(string name);
+    private delegate Error DConfigRevertChanges(string name);
 
     #endregion
 
@@ -59,15 +61,15 @@ public static partial class Mupen64Plus
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate Mupen64PlusTypes.Error DConfigSetParameter(IntPtr handle, string param, Mupen64PlusTypes.Type type, IntPtr value);
+    private delegate Error DConfigSetParameter(IntPtr handle, string param, Mupen64PlusTypes.Type type, IntPtr value);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate Mupen64PlusTypes.Error DConfigSetParameterHelp(IntPtr handle, string param, string help);
+    private delegate Error DConfigSetParameterHelp(IntPtr handle, string param, string help);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate Mupen64PlusTypes.Error DConfigGetParameterType(IntPtr handle, string param, out Mupen64PlusTypes.Type type);
+    private delegate Error DConfigGetParameterType(IntPtr handle, string param, out Mupen64PlusTypes.Type type);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]

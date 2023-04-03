@@ -2,6 +2,7 @@ using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Interfaces;
 using M64RPFW.Models.Types;
 using M64RPFW.Services;
+using M64RPFW.Services.Abstractions;
 
 namespace M64RPFW.ViewModels;
 
@@ -61,15 +62,20 @@ public unsafe partial class EmulatorViewModel : IVideoExtensionService
                 return Error.Unsupported;
             
             Mupen64Plus.Log(LogSources.Vidext, MessageLevel.Info, $"Setting video mode {width}x{height}");
-            WindowWidth = width;
-            WindowHeight = height + MenuHeight;
             if ((flags & Mupen64PlusTypes.VideoFlags.SupportResizing) == 0)
                 Resizable = false;
-
+            
+            _dispatcherService.Execute(() =>
+            {
+                _windowSizingService.LayoutToFit(new WindowSize(width, height));
+            });
+                
+                
             _openGlContextService.CreateWindow(width, height, bpp);
+
             return Error.Success;
         }
-        catch (Exception)
+        catch (Exception e)
         {
             return Error.Internal;
         }
@@ -157,12 +163,13 @@ public unsafe partial class EmulatorViewModel : IVideoExtensionService
 
     #endregion
 
-    partial void OnSizeChanged()
+    public void OnSizeChanged()
     {
         if (!MupenIsActive)
             return;
-        var width = Math.Min((uint) WindowWidth, 65535);
-        var height = Math.Min((uint) WindowHeight, 65535);
+        var size = _windowSizingService.GetWindowSize();
+        var width = Math.Min((uint) size.Width, 65535);
+        var height = Math.Min((uint) size.Height, 65535);
         Mupen64Plus.CoreStateSet(Mupen64PlusTypes.CoreParam.VideoSize, (width << 16) | height);
     }
 }

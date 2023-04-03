@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 
 namespace M64RPFW.Models.Types;
 
-public static class Mupen64PlusTypes
+public static partial class Mupen64PlusTypes
 {
     public enum Error
     {
