@@ -13,6 +13,9 @@ public static partial class Mupen64Plus
     [return: MarshalAs(UnmanagedType.Bool)]
     public delegate bool VCRMsgFunc(MessageLevel lvl, string msg);
 
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    public delegate void VCRStateCallback(VCRParam param, int value);
+
     #endregion
 
     #region VCR delegates
@@ -23,7 +26,16 @@ public static partial class Mupen64Plus
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
+    private delegate void DVCR_SetStateCallback(VCRStateCallback callback);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [RuntimeDllImport]
     private delegate uint DVCR_GetCurFrame();
+
+    
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [RuntimeDllImport]
+    private delegate void DVCR_StopMovie([MarshalAs(UnmanagedType.Bool)] bool restart);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
@@ -61,7 +73,9 @@ public static partial class Mupen64Plus
     private static void ResolveVCRFunctions()
     {
         ResolveDelegate(_libHandle, out _vcrSetErrorCallback);
+        ResolveDelegate(_libHandle, out _vcrSetStateCallback);
         ResolveDelegate(_libHandle, out _vcrGetCurFrame);
+        ResolveDelegate(_libHandle, out _vcrStopMovie);
         ResolveDelegate(_libHandle, out _vcrSetKeys);
         ResolveDelegate(_libHandle, out _vcrGetKeys);
         ResolveDelegate(_libHandle, out _vcrIsPlaying);
@@ -72,7 +86,9 @@ public static partial class Mupen64Plus
     }
 
     private static DVCR_SetErrorCallback _vcrSetErrorCallback;
+    private static DVCR_SetStateCallback _vcrSetStateCallback;
     private static DVCR_GetCurFrame _vcrGetCurFrame;
+    private static DVCR_StopMovie _vcrStopMovie;
     private static DVCR_SetKeys _vcrSetKeys;
     private static DVCR_GetKeys _vcrGetKeys;
     private static DVCR_IsPlaying _vcrIsPlaying;
@@ -80,6 +96,6 @@ public static partial class Mupen64Plus
     private static DVCR_SetReadOnly _vcrSetReadOnly;
     private static DVCR_StartRecording _vcrStartRecording;
     private static DVCR_StartMovie _vcrStartMovie;
-    
-    
+
+
 }

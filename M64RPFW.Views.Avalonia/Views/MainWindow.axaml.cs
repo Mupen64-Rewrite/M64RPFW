@@ -69,13 +69,11 @@ public partial class MainWindow : Window, IWindowSizingService
 
     public WindowSize GetWindowSize()
     {
-        Mupen64Plus.Log(Mupen64Plus.LogSources.App, Mupen64PlusTypes.MessageLevel.Status, $"GWS Is UI Thread: {Dispatcher.UIThread.CheckAccess()}");
         return new WindowSize(_vidextControl.Width, _vidextControl.Height);
     }
 
     public void LayoutToFit(WindowSize size)
     {
-        Mupen64Plus.Log(Mupen64Plus.LogSources.App, Mupen64PlusTypes.MessageLevel.Status, $"LTF Is UI Thread: {Dispatcher.UIThread.CheckAccess()}");
         _shouldBlockSizeChangeEvents = true;
         _prevVidextMinWidth = _vidextControl.MinWidth;
         _prevVidextMinHeight = _vidextControl.MinHeight;

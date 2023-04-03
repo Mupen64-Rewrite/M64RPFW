@@ -39,4 +39,14 @@ public static partial class Mupen64Plus
         Error err = _vcrStartMovie(path);
         ThrowForError(err);
     }
+
+    public static void VCR_StopMovie()
+    {
+        _vcrStopMovie(false);
+    }
+
+    public static void VCR_RestartMovie()
+    {
+        _vcrStopMovie(true);
+    }
 }

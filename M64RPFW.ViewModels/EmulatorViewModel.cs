@@ -73,8 +73,8 @@ public partial class EmulatorViewModel : ObservableObject
     public bool MupenIsRunning => MupenEmuState is EmuState.Running;
     public bool MupenIsPaused => MupenEmuState is EmuState.Paused;
     public bool MupenIsActive => MupenEmuState is EmuState.Running or EmuState.Paused;
-    
-    
+
+    public bool VCRIsPlaying => Mupen64Plus.VCR_IsPlaying;
 
     #endregion
 }
