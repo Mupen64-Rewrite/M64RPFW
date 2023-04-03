@@ -139,10 +139,28 @@ public partial class EmulatorViewModel
     [RelayCommand(CanExecute = nameof(MupenIsActive))]
     private void SetSaveSlot()
     {
-        Console.WriteLine($"Saving slot {CurrentSlotMenuItem}");
         if (CurrentSlotMenuItem == null)
             return;
         Mupen64Plus.SetSavestateSlot((int) CurrentSlotMenuItem);
+    }
+
+    [RelayCommand(CanExecute = nameof(MupenIsActive))]
+    private async void OpenMovie()
+    {
+        var paths = await _filePickerService.ShowOpenFilePickerAsync(options: new FilePickerOption[]
+        {
+            new("M64 movie (.m64)", Patterns: new[] { "*.m64" })
+        });
+        if (paths == null)
+            return;
+
+        Mupen64Plus.VCR_StartMovie(paths[0]);
+        Mupen64Plus.VCR_ReadOnly = true;
+    }
+
+    private void CloseMovie()
+    {
+        Mupen64Plus.VCR_StopMovie();
     }
 
     #endregion

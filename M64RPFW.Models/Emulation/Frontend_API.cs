@@ -12,6 +12,8 @@ public static partial class Mupen64Plus
     private static readonly DebugCallback _debugCallback;
     private static readonly StateCallback _stateCallback;
     private static readonly FrameCallback _frameCallback;
+    private static readonly VCRMsgFunc _vcrMsgFunc;
+    private static readonly VCRStateCallback _vcrStateCallback;
 
     private static GCHandle[] _callbackGCHandles;
     
@@ -25,15 +27,24 @@ public static partial class Mupen64Plus
 
         ResolveFrontendFunctions();
         ResolveConfigFunctions();
+        ResolveVCRFunctions();
 
         _debugCallback = OnLogMessage;
         _stateCallback = OnStateChange;
+        _vcrMsgFunc = (lvl, msg) =>
+        {
+            OnLogMessage((nint) (int) LogSources.VCR, lvl, msg);
+            return true;
+        };
+        _vcrStateCallback = OnVCRStateChange;
 
         Mupen64PlusTypes.Error err = _fnCoreStartup(
-            0x020000, null, expectedPath, (IntPtr) (int) Mupen64PlusTypes.PluginType.Core,
+            0x020000, null, expectedPath, (nint) (int) Mupen64PlusTypes.PluginType.Core,
             _debugCallback, IntPtr.Zero, _stateCallback);
         ThrowForError(err);
 
+        _vcrSetErrorCallback(_vcrMsgFunc);
+        _vcrSetStateCallback(_vcrStateCallback);
 
         _frameCallback = OnFrameComplete;
         err = _fnCoreDoCommand(Mupen64PlusTypes.Command.SetFrameCallback, 0,
@@ -45,6 +56,7 @@ public static partial class Mupen64Plus
             GCHandle.Alloc(_debugCallback, GCHandleType.Normal),
             GCHandle.Alloc(_stateCallback, GCHandleType.Normal),
             GCHandle.Alloc(_frameCallback, GCHandleType.Normal),
+            GCHandle.Alloc(_vcrMsgFunc, GCHandleType.Normal), 
         };
 
         _pluginDict = new Dictionary<Mupen64PlusTypes.PluginType, IntPtr>();
@@ -93,6 +105,8 @@ public static partial class Mupen64Plus
     {
         var type = (int) context;
 
+        string sourceString = type < 0x4000 ? "M64+" : "RPFW";
+
         string typeString = type switch
         {
             (int) Mupen64PlusTypes.PluginType.Core => "CORE ",
@@ -100,10 +114,11 @@ public static partial class Mupen64Plus
             (int) Mupen64PlusTypes.PluginType.Audio => "AUDIO",
             (int) Mupen64PlusTypes.PluginType.Input => "INPUT",
             (int) Mupen64PlusTypes.PluginType.RSP => "RSP  ",
+            (int) LogSources.VCR => "VCR  ",
             (int) LogSources.App => "APP  ",
             (int) LogSources.Vidext => "VIDXT",
             (int) LogSources.Config => "CONF ",
-            _ => "??    "
+            _ => "??   "
         };
 
         string levelString = level switch
@@ -116,12 +131,17 @@ public static partial class Mupen64Plus
             _ => "??   "
         };
 
-        Console.WriteLine($"[M64+ {typeString} {levelString}] {message}");
+        Console.WriteLine($"[{sourceString} {typeString} {levelString}] {message}");
     }
 
     private static void OnStateChange(IntPtr context, Mupen64PlusTypes.CoreParam param, int newValue)
     {
         StateChanged?.Invoke(null, new StateChangeEventArgs { Param = param, NewValue = newValue });
+    }
+
+    private static void OnVCRStateChange(Mupen64PlusTypes.VCRParam param, int newValue)
+    {
+        VCRStateChanged?.Invoke(null, new VCRStateChangeEventArgs {Param = param, NewValue = newValue});
     }
 
     private static void OnFrameComplete(int frameIndex)
@@ -137,7 +157,15 @@ public static partial class Mupen64Plus
         public int NewValue { get; init; }
     }
 
+    public class VCRStateChangeEventArgs : EventArgs
+    {
+        public Mupen64PlusTypes.VCRParam Param { get; init; }
+        public int NewValue { get; init; }
+    }
+
     public static event EventHandler<StateChangeEventArgs>? StateChanged;
+
+    public static event EventHandler<VCRStateChangeEventArgs>? VCRStateChanged; 
     public static event EventHandler<int>? FrameComplete;
 
     #region Core Commands
@@ -507,7 +535,8 @@ public static partial class Mupen64Plus
 
     public enum LogSources
     {
-        App = 0x4201,
+        VCR = 0x2000,
+        App = 0x4000,
         Vidext,
         Config
     }

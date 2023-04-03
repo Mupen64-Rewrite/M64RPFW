@@ -42,4 +42,10 @@ public static partial class Mupen64PlusTypes
         FromReset = 2,
         FromEEPROM = 4,
     }
+
+    public enum VCRParam
+    {
+        State = 0,
+        Readonly
+    }
 }
