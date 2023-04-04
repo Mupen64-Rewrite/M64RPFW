@@ -46,6 +46,6 @@ public static partial class Mupen64PlusTypes
     public enum VCRParam
     {
         State = 0,
-        Readonly
+        ReadOnly
     }
 }

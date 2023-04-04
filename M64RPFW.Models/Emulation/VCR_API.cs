@@ -22,7 +22,7 @@ public static partial class Mupen64Plus
 
     public static bool VCR_IsPlaying => _vcrIsPlaying();
 
-    public static bool VCR_ReadOnly
+    public static bool VCR_IsReadOnly
     {
         get => _vcrIsReadOnly();
         set => _vcrSetReadOnly(value);

@@ -90,10 +90,16 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="_Movie">
-                <MenuItem Header="_Open Movie" />
-                <MenuItem Header="_Record Movie" />
-                <MenuItem Header="_Save Movie" />
-                <MenuItem Header="_Save Movie" />
+                <MenuItem Header="_Open Movie" Command="{Binding EmulatorViewModel.OpenMovieCommand}"/>
+                <MenuItem Header="Start _Recording" Command="{Binding EmulatorViewModel.StartRecordingCommand}"/>
+                <MenuItem Header="_Stop Movie" Command="{Binding EmulatorViewModel.StopMovieCommand}"/>
+                <MenuItem Header="Res_tart Movie" Command="{Binding EmulatorViewModel.RestartMovieCommand}"/>
+                <MenuItem Header="Read-Only _Mode" IsEnabled="False">
+                    <!--Make it toggle read-only state somehow-->
+                </MenuItem>
+                <Separator/>
+                <MenuItem Header="_Start Encoder..." IsEnabled="False"/>
+                <MenuItem Header="_Stop Encoder" IsEnabled="False"/>
             </MenuItem>
         </Menu>
         <ctrls:VidextControl Name="EmulatorWindow" />
