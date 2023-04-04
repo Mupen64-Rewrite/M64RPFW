@@ -44,6 +44,19 @@ public partial class EmulatorViewModel : ObservableObject
         }
     }
 
+    private void OnVCRStateChange(object? sender, Mupen64Plus.VCRStateChangeEventArgs args)
+    {
+        switch (args.Param)
+        {
+            case VCRParam.State:
+                _dispatcherService.Execute(OnVCRIsPlayingChanged);
+                break;
+            case VCRParam.ReadOnly:
+                _dispatcherService.Execute(OnVCRIsReadOnlyChanged);
+                break;
+        }
+    }
+
     public void OnWindowClosed()
     {
         if (MupenIsActive)
@@ -74,7 +87,19 @@ public partial class EmulatorViewModel : ObservableObject
     public bool MupenIsPaused => MupenEmuState is EmuState.Paused;
     public bool MupenIsActive => MupenEmuState is EmuState.Running or EmuState.Paused;
 
-    public bool VCRIsPlaying => Mupen64Plus.VCR_IsPlaying;
+    public bool VCRIsPlaying => Mupen64Plus.VCR_IsPlaying && MupenIsActive;
+    public bool VCRIsNotPlaying => !Mupen64Plus.VCR_IsPlaying && MupenIsActive;
+    public bool VCRIsReadOnly => Mupen64Plus.VCR_IsReadOnly;
+
+    private void OnVCRIsPlayingChanged()
+    {
+        
+    }
+
+    private void OnVCRIsReadOnlyChanged()
+    {
+        
+    }
 
     #endregion
 }

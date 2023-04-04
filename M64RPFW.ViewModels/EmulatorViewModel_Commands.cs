@@ -153,14 +153,41 @@ public partial class EmulatorViewModel
         });
         if (paths == null)
             return;
+        
+        if (Mupen64Plus.VCR_IsPlaying)
+            Mupen64Plus.VCR_StopMovie();
 
         Mupen64Plus.VCR_StartMovie(paths[0]);
-        Mupen64Plus.VCR_ReadOnly = true;
+        Mupen64Plus.VCR_IsReadOnly = true;
     }
-
-    private void CloseMovie()
+    
+    [RelayCommand(CanExecute = nameof(MupenIsActive))]
+    private async void StartRecording()
+    {
+        var path = await _filePickerService.ShowSaveFilePickerAsync(options: new FilePickerOption[]
+        {
+            new("M64 movie (.m64)", Patterns: new[] { "*.m64" })
+        });
+        if (path == null)
+            return;
+        
+        if (Mupen64Plus.VCR_IsPlaying)
+            Mupen64Plus.VCR_StopMovie();
+        
+        // TODO show another dialog to prompt author, description, start type
+        Mupen64Plus.VCR_StartRecording(path);
+    }
+    
+    [RelayCommand(CanExecute = nameof(VCRIsPlaying))]
+    private void StopMovie()
     {
         Mupen64Plus.VCR_StopMovie();
+    }
+
+    [RelayCommand(CanExecute = nameof(VCRIsPlaying))]
+    private void RestartMovie()
+    {
+        Mupen64Plus.VCR_RestartMovie();
     }
 
     #endregion
