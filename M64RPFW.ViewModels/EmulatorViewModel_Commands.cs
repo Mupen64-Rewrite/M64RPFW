@@ -145,19 +145,12 @@ public partial class EmulatorViewModel
     }
 
     [RelayCommand(CanExecute = nameof(MupenIsActive))]
-    private async void OpenMovie()
+    private void PlayMovie(string path)
     {
-        var paths = await _filePickerService.ShowOpenFilePickerAsync(options: new FilePickerOption[]
-        {
-            new("M64 movie (.m64)", Patterns: new[] { "*.m64" })
-        });
-        if (paths == null)
-            return;
-        
         if (Mupen64Plus.VCR_IsPlaying)
             Mupen64Plus.VCR_StopMovie();
 
-        Mupen64Plus.VCR_StartMovie(paths[0]);
+        Mupen64Plus.VCR_StartMovie(path);
         Mupen64Plus.VCR_IsReadOnly = true;
     }
     

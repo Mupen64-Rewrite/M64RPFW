@@ -5,7 +5,9 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.Input;
 using M64RPFW.Models.Emulation;
+using M64RPFW.Models.Helpers;
 using M64RPFW.Models.Types;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
@@ -85,4 +87,15 @@ public partial class MainWindow : Window, IWindowSizingService
     private VidextControl _vidextControl;
     private bool _shouldBlockSizeChangeEvents;
     private double _prevVidextMinWidth, _prevVidextMinHeight;
+    
+    private async void OpenMovieMenuItem_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var movieSelectionDialog = new MovieSelectionDialog();
+        await movieSelectionDialog.ShowDialog(this);
+
+        if (!PathHelper.IsValid(movieSelectionDialog.MovieSelectionViewModel.Path))
+            return;
+        
+        EmulatorViewModel.PlayMovieCommand.Execute(movieSelectionDialog.MovieSelectionViewModel.Path);
+    }
 }
