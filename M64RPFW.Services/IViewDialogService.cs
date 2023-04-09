@@ -8,7 +8,15 @@ namespace M64RPFW.Services;
 /// </summary>
 public interface IViewDialogService
 {
+    /// <summary>
+    /// Shows the settings dialog.
+    /// </summary>
     Task ShowSettingsDialog();
     
-    Task<OpenMovieDialogResult> ShowOpenMovieDialog();
+    /// <summary>
+    /// Prompts a dialog to open a movie.
+    /// </summary>
+    /// <param name="paramsEditable">If true, allows the user to set parameters.</param>
+    /// <returns>The parameters of the movie.</returns>
+    Task<OpenMovieDialogResult?> ShowOpenMovieDialog(bool paramsEditable);
 }

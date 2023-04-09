@@ -81,8 +81,10 @@ public partial class MainWindow : Window, IWindowSizingService, IViewDialogServi
         return d.ShowDialog(this);
     }
 
-    public Task<OpenMovieDialogResult> ShowOpenMovieDialog()
+    public Task<OpenMovieDialogResult?> ShowOpenMovieDialog(bool paramsEditable)
     {
-        return null!;
+        OpenMovieDialog d = new();
+        d.ViewModel.IsEditable = paramsEditable;
+        return d.ShowDialog<OpenMovieDialogResult?>(this);
     }
 }

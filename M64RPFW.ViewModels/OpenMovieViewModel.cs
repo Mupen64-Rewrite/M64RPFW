@@ -1,18 +1,52 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using M64RPFW.Models.Types;
+using M64RPFW.Models.Emulation;
+using M64RPFW.Models.Movies;
 using M64RPFW.Services.Abstractions;
+using static M64RPFW.Models.Types.Mupen64PlusTypes;
 
 namespace M64RPFW.ViewModels;
 
 public partial class OpenMovieViewModel : ObservableObject
 {
-    [ObservableProperty] private string _path;
-    [ObservableProperty] private string _authors;
-    [ObservableProperty] private string _description;
-    [ObservableProperty] private Mupen64PlusTypes.VCRStartType _startType;
-    
-    public OpenMovieViewModel() {}
+    [ObservableProperty] private string _path = "";
+    [ObservableProperty] private string _authors = "";
+    [ObservableProperty] private string _description = "";
+    [ObservableProperty] private VCRStartType _startType = VCRStartType.FromSnapshot;
+    [ObservableProperty] private bool _isEditable = true;
 
-    public event Action<OpenMovieDialogResult?> OnCloseRequested = _ => {};
+    public event Action<OpenMovieDialogResult?> OnCloseRequested = _ => { };
+
+    public VCRStartType[] StartTypes => Enum.GetValues<VCRStartType>();
+
+    public FilePickerOption[] MoviePickerOptions => new FilePickerOption[]
+    {
+        new("Mupen64 movie (.m64)", new[] {"*.m64"})
+    };
+
+    partial void OnPathChanged(string value)
+    {
+        if (IsEditable)
+            return;
+        
+        // Load existing info (this might be slow depending on disk speed, but...)
+        MovieHeader mh = new();
+        mh.Load(value);
+
+        Authors = mh.Authors;
+        Description = mh.Description;
+        StartType = (VCRStartType) mh.StartType;
+    }
+
+    [RelayCommand]
+    private void ReturnSuccess()
+    {
+        OnCloseRequested(new OpenMovieDialogResult(Path, Authors, Description, StartType));
+    }
+
+    [RelayCommand]
+    private void ReturnFailure()
+    {
+        OnCloseRequested(null);
+    }
 }

@@ -6,6 +6,7 @@ using M64RPFW.Models.Helpers;
 using M64RPFW.Models.Settings;
 using M64RPFW.Models.Types.Settings;
 using M64RPFW.Services;
+using M64RPFW.Services.Abstractions;
 using M64RPFW.ViewModels.Messages;
 
 namespace M64RPFW.ViewModels;
@@ -147,6 +148,11 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
     #region Constants
 
     public EmulatorType[] EmulatorTypes => Enum.GetValues<EmulatorType>();
+
+    public FilePickerOption[] DllPickerOptions => new FilePickerOption[]
+    {
+        new($"Dynamic library (.{NativeLibHelper.LibraryExtension})", Patterns: new []{ $"*.{NativeLibHelper.LibraryExtension}" })
+    };
 
     #endregion
     

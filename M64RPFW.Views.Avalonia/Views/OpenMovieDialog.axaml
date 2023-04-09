@@ -1,0 +1,35 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:M64RPFW.Views.Avalonia.Controls"
+        xmlns:vm="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="M64RPFW.Views.Avalonia.Views.OpenMovieDialog"
+        x:CompileBindings="True"
+        x:DataType="vm:OpenMovieViewModel"
+        Title="OpenMovieDialog">
+    <Window.Styles>
+        <Style Selector="StackPanel">
+            <Setter Property="Margin" Value="{StaticResource ContentPadding}"/>
+        </Style>
+    </Window.Styles>
+    <DockPanel LastChildFill="True">
+        <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button Content="OK" Command="{Binding ReturnSuccessCommand}"/>
+            <Button Content="Cancel" Command="{Binding ReturnFailureCommand}"/>
+        </StackPanel>
+        <ScrollViewer>
+            <StackPanel>
+                <Label Content="Path"/>
+                <controls:FileBrowser CurrentPath="{Binding Path}" PickerOptions="{Binding MoviePickerOptions, Mode=OneTime}"/>
+                <Label Content="Start type"/>
+                <ComboBox Items="{Binding StartTypes, Mode=OneTime}" SelectedItem="{Binding StartType}" IsEnabled="{Binding IsEditable}"/>
+                <Label Content="Authors"/>
+                <TextBox Text="{Binding Authors}" TextWrapping="Wrap" IsEnabled="{Binding IsEditable}"/>
+                <Label Content="Description"/>
+                <TextBox AcceptsReturn="True" Text="{Binding Description}" IsEnabled="{Binding IsEditable}"/>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

@@ -75,7 +75,7 @@ public unsafe partial class EmulatorViewModel : IVideoExtensionService
 
             return Error.Success;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return Error.Internal;
         }

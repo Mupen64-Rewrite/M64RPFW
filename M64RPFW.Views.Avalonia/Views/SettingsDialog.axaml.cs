@@ -12,6 +12,7 @@ public partial class SettingsDialog : Window
     public SettingsDialog()
     {
         AvaloniaXamlLoader.Load(this);
+        DataContext = SettingsViewModel.Instance;
     }
     
     private void TopLevel_OnClosed(object? sender, EventArgs e)
