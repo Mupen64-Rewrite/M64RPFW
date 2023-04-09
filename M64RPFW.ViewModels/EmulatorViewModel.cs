@@ -17,13 +17,15 @@ public partial class EmulatorViewModel : ObservableObject
     private readonly IDispatcherService _dispatcherService;
     private readonly IFilePickerService _filePickerService;
     private readonly IWindowSizingService _windowSizingService;
-    
-    public EmulatorViewModel(IOpenGLContextService openGlContextService, IDispatcherService dispatcherService, IFilePickerService filePickerService, IWindowSizingService windowSizingService)
+    private readonly IViewDialogService _viewDialogService;
+
+    public EmulatorViewModel(IOpenGLContextService openGlContextService, IDispatcherService dispatcherService, IFilePickerService filePickerService, IWindowSizingService windowSizingService, IViewDialogService viewDialogService)
     {
         _openGlContextService = openGlContextService;
         _dispatcherService = dispatcherService;
         _filePickerService = filePickerService;
         _windowSizingService = windowSizingService;
+        _viewDialogService = viewDialogService;
 
         var version = Mupen64Plus.GetVersionInfo();
         Mupen64Plus.Log(Mupen64Plus.LogSources.App, MessageLevel.Info,

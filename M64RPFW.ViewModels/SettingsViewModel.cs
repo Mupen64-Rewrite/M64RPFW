@@ -14,14 +14,16 @@ namespace M64RPFW.ViewModels;
 public sealed partial class SettingsViewModel : ObservableObject, IRecipient<RomLoadingMessage>
 {
     
-    public SettingsViewModel(IFilePickerService filePickerService)
+    private SettingsViewModel()
     {
-        _filePickerService = filePickerService;
-        // WeakReferenceMessenger.Default.RegisterAll(this);
         RPFWSettings.Load();
     }
-    
-    private readonly IFilePickerService _filePickerService;
+
+    static SettingsViewModel()
+    {
+        Instance = new SettingsViewModel();
+    }
+    public static SettingsViewModel Instance { get; }
 
     #region Properties
     

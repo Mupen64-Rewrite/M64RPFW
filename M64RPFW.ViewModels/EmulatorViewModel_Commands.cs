@@ -145,8 +145,11 @@ public partial class EmulatorViewModel
     }
 
     [RelayCommand(CanExecute = nameof(MupenIsActive))]
-    private void PlayMovie(string path)
+    private async void StartMovie(string path)
     {
+        var result = await _viewDialogService.ShowOpenMovieDialog();
+        return;
+        
         if (Mupen64Plus.VCR_IsPlaying)
             Mupen64Plus.VCR_StopMovie();
 
@@ -181,6 +184,16 @@ public partial class EmulatorViewModel
     private void RestartMovie()
     {
         Mupen64Plus.VCR_RestartMovie();
+    }
+
+    #endregion
+
+    #region View commands
+    
+    [RelayCommand]
+    private async void ShowSettings()
+    {
+        await _viewDialogService.ShowSettingsDialog();
     }
 
     #endregion

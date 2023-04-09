@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -17,11 +18,6 @@ public partial class HotkeyButton : UserControl
         InitializeComponent();
     }
 
-    private void InitializeComponent()
-    {
-        AvaloniaXamlLoader.Load(this);
-    }
-
     public static readonly StyledProperty<KeyGesture> CurrentHotkeyProperty =
         AvaloniaProperty.Register<HotkeyButton, KeyGesture>(nameof(CurrentHotkey),
             defaultBindingMode: BindingMode.TwoWay);
@@ -35,7 +31,7 @@ public partial class HotkeyButton : UserControl
     protected override void OnKeyDown(KeyEventArgs e)
     {
         // Button has to have been activated for this to work
-        if (!_isAwaitingInput)
+        if (Button?.IsChecked is null or false)
             return;
         // modifiers don't count
         if (e.Key is Key.LeftCtrl or Key.RightCtrl or Key.LeftShift or Key.RightShift or Key.LeftAlt or Key.RightAlt
@@ -47,19 +43,11 @@ public partial class HotkeyButton : UserControl
 
         // unfocus this element
         e.Device?.SetFocusedElement(null, NavigationMethod.Unspecified, KeyModifiers.None);
-        _isAwaitingInput = false;
-    }
-
-    protected override void OnLostFocus(RoutedEventArgs e)
-    {
-        _isAwaitingInput = false;
+        Button.IsChecked = false;
     }
 
     private void Button_OnClick(object? sender, RoutedEventArgs e)
     {
-        _isAwaitingInput = true;
         Focus();
     }
-
-    private bool _isAwaitingInput = false;
 }

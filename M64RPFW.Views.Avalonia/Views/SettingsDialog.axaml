@@ -9,10 +9,6 @@
         x:DataType="viewModels:EmulatorViewModel"
         Title="Settings" Width="500" Height="500"
         Closed="TopLevel_OnClosed">
-    <Window.Resources>
-        <Thickness x:Key="SpaceBelowThickness">0,10,0,20</Thickness>
-        <Thickness x:Key="TabItemPadding">10,10,10,10</Thickness>
-    </Window.Resources>
     <Window.Styles>
         <Style Selector="ComboBox">
             <Setter Property="Margin" Value="{StaticResource SpaceBelowThickness}"/>
@@ -21,7 +17,7 @@
             <Setter Property="Margin" Value="{StaticResource SpaceBelowThickness}"/>
         </Style>
         <Style Selector="TabItem > StackPanel">
-            <Setter Property="Margin" Value="{StaticResource TabItemPadding}"/>
+            <Setter Property="Margin" Value="{StaticResource ContentPadding}"/>
         </Style>
         <Style Selector="#ShortcutTab ctrls|HotkeyButton">
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
