@@ -18,26 +18,22 @@ using Size = System.Drawing.Size;
 
 namespace M64RPFW.Views.Avalonia.Views;
 
-public partial class MainWindow : Window, IWindowSizingService
+public partial class MainWindow : Window, IWindowSizingService, IViewDialogService
 {
     public MainWindow()
     {
         AvaloniaXamlLoader.Load(this);
 
         _vidextControl = this.Find<VidextControl>("EmulatorWindow")!;
-        
-        EmulatorViewModel = new EmulatorViewModel(this.Find<VidextControl>("EmulatorWindow")!, (App) Application.Current!,
-            FilePickerService.Instance, this);
-        SettingsViewModel = new SettingsViewModel(FilePickerService.Instance);
 
-        DataContext = this;
+        DataContext = new EmulatorViewModel(this.Find<VidextControl>("EmulatorWindow")!, (App) Application.Current!,
+            FilePickerService.Instance, this, this);
 
         _shouldBlockSizeChangeEvents = false;
     }
     
     // avalonia compiled binding resolver lives in another assembly, so these have to be public :(
-    public EmulatorViewModel EmulatorViewModel { get; }
-    public SettingsViewModel SettingsViewModel { get; }
+    public EmulatorViewModel EmulatorViewModel => (EmulatorViewModel) DataContext!;
 
     private void Window_OnClosed(object? sender, EventArgs eventArgs)
     {
@@ -60,15 +56,6 @@ public partial class MainWindow : Window, IWindowSizingService
         }
     }
 
-    private void ShowSettingsDialogMenuItem_OnClick(object? sender, RoutedEventArgs e)
-    {
-        var dialog = new SettingsDialog
-        {
-            DataContext = SettingsViewModel
-        };
-        dialog.ShowDialog(this);
-    }
-
     public WindowSize GetWindowSize()
     {
         return new WindowSize(_vidextControl.Width, _vidextControl.Height);
@@ -87,15 +74,15 @@ public partial class MainWindow : Window, IWindowSizingService
     private VidextControl _vidextControl;
     private bool _shouldBlockSizeChangeEvents;
     private double _prevVidextMinWidth, _prevVidextMinHeight;
-    
-    private async void OpenMovieMenuItem_OnClick(object? sender, RoutedEventArgs e)
-    {
-        var movieSelectionDialog = new MovieSelectionDialog();
-        await movieSelectionDialog.ShowDialog(this);
 
-        if (!PathHelper.IsValid(movieSelectionDialog.MovieSelectionViewModel.Path))
-            return;
-        
-        EmulatorViewModel.PlayMovieCommand.Execute(movieSelectionDialog.MovieSelectionViewModel.Path);
+    public Task ShowSettingsDialog()
+    {
+        SettingsDialog d = new();
+        return d.ShowDialog(this);
+    }
+
+    public Task<OpenMovieDialogResult> ShowOpenMovieDialog()
+    {
+        return null!;
     }
 }

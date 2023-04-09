@@ -4,11 +4,13 @@
              xmlns:converter="clr-namespace:M64RPFW.Views.Avalonia.Converter"
              x:Class="M64RPFW.Views.Avalonia.App">
     <Application.Resources>
-        <converter:StringToKeyGestureConverter x:Key="StringToKeyGestureConverter"/>
-        <converter:DefaultValueConverter x:Key="DefaultValueConverter"/>
+        <converter:StringToKeyGestureConverter x:Key="StringToKeyGestureConverter" />
+        <converter:DefaultValueConverter x:Key="DefaultValueConverter" />
+        <Thickness x:Key="SpaceBelowThickness">0,10,0,20</Thickness>
+        <Thickness x:Key="ContentPadding">10,10,10,10</Thickness>
     </Application.Resources>
     <Application.Styles>
-        <FluentTheme/>
-        
+        <FluentTheme />
+
     </Application.Styles>
 </Application>

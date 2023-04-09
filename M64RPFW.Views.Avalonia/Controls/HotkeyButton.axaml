@@ -5,7 +5,8 @@
              xmlns:ctrls="clr-namespace:M64RPFW.Views.Avalonia.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="M64RPFW.Views.Avalonia.Controls.HotkeyButton">
-    <Button
+    <ToggleButton
+        Name="Button"
         DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ctrls:HotkeyButton}}}"
         Click="Button_OnClick" Content="{Binding CurrentHotkey, Converter={StaticResource DefaultValueConverter}, ConverterParameter='...'}"
         HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center"/>
