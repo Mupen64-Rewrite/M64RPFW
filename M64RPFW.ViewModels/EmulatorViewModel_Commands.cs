@@ -148,12 +148,17 @@ public partial class EmulatorViewModel
     private async void StartMovie()
     {
         var result = await _viewDialogService.ShowOpenMovieDialog(false);
-        return;
+
+        if (result == null)
+            return;
+        // probably want to add a warning here
+        if (!File.Exists(result.Path))
+            return;
         
         if (Mupen64Plus.VCR_IsPlaying)
             Mupen64Plus.VCR_StopMovie();
 
-        // Mupen64Plus.VCR_StartMovie(path);
+        Mupen64Plus.VCR_StartMovie(result.Path);
         Mupen64Plus.VCR_IsReadOnly = true;
     }
     
@@ -161,13 +166,20 @@ public partial class EmulatorViewModel
     private async void StartRecording()
     {
         var result = await _viewDialogService.ShowOpenMovieDialog(true);
-        return;
+        
+        if (result == null)
+            return;
+
+        if (File.Exists(result.Path))
+        {
+            // Perhaps add message boxes to view dialog service?
+            Mupen64Plus.Log(LogSources.App, MessageLevel.Warning, "Overwriting a file...");
+        }
         
         if (Mupen64Plus.VCR_IsPlaying)
             Mupen64Plus.VCR_StopMovie();
         
-        // TODO show another dialog to prompt author, description, start type
-        // Mupen64Plus.VCR_StartRecording(path);
+        Mupen64Plus.VCR_StartRecording(result.Path, result.Authors, result.Description, result.StartType);
     }
     
     [RelayCommand(CanExecute = nameof(VCRIsPlaying))]
