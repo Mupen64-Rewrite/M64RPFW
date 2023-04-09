@@ -82,6 +82,8 @@ public partial class EmulatorViewModel : ObservableObject
         SetSaveSlotCommand.NotifyCanExecuteChanged();
         LoadCurrentSlotCommand.NotifyCanExecuteChanged();
         SaveCurrentSlotCommand.NotifyCanExecuteChanged();
+        StartMovieCommand.NotifyCanExecuteChanged();
+        StartRecordingCommand.NotifyCanExecuteChanged();
     }
 
     public bool MupenIsStopped => MupenEmuState is EmuState.Stopped;

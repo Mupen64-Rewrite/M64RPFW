@@ -145,33 +145,29 @@ public partial class EmulatorViewModel
     }
 
     [RelayCommand(CanExecute = nameof(MupenIsActive))]
-    private async void StartMovie(string path)
+    private async void StartMovie()
     {
-        var result = await _viewDialogService.ShowOpenMovieDialog();
+        var result = await _viewDialogService.ShowOpenMovieDialog(false);
         return;
         
         if (Mupen64Plus.VCR_IsPlaying)
             Mupen64Plus.VCR_StopMovie();
 
-        Mupen64Plus.VCR_StartMovie(path);
+        // Mupen64Plus.VCR_StartMovie(path);
         Mupen64Plus.VCR_IsReadOnly = true;
     }
     
     [RelayCommand(CanExecute = nameof(MupenIsActive))]
     private async void StartRecording()
     {
-        var path = await _filePickerService.ShowSaveFilePickerAsync(options: new FilePickerOption[]
-        {
-            new("M64 movie (.m64)", Patterns: new[] { "*.m64" })
-        });
-        if (path == null)
-            return;
+        var result = await _viewDialogService.ShowOpenMovieDialog(true);
+        return;
         
         if (Mupen64Plus.VCR_IsPlaying)
             Mupen64Plus.VCR_StopMovie();
         
         // TODO show another dialog to prompt author, description, start type
-        Mupen64Plus.VCR_StartRecording(path);
+        // Mupen64Plus.VCR_StartRecording(path);
     }
     
     [RelayCommand(CanExecute = nameof(VCRIsPlaying))]
