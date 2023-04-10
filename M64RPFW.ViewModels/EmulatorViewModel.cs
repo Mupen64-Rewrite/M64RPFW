@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using M64RPFW.Models.Emulation;
@@ -33,6 +34,7 @@ public partial class EmulatorViewModel : ObservableObject
 
         // Register Mupen64Plus-related listeners
         Mupen64Plus.StateChanged += OnMupenStateChange;
+        Mupen64Plus.VCRStateChanged += OnVCRStateChange;
         Mupen64Plus.OverrideVidExt(this.ToVidextStruct());
     }
 
@@ -72,37 +74,29 @@ public partial class EmulatorViewModel : ObservableObject
 
     private void OnEmuStateChanged()
     {
-        OpenRomCommand.NotifyCanExecuteChanged();
-        CloseRomCommand.NotifyCanExecuteChanged();
-        ResetRomCommand.NotifyCanExecuteChanged();
-        PauseOrResumeCommand.NotifyCanExecuteChanged();
-        FrameAdvanceCommand.NotifyCanExecuteChanged();
-        LoadFromFileCommand.NotifyCanExecuteChanged();
-        SaveToFileCommand.NotifyCanExecuteChanged();
-        SetSaveSlotCommand.NotifyCanExecuteChanged();
-        LoadCurrentSlotCommand.NotifyCanExecuteChanged();
-        SaveCurrentSlotCommand.NotifyCanExecuteChanged();
-        StartMovieCommand.NotifyCanExecuteChanged();
-        StartRecordingCommand.NotifyCanExecuteChanged();
+        OnPropertyChanged(nameof(MupenIsStopped));
+        OnPropertyChanged(nameof(MupenIsPaused));
+        OnPropertyChanged(nameof(MupenIsActive));
     }
 
     public bool MupenIsStopped => MupenEmuState is EmuState.Stopped;
-    public bool MupenIsRunning => MupenEmuState is EmuState.Running;
     public bool MupenIsPaused => MupenEmuState is EmuState.Paused;
     public bool MupenIsActive => MupenEmuState is EmuState.Running or EmuState.Paused;
 
     public bool VCRIsPlaying => Mupen64Plus.VCR_IsPlaying && MupenIsActive;
-    public bool VCRIsNotPlaying => !Mupen64Plus.VCR_IsPlaying && MupenIsActive;
     public bool VCRIsReadOnly => Mupen64Plus.VCR_IsReadOnly;
 
     private void OnVCRIsPlayingChanged()
     {
-        
+        OnPropertyChanged(nameof(VCRIsPlaying));
+        // StopMovieCommand.NotifyCanExecuteChanged();
+        // RestartMovieCommand.NotifyCanExecuteChanged();
+        // ToggleReadOnlyModeCommand.NotifyCanExecuteChanged();
     }
 
     private void OnVCRIsReadOnlyChanged()
     {
-        
+        OnPropertyChanged(nameof(VCRIsReadOnly));
     }
 
     #endregion

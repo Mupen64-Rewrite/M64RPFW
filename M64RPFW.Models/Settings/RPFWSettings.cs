@@ -61,6 +61,11 @@ public class RPFWSettings : ITomlMetadataProvider
         public string SaveToFile { get; set; } = "Ctrl+Shift+S";
         public string LoadCurrentSlot { get; set; } = "L";
         public string SaveCurrentSlot { get; set; } = "I";
+
+        public string StartMovie { get; set; } = "Ctrl+Alt+O";
+        public string StartRecording { get; set; } = "Ctrl+Alt+L";
+        public string StopMovie { get; set; } = "Ctrl+Alt+W";
+        public string RestartMovie { get; set; } = "Ctrl+Alt+R";
     }
 
     public HotkeysSection Hotkeys { get; } = new();

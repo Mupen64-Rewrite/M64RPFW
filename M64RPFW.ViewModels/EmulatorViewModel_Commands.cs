@@ -180,6 +180,7 @@ public partial class EmulatorViewModel
             Mupen64Plus.VCR_StopMovie();
         
         Mupen64Plus.VCR_StartRecording(result.Path, result.Authors, result.Description, result.StartType);
+        Mupen64Plus.VCR_IsReadOnly = false;
     }
     
     [RelayCommand(CanExecute = nameof(VCRIsPlaying))]
@@ -192,6 +193,13 @@ public partial class EmulatorViewModel
     private void RestartMovie()
     {
         Mupen64Plus.VCR_RestartMovie();
+    }
+
+    [RelayCommand(CanExecute = nameof(VCRIsPlaying))]
+    private void ToggleReadOnlyMode()
+    {
+        // toggle the current readonly state
+        Mupen64Plus.VCR_IsReadOnly = !Mupen64Plus.VCR_IsReadOnly;
     }
 
     #endregion

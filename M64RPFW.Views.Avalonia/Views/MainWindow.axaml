@@ -5,6 +5,7 @@
                   xmlns:ctrls="clr-namespace:M64RPFW.Views.Avalonia.Controls"
                   xmlns:views="clr-namespace:M64RPFW.Views.Avalonia.Views"
                   xmlns:vm="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels"
+                  xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
                   mc:Ignorable="d"
                   x:Class="M64RPFW.Views.Avalonia.Views.MainWindow"
                   Icon="/Assets/rpfw.ico"
@@ -91,12 +92,23 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="_Movie">
-                <MenuItem Header="_Open Movie" Command="{Binding StartMovieCommand}"/>
-                <MenuItem Header="Start _Recording" Command="{Binding StartRecordingCommand}"/>
-                <MenuItem Header="_Stop Movie" Command="{Binding StopMovieCommand}"/>
-                <MenuItem Header="Res_tart Movie" Command="{Binding RestartMovieCommand}"/>
-                <MenuItem Header="Read-Only _Mode" IsEnabled="False">
-                    <!--Make it toggle read-only state somehow-->
+                <MenuItem Header="_Open Movie" Command="{Binding StartMovieCommand}"
+                          HotKey="{Binding StartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"
+                          InputGesture="{Binding StartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"/>
+                <MenuItem Header="Start _Recording" Command="{Binding StartRecordingCommand}"
+                          HotKey="{Binding StartRecordingHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"
+                          InputGesture="{Binding StartRecordingHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"/>
+                <MenuItem Header="_Stop Movie" Command="{Binding StopMovieCommand}"
+                          HotKey="{Binding StopMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"
+                          InputGesture="{Binding StopMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"/>
+                <MenuItem Header="Res_tart Movie" Command="{Binding RestartMovieCommand}"
+                          HotKey="{Binding RestartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"
+                          InputGesture="{Binding RestartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"/>
+                <MenuItem Command="{Binding ToggleReadOnlyModeCommand}" Header="Read-Only Mode">
+                    <MenuItem.Icon>
+                        <!-- Incredibly jank, but this works somehow -->
+                        <CheckBox IsHitTestVisible="False" IsChecked="{Binding VCRIsReadOnly}"/>
+                    </MenuItem.Icon>
                 </MenuItem>
                 <Separator/>
                 <MenuItem Header="_Start Encoder..." IsEnabled="False"/>

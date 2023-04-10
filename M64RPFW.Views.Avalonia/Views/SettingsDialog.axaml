@@ -12,64 +12,95 @@
         Closed="TopLevel_OnClosed">
     <Window.Styles>
         <Style Selector="ComboBox">
-            <Setter Property="Margin" Value="{StaticResource SpaceBelowThickness}"/>
+            <Setter Property="Margin" Value="{StaticResource SpaceBelowThickness}" />
         </Style>
         <Style Selector="ctrls|FileBrowser">
-            <Setter Property="Margin" Value="{StaticResource SpaceBelowThickness}"/>
+            <Setter Property="Margin" Value="{StaticResource SpaceBelowThickness}" />
         </Style>
-        <Style Selector="TabItem > StackPanel">
-            <Setter Property="Margin" Value="{StaticResource ContentPadding}"/>
+        <Style Selector="ScrollViewer > StackPanel">
+            <Setter Property="Margin" Value="{StaticResource ContentPadding}" />
         </Style>
         <Style Selector="#ShortcutTab ctrls|HotkeyButton">
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
         </Style>
     </Window.Styles>
     <TabControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TabStripPlacement="Left">
         <TabItem Header="General">
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                <TextBlock Text="Core type:"/>
-                <ComboBox 
-                    Items="{Binding EmulatorTypes,Mode=OneTime}" 
-                    SelectedItem="{Binding CoreType,Mode=TwoWay}"/>
-                <CheckBox Content="Disable Expansion Pak memory"/>
-                <CheckBox Content="Randomize interrupt timings"/>
-            </StackPanel>
+            <ScrollViewer>
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                    <TextBlock Text="Core type:" />
+                    <ComboBox
+                        Items="{Binding EmulatorTypes,Mode=OneTime}"
+                        SelectedItem="{Binding CoreType,Mode=TwoWay}" />
+                    <CheckBox Content="Disable Expansion Pak memory" />
+                    <CheckBox Content="Randomize interrupt timings" />
+                </StackPanel>
+            </ScrollViewer>
         </TabItem>
         <TabItem Header="Shortcuts" Name="ShortcutTab">
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                <Grid RowDefinitions="*,*,*,*,*,*,*,*,*" ColumnDefinitions="*,*">
-                    <Label Grid.Row="0" Grid.Column="0" Content="Open ROM"/>
-                    <ctrls:HotkeyButton Grid.Row="0" Grid.Column="1" CurrentHotkey="{Binding OpenRomHotkey, Converter={StaticResource StringToKeyGestureConverter}}"/>
-                    <Label Grid.Row="1" Grid.Column="0" Content="Close ROM"/>
-                    <ctrls:HotkeyButton Grid.Row="1" Grid.Column="1" CurrentHotkey="{Binding CloseRomHotkey, Converter={StaticResource StringToKeyGestureConverter}}"/>
-                    <Label Grid.Row="2" Grid.Column="0" Content="Reset ROM"/>
-                    <ctrls:HotkeyButton Grid.Row="2" Grid.Column="1" CurrentHotkey="{Binding ResetRomHotkey, Converter={StaticResource StringToKeyGestureConverter}}"/>
-                    <Label Grid.Row="3" Grid.Column="0" Content="Pause/Resume"/>
-                    <ctrls:HotkeyButton Grid.Row="3" Grid.Column="1" CurrentHotkey="{Binding PauseOrResumeHotkey, Converter={StaticResource StringToKeyGestureConverter}}"/>
-                    <Label Grid.Row="4" Grid.Column="0" Content="Frame Advance"/>
-                    <ctrls:HotkeyButton Grid.Row="4" Grid.Column="1" CurrentHotkey="{Binding FrameAdvanceHotkey, Converter={StaticResource StringToKeyGestureConverter}}"/>
-                    <Label Grid.Row="5" Grid.Column="0" Content="Load from File"/>
-                    <ctrls:HotkeyButton Grid.Row="5" Grid.Column="1" CurrentHotkey="{Binding LoadFromFileHotkey, Converter={StaticResource StringToKeyGestureConverter}}"/>
-                    <Label Grid.Row="6" Grid.Column="0" Content="Save to File"/>
-                    <ctrls:HotkeyButton Grid.Row="6" Grid.Column="1" CurrentHotkey="{Binding SaveToFileHotkey, Converter={StaticResource StringToKeyGestureConverter}}"/>
-                    <Label Grid.Row="7" Grid.Column="0" Content="Load Current Slot"/>
-                    <ctrls:HotkeyButton Grid.Row="7" Grid.Column="1" CurrentHotkey="{Binding LoadCurrentSlotHotkey, Converter={StaticResource StringToKeyGestureConverter}}"/>
-                    <Label Grid.Row="8" Grid.Column="0" Content="Save Current Slot"/>
-                    <ctrls:HotkeyButton Grid.Row="8" Grid.Column="1" CurrentHotkey="{Binding SaveCurrentSlotHotkey, Converter={StaticResource StringToKeyGestureConverter}}"/>
-                </Grid>
-            </StackPanel>
+            <ScrollViewer>
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                    <TextBlock FontWeight="Bold">Emulator</TextBlock>
+                    <Grid RowDefinitions="*,*,*,*,*,*,*,*,*" ColumnDefinitions="*,*">
+                        <Label Grid.Row="0" Grid.Column="0" Content="Open ROM" />
+                        <ctrls:HotkeyButton Grid.Row="0" Grid.Column="1"
+                                            CurrentHotkey="{Binding OpenRomHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                        <Label Grid.Row="1" Grid.Column="0" Content="Close ROM" />
+                        <ctrls:HotkeyButton Grid.Row="1" Grid.Column="1"
+                                            CurrentHotkey="{Binding CloseRomHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                        <Label Grid.Row="2" Grid.Column="0" Content="Reset ROM" />
+                        <ctrls:HotkeyButton Grid.Row="2" Grid.Column="1"
+                                            CurrentHotkey="{Binding ResetRomHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                        <Label Grid.Row="3" Grid.Column="0" Content="Pause/Resume" />
+                        <ctrls:HotkeyButton Grid.Row="3" Grid.Column="1"
+                                            CurrentHotkey="{Binding PauseOrResumeHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                        <Label Grid.Row="4" Grid.Column="0" Content="Frame Advance" />
+                        <ctrls:HotkeyButton Grid.Row="4" Grid.Column="1"
+                                            CurrentHotkey="{Binding FrameAdvanceHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                        <Label Grid.Row="5" Grid.Column="0" Content="Load from File" />
+                        <ctrls:HotkeyButton Grid.Row="5" Grid.Column="1"
+                                            CurrentHotkey="{Binding LoadFromFileHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                        <Label Grid.Row="6" Grid.Column="0" Content="Save to File" />
+                        <ctrls:HotkeyButton Grid.Row="6" Grid.Column="1"
+                                            CurrentHotkey="{Binding SaveToFileHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                        <Label Grid.Row="7" Grid.Column="0" Content="Load Current Slot" />
+                        <ctrls:HotkeyButton Grid.Row="7" Grid.Column="1"
+                                            CurrentHotkey="{Binding LoadCurrentSlotHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                        <Label Grid.Row="8" Grid.Column="0" Content="Save Current Slot" />
+                        <ctrls:HotkeyButton Grid.Row="8" Grid.Column="1"
+                                            CurrentHotkey="{Binding SaveCurrentSlotHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                    </Grid>
+                    <TextBlock FontWeight="Bold">Rerecording</TextBlock>
+                    <Grid RowDefinitions="*,*,*,*" ColumnDefinitions="*,*">
+                        <Label Grid.Row="0" Grid.Column="0" Content="Start Movie" />
+                        <ctrls:HotkeyButton Grid.Row="0" Grid.Column="1"
+                                            CurrentHotkey="{Binding StartMovieHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                        <Label Grid.Row="1" Grid.Column="0" Content="Start Recording" />
+                        <ctrls:HotkeyButton Grid.Row="1" Grid.Column="1"
+                                            CurrentHotkey="{Binding StartRecordingHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                        <Label Grid.Row="2" Grid.Column="0" Content="Stop Movie" />
+                        <ctrls:HotkeyButton Grid.Row="2" Grid.Column="1"
+                                            CurrentHotkey="{Binding StopMovieHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                        <Label Grid.Row="3" Grid.Column="0" Content="Restart Movie" />
+                        <ctrls:HotkeyButton Grid.Row="3" Grid.Column="1"
+                                            CurrentHotkey="{Binding RestartMovieHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
         </TabItem>
         <TabItem Header="Plugins">
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                <TextBlock Text="Video plugin"/>
-                <ctrls:FileBrowser CurrentPath="{Binding VideoPluginPath}" PickerOptions="{Binding DllPickerOptions}"/>
-                <TextBlock Text="Audio plugin"/>
-                <ctrls:FileBrowser CurrentPath="{Binding AudioPluginPath}" PickerOptions="{Binding DllPickerOptions}"/>
-                <TextBlock Text="Input plugin"/>
-                <ctrls:FileBrowser CurrentPath="{Binding InputPluginPath}" PickerOptions="{Binding DllPickerOptions}"/>
-                <TextBlock Text="RSP plugin"/>
-                <ctrls:FileBrowser CurrentPath="{Binding RspPluginPath}" PickerOptions="{Binding DllPickerOptions}"/>
-            </StackPanel>
+            <ScrollViewer>
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                    <TextBlock Text="Video plugin" />
+                    <ctrls:FileBrowser CurrentPath="{Binding VideoPluginPath}" PickerOptions="{Binding DllPickerOptions}" />
+                    <TextBlock Text="Audio plugin" />
+                    <ctrls:FileBrowser CurrentPath="{Binding AudioPluginPath}" PickerOptions="{Binding DllPickerOptions}" />
+                    <TextBlock Text="Input plugin" />
+                    <ctrls:FileBrowser CurrentPath="{Binding InputPluginPath}" PickerOptions="{Binding DllPickerOptions}" />
+                    <TextBlock Text="RSP plugin" />
+                    <ctrls:FileBrowser CurrentPath="{Binding RspPluginPath}" PickerOptions="{Binding DllPickerOptions}" />
+                </StackPanel>
+            </ScrollViewer>
         </TabItem>
         <TabItem Header="Video">
         </TabItem>

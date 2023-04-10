@@ -8,7 +8,7 @@
         x:Class="M64RPFW.Views.Avalonia.Views.OpenMovieDialog"
         x:CompileBindings="True"
         x:DataType="vm:OpenMovieViewModel"
-        Title="OpenMovieDialog">
+        Title="{Binding IsEditable, Converter={StaticResource StringSelectorConverter}, ConverterParameter='Record New Movie\\Open Movie'}">
     <Window.Styles>
         <Style Selector="StackPanel">
             <Setter Property="Margin" Value="{StaticResource ContentPadding}"/>
