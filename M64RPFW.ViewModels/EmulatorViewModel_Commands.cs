@@ -159,7 +159,7 @@ public partial class EmulatorViewModel
             Mupen64Plus.VCR_StopMovie();
 
         Mupen64Plus.VCR_StartMovie(result.Path);
-        Mupen64Plus.VCR_IsReadOnly = true;
+        Mupen64Plus.VCR_DisableWrites = true;
     }
     
     [RelayCommand(CanExecute = nameof(MupenIsActive))]
@@ -180,7 +180,7 @@ public partial class EmulatorViewModel
             Mupen64Plus.VCR_StopMovie();
         
         Mupen64Plus.VCR_StartRecording(result.Path, result.Authors, result.Description, result.StartType);
-        Mupen64Plus.VCR_IsReadOnly = false;
+        Mupen64Plus.VCR_DisableWrites = false;
     }
     
     [RelayCommand(CanExecute = nameof(VCRIsPlaying))]
@@ -196,10 +196,10 @@ public partial class EmulatorViewModel
     }
 
     [RelayCommand(CanExecute = nameof(VCRIsPlaying))]
-    private void ToggleReadOnlyMode()
+    private void ToggleDisableWrites()
     {
         // toggle the current readonly state
-        Mupen64Plus.VCR_IsReadOnly = !Mupen64Plus.VCR_IsReadOnly;
+        Mupen64Plus.VCR_DisableWrites = !Mupen64Plus.VCR_DisableWrites;
     }
 
     #endregion

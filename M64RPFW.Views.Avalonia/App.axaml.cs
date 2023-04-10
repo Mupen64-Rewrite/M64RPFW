@@ -2,6 +2,7 @@ using System;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform;
 using Avalonia.Threading;
 using M64RPFW.Services;
 using M64RPFW.Views.Avalonia.Views;
@@ -20,7 +21,9 @@ public class App : Application, IDispatcherService
     public override void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
             desktop.MainWindow = new MainWindow();
+        }
 
         base.OnFrameworkInitializationCompleted();
     }

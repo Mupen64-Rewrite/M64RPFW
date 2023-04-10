@@ -49,7 +49,9 @@ public class RPFWSettings : ITomlMetadataProvider
     {
         // storage for comments and whitespace
         TomlPropertiesMetadata? ITomlMetadataProvider.PropertiesMetadata { get; set; }
-
+        
+        // TODO: match back to default Mupen64 keymap
+        
         public string OpenRom { get; set; } = "Ctrl+O";
         public string CloseRom { get; set; } = "Ctrl+W";
         public string ResetRom { get; set; } = "Ctrl+R";
@@ -66,6 +68,7 @@ public class RPFWSettings : ITomlMetadataProvider
         public string StartRecording { get; set; } = "Ctrl+Alt+L";
         public string StopMovie { get; set; } = "Ctrl+Alt+W";
         public string RestartMovie { get; set; } = "Ctrl+Alt+R";
+        public string DisableWrites { get; set; } = "Alt+Shift+R";
     }
 
     public HotkeysSection Hotkeys { get; } = new();

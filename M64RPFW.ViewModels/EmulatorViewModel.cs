@@ -77,6 +77,19 @@ public partial class EmulatorViewModel : ObservableObject
         OnPropertyChanged(nameof(MupenIsStopped));
         OnPropertyChanged(nameof(MupenIsPaused));
         OnPropertyChanged(nameof(MupenIsActive));
+        
+        OpenRomCommand.NotifyCanExecuteChanged();
+        CloseRomCommand.NotifyCanExecuteChanged();
+        ResetRomCommand.NotifyCanExecuteChanged();
+        PauseOrResumeCommand.NotifyCanExecuteChanged();
+        FrameAdvanceCommand.NotifyCanExecuteChanged();
+        LoadFromFileCommand.NotifyCanExecuteChanged();
+        SaveToFileCommand.NotifyCanExecuteChanged();
+        SetSaveSlotCommand.NotifyCanExecuteChanged();
+        LoadCurrentSlotCommand.NotifyCanExecuteChanged();
+        SaveCurrentSlotCommand.NotifyCanExecuteChanged();
+        StartMovieCommand.NotifyCanExecuteChanged();
+        StartRecordingCommand.NotifyCanExecuteChanged();
     }
 
     public bool MupenIsStopped => MupenEmuState is EmuState.Stopped;
@@ -84,19 +97,19 @@ public partial class EmulatorViewModel : ObservableObject
     public bool MupenIsActive => MupenEmuState is EmuState.Running or EmuState.Paused;
 
     public bool VCRIsPlaying => Mupen64Plus.VCR_IsPlaying && MupenIsActive;
-    public bool VCRIsReadOnly => Mupen64Plus.VCR_IsReadOnly;
+    public bool VCRDisableWrites => Mupen64Plus.VCR_DisableWrites;
 
     private void OnVCRIsPlayingChanged()
     {
         OnPropertyChanged(nameof(VCRIsPlaying));
-        // StopMovieCommand.NotifyCanExecuteChanged();
-        // RestartMovieCommand.NotifyCanExecuteChanged();
-        // ToggleReadOnlyModeCommand.NotifyCanExecuteChanged();
+        StopMovieCommand.NotifyCanExecuteChanged();
+        RestartMovieCommand.NotifyCanExecuteChanged();
+        ToggleDisableWritesCommand.NotifyCanExecuteChanged();
     }
 
     private void OnVCRIsReadOnlyChanged()
     {
-        OnPropertyChanged(nameof(VCRIsReadOnly));
+        OnPropertyChanged(nameof(VCRDisableWrites));
     }
 
     #endregion

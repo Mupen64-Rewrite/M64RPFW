@@ -158,6 +158,12 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         get => RPFWSettings.Instance.Hotkeys.RestartMovie;
         set => SetRPFWSetting((inst, val) => inst.Hotkeys.RestartMovie = val, value);
     }
+    
+    public string DisableWritesHotkey
+    {
+        get => RPFWSettings.Instance.Hotkeys.DisableWrites;
+        set => SetRPFWSetting((inst, val) => inst.Hotkeys.DisableWrites = val, value);
+    }
 
     // Save on dialog closing, otherwise it won't affect Mupen64Plus
     public void OnClosed()

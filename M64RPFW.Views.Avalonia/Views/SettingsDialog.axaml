@@ -71,7 +71,7 @@
                                             CurrentHotkey="{Binding SaveCurrentSlotHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
                     </Grid>
                     <TextBlock FontWeight="Bold">Rerecording</TextBlock>
-                    <Grid RowDefinitions="*,*,*,*" ColumnDefinitions="*,*">
+                    <Grid RowDefinitions="*,*,*,*,*" ColumnDefinitions="*,*">
                         <Label Grid.Row="0" Grid.Column="0" Content="Start Movie" />
                         <ctrls:HotkeyButton Grid.Row="0" Grid.Column="1"
                                             CurrentHotkey="{Binding StartMovieHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
@@ -84,6 +84,9 @@
                         <Label Grid.Row="3" Grid.Column="0" Content="Restart Movie" />
                         <ctrls:HotkeyButton Grid.Row="3" Grid.Column="1"
                                             CurrentHotkey="{Binding RestartMovieHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                        <Label Grid.Row="3" Grid.Column="0" Content="Toggle Disable Writes" />
+                        <ctrls:HotkeyButton Grid.Row="3" Grid.Column="1"
+                                            CurrentHotkey="{Binding DisableWritesHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
                     </Grid>
                 </StackPanel>
             </ScrollViewer>
