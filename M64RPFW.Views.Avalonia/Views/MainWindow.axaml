@@ -22,42 +22,62 @@
             <Setter Property="VerticalAlignment" Value="Stretch" />
         </Style>
     </Window.Styles>
+    <Window.KeyBindings>
+        <!--Maybe make this an attached property or something, I have no idea-->
+        <KeyBinding Command="{Binding OpenRomCommand}"
+                    Gesture="{Binding OpenRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+        <KeyBinding Command="{Binding CloseRomCommand}"
+                    Gesture="{Binding CloseRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+        <KeyBinding Command="{Binding ResetRomCommand}"
+                    Gesture="{Binding ResetRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+        <KeyBinding Command="{Binding PauseOrResumeCommand}"
+                    Gesture="{Binding PauseOrResumeHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+        <KeyBinding Command="{Binding FrameAdvanceCommand}"
+                    Gesture="{Binding FrameAdvanceHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+        <KeyBinding Command="{Binding LoadFromFileCommand}"
+                    Gesture="{Binding LoadFromFileHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+        <KeyBinding Command="{Binding SaveToFileCommand}"
+                    Gesture="{Binding SaveToFileHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+        <KeyBinding Command="{Binding LoadCurrentSlotCommand}"
+                    Gesture="{Binding LoadCurrentSlotHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+        <KeyBinding Command="{Binding SaveCurrentSlotCommand}"
+                    Gesture="{Binding SaveCurrentSlotHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+        <KeyBinding Command="{Binding StartMovieCommand}"
+                    Gesture="{Binding StartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+        <KeyBinding Command="{Binding StartRecordingCommand}"
+                    Gesture="{Binding StartRecordingHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+        <KeyBinding Command="{Binding StopMovieCommand}"
+                    Gesture="{Binding StopMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+        <KeyBinding Command="{Binding RestartMovieCommand}"
+                    Gesture="{Binding RestartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+    </Window.KeyBindings>
     <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" LastChildFill="True">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
                 <!-- Opening a ROM depends on the window, thus it's part of view -->
                 <!-- TODO: implement attached property or behaviour for applying both HotKey and InputGesture from a single binding value -->
                 <MenuItem Header="_Open ROM" Command="{Binding OpenRomCommand}"
-                          HotKey="{Binding OpenRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"
                           InputGesture="{Binding OpenRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
                 <MenuItem Header="_Close ROM" Command="{Binding CloseRomCommand}"
-                          HotKey="{Binding CloseRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"
                           InputGesture="{Binding CloseRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
                 <MenuItem Header="_Reset ROM" Command="{Binding ResetRomCommand}"
-                          HotKey="{Binding ResetRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"
                           InputGesture="{Binding ResetRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
                 <Separator />
                 <MenuItem Header="_Settings..." Command="{Binding ShowSettingsCommand}" />
             </MenuItem>
             <MenuItem Header="_Emulator">
                 <MenuItem Header="_Pause/Resume" Command="{Binding PauseOrResumeCommand}"
-                          HotKey="{Binding PauseOrResumeHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"
                           InputGesture="{Binding PauseOrResumeHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
                 <MenuItem Header="Frame _Advance" Command="{Binding FrameAdvanceCommand}"
-                          HotKey="{Binding FrameAdvanceHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"
                           InputGesture="{Binding FrameAdvanceHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
                 <Separator />
                 <MenuItem Header="Load _From File" Command="{Binding LoadFromFileCommand}"
-                          HotKey="{Binding LoadFromFileHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"
                           InputGesture="{Binding LoadFromFileHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
                 <MenuItem Header="Save _To File" Command="{Binding SaveToFileCommand}"
-                          HotKey="{Binding SaveToFileHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"
                           InputGesture="{Binding SaveToFileHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
                 <MenuItem Header="_Load State" Command="{Binding LoadCurrentSlotCommand}"
-                          HotKey="{Binding LoadCurrentSlotHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"
                           InputGesture="{Binding LoadCurrentSlotHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
                 <MenuItem Header="_Save State" Command="{Binding SaveCurrentSlotCommand}"
-                          HotKey="{Binding SaveCurrentSlotHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"
                           InputGesture="{Binding SaveCurrentSlotHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
                 <Separator />
                 <!-- Jank incoming! (Avalonia doesn't have RadioMenuItem, and I can't really implement one) -->
@@ -93,28 +113,23 @@
             </MenuItem>
             <MenuItem Header="_Movie">
                 <MenuItem Header="_Open Movie" Command="{Binding StartMovieCommand}"
-                          HotKey="{Binding StartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"
-                          InputGesture="{Binding StartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"/>
+                          InputGesture="{Binding StartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
                 <MenuItem Header="Start _Recording" Command="{Binding StartRecordingCommand}"
-                          HotKey="{Binding StartRecordingHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"
-                          InputGesture="{Binding StartRecordingHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"/>
+                          InputGesture="{Binding StartRecordingHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
                 <MenuItem Header="_Stop Movie" Command="{Binding StopMovieCommand}"
-                          HotKey="{Binding StopMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"
-                          InputGesture="{Binding StopMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"/>
+                          InputGesture="{Binding StopMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
                 <MenuItem Header="Res_tart Movie" Command="{Binding RestartMovieCommand}"
-                          HotKey="{Binding RestartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"
-                          InputGesture="{Binding RestartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"/>
-                <MenuItem Command="{Binding ToggleDisableWritesCommand}" Header="Disable Writes"
-                          HotKey="{Binding DisableWritesHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"
+                          InputGesture="{Binding RestartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+                <MenuItem Header="Disable Writes" Command="{Binding ToggleDisableWritesCommand}"
                           InputGesture="{Binding DisableWritesHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}">
                     <MenuItem.Icon>
                         <!-- Incredibly jank, but this works somehow -->
-                        <CheckBox IsHitTestVisible="False" IsChecked="{Binding VCRDisableWrites}"/>
+                        <CheckBox IsHitTestVisible="False" IsChecked="{Binding VCRDisableWrites}" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <Separator/>
-                <MenuItem Header="_Start Encoder..." IsEnabled="False"/>
-                <MenuItem Header="_Stop Encoder" IsEnabled="False"/>
+                <Separator />
+                <MenuItem Header="_Start Encoder..." IsEnabled="False" />
+                <MenuItem Header="_Stop Encoder" IsEnabled="False" />
             </MenuItem>
         </Menu>
         <ctrls:VidextControl Name="EmulatorWindow" />
