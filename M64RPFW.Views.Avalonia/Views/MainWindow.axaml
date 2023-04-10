@@ -104,10 +104,12 @@
                 <MenuItem Header="Res_tart Movie" Command="{Binding RestartMovieCommand}"
                           HotKey="{Binding RestartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"
                           InputGesture="{Binding RestartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"/>
-                <MenuItem Command="{Binding ToggleReadOnlyModeCommand}" Header="Read-Only Mode">
+                <MenuItem Command="{Binding ToggleDisableWritesCommand}" Header="Disable Writes"
+                          HotKey="{Binding DisableWritesHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"
+                          InputGesture="{Binding DisableWritesHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}">
                     <MenuItem.Icon>
                         <!-- Incredibly jank, but this works somehow -->
-                        <CheckBox IsHitTestVisible="False" IsChecked="{Binding VCRIsReadOnly}"/>
+                        <CheckBox IsHitTestVisible="False" IsChecked="{Binding VCRDisableWrites}"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator/>

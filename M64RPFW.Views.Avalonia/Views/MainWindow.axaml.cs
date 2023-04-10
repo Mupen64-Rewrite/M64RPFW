@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
@@ -54,6 +55,12 @@ public partial class MainWindow : Window, IWindowSizingService, IViewDialogServi
 
             _shouldBlockSizeChangeEvents = false;
         }
+    }
+
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+        base.OnKeyDown(e);
+        Console.WriteLine($"pressed: {e.Key}");
     }
 
     public WindowSize GetWindowSize()

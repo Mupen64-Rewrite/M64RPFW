@@ -1,10 +1,12 @@
 using System;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform;
 using Avalonia.VisualTree;
 using M64RPFW.Models.Types;
 using M64RPFW.Services;
 using M64RPFW.Views.Avalonia.Controls.Helpers;
+using M64RPFW.Views.Avalonia.Native;
 using Silk.NET.OpenGL;
 using Silk.NET.SDL;
 using static M64RPFW.Views.Avalonia.Controls.Helpers.SilkGlobals;
@@ -17,12 +19,13 @@ public unsafe class VidextControl : NativeControlHost, IOpenGLContextService
 {
     public VidextControl()
     {
+        
     }
     protected override IPlatformHandle CreateNativeControlCore(IPlatformHandle parent)
     {
         var platHandle = base.CreateNativeControlCore(parent);
         _winHandle = platHandle.Handle;
-        
+
         // HACK: make the window black and clear it
         {
             InitWindow();
@@ -45,6 +48,9 @@ public unsafe class VidextControl : NativeControlHost, IOpenGLContextService
             SDL.InitSubSystem(Sdl.InitVideo);
         // needed to let SDL handle OpenGL context management
         SDL.SetHint("SDL_VIDEO_FOREIGN_WINDOW_OPENGL", "1");
+        // in case SDL wants to use Wayland, force X11 (for now)
+        if (OperatingSystem.IsLinux())
+            SDL.SetHint("SDL_VIDEODRIVER", "x11");
         _sdlWin = SDL.CreateWindowFrom((void*) _winHandle);
     }
 
