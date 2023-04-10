@@ -16,6 +16,8 @@ class Program
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
     {
+        // NOTE: may need to force X11 on Linux when Wayland support is added, as GNOME
+        // does not support the xdg-decoration protocol for SSD.
         var builder = AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .LogToTrace();

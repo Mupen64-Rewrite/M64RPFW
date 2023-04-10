@@ -13,6 +13,7 @@ public class App : Application, IDispatcherService
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+        Name = "M64RPFW";
     }
 
 
