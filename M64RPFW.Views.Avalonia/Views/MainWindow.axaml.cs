@@ -14,6 +14,7 @@ using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
 using M64RPFW.ViewModels;
 using M64RPFW.Views.Avalonia.Controls;
+using M64RPFW.Views.Avalonia.Controls.Helpers;
 using M64RPFW.Views.Avalonia.Services;
 using Size = System.Drawing.Size;
 
@@ -34,17 +35,17 @@ public partial class MainWindow : Window, IWindowSizingService, IViewDialogServi
     }
     
     // avalonia compiled binding resolver lives in another assembly, so these have to be public :(
-    public EmulatorViewModel EmulatorViewModel => (EmulatorViewModel) DataContext!;
+    public EmulatorViewModel ViewModel => (EmulatorViewModel) DataContext!;
 
     private void Window_OnClosed(object? sender, EventArgs eventArgs)
     {
-        EmulatorViewModel.OnWindowClosed();
+        ViewModel.OnWindowClosed();
     }
     
     private void Window_OnSizeChanged(object? sender, SizeChangedEventArgs e)
     {
         if (!_shouldBlockSizeChangeEvents)
-            EmulatorViewModel.OnSizeChanged();
+            ViewModel.OnSizeChanged();
         else
         {
             if (CanResize)
@@ -55,12 +56,6 @@ public partial class MainWindow : Window, IWindowSizingService, IViewDialogServi
 
             _shouldBlockSizeChangeEvents = false;
         }
-    }
-
-    protected override void OnKeyDown(KeyEventArgs e)
-    {
-        base.OnKeyDown(e);
-        Console.WriteLine($"pressed: {e.Key}");
     }
 
     public WindowSize GetWindowSize()
@@ -93,5 +88,19 @@ public partial class MainWindow : Window, IWindowSizingService, IViewDialogServi
         OpenMovieDialog d = new();
         d.ViewModel.IsEditable = paramsEditable;
         return d.ShowDialog<OpenMovieDialogResult?>(this);
+    }
+
+    private void Window_OnKeyDown(object? sender, KeyEventArgs e)
+    {
+        var scancode = SDLHelpers.ToSDLScancode(e.Key);
+        var modifiers = SDLHelpers.ToSDLKeymod(e.KeyModifiers);
+        ViewModel.ForwardSDLKeyDown(scancode, modifiers);
+    }
+    
+    private void Window_OnKeyUp(object? sender, KeyEventArgs e)
+    {
+        var scancode = SDLHelpers.ToSDLScancode(e.Key);
+        var modifiers = SDLHelpers.ToSDLKeymod(e.KeyModifiers);
+        ViewModel.ForwardSDLKeyUp(scancode, modifiers);
     }
 }

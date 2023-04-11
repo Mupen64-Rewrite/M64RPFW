@@ -3,6 +3,7 @@ using M64RPFW.Models.Interfaces;
 using M64RPFW.Models.Types;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
+using Silk.NET.SDL;
 
 namespace M64RPFW.ViewModels;
 
@@ -171,5 +172,15 @@ public unsafe partial class EmulatorViewModel : IVideoExtensionService
         var width = Math.Min((uint) size.Width, 65535);
         var height = Math.Min((uint) size.Height, 65535);
         Mupen64Plus.CoreStateSet(Mupen64PlusTypes.CoreParam.VideoSize, (width << 16) | height);
+    }
+
+    public void ForwardSDLKeyDown(Scancode scancode, Keymod modifiers)
+    {
+        Mupen64Plus.SendSDLKeyDown(scancode, modifiers);
+    }
+    
+    public void ForwardSDLKeyUp(Scancode scancode, Keymod modifiers)
+    {
+        Mupen64Plus.SendSDLKeyUp(scancode, modifiers);
     }
 }
