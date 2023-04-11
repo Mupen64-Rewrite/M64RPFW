@@ -1,8 +1,10 @@
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using M64RPFW.Models.Helpers;
 using M64RPFW.Models.Types;
+using Silk.NET.SDL;
 
 namespace M64RPFW.Models.Emulation;
 
@@ -130,7 +132,6 @@ public static partial class Mupen64Plus
             Mupen64PlusTypes.MessageLevel.Verbose => "TRACE",
             _ => "??   "
         };
-
         Console.WriteLine($"[{sourceString} {typeString} {levelString}] {message}");
     }
 
@@ -409,14 +410,16 @@ public static partial class Mupen64Plus
         ThrowForError(err);
     }
 
-    public static unsafe void SendSDLKeyDown(uint combined)
+    public static unsafe void SendSDLKeyDown(Scancode scancode, Keymod modifiers)
     {
+        uint combined = (uint) modifiers << 16 | (uint) scancode;
         Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.SendSDLKeyDown, (int) combined, null);
         ThrowForError(err);
     }
 
-    public static unsafe void SendSDLKeyUp(uint combined)
+    public static unsafe void SendSDLKeyUp(Scancode scancode, Keymod modifiers)
     {
+        uint combined = (uint) modifiers << 16 | (uint) scancode;
         Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.SendSDLKeyUp, (int) combined, null);
         ThrowForError(err);
     }

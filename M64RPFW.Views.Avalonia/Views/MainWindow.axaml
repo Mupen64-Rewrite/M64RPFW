@@ -15,6 +15,8 @@
                   CanResize="{Binding Resizable,Mode=OneWay}"
                   Closed="Window_OnClosed"
                   SizeChanged="Window_OnSizeChanged"
+                  KeyDown="Window_OnKeyDown"
+                  KeyUp="Window_OnKeyUp"
                   x:CompileBindings="True"
                   x:DataType="vm:EmulatorViewModel">
     <Window.Styles>
