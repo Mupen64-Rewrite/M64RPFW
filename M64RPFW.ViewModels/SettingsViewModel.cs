@@ -180,8 +180,8 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
 
     public FilePickerOption[] DllPickerOptions => new FilePickerOption[]
     {
-        new($"Dynamic library (.{NativeLibHelper.LibraryExtension})",
-            Patterns: new[] { $"*.{NativeLibHelper.LibraryExtension}" })
+        new($"Dynamic library ({NativeLibHelper.LibraryExtension})",
+            Patterns: new[] { $"*{NativeLibHelper.LibraryExtension}" })
     };
 
     #endregion
