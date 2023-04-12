@@ -23,6 +23,17 @@ public partial class FileBrowser : UserControl
         InitializeComponent();
     }
 
+    public static readonly StyledProperty<bool> IsOpenDialogProperty =
+        AvaloniaProperty.Register<FileBrowser, bool>(nameof(IsOpenDialog), defaultValue: true,
+            defaultBindingMode: BindingMode.TwoWay);
+
+    public bool IsOpenDialog
+    {
+        get => GetValue(IsOpenDialogProperty);
+        set => SetValue(IsOpenDialogProperty, value);
+    }
+
+    
     public static readonly StyledProperty<string> CurrentPathProperty =
         AvaloniaProperty.Register<FileBrowser, string>(nameof(CurrentPath), defaultValue: "",
             defaultBindingMode: BindingMode.TwoWay);
@@ -32,7 +43,7 @@ public partial class FileBrowser : UserControl
         get => GetValue(CurrentPathProperty);
         set
         {
-            if (!File.Exists(value))
+            if (IsOpenDialog && !File.Exists(value))
                 throw new ArgumentException("Provided path is invalid");
             SetValue(CurrentPathProperty, value);
         }
@@ -80,19 +91,37 @@ public partial class FileBrowser : UserControl
             // shouldn't throw... hopefully :P
             suggestedStartLocation = await provider.TryGetWellKnownFolderAsync(WellKnownFolder.Documents);
         }
+        
+        IStorageFile? storageFile = null;
 
-        
-        
-        var storageFiles = await provider.OpenFilePickerAsync(new FilePickerOpenOptions
+        if (IsOpenDialog)
         {
-            Title = PickerTitle,
-            AllowMultiple = false,
-            FileTypeFilter = PickerOptions?.Select(fpo => fpo.ToFilePickerFileType()).ToArray(),
-            SuggestedStartLocation = suggestedStartLocation
-        });
-        if (storageFiles.Count == 0)
+            var storageFiles = await provider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = PickerTitle,
+                AllowMultiple = false,
+                FileTypeFilter = PickerOptions?.Select(fpo => fpo.ToFilePickerFileType()).ToArray(),
+                SuggestedStartLocation = suggestedStartLocation
+            });
+            if (storageFiles.Count > 0)
+            {
+                storageFile = storageFiles[0];
+            }
+        }
+        else
+        {
+
+            storageFile = await provider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                Title = PickerTitle,
+                SuggestedStartLocation = suggestedStartLocation
+            });
+
+        }
+        
+        if (storageFile == null)
             return;
 
-        CurrentPath = storageFiles[0].Path.LocalPath;
+        CurrentPath = storageFile.Path.LocalPath;
     }
 }
