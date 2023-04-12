@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -62,13 +64,31 @@ public partial class FileBrowser : UserControl
 
     private async void Button_OnClick(object? sender, RoutedEventArgs e)
     {
+       
+        
         var provider = WindowHelper.GetWindow().StorageProvider;
+        
+        IStorageFolder? suggestedStartLocation;
+
+        try
+        {
+            // try to get a known path first. if this fails, fall back to a known location. 
+            suggestedStartLocation = await provider.TryGetFolderFromPathAsync(Path.GetDirectoryName(CurrentPath)!);
+        }
+        catch
+        {
+            // shouldn't throw... hopefully :P
+            suggestedStartLocation = await provider.TryGetWellKnownFolderAsync(WellKnownFolder.Documents);
+        }
+
+        
+        
         var storageFiles = await provider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
             Title = PickerTitle,
             AllowMultiple = false,
             FileTypeFilter = PickerOptions?.Select(fpo => fpo.ToFilePickerFileType()).ToArray(),
-            SuggestedStartLocation = await provider.TryGetFolderFromPathAsync(Path.GetDirectoryName(CurrentPath)!)
+            SuggestedStartLocation = suggestedStartLocation
         });
         if (storageFiles.Count == 0)
             return;
