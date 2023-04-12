@@ -22,7 +22,7 @@
         <ScrollViewer>
             <StackPanel>
                 <Label Content="Path"/>
-                <controls:FileBrowser CurrentPath="{Binding Path}" PickerOptions="{Binding MoviePickerOptions, Mode=OneTime}"/>
+                <controls:FileBrowser CurrentPath="{Binding Path}" PickerOptions="{Binding MoviePickerOptions, Mode=OneTime}" IsOpenDialog="{Binding IsEditable, Converter={StaticResource BooleanInvertConverter}}"/>
                 <Label Content="Start type"/>
                 <ComboBox Items="{Binding StartTypes, Mode=OneTime}" SelectedItem="{Binding StartType}" IsEnabled="{Binding IsEditable}"/>
                 <Label Content="Authors"/>
