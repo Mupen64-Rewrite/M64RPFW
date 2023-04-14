@@ -68,6 +68,15 @@ public partial class FileBrowser : UserControl
         set => SetValue(PickerOptionsProperty, value);
     }
 
+    public static readonly StyledProperty<string> WatermarkProperty =
+        AvaloniaProperty.Register<FileBrowser, string>(nameof(Watermark), "Path");
+
+    public string Watermark
+    {
+        get => GetValue(WatermarkProperty);
+        set => SetValue(WatermarkProperty, value);
+    }
+    
     private void InitializeComponent()
     {
         AvaloniaXamlLoader.Load(this);

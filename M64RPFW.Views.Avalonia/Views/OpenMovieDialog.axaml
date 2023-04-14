@@ -11,24 +11,29 @@
         Title="{Binding IsEditable, Converter={StaticResource StringSelectorConverter}, ConverterParameter='Record New Movie\\Open Movie'}">
     <Window.Styles>
         <Style Selector="StackPanel">
-            <Setter Property="Margin" Value="{StaticResource ContentPadding}"/>
+            <Setter Property="Margin" Value="{StaticResource ContentPadding}" />
         </Style>
     </Window.Styles>
     <DockPanel LastChildFill="True">
         <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right" Orientation="Horizontal">
-            <Button Content="OK" Command="{Binding ReturnSuccessCommand}"/>
-            <Button Content="Cancel" Command="{Binding ReturnFailureCommand}"/>
+            <Button Content="OK" IsDefault="True" Command="{Binding ReturnSuccessCommand}" />
+            <Button Content="Cancel" Command="{Binding ReturnFailureCommand}" />
         </StackPanel>
         <ScrollViewer>
             <StackPanel>
-                <Label Content="Path"/>
-                <controls:FileBrowser CurrentPath="{Binding Path}" PickerOptions="{Binding MoviePickerOptions, Mode=OneTime}" IsOpenDialog="{Binding IsEditable, Converter={StaticResource BooleanInvertConverter}}"/>
-                <Label Content="Start type"/>
-                <ComboBox Items="{Binding StartTypes, Mode=OneTime}" SelectedItem="{Binding StartType}" IsEnabled="{Binding IsEditable}"/>
-                <Label Content="Authors"/>
-                <TextBox Text="{Binding Authors}" TextWrapping="Wrap" IsEnabled="{Binding IsEditable}"/>
-                <Label Content="Description"/>
-                <TextBox AcceptsReturn="True" Text="{Binding Description}" IsEnabled="{Binding IsEditable}"/>
+                <controls:FileBrowser CurrentPath="{Binding Path}"
+                                      PickerOptions="{Binding MoviePickerOptions, Mode=OneTime}"
+                                      IsOpenDialog="{Binding IsEditable, Converter={StaticResource BooleanInvertConverter}}" />
+                <TextBlock Classes="h3" Text="Start from" />
+
+                <ComboBox Items="{Binding StartTypes, Mode=OneTime}"
+                          SelectedItem="{Binding StartType}" IsEnabled="{Binding IsEditable}" />
+                <TextBlock Classes="h3" Text="Author" />
+                <TextBox Text="{Binding Authors}" TextWrapping="Wrap" IsEnabled="{Binding IsEditable}" />
+                <TextBlock Classes="h3" Text="Description" />
+                <TextBox AcceptsReturn="True" Text="{Binding Description}" IsEnabled="{Binding IsEditable}" />
+
+
             </StackPanel>
         </ScrollViewer>
     </DockPanel>

@@ -118,6 +118,7 @@
                           InputGesture="{Binding StartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
                 <MenuItem Header="Start _Recording" Command="{Binding StartRecordingCommand}"
                           InputGesture="{Binding StartRecordingHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+                <Separator/>
                 <MenuItem Header="_Stop Movie" Command="{Binding StopMovieCommand}"
                           InputGesture="{Binding StopMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
                 <MenuItem Header="Res_tart Movie" Command="{Binding RestartMovieCommand}"

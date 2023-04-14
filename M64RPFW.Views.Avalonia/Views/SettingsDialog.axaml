@@ -9,14 +9,21 @@
         x:CompileBindings="True"
         x:DataType="viewModels:SettingsViewModel"
         Title="Settings" Width="500" Height="500"
+        xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         Closed="TopLevel_OnClosed">
+    <Window.Resources>
+        <x:Double x:Key="IconSize">28</x:Double>
+    </Window.Resources>
     <Window.Styles>
-        <Style Selector="ComboBox">
-            <Setter Property="Margin" Value="{StaticResource SpaceBelowThickness}" />
+        <Style Selector="materialIcons|MaterialIcon">
+            <Setter Property="FontSize" Value="24"/>
         </Style>
-        <Style Selector="ctrls|FileBrowser">
-            <Setter Property="Margin" Value="{StaticResource SpaceBelowThickness}" />
-        </Style>
+        <!-- <Style Selector="ComboBox"> -->
+        <!--     <Setter Property="Margin" Value="{StaticResource SpaceBelowThickness}" /> -->
+        <!-- </Style> -->
+        <!-- <Style Selector="ctrls|FileBrowser"> -->
+        <!--     <Setter Property="Margin" Value="{StaticResource SpaceBelowThickness}" /> -->
+        <!-- </Style> -->
         <Style Selector="ScrollViewer > StackPanel">
             <Setter Property="Margin" Value="{StaticResource ContentPadding}" />
         </Style>
@@ -24,11 +31,11 @@
             <Setter Property="HorizontalAlignment" Value="Stretch" />
         </Style>
     </Window.Styles>
-    <TabControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TabStripPlacement="Left">
-        <TabItem Header="General">
+    <TabControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TabStripPlacement="Top">
+        <TabItem Header="{materialIcons:MaterialIconExt Kind=Chip, Size={StaticResource IconSize}}">
             <ScrollViewer>
-                <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                    <TextBlock Text="Core type:" />
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <TextBlock Classes="h3" Text="Core"/>
                     <ComboBox
                         Items="{Binding EmulatorTypes,Mode=OneTime}"
                         SelectedItem="{Binding CoreType,Mode=TwoWay}" />
@@ -37,10 +44,10 @@
                 </StackPanel>
             </ScrollViewer>
         </TabItem>
-        <TabItem Header="Shortcuts" Name="ShortcutTab">
+        <TabItem Header="{materialIcons:MaterialIconExt Kind=Keyboard, Size={StaticResource IconSize}}" Name="ShortcutTab">
             <ScrollViewer>
-                <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                    <TextBlock FontWeight="Bold">Emulator</TextBlock>
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <TextBlock Classes="h3" Text="Emulator"/>
                     <Grid RowDefinitions="*,*,*,*,*,*,*,*,*" ColumnDefinitions="*,*">
                         <Label Grid.Row="0" Grid.Column="0" Content="Open ROM" />
                         <ctrls:HotkeyButton Grid.Row="0" Grid.Column="1"
@@ -70,7 +77,7 @@
                         <ctrls:HotkeyButton Grid.Row="8" Grid.Column="1"
                                             CurrentHotkey="{Binding SaveCurrentSlotHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
                     </Grid>
-                    <TextBlock FontWeight="Bold">Rerecording</TextBlock>
+                    <TextBlock Classes="h3" Text="Rerecording"/>
                     <Grid RowDefinitions="*,*,*,*,*" ColumnDefinitions="*,*">
                         <Label Grid.Row="0" Grid.Column="0" Content="Start Movie" />
                         <ctrls:HotkeyButton Grid.Row="0" Grid.Column="1"
@@ -84,28 +91,35 @@
                         <Label Grid.Row="3" Grid.Column="0" Content="Restart Movie" />
                         <ctrls:HotkeyButton Grid.Row="3" Grid.Column="1"
                                             CurrentHotkey="{Binding RestartMovieHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
-                        <Label Grid.Row="3" Grid.Column="0" Content="Toggle Disable Writes" />
-                        <ctrls:HotkeyButton Grid.Row="3" Grid.Column="1"
+                        <Label Grid.Row="4" Grid.Column="0" Content="Toggle Disable Writes" />
+                        <ctrls:HotkeyButton Grid.Row="4" Grid.Column="1"
                                             CurrentHotkey="{Binding DisableWritesHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
                     </Grid>
                 </StackPanel>
             </ScrollViewer>
         </TabItem>
-        <TabItem Header="Plugins">
+        <TabItem Header="{materialIcons:MaterialIconExt Kind=Plugin, Size={StaticResource IconSize}}">
             <ScrollViewer>
-                <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                    <TextBlock Text="Video plugin" />
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <TextBlock Classes="h3" Text="Video"/>
                     <ctrls:FileBrowser CurrentPath="{Binding VideoPluginPath}" PickerOptions="{Binding DllPickerOptions}" />
-                    <TextBlock Text="Audio plugin" />
+                    <TextBlock Classes="h3" Text="Audio"/>
                     <ctrls:FileBrowser CurrentPath="{Binding AudioPluginPath}" PickerOptions="{Binding DllPickerOptions}" />
-                    <TextBlock Text="Input plugin" />
+                    <TextBlock Classes="h3" Text="Input"/>
                     <ctrls:FileBrowser CurrentPath="{Binding InputPluginPath}" PickerOptions="{Binding DllPickerOptions}" />
-                    <TextBlock Text="RSP plugin" />
+                    <TextBlock Classes="h3" Text="RSP"/>
                     <ctrls:FileBrowser CurrentPath="{Binding RspPluginPath}" PickerOptions="{Binding DllPickerOptions}" />
                 </StackPanel>
             </ScrollViewer>
         </TabItem>
-        <TabItem Header="Video">
-        </TabItem>
+        
+        <!-- <TabItem Header="{materialIcons:MaterialIconExt Kind=Video}"> -->
+        <!-- </TabItem> -->
+        <!-- <TabItem Header="{materialIcons:MaterialIconExt Kind=Audio}"> -->
+        <!-- </TabItem> -->
+        <!-- <TabItem Header="{materialIcons:MaterialIconExt Kind=Gamepad}"> -->
+        <!-- </TabItem> -->
+        <!-- <TabItem Header="{materialIcons:MaterialIconExt Kind=Cpu64Bit}"> -->
+        <!-- </TabItem> -->
     </TabControl>
 </Window>
