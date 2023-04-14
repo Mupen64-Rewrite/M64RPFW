@@ -53,7 +53,7 @@ public static partial class Mupen64Plus
     /// <param name="author">a string stored as the "Authors" field</param>
     /// <param name="desc">a string stored as the "Description" field</param>
     /// <param name="startType">what to do before starting this M64</param>
-    public static void VCR_StartRecording(string path, string author = "", string desc = "", VCRStartType startType = VCRStartType.FromReset)
+    public static void VCR_StartRecording(string path, string author = "", string desc = "", VCRStartType startType = VCRStartType.Reset)
     {
         Error err = _vcrStartRecording(path, author, desc, startType);
         ThrowForError(err);

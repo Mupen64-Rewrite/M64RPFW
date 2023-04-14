@@ -12,7 +12,7 @@ public partial class OpenMovieViewModel : ObservableObject
     [ObservableProperty] private string _path = "";
     [ObservableProperty] private string _authors = "";
     [ObservableProperty] private string _description = "";
-    [ObservableProperty] private VCRStartType _startType = VCRStartType.FromSnapshot;
+    [ObservableProperty] private VCRStartType _startType = VCRStartType.Snapshot;
     [ObservableProperty] private bool _isEditable = true;
 
     public event Action<OpenMovieDialogResult?> OnCloseRequested = _ => { };
