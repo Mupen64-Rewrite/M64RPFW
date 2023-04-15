@@ -267,6 +267,15 @@ namespace M64RPFW.Views.Avalonia.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Recent Roms.
+        /// </summary>
+        internal static string RecentRoms {
+            get {
+                return ResourceManager.GetString("RecentRoms", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Rerecording.
         /// </summary>
         internal static string Rerecording {

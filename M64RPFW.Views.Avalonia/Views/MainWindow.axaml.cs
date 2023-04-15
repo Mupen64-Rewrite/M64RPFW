@@ -21,7 +21,7 @@ public partial class MainWindow : Window, IWindowSizingService, IViewDialogServi
     public MainWindow()
     {
         AvaloniaXamlLoader.Load(this);
-
+        
         _vidextControl = this.Find<VidextControl>("EmulatorWindow")!;
 
         DataContext = new EmulatorViewModel(this.Find<VidextControl>("EmulatorWindow")!, (App)Application.Current!,

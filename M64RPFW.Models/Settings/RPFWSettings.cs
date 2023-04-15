@@ -1,8 +1,5 @@
-using System.Diagnostics.Contracts;
+using System.Collections.ObjectModel;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Helpers;
 using M64RPFW.Models.Types;
@@ -27,7 +24,7 @@ public class RPFWSettings : ITomlMetadataProvider
 
         public string Culture { get; set; } = "en-US";
         public string Theme { get; set; } = "Light";
-        public List<string> RecentRoms { get; } = new();
+        public ObservableCollection<string> RecentRoms { get; set; } = new();
         public bool IsStatusBarVisible { get; set; } = true;
     }
 
