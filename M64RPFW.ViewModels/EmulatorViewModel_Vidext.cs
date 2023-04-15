@@ -173,14 +173,20 @@ public unsafe partial class EmulatorViewModel : IVideoExtensionService
         var height = Math.Min((uint) size.Height, 65535);
         Mupen64Plus.CoreStateSet(Mupen64PlusTypes.CoreParam.VideoSize, (width << 16) | height);
     }
-
+    
     public void ForwardSDLKeyDown(Scancode scancode, Keymod modifiers)
     {
-        Mupen64Plus.SendSDLKeyDown(scancode, modifiers);
+        if (MupenIsActive)
+        {
+            Mupen64Plus.SendSDLKeyDown(scancode, modifiers);
+        }
     }
     
     public void ForwardSDLKeyUp(Scancode scancode, Keymod modifiers)
     {
-        Mupen64Plus.SendSDLKeyUp(scancode, modifiers);
+        if (MupenIsActive)
+        {
+            Mupen64Plus.SendSDLKeyUp(scancode, modifiers);
+        }
     }
 }

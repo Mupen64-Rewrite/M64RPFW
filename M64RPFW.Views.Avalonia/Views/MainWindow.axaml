@@ -54,7 +54,7 @@
         <KeyBinding Command="{Binding RestartMovieCommand}"
                     Gesture="{Binding RestartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
     </Window.KeyBindings>
-    <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" LastChildFill="True">
+    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" RowDefinitions="Auto,*,Auto">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[File]'}">
                 <!-- Opening a ROM depends on the window, thus it's part of view -->
@@ -184,7 +184,10 @@
                     IsEnabled="False" />
             </MenuItem>
         </Menu>
-        <ctrls:VidextControl Name="EmulatorWindow" />
-    </DockPanel>
+        <ctrls:VidextControl Grid.Row="1" Name="EmulatorWindow" />
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            
+        </StackPanel>
+    </Grid>
 
 </views:MainWindow>
