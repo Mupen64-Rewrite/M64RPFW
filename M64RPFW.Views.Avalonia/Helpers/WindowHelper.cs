@@ -1,14 +1,21 @@
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 
 namespace M64RPFW.Views.Avalonia.Helpers;
 
-internal class WindowHelper
+internal static class WindowHelper
 {
-    internal static Window GetWindow()
+    /// <summary>
+    ///     Gets the first active <see cref="Window" /> from the <see cref="Application" />'s window collection
+    /// </summary>
+    /// <returns>The first active <see cref="Window" />, or <see cref="MainWindow" /></returns>
+    internal static Window GetFirstActiveWindow()
     {
-        var lifetime = Application.Current!.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
-        return lifetime?.MainWindow!;
+        return ((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).Windows
+            .FirstOrDefault(
+                x => x.IsActive,
+                (Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)!.MainWindow);
     }
 }

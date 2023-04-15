@@ -9,10 +9,21 @@
         x:Class="M64RPFW.Views.Avalonia.Views.OpenMovieDialog"
         x:CompileBindings="True"
         x:DataType="vm:OpenMovieViewModel"
-        Title="TODO: conditional title changing">
+        Classes.IsEditable="{Binding IsEditable}"
+        Classes.IsNotEditable="{Binding !IsEditable}">
     <Window.Styles>
         <Style Selector="StackPanel">
-            <Setter Property="Margin" Value="{StaticResource ContentPadding}" />
+            <Setter Property="Margin" Value="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[Ok]'}" />
+        </Style>
+        <Style Selector="Window.IsEditable">
+            <Style.Setters>
+                <Setter Property="Title" Value="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[StartRecording]'}"/>
+            </Style.Setters>
+        </Style>
+        <Style Selector="Window.IsNotEditable">
+            <Style.Setters>
+                <Setter Property="Title" Value="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[StartPlaying]'}"/>
+            </Style.Setters>
         </Style>
     </Window.Styles>
     <DockPanel LastChildFill="True">
