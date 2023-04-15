@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="128" align="center" src="https://raw.githubusercontent.com/Mupen64-Rewrite/M64RPFW/dc8cbbe650db147fc03086dcf61e2cf548984500/MiscAssets/rpfw.svg?token=ALUAFBJOQCHUOBKMRPJHEDLEHJTNA">
+  <img width="128" align="center" src="https://github.com/Mupen64-Rewrite/M64RPFW/blob/avalonia/MiscAssets/rpfw.svg">
 </p>
 
 <h1 align="center">
