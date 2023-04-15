@@ -5,8 +5,8 @@
                   xmlns:ctrls="clr-namespace:M64RPFW.Views.Avalonia.Controls"
                   xmlns:views="clr-namespace:M64RPFW.Views.Avalonia.Views"
                   xmlns:vm="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels"
-                  xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
                   xmlns:markupExtensions="clr-namespace:M64RPFW.Views.Avalonia.MarkupExtensions"
+                  xmlns:system="clr-namespace:System;assembly=System.Runtime"
                   mc:Ignorable="d"
                   x:Class="M64RPFW.Views.Avalonia.Views.MainWindow"
                   Icon="/Assets/rpfw.ico"
@@ -59,33 +59,67 @@
             <MenuItem Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[File]'}">
                 <!-- Opening a ROM depends on the window, thus it's part of view -->
                 <!-- TODO: implement attached property or behaviour for applying both HotKey and InputGesture from a single binding value -->
-                <MenuItem Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[OpenRom]'}" Command="{Binding OpenRomCommand}"
-                          InputGesture="{Binding OpenRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
-                <MenuItem Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[CloseRom]'}" Command="{Binding CloseRomCommand}"
-                          InputGesture="{Binding CloseRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
-                <MenuItem Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[ResetRom]'}" Command="{Binding ResetRomCommand}"
-                          InputGesture="{Binding ResetRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+                <MenuItem
+                    Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[OpenRom]'}"
+                    Command="{Binding OpenRomCommand}"
+                    InputGesture="{Binding OpenRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+                <!-- TODO: MenuItem itemscontrol container retemplating -->
+                <!-- <MenuItem -->
+                <!--     Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[RecentRoms]'}" -->
+                <!--     ItemsSource="{Binding Source={x:Static vm:SettingsViewModel.Instance}, Path=RecentRoms}"> -->
+                <!--     <MenuItem.DataTemplates> -->
+                <!-- -->
+                <!--         <DataTemplate DataType="{x:Type system:String}"> -->
+                <!--             <TextBlock Text="{Binding}" /> -->
+                <!--         </DataTemplate> -->
+                <!--     </MenuItem.DataTemplates> -->
+                <!-- </MenuItem> -->
+
+                <MenuItem
+                    Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[CloseRom]'}"
+                    Command="{Binding CloseRomCommand}"
+                    InputGesture="{Binding CloseRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+                <MenuItem
+                    Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[ResetRom]'}"
+                    Command="{Binding ResetRomCommand}"
+                    InputGesture="{Binding ResetRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
                 <Separator />
-                <MenuItem Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[Settings]'}" Command="{Binding ShowSettingsCommand}" />
+                <MenuItem
+                    Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[Settings]'}"
+                    Command="{Binding ShowSettingsCommand}" />
             </MenuItem>
-            <MenuItem Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[Emulator]'}">
-                <MenuItem Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[PauseOrResume]'}" Command="{Binding PauseOrResumeCommand}"
-                          InputGesture="{Binding PauseOrResumeHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
-                <MenuItem Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[FrameAdvance]'}" Command="{Binding FrameAdvanceCommand}"
-                          InputGesture="{Binding FrameAdvanceHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+            <MenuItem
+                Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[Emulator]'}">
+                <MenuItem
+                    Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[PauseOrResume]'}"
+                    Command="{Binding PauseOrResumeCommand}"
+                    InputGesture="{Binding PauseOrResumeHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+                <MenuItem
+                    Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[FrameAdvance]'}"
+                    Command="{Binding FrameAdvanceCommand}"
+                    InputGesture="{Binding FrameAdvanceHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
                 <Separator />
-                <MenuItem Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[LoadFromFile]'}" Command="{Binding LoadFromFileCommand}"
-                          InputGesture="{Binding LoadFromFileHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
-                <MenuItem Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[SaveToFile]'}" Command="{Binding SaveToFileCommand}"
-                          InputGesture="{Binding SaveToFileHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
-                <MenuItem Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[LoadState]'}" Command="{Binding LoadCurrentSlotCommand}"
-                          InputGesture="{Binding LoadCurrentSlotHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
-                <MenuItem Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[SaveState]'}" Command="{Binding SaveCurrentSlotCommand}"
-                          InputGesture="{Binding SaveCurrentSlotHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+                <MenuItem
+                    Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[LoadFromFile]'}"
+                    Command="{Binding LoadFromFileCommand}"
+                    InputGesture="{Binding LoadFromFileHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+                <MenuItem
+                    Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[SaveToFile]'}"
+                    Command="{Binding SaveToFileCommand}"
+                    InputGesture="{Binding SaveToFileHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+                <MenuItem
+                    Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[LoadState]'}"
+                    Command="{Binding LoadCurrentSlotCommand}"
+                    InputGesture="{Binding LoadCurrentSlotHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+                <MenuItem
+                    Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[SaveState]'}"
+                    Command="{Binding SaveCurrentSlotCommand}"
+                    InputGesture="{Binding SaveCurrentSlotHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
                 <Separator />
                 <!-- Jank incoming! (Avalonia doesn't have RadioMenuItem, and I can't really implement one) -->
-                <MenuItem Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[CurrentSlot]'}"
-                          SelectedItem="{Binding CurrentSlotMenuItem,Mode=OneWayToSource}">
+                <MenuItem
+                    Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[CurrentSlot]'}"
+                    SelectedItem="{Binding CurrentSlotMenuItem,Mode=OneWayToSource}">
                     <MenuItem.Styles>
                         <Style Selector="MenuItem">
                             <Setter Property="Header">
@@ -115,25 +149,39 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[Movie]'}">
-                <MenuItem Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[StartPlaying]'}" Command="{Binding StartMovieCommand}"
-                          InputGesture="{Binding StartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
-                <MenuItem Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[StartRecording]'}" Command="{Binding StartRecordingCommand}"
-                          InputGesture="{Binding StartRecordingHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
-                <Separator/>
-                <MenuItem Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[StopMovie]'}" Command="{Binding StopMovieCommand}"
-                          InputGesture="{Binding StopMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
-                <MenuItem Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[RestartMovie]'}" Command="{Binding RestartMovieCommand}"
-                          InputGesture="{Binding RestartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
-                <MenuItem Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[DisableWrites]'}" Command="{Binding ToggleDisableWritesCommand}"
-                          InputGesture="{Binding DisableWritesHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}">
+                <MenuItem
+                    Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[StartPlaying]'}"
+                    Command="{Binding StartMovieCommand}"
+                    InputGesture="{Binding StartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+                <MenuItem
+                    Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[StartRecording]'}"
+                    Command="{Binding StartRecordingCommand}"
+                    InputGesture="{Binding StartRecordingHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+                <Separator />
+                <MenuItem
+                    Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[StopMovie]'}"
+                    Command="{Binding StopMovieCommand}"
+                    InputGesture="{Binding StopMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+                <MenuItem
+                    Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[RestartMovie]'}"
+                    Command="{Binding RestartMovieCommand}"
+                    InputGesture="{Binding RestartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+                <MenuItem
+                    Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[DisableWrites]'}"
+                    Command="{Binding ToggleDisableWritesCommand}"
+                    InputGesture="{Binding DisableWritesHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}">
                     <MenuItem.Icon>
                         <!-- Incredibly jank, but this works somehow -->
                         <CheckBox IsHitTestVisible="False" IsChecked="{Binding VCRDisableWrites}" />
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator />
-                <MenuItem Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[StartEncoder]'}" IsEnabled="False" />
-                <MenuItem Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[StopEncoder]'}" IsEnabled="False" />
+                <MenuItem
+                    Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[StartEncoder]'}"
+                    IsEnabled="False" />
+                <MenuItem
+                    Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[StopEncoder]'}"
+                    IsEnabled="False" />
             </MenuItem>
         </Menu>
         <ctrls:VidextControl Name="EmulatorWindow" />

@@ -142,4 +142,7 @@
     <data name="Theme" xml:space="preserve">
         <value>Theme</value>
     </data>
+    <data name="RecentRoms" xml:space="preserve">
+        <value>Recent Roms</value>
+    </data>
 </root>
