@@ -1,5 +1,7 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Helpers;
@@ -27,6 +29,18 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
 
     #region Properties
 
+    public string Culture
+    {
+        get => RPFWSettings.Instance.View.Culture;
+        set => SetRPFWSetting((inst, val) => inst.View.Culture = val, value);
+    }
+    
+    public string Theme
+    {
+        get => RPFWSettings.Instance.View.Theme;
+        set => SetRPFWSetting((inst, val) => inst.View.Theme = val, value);
+    }
+    
     public string VideoPluginPath
     {
         get => PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.VideoPath);
@@ -71,14 +85,8 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
 
     public bool IsStatusBarVisible
     {
-        get => RPFWSettings.Instance.General.IsStatusBarVisible;
-        set => SetRPFWSetting((inst, val) => inst.General.IsStatusBarVisible = val, value);
-    }
-
-    public string Locale
-    {
-        get => RPFWSettings.Instance.General.Locale;
-        set => SetRPFWSetting((inst, val) => inst.General.Locale = val, value);
+        get => RPFWSettings.Instance.View.IsStatusBarVisible;
+        set => SetRPFWSetting((inst, val) => inst.View.IsStatusBarVisible = val, value);
     }
 
     public string OpenRomHotkey
@@ -165,8 +173,8 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         set => SetRPFWSetting((inst, val) => inst.Hotkeys.DisableWrites = val, value);
     }
 
-    // Save on dialog closing, otherwise it won't affect Mupen64Plus
-    public void OnClosed()
+    [RelayCommand]
+    private void Save()
     {
         Mupen64Plus.ConfigSaveFile();
         RPFWSettings.Save();
@@ -186,18 +194,6 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
 
     #endregion
 
-    // [RelayCommand]
-    // private void RemoveRecentRomPath(string path)
-    // {
-    //     RecentRomPaths.Remove(path);
-    // } 
-    //
-    // void IRecipient<RomLoadingMessage>.Receive(RomLoadingMessage message)
-    // {
-    //     RecentRomPaths.Remove(message.Value);
-    //     RecentRomPaths.Insert(0, message.Value);
-    // }
-
     private void SetMupenSetting<T>(IntPtr section, string key, T value,
         [CallerMemberName] string? callerMemberName = null)
     {
@@ -216,5 +212,16 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
 
     public void Receive(RomLoadingMessage message)
     {
+        // TODO: implement recent roms   
+    }
+
+    // HACK: notify all properties changed on this class
+    public void NotifyAllPropertiesChanged()
+    {
+        var properties = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        foreach (var propertyInfo in properties)
+        {
+            OnPropertyChanged(propertyInfo.Name);
+        }
     }
 }

@@ -12,8 +12,8 @@
         <Thickness x:Key="ContentPadding">10,10,10,10</Thickness>
     </Application.Resources>
     <Application.Styles>
+        <FluentTheme/>
         <materialIcons:MaterialIconStyles />
-        <FluentTheme />
 
         <Style Selector="TextBlock.h1">
             <Setter Property="FontSize" Value="24" />
