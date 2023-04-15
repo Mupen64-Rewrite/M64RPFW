@@ -86,7 +86,7 @@ public partial class FileBrowser : UserControl
     {
        
         
-        var provider = WindowHelper.GetWindow().StorageProvider;
+        var provider = WindowHelper.GetFirstActiveWindow().StorageProvider;
         
         IStorageFolder? suggestedStartLocation;
 
