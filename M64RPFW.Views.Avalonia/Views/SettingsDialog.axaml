@@ -10,20 +10,12 @@
         x:DataType="viewModels:SettingsViewModel"
         Title="Settings" Width="500" Height="500"
         xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:markupExtensions="clr-namespace:M64RPFW.Views.Avalonia.MarkupExtensions"
         Closed="TopLevel_OnClosed">
     <Window.Resources>
         <x:Double x:Key="IconSize">28</x:Double>
     </Window.Resources>
     <Window.Styles>
-        <Style Selector="materialIcons|MaterialIcon">
-            <Setter Property="FontSize" Value="24"/>
-        </Style>
-        <!-- <Style Selector="ComboBox"> -->
-        <!--     <Setter Property="Margin" Value="{StaticResource SpaceBelowThickness}" /> -->
-        <!-- </Style> -->
-        <!-- <Style Selector="ctrls|FileBrowser"> -->
-        <!--     <Setter Property="Margin" Value="{StaticResource SpaceBelowThickness}" /> -->
-        <!-- </Style> -->
         <Style Selector="ScrollViewer > StackPanel">
             <Setter Property="Margin" Value="{StaticResource ContentPadding}" />
         </Style>
@@ -32,66 +24,111 @@
         </Style>
     </Window.Styles>
     <TabControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TabStripPlacement="Top">
-        <TabItem Header="{materialIcons:MaterialIconExt Kind=Chip, Size={StaticResource IconSize}}">
+        <TabItem Header="{materialIcons:MaterialIconExt Kind=Monitor, Size={StaticResource IconSize}}">
             <ScrollViewer>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <TextBlock Classes="h3" Text="Core"/>
+                    <!-- TODO: find a way to polyfill selectedvaluepath, because we need localization support for comboboxitems -->
+                    <TextBlock Classes="h3"
+                               Text="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[Culture]'}" />
                     <ComboBox
-                        Items="{Binding EmulatorTypes,Mode=OneTime}"
-                        SelectedItem="{Binding CoreType,Mode=TwoWay}" />
-                    <CheckBox Content="Disable Expansion Pak memory" />
-                    <CheckBox Content="Randomize interrupt timings" />
+                        SelectedValue="{Binding Culture,Mode=TwoWay}">
+                        <ComboBox.Items>
+                            <x:String>en-US</x:String>
+                            <x:String>de-DE</x:String>
+                        </ComboBox.Items>
+                    </ComboBox>
+                    <TextBlock Classes="h3"
+                               Text="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[Theme]'}" />
+                    <ComboBox
+                        SelectedValue="{Binding Theme,Mode=TwoWay}">
+                        <ComboBox.Items>
+                            <x:String>Light</x:String>
+                            <x:String>Dark</x:String>
+                        </ComboBox.Items>
+                    </ComboBox>
                 </StackPanel>
             </ScrollViewer>
         </TabItem>
-        <TabItem Header="{materialIcons:MaterialIconExt Kind=Keyboard, Size={StaticResource IconSize}}" Name="ShortcutTab">
+        <TabItem Header="{materialIcons:MaterialIconExt Kind=Chip, Size={StaticResource IconSize}}">
             <ScrollViewer>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <TextBlock Classes="h3" Text="Emulator"/>
+                    <TextBlock Classes="h3"
+                               Text="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[Core]'}" />
+                    <ComboBox
+                        Items="{Binding EmulatorTypes,Mode=OneTime}"
+                        SelectedItem="{Binding CoreType,Mode=TwoWay}" />
+                    <CheckBox
+                        Content="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[DisableExpansionPakMemory]'}" />
+                    <CheckBox
+                        Content="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[RandomizeInterruptTimings]'}" />
+                </StackPanel>
+            </ScrollViewer>
+        </TabItem>
+        <TabItem Header="{materialIcons:MaterialIconExt Kind=Keyboard, Size={StaticResource IconSize}}"
+                 Name="ShortcutTab">
+            <ScrollViewer>
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <TextBlock Classes="h3"
+                               Text="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[Emulator]'}" />
                     <Grid RowDefinitions="*,*,*,*,*,*,*,*,*" ColumnDefinitions="*,*">
-                        <Label Grid.Row="0" Grid.Column="0" Content="Open ROM" />
+                        <Label Grid.Row="0" Grid.Column="0"
+                               Content="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[OpenRom]'}" />
                         <ctrls:HotkeyButton Grid.Row="0" Grid.Column="1"
                                             CurrentHotkey="{Binding OpenRomHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
-                        <Label Grid.Row="1" Grid.Column="0" Content="Close ROM" />
+                        <Label Grid.Row="1" Grid.Column="0"
+                               Content="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[CloseRom]'}" />
                         <ctrls:HotkeyButton Grid.Row="1" Grid.Column="1"
                                             CurrentHotkey="{Binding CloseRomHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
-                        <Label Grid.Row="2" Grid.Column="0" Content="Reset ROM" />
+                        <Label Grid.Row="2" Grid.Column="0"
+                               Content="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[ResetRom]'}" />
                         <ctrls:HotkeyButton Grid.Row="2" Grid.Column="1"
                                             CurrentHotkey="{Binding ResetRomHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
-                        <Label Grid.Row="3" Grid.Column="0" Content="Pause/Resume" />
+                        <Label Grid.Row="3" Grid.Column="0"
+                               Content="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[PauseOrResume]'}" />
                         <ctrls:HotkeyButton Grid.Row="3" Grid.Column="1"
                                             CurrentHotkey="{Binding PauseOrResumeHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
-                        <Label Grid.Row="4" Grid.Column="0" Content="Frame Advance" />
+                        <Label Grid.Row="4" Grid.Column="0"
+                               Content="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[FrameAdvance]'}" />
                         <ctrls:HotkeyButton Grid.Row="4" Grid.Column="1"
                                             CurrentHotkey="{Binding FrameAdvanceHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
-                        <Label Grid.Row="5" Grid.Column="0" Content="Load from File" />
+                        <Label Grid.Row="5" Grid.Column="0"
+                               Content="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[LoadFromFile]'}" />
                         <ctrls:HotkeyButton Grid.Row="5" Grid.Column="1"
                                             CurrentHotkey="{Binding LoadFromFileHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
-                        <Label Grid.Row="6" Grid.Column="0" Content="Save to File" />
+                        <Label Grid.Row="6" Grid.Column="0"
+                               Content="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[SaveToFile]'}" />
                         <ctrls:HotkeyButton Grid.Row="6" Grid.Column="1"
                                             CurrentHotkey="{Binding SaveToFileHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
-                        <Label Grid.Row="7" Grid.Column="0" Content="Load Current Slot" />
+                        <Label Grid.Row="7" Grid.Column="0"
+                               Content="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[LoadCurrentSlot]'}" />
                         <ctrls:HotkeyButton Grid.Row="7" Grid.Column="1"
                                             CurrentHotkey="{Binding LoadCurrentSlotHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
-                        <Label Grid.Row="8" Grid.Column="0" Content="Save Current Slot" />
+                        <Label Grid.Row="8" Grid.Column="0"
+                               Content="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[SaveCurrentSlot]'}" />
                         <ctrls:HotkeyButton Grid.Row="8" Grid.Column="1"
                                             CurrentHotkey="{Binding SaveCurrentSlotHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
                     </Grid>
-                    <TextBlock Classes="h3" Text="Rerecording"/>
+                    <TextBlock Classes="h3"
+                               Text="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[Rerecording]'}" />
                     <Grid RowDefinitions="*,*,*,*,*" ColumnDefinitions="*,*">
-                        <Label Grid.Row="0" Grid.Column="0" Content="Start Movie" />
+                        <Label Grid.Row="0" Grid.Column="0"
+                               Content="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[StartPlaying]'}" />
                         <ctrls:HotkeyButton Grid.Row="0" Grid.Column="1"
                                             CurrentHotkey="{Binding StartMovieHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
-                        <Label Grid.Row="1" Grid.Column="0" Content="Start Recording" />
+                        <Label Grid.Row="1" Grid.Column="0"
+                               Content="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[StartRecording]'}" />
                         <ctrls:HotkeyButton Grid.Row="1" Grid.Column="1"
                                             CurrentHotkey="{Binding StartRecordingHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
-                        <Label Grid.Row="2" Grid.Column="0" Content="Stop Movie" />
+                        <Label Grid.Row="2" Grid.Column="0"
+                               Content="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[StopMovie]'}" />
                         <ctrls:HotkeyButton Grid.Row="2" Grid.Column="1"
                                             CurrentHotkey="{Binding StopMovieHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
-                        <Label Grid.Row="3" Grid.Column="0" Content="Restart Movie" />
+                        <Label Grid.Row="3" Grid.Column="0"
+                               Content="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[RestartMovie]'}" />
                         <ctrls:HotkeyButton Grid.Row="3" Grid.Column="1"
                                             CurrentHotkey="{Binding RestartMovieHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
-                        <Label Grid.Row="4" Grid.Column="0" Content="Toggle Disable Writes" />
+                        <Label Grid.Row="4" Grid.Column="0"
+                               Content="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[ToggleDisableWrites]'}" />
                         <ctrls:HotkeyButton Grid.Row="4" Grid.Column="1"
                                             CurrentHotkey="{Binding DisableWritesHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
                     </Grid>
@@ -101,25 +138,23 @@
         <TabItem Header="{materialIcons:MaterialIconExt Kind=Plugin, Size={StaticResource IconSize}}">
             <ScrollViewer>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <TextBlock Classes="h3" Text="Video"/>
-                    <ctrls:FileBrowser CurrentPath="{Binding VideoPluginPath}" PickerOptions="{Binding DllPickerOptions}" />
-                    <TextBlock Classes="h3" Text="Audio"/>
-                    <ctrls:FileBrowser CurrentPath="{Binding AudioPluginPath}" PickerOptions="{Binding DllPickerOptions}" />
-                    <TextBlock Classes="h3" Text="Input"/>
-                    <ctrls:FileBrowser CurrentPath="{Binding InputPluginPath}" PickerOptions="{Binding DllPickerOptions}" />
-                    <TextBlock Classes="h3" Text="RSP"/>
+                    <TextBlock Classes="h3"
+                               Text="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[Video]'}" />
+                    <ctrls:FileBrowser CurrentPath="{Binding VideoPluginPath}"
+                                       PickerOptions="{Binding DllPickerOptions}" />
+                    <TextBlock Classes="h3"
+                               Text="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[Audio]'}" />
+                    <ctrls:FileBrowser CurrentPath="{Binding AudioPluginPath}"
+                                       PickerOptions="{Binding DllPickerOptions}" />
+                    <TextBlock Classes="h3"
+                               Text="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[Input]'}" />
+                    <ctrls:FileBrowser CurrentPath="{Binding InputPluginPath}"
+                                       PickerOptions="{Binding DllPickerOptions}" />
+                    <TextBlock Classes="h3"
+                               Text="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[Rsp]'}" />
                     <ctrls:FileBrowser CurrentPath="{Binding RspPluginPath}" PickerOptions="{Binding DllPickerOptions}" />
                 </StackPanel>
             </ScrollViewer>
         </TabItem>
-        
-        <!-- <TabItem Header="{materialIcons:MaterialIconExt Kind=Video}"> -->
-        <!-- </TabItem> -->
-        <!-- <TabItem Header="{materialIcons:MaterialIconExt Kind=Audio}"> -->
-        <!-- </TabItem> -->
-        <!-- <TabItem Header="{materialIcons:MaterialIconExt Kind=Gamepad}"> -->
-        <!-- </TabItem> -->
-        <!-- <TabItem Header="{materialIcons:MaterialIconExt Kind=Cpu64Bit}"> -->
-        <!-- </TabItem> -->
     </TabControl>
 </Window>

@@ -20,6 +20,19 @@ public class RPFWSettings : ITomlMetadataProvider
 {
     TomlPropertiesMetadata? ITomlMetadataProvider.PropertiesMetadata { get; set; }
 
+    public class ViewSection : ITomlMetadataProvider
+    {
+        // storage for comments and whitespace
+        TomlPropertiesMetadata? ITomlMetadataProvider.PropertiesMetadata { get; set; }
+
+        public string Culture { get; set; } = "en-US";
+        public string Theme { get; set; } = "Light";
+        public List<string> RecentRoms { get; } = new();
+        public bool IsStatusBarVisible { get; set; } = true;
+    }
+
+    public ViewSection View { get; } = new();
+    
     public class PluginsSection : ITomlMetadataProvider
     {
         // storage for comments and whitespace
@@ -32,19 +45,7 @@ public class RPFWSettings : ITomlMetadataProvider
     }
 
     public PluginsSection Plugins { get; } = new();
-
-    public class GeneralSection : ITomlMetadataProvider
-    {
-        // storage for comments and whitespace
-        TomlPropertiesMetadata? ITomlMetadataProvider.PropertiesMetadata { get; set; }
-
-        public List<string> RecentRoms { get; } = new();
-        public string Locale { get; set; } = "en_US";
-        public bool IsStatusBarVisible { get; set; } = true;
-    }
-
-    public GeneralSection General { get; } = new();
-
+    
     public class HotkeysSection : ITomlMetadataProvider
     {
         // storage for comments and whitespace
