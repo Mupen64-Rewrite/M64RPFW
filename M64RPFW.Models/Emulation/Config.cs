@@ -16,7 +16,7 @@ public static partial class Mupen64Plus
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate void ListParametersCallback(IntPtr context, string name, Type type);
+    private delegate void ListParametersCallback(IntPtr context, string name, Mupen64PlusTypes.Type type);
 
     #endregion
     #region Delegates for config functions
