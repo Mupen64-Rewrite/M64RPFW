@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels"
         xmlns:conv="clr-namespace:M64RPFW.Views.Avalonia.Converter"
+        xmlns:system="clr-namespace:System;assembly=System.Runtime"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="M64RPFW.Views.Avalonia.Views.AdvancedSettingsDialog"
         x:CompileBindings="True" x:DataType="vm:AdvancedSettingsViewModel"
@@ -15,18 +16,43 @@
             <Label Grid.Row="0" Grid.Column="0" Content="Current section: "/>
             <ComboBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{Binding ConfigSectionNames}" SelectedItem="{Binding SectionName}"/>
         </Grid>
-        <DataGrid Items="{Binding CurrentSection}">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
-                <DataGridTemplateColumn Header="Value">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <conv:ConfigEditingDataTemplate/>
-                    </DataGridTemplateColumn.CellTemplate>
-                    <DataGridTemplateColumn.CellEditingTemplate>
-                        <conv:ConfigEditingDataTemplate/>
-                    </DataGridTemplateColumn.CellEditingTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
+        <ScrollViewer>
+            <ItemsControl ItemsSource="{Binding CurrentSection}" Grid.IsSharedSizeScope="True">
+                <ItemsControl.DataTemplates>
+                    <DataTemplate DataType="vm:ConfigKeyViewModel">
+                    
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" SharedSizeGroup="Key"></ColumnDefinition>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{Binding Name}"/>
+
+                            <ContentControl Grid.Column="1" Content="{Binding Value}">
+                                <ContentControl.DataTemplates>
+                                    <DataTemplate DataType="{x:Type system:Int32}">
+                                        <NumericUpDown Increment="1" Value="{Binding}"/>
+                                    </DataTemplate>
+                                    <DataTemplate DataType="{x:Type system:Single}">
+                                        <NumericUpDown Increment="0.1" Value="{Binding}"/>
+                                    </DataTemplate>
+                                    <DataTemplate DataType="{x:Type system:String}">
+                                        <TextBox Text="{Binding}"/>
+                                    </DataTemplate>
+                                    <DataTemplate DataType="{x:Type system:Boolean}">
+                                        <ToggleButton IsChecked="{Binding}"/>
+                                    </DataTemplate>
+                                </ContentControl.DataTemplates>
+                            </ContentControl>
+                        </Grid>
+             
+                   
+                    </DataTemplate>
+                </ItemsControl.DataTemplates>
+            </ItemsControl>
+        </ScrollViewer>
+        
+        
+       
     </DockPanel>
 </Window>
