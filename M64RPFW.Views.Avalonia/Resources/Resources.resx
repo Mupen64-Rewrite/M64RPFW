@@ -145,4 +145,10 @@
     <data name="RecentRoms" xml:space="preserve">
         <value>Recent Roms</value>
     </data>
+    <data name="VideoHeight" xml:space="preserve">
+        <value>Video Height</value>
+    </data>
+    <data name="VideoWidth" xml:space="preserve">
+        <value>Video Width</value>
+    </data>
 </root>

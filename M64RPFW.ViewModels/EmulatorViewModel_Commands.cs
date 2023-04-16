@@ -217,5 +217,11 @@ public partial class EmulatorViewModel
         await _viewDialogService.ShowSettingsDialog();
     }
 
+    [RelayCommand]
+    private async void ShowAdvancedSettings()
+    {
+        await _viewDialogService.ShowAdvancedSettingsDialog();
+    }
+
     #endregion
 }

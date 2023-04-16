@@ -9,6 +9,7 @@ using M64RPFW.Models.Helpers;
 using M64RPFW.Models.Settings;
 using M64RPFW.Models.Types.Settings;
 using M64RPFW.Services.Abstractions;
+using M64RPFW.ViewModels.Helpers;
 using M64RPFW.ViewModels.Messages;
 
 namespace M64RPFW.ViewModels;
@@ -200,6 +201,7 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
     };
 
     #endregion
+
 
     private void SetMupenSetting<T>(IntPtr section, string key, T value,
         [CallerMemberName] string? callerMemberName = null)

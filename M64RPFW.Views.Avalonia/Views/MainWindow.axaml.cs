@@ -120,6 +120,12 @@ public partial class MainWindow : Window, IWindowSizingService, IViewDialogServi
         return d.ShowDialog(this);
     }
 
+    public Task ShowAdvancedSettingsDialog()
+    {
+        AdvancedSettingsDialog d = new();
+        return d.ShowDialog(this);
+    }
+
     public Task<OpenMovieDialogResult?> ShowOpenMovieDialog(bool paramsEditable)
     {
         OpenMovieDialog d = new();

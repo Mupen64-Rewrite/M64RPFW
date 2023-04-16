@@ -35,7 +35,7 @@
             <StackPanel>
                 <controls:FileBrowser CurrentPath="{Binding Path}"
                                       PickerOptions="{Binding MoviePickerOptions, Mode=OneTime}"
-                                      IsOpenDialog="{Binding IsEditable, Converter={StaticResource BooleanInvertConverter}}" />
+                                      IsOpenDialog="{Binding !IsEditable}" />
                 <TextBlock Classes="h3" Text="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[StartFrom]'}" />
 
                 <ComboBox Items="{Binding StartTypes, Mode=OneTime}"

@@ -12,7 +12,9 @@ public static partial class Mupen64Plus
         
         
         List<string> res = new();
-        Mupen64PlusTypes.Error err = _fnConfigListSections(IntPtr.Zero, (_, name) => res.Add(name));
+        ListSectionsCallback lsc = (_, name) => res.Add(name);
+        Mupen64PlusTypes.Error err = _fnConfigListSections(IntPtr.Zero, lsc);
+        GC.KeepAlive(lsc);
         ThrowForError(err);
         
         return res;

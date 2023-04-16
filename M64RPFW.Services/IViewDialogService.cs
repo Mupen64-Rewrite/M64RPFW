@@ -12,7 +12,12 @@ public interface IViewDialogService
     /// Shows the settings dialog.
     /// </summary>
     Task ShowSettingsDialog();
-    
+
+    /// <summary>
+    /// Shows the advanced settings dialog.
+    /// </summary>
+    Task ShowAdvancedSettingsDialog();
+
     /// <summary>
     /// Prompts a dialog to open a movie.
     /// </summary>
