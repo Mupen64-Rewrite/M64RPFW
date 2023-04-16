@@ -21,7 +21,7 @@ public sealed class FilePickerService : IFilePickerService
 
     public async Task<string[]?> ShowOpenFilePickerAsync(string title = "Open file...", IReadOnlyList<FilePickerOption>? options = null, bool allowMultiple = false)
     {
-        var provider = WindowHelper.GetWindow().StorageProvider;
+        var provider = WindowHelper.GetFirstActiveWindow().StorageProvider;
         var storageFiles = await provider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
             Title = title,
@@ -33,7 +33,7 @@ public sealed class FilePickerService : IFilePickerService
 
     public async Task<string?> ShowSaveFilePickerAsync(string title = "Open file...", IReadOnlyList<FilePickerOption>? options = null)
     {
-        var provider = WindowHelper.GetWindow().StorageProvider;
+        var provider = WindowHelper.GetFirstActiveWindow().StorageProvider;
         var storageFile = await provider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
             Title = title,

@@ -1,8 +1,10 @@
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Helpers;
 using M64RPFW.Models.Settings;
 using M64RPFW.Services.Abstractions;
+using M64RPFW.ViewModels.Messages;
 using static M64RPFW.Models.Types.Mupen64PlusTypes;
 
 namespace M64RPFW.ViewModels;
@@ -49,9 +51,12 @@ public partial class EmulatorViewModel
         {
             new("N64 ROMs (.n64, .z64, .v64)", Patterns: new[] { "*.n64", "*.z64", "*.v64" }),
         }, allowMultiple: false);
+        
         if (files == null)
             return;
 
+        WeakReferenceMessenger.Default.Send(new RomLoadingMessage(files[0]));
+        
         _emuThread = new Thread(EmulatorThreadRun);
         _emuThread.Start(files[0]);
     }

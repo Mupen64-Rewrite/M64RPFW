@@ -1,13 +1,14 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Collections.ObjectModel;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Helpers;
 using M64RPFW.Models.Settings;
 using M64RPFW.Models.Types.Settings;
-using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
-using M64RPFW.ViewModels.Helpers;
 using M64RPFW.ViewModels.Messages;
 
 namespace M64RPFW.ViewModels;
@@ -17,8 +18,7 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
     private SettingsViewModel()
     {
         RPFWSettings.Load();
-        
-        MupenConfigHelpers.ConfigSectionToDict(MupenSettings.VideoGeneral, VideoGeneralSection);
+        WeakReferenceMessenger.Default.RegisterAll(this);
     }
 
     static SettingsViewModel()
@@ -30,6 +30,24 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
 
     #region Properties
 
+    public string Culture
+    {
+        get => RPFWSettings.Instance.View.Culture;
+        set => SetRPFWSetting((inst, val) => inst.View.Culture = val, value);
+    }
+    
+    public string Theme
+    {
+        get => RPFWSettings.Instance.View.Theme;
+        set => SetRPFWSetting((inst, val) => inst.View.Theme = val, value);
+    }
+    
+    public ObservableCollection<string> RecentRoms
+    {
+        get => RPFWSettings.Instance.View.RecentRoms;
+        set => SetRPFWSetting((inst, val) => inst.View.RecentRoms = val, value);
+    }
+    
     public string VideoPluginPath
     {
         get => PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.VideoPath);
@@ -74,14 +92,8 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
 
     public bool IsStatusBarVisible
     {
-        get => RPFWSettings.Instance.General.IsStatusBarVisible;
-        set => SetRPFWSetting((inst, val) => inst.General.IsStatusBarVisible = val, value);
-    }
-
-    public string Locale
-    {
-        get => RPFWSettings.Instance.General.Locale;
-        set => SetRPFWSetting((inst, val) => inst.General.Locale = val, value);
+        get => RPFWSettings.Instance.View.IsStatusBarVisible;
+        set => SetRPFWSetting((inst, val) => inst.View.IsStatusBarVisible = val, value);
     }
 
     public string OpenRomHotkey
@@ -168,7 +180,12 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         set => SetRPFWSetting((inst, val) => inst.Hotkeys.DisableWrites = val, value);
     }
 
-    
+    [RelayCommand]
+    private void Save()
+    {
+        Mupen64Plus.ConfigSaveFile();
+        RPFWSettings.Save();
+    }
 
     #endregion
 
@@ -183,32 +200,6 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
     };
 
     #endregion
-    
-    // Save on dialog closing, otherwise it won't affect Mupen64Plus
-    public void OnClosed()
-    {
-        MupenConfigHelpers.DictToConfigSection(VideoGeneralSection, MupenSettings.VideoGeneral);
-        Mupen64Plus.ConfigSaveFile();
-        RPFWSettings.Save();
-    }
-
-    #region Dictionary Tests
-
-    public ObservableDictionary<string, object> VideoGeneralSection { get; } = new();
-
-    #endregion
-
-    // [RelayCommand]
-    // private void RemoveRecentRomPath(string path)
-    // {
-    //     RecentRomPaths.Remove(path);
-    // } 
-    //
-    // void IRecipient<RomLoadingMessage>.Receive(RomLoadingMessage message)
-    // {
-    //     RecentRomPaths.Remove(message.Value);
-    //     RecentRomPaths.Insert(0, message.Value);
-    // }
 
     private void SetMupenSetting<T>(IntPtr section, string key, T value,
         [CallerMemberName] string? callerMemberName = null)
@@ -228,5 +219,16 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
 
     public void Receive(RomLoadingMessage message)
     {
+        RecentRoms.Add(message.Value);
+    }
+
+    // HACK: notify all properties changed on this class
+    public void NotifyAllPropertiesChanged()
+    {
+        var properties = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        foreach (var propertyInfo in properties)
+        {
+            OnPropertyChanged(propertyInfo.Name);
+        }
     }
 }
