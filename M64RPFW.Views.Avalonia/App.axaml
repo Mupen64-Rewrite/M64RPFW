@@ -2,17 +2,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:conv="clr-namespace:M64RPFW.Views.Avalonia.Converter"
              x:Class="M64RPFW.Views.Avalonia.App"
-             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia">
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:viewModels="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels">
     <Application.Resources>
         <conv:StringToKeyGestureConverter x:Key="StringToKeyGestureConverter" />
         <conv:DefaultValueConverter x:Key="DefaultValueConverter" />
         <conv:StringSelectorConverter x:Key="StringSelectorConverter" />
-        <conv:BooleanInvertConverter x:Key="BooleanInvertConverter" />
+        <conv:ConfigEditingDataTemplate x:Key="ConfigKeyDataTemplate"></conv:ConfigEditingDataTemplate>
         <Thickness x:Key="SpaceBelowThickness">0,10,0,20</Thickness>
         <Thickness x:Key="ContentPadding">10,10,10,10</Thickness>
     </Application.Resources>
     <Application.Styles>
         <FluentTheme/>
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
         <materialIcons:MaterialIconStyles />
 
         <Style Selector="TextBlock.h1">

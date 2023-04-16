@@ -24,7 +24,7 @@
         </Style>
     </Window.Styles>
     <TabControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TabStripPlacement="Top">
-        <TabItem Header="{materialIcons:MaterialIconExt Kind=Monitor, Size={StaticResource IconSize}}">
+        <TabItem Header="{materialIcons:MaterialIconExt Kind=HammerWrench, Size={StaticResource IconSize}}">
             <ScrollViewer>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <!-- TODO: find a way to polyfill selectedvaluepath, because we need localization support for comboboxitems -->
@@ -153,6 +153,13 @@
                     <TextBlock Classes="h3"
                                Text="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[Rsp]'}" />
                     <ctrls:FileBrowser CurrentPath="{Binding RspPluginPath}" PickerOptions="{Binding DllPickerOptions}" />
+                </StackPanel>
+            </ScrollViewer>
+        </TabItem>
+        <TabItem Header="{materialIcons:MaterialIconExt Kind=Monitor, Size={StaticResource IconSize}}">
+            <ScrollViewer>
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    
                 </StackPanel>
             </ScrollViewer>
         </TabItem>
