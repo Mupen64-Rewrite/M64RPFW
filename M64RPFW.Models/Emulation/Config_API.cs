@@ -26,15 +26,21 @@ public static partial class Mupen64Plus
         return handle;
     }
 
-    public static IEnumerable<(string name, Type type)> ConfigListParameters(IntPtr handle)
+    public static ICollection<(string name, Mupen64PlusTypes.Type type)> ConfigListParameters(IntPtr handle)
     {
         
 
-        List<(string name, Type type)> res = new();
+        List<(string name, Mupen64PlusTypes.Type type)> res = new();
         Mupen64PlusTypes.Error err = _fnConfigListParameters(handle, IntPtr.Zero, (_, name, type) => res.Add((name, type)));
         ThrowForError(err);
 
         return res;
+    }
+
+    public static void ConfigCallOverParameters(IntPtr handle, Action<string, Mupen64PlusTypes.Type> func)
+    {
+        var err = _fnConfigListParameters(handle, IntPtr.Zero, (_, name, type) => func(name, type));
+        ThrowForError(err);
     }
 
     public static void ConfigSaveFile()
@@ -119,11 +125,11 @@ public static partial class Mupen64Plus
         ThrowForError(err);
     }
 
-    public static Mupen64PlusTypes.Type ConfigGetType(IntPtr handle, string name)
+    public static Mupen64PlusTypes.Type? ConfigGetType(IntPtr handle, string name)
     {
         Mupen64PlusTypes.Error err = _fnConfigGetParameterType(handle, name, out var type);
         if (err == Mupen64PlusTypes.Error.InputNotFound)
-            throw new ArgumentOutOfRangeException(nameof(name), "Value not found in this config section");
+            return null;
         ThrowForError(err);
 
         return type;
@@ -186,6 +192,25 @@ public static partial class Mupen64Plus
             return (T) Convert.ChangeType(ConfigGetString(handle, name), typeof(string));
         throw new ArgumentException("Unknown type, cannot get generic config");
     }
+    
+    /// <summary>
+    /// Retrieves a config value using a type specified by config.
+    /// </summary>
+    /// <param name="handle"></param>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public static object? ConfigGetObject(IntPtr handle, string name)
+    {
+        ThrowForError(_fnConfigGetParameterType(handle, name, out var type));
+        return type switch
+        {
+            Mupen64PlusTypes.Type.Int => _fnConfigGetParamInt(handle, name),
+            Mupen64PlusTypes.Type.Float => _fnConfigGetParamFloat(handle, name),
+            Mupen64PlusTypes.Type.Bool => _fnConfigGetParamBool(handle, name),
+            Mupen64PlusTypes.Type.String => _fnConfigGetParamString(handle, name),
+            _ => null
+        };
+    }
 
     public static void ConfigSet<T>(IntPtr handle, string name, T value)
     {
@@ -199,7 +224,22 @@ public static partial class Mupen64Plus
         else if (t == typeof(string))
             ConfigSetString(handle, name, (string) Convert.ChangeType(value, typeof(string))!);
         else
-            throw new ArgumentException("Unknown type, cannot get generic config");
+            throw new ArgumentException("Unknown type, cannot set generic config");
+    }
+
+    public static void ConfigSetObject(IntPtr handle, string name, object value)
+    {
+        var t = value.GetType();
+        if (t == typeof(int) || (t.IsEnum && t.UnderlyingSystemType.IsIntegerType()))
+            ConfigSetInt(handle, name, (int) Convert.ChangeType(value, typeof(int))!);
+        else if (t == typeof(float) || t == typeof(double))
+            ConfigSetFloat(handle, name, (float) Convert.ChangeType(value, typeof(float))!);
+        else if (t == typeof(bool))
+            ConfigSetBool(handle, name, (bool) Convert.ChangeType(value, typeof(bool))!);
+        else if (t == typeof(string))
+            ConfigSetString(handle, name, (string) Convert.ChangeType(value, typeof(string))!);
+        else
+            throw new ArgumentException("Unknown type, cannot set generic config");
     }
 
     #endregion

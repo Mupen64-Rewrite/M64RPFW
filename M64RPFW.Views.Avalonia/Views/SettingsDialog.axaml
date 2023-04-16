@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels"
         xmlns:ctrls="clr-namespace:M64RPFW.Views.Avalonia.Controls"
+        xmlns:system="clr-namespace:System;assembly=System.Runtime"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="M64RPFW.Views.Avalonia.Views.SettingsDialog"
         x:CompileBindings="True"
@@ -95,11 +96,14 @@
             <ScrollViewer>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top">
                     <TextBlock Text="Video plugin" />
-                    <ctrls:FileBrowser CurrentPath="{Binding VideoPluginPath}" PickerOptions="{Binding DllPickerOptions}" />
+                    <ctrls:FileBrowser CurrentPath="{Binding VideoPluginPath}"
+                                       PickerOptions="{Binding DllPickerOptions}" />
                     <TextBlock Text="Audio plugin" />
-                    <ctrls:FileBrowser CurrentPath="{Binding AudioPluginPath}" PickerOptions="{Binding DllPickerOptions}" />
+                    <ctrls:FileBrowser CurrentPath="{Binding AudioPluginPath}"
+                                       PickerOptions="{Binding DllPickerOptions}" />
                     <TextBlock Text="Input plugin" />
-                    <ctrls:FileBrowser CurrentPath="{Binding InputPluginPath}" PickerOptions="{Binding DllPickerOptions}" />
+                    <ctrls:FileBrowser CurrentPath="{Binding InputPluginPath}"
+                                       PickerOptions="{Binding DllPickerOptions}" />
                     <TextBlock Text="RSP plugin" />
                     <ctrls:FileBrowser CurrentPath="{Binding RspPluginPath}" PickerOptions="{Binding DllPickerOptions}" />
                 </StackPanel>

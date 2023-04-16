@@ -7,6 +7,7 @@ using M64RPFW.Models.Settings;
 using M64RPFW.Models.Types.Settings;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
+using M64RPFW.ViewModels.Helpers;
 using M64RPFW.ViewModels.Messages;
 
 namespace M64RPFW.ViewModels;
@@ -16,6 +17,8 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
     private SettingsViewModel()
     {
         RPFWSettings.Load();
+        
+        MupenConfigHelpers.ConfigSectionToDict(MupenSettings.VideoGeneral, VideoGeneralSection);
     }
 
     static SettingsViewModel()
@@ -165,12 +168,7 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         set => SetRPFWSetting((inst, val) => inst.Hotkeys.DisableWrites = val, value);
     }
 
-    // Save on dialog closing, otherwise it won't affect Mupen64Plus
-    public void OnClosed()
-    {
-        Mupen64Plus.ConfigSaveFile();
-        RPFWSettings.Save();
-    }
+    
 
     #endregion
 
@@ -183,6 +181,20 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         new($"Dynamic library ({NativeLibHelper.LibraryExtension})",
             Patterns: new[] { $"*{NativeLibHelper.LibraryExtension}" })
     };
+
+    #endregion
+    
+    // Save on dialog closing, otherwise it won't affect Mupen64Plus
+    public void OnClosed()
+    {
+        MupenConfigHelpers.DictToConfigSection(VideoGeneralSection, MupenSettings.VideoGeneral);
+        Mupen64Plus.ConfigSaveFile();
+        RPFWSettings.Save();
+    }
+
+    #region Dictionary Tests
+
+    public ObservableDictionary<string, object> VideoGeneralSection { get; } = new();
 
     #endregion
 
