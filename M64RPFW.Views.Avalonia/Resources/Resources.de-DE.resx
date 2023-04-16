@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="File" xml:space="preserve">
+        <value>Datei</value>
+    </data>
+    <data name="Audio" xml:space="preserve">
+        <value>Audio</value>
+    </data>
+    <data name="Author" xml:space="preserve">
+        <value>Autor</value>
+    </data>
+    <data name="Browse" xml:space="preserve">
+        <value>Durchsuchen...</value>
+    </data>
+    <data name="Cancel" xml:space="preserve">
+        <value>Abbrechen</value>
+    </data>
+    <data name="CloseRom" xml:space="preserve">
+        <value>Rom schließen</value>
+    </data>
+    <data name="Core" xml:space="preserve">
+        <value>Kern</value>
+    </data>
+    <data name="CurrentSlot" xml:space="preserve">
+        <value>Ausgewählter Slot</value>
+    </data>
+    <data name="Description" xml:space="preserve">
+        <value>Beschreibung</value>
+    </data>
+    <data name="DisableExpansionPakMemory" xml:space="preserve">
+        <value>Expansion Pak-Speicher deaktivieren</value>
+    </data>
+    <data name="DisableWrites" xml:space="preserve">
+        <value>Schreibschutz</value>
+    </data>
+    <data name="Emulator" xml:space="preserve">
+        <value>Emulator</value>
+    </data>
+    <data name="FrameAdvance" xml:space="preserve">
+        <value>Bild fortschreiten</value>
+    </data>
+    <data name="Input" xml:space="preserve">
+        <value>Eingabe</value>
+    </data>
+    <data name="LoadCurrentSlot" xml:space="preserve">
+        <value>Ausgewählten Slot laden</value>
+    </data>
+    <data name="LoadFromFile" xml:space="preserve">
+        <value>Von Datei laden...</value>
+    </data>
+    <data name="LoadState" xml:space="preserve">
+        <value>State laden</value>
+    </data>
+    <data name="Movie" xml:space="preserve">
+        <value>Aufnahme</value>
+    </data>
+    <data name="Ok" xml:space="preserve">
+        <value>Ok</value>
+    </data>
+    <data name="OpenRom" xml:space="preserve">
+        <value>Rom öffnen...</value>
+    </data>
+    <data name="PauseOrResume" xml:space="preserve">
+        <value>Pausieren/Fortsetzen</value>
+    </data>
+    <data name="RandomizeInterruptTimings" xml:space="preserve">
+        <value>Interrupt-Timings randomisieren</value>
+    </data>
+    <data name="Rerecording" xml:space="preserve">
+        <value>Rerecording</value>
+    </data>
+    <data name="ResetRom" xml:space="preserve">
+        <value>Rom neu laden</value>
+    </data>
+    <data name="RestartMovie" xml:space="preserve">
+        <value>Aufnahme neu starten</value>
+    </data>
+    <data name="Rsp" xml:space="preserve">
+        <value>RSP</value>
+    </data>
+    <data name="SaveCurrentSlot" xml:space="preserve">
+        <value>Ausgewählten Slot speichern</value>
+    </data>
+    <data name="SaveState" xml:space="preserve">
+        <value>State speichern</value>
+    </data>
+    <data name="SaveToFile" xml:space="preserve">
+        <value>Speichern unter...</value>
+    </data>
+    <data name="Settings" xml:space="preserve">
+        <value>Einstellungen</value>
+    </data>
+    <data name="StartFrom" xml:space="preserve">
+        <value>Startzustand</value>
+    </data>
+    <data name="StartEncoder" xml:space="preserve">
+        <value>Encoder starten...</value>
+    </data>
+    <data name="StartPlaying" xml:space="preserve">
+        <value>Wiedergabe starten...</value>
+    </data>
+    <data name="StartRecording" xml:space="preserve">
+        <value>Aufnahme starten...</value>
+    </data>
+    <data name="StopEncoder" xml:space="preserve">
+        <value>Encoder stoppen</value>
+    </data>
+    <data name="StopMovie" xml:space="preserve">
+        <value>Aufnahme stoppen...</value>
+    </data>
+    <data name="ToggleDisableWrites" xml:space="preserve">
+        <value>Schreibschutz umschalten</value>
+    </data>
+    <data name="Video" xml:space="preserve">
+        <value>Video</value>
+    </data>
+    <data name="Culture" xml:space="preserve">
+        <value>Sprache</value>
+    </data>
+    <data name="Theme" xml:space="preserve">
+        <value>Farbschema</value>
+    </data>
+    <data name="RecentRoms" xml:space="preserve">
+        <value>Aktuelle Roms</value>
+    </data>
+</root>

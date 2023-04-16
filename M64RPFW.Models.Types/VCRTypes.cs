@@ -38,9 +38,10 @@ public static partial class Mupen64PlusTypes
 
     public enum VCRStartType
     {
-        FromSnapshot = 1,
-        FromReset = 2,
-        FromEEPROM = 4,
+        Snapshot = 1,
+        Reset = 2,
+        // ReSharper disable once InconsistentNaming
+        EEPROM = 4,
     }
 
     public enum VCRParam
