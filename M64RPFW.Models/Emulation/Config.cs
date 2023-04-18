@@ -73,7 +73,7 @@ public static partial class Mupen64Plus
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate string? DConfigGetParameterHelp(IntPtr handle, string param);
+    private delegate IntPtr DConfigGetParameterHelp(IntPtr handle, string param);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
@@ -89,7 +89,7 @@ public static partial class Mupen64Plus
     
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate string DConfigGetParamString(IntPtr handle, string param);
+    private delegate IntPtr DConfigGetParamString(IntPtr handle, string param);
 
     #endregion
 

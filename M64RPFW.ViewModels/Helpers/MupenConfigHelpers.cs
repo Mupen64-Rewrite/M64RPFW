@@ -8,7 +8,7 @@ public static class MupenConfigHelpers
     public static ObservableCollection<ConfigKeyViewModel> GenerateConfigSection(IntPtr section)
     {
         ObservableCollection<ConfigKeyViewModel> result = new();
-        Mupen64Plus.ConfigCallOverParameters(section, (name, _) =>
+        Mupen64Plus.ConfigForEachParameter(section, (name, _) =>
         {
             result.Add(new ConfigKeyViewModel(section, name));
         });
