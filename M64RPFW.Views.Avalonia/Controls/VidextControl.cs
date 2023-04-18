@@ -1,17 +1,13 @@
 using System;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform;
-using Avalonia.VisualTree;
 using M64RPFW.Models.Types;
 using M64RPFW.Services;
 using M64RPFW.Views.Avalonia.Controls.Helpers;
-using M64RPFW.Views.Avalonia.Native;
 using Silk.NET.OpenGL;
 using Silk.NET.SDL;
 using static M64RPFW.Views.Avalonia.Controls.Helpers.SilkGlobals;
 using SDL_Window = Silk.NET.SDL.Window;
-using Window = Avalonia.Controls.Window;
 
 namespace M64RPFW.Views.Avalonia.Controls;
 

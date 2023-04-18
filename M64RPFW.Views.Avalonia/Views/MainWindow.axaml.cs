@@ -6,6 +6,8 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
+using M64RPFW.Models.Emulation;
+using M64RPFW.Models.Types;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
 using M64RPFW.ViewModels;
@@ -21,10 +23,11 @@ public partial class MainWindow : Window, IWindowSizingService, IViewDialogServi
     public MainWindow()
     {
         AvaloniaXamlLoader.Load(this);
-        
+
+
         _vidextControl = this.Find<VidextControl>("EmulatorWindow")!;
 
-        DataContext = new EmulatorViewModel(this.Find<VidextControl>("EmulatorWindow")!, (App)Application.Current!,
+        DataContext = new EmulatorViewModel(this.Find<VidextControl>("EmulatorWindow")!, (App) Application.Current!,
             FilePickerService.Instance, this, this);
 
         _shouldBlockSizeChangeEvents = false;
@@ -70,7 +73,7 @@ public partial class MainWindow : Window, IWindowSizingService, IViewDialogServi
     }
 
     // avalonia compiled binding resolver lives in another assembly, so these have to be public :(
-    public EmulatorViewModel ViewModel => (EmulatorViewModel)DataContext!;
+    public EmulatorViewModel ViewModel => (EmulatorViewModel) DataContext!;
 
     private void Window_OnClosed(object? sender, EventArgs eventArgs)
     {

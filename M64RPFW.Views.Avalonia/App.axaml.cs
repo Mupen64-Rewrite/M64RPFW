@@ -2,6 +2,7 @@ using System;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using M64RPFW.Services;
 using M64RPFW.Views.Avalonia.Views;
@@ -14,6 +15,7 @@ public class App : Application, IDispatcherService
     {
         AvaloniaXamlLoader.Load(this);
         Name = "M64RPFW";
+
     }
 
 
@@ -21,7 +23,8 @@ public class App : Application, IDispatcherService
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainWindow();
+            var win = new MainWindow();
+            desktop.MainWindow = win;
         }
 
         base.OnFrameworkInitializationCompleted();
