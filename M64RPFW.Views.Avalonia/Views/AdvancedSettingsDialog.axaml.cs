@@ -27,5 +27,6 @@ public partial class AdvancedSettingsDialog : Window
     private void TopLevel_OnClosed(object? sender, EventArgs e)
     {
         ViewModel.OnClosed();
+        SettingsViewModel.Instance.NotifyAllPropertiesChanged();
     }
 }
