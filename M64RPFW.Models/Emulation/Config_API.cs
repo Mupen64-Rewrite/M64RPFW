@@ -1,4 +1,5 @@
 using System.Diagnostics.Contracts;
+using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using M64RPFW.Models.Helpers;
 using M64RPFW.Models.Types;
@@ -7,17 +8,10 @@ namespace M64RPFW.Models.Emulation;
 
 public static partial class Mupen64Plus
 {
-    public static IEnumerable<string> ListConfigSections()
+    public static void ConfigForEachSection(Action<string> callback)
     {
-        
-        
-        List<string> res = new();
-        ListSectionsCallback lsc = (_, name) => res.Add(name);
-        Mupen64PlusTypes.Error err = _fnConfigListSections(IntPtr.Zero, lsc);
-        GC.KeepAlive(lsc);
+        var err = _fnConfigListSections(IntPtr.Zero, (_, name) => callback(name));
         ThrowForError(err);
-        
-        return res;
     }
 
     public static IntPtr ConfigOpenSection(string name)
@@ -28,18 +22,7 @@ public static partial class Mupen64Plus
         return handle;
     }
 
-    public static ICollection<(string name, Mupen64PlusTypes.Type type)> ConfigListParameters(IntPtr handle)
-    {
-        
-
-        List<(string name, Mupen64PlusTypes.Type type)> res = new();
-        Mupen64PlusTypes.Error err = _fnConfigListParameters(handle, IntPtr.Zero, (_, name, type) => res.Add((name, type)));
-        ThrowForError(err);
-
-        return res;
-    }
-
-    public static void ConfigCallOverParameters(IntPtr handle, Action<string, Mupen64PlusTypes.Type> func)
+    public static void ConfigForEachParameter(IntPtr handle, Action<string, Mupen64PlusTypes.Type> func)
     {
         var err = _fnConfigListParameters(handle, IntPtr.Zero, (_, name, type) => func(name, type));
         ThrowForError(err);
@@ -140,7 +123,7 @@ public static partial class Mupen64Plus
     [Pure]
     public static string? ConfigGetHelp(IntPtr handle, string name)
     {
-        return _fnConfigGetParameterHelp(handle, name);
+        return Marshal.PtrToStringAnsi(_fnConfigGetParameterHelp(handle, name));
     }
     
     [Pure]
@@ -168,7 +151,8 @@ public static partial class Mupen64Plus
     public static string ConfigGetString(IntPtr handle, string name)
     {
         ConfigGetType(handle, name);
-        return _fnConfigGetParamString(handle, name);
+        IntPtr str = _fnConfigGetParamString(handle, name);
+        return Marshal.PtrToStringAnsi(str)!;
     }
 
     #region Generic config get/set
@@ -209,7 +193,7 @@ public static partial class Mupen64Plus
             Mupen64PlusTypes.Type.Int => _fnConfigGetParamInt(handle, name),
             Mupen64PlusTypes.Type.Float => _fnConfigGetParamFloat(handle, name),
             Mupen64PlusTypes.Type.Bool => _fnConfigGetParamBool(handle, name),
-            Mupen64PlusTypes.Type.String => _fnConfigGetParamString(handle, name),
+            Mupen64PlusTypes.Type.String => Marshal.PtrToStringAnsi(_fnConfigGetParamString(handle, name)),
             _ => null
         };
     }
