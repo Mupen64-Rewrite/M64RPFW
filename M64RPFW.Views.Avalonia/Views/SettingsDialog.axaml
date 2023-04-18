@@ -42,6 +42,7 @@
                     <ComboBox
                         SelectedValue="{Binding Theme,Mode=TwoWay}">
                         <ComboBox.Items>
+                            <x:String>Default</x:String>
                             <x:String>Light</x:String>
                             <x:String>Dark</x:String>
                         </ComboBox.Items>

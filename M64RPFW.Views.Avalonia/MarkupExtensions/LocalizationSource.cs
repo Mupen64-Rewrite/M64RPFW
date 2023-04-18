@@ -10,7 +10,7 @@ public class LocalizationSource : INotifyPropertyChanged
     public static LocalizationSource Instance { get; } = new();
 
     private readonly ResourceManager _resourceManager = Resources.Resources.ResourceManager;
-    private CultureInfo _currentCulture;
+    private CultureInfo _currentCulture = null!;
     public string this[string key] => _resourceManager.GetString(key, _currentCulture) ?? $"[{key}]";
 
     public CultureInfo CurrentCulture

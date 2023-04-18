@@ -11,11 +11,11 @@ internal static class WindowHelper
     ///     Gets the first active <see cref="Window" /> from the <see cref="Application" />'s window collection
     /// </summary>
     /// <returns>The first active <see cref="Window" />, or <see cref="MainWindow" /></returns>
-    internal static Window GetFirstActiveWindow()
+    internal static Window? GetFirstActiveWindow()
     {
-        return ((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).Windows
+        return ((IClassicDesktopStyleApplicationLifetime)Application.Current!.ApplicationLifetime!).Windows
             .FirstOrDefault(
-                x => x.IsActive,
+                x => x?.IsActive ?? false,
                 (Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)!.MainWindow);
     }
 }

@@ -1,5 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
+using Avalonia.Data;
+using Avalonia.Layout;
 using M64RPFW.ViewModels;
 
 namespace M64RPFW.Views.Avalonia.Converter;
@@ -35,21 +37,41 @@ public class ConfigDataTemplate : IRecyclingDataTemplate
 
     private static Control? BuildIntControl(ConfigKeyViewModel vm)
     {
-        throw new System.NotImplementedException();
+        return new TextBlock
+        {
+            [!TextBlock.TextProperty] = new Binding("Value"),
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            VerticalAlignment = VerticalAlignment.Center
+        };
     }
     
     private static Control? BuildFloatControl(ConfigKeyViewModel vm)
     {
-        throw new System.NotImplementedException();
+        return new TextBlock
+        {
+            [!TextBlock.TextProperty] = new Binding("Value"),
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            VerticalAlignment = VerticalAlignment.Center
+        };
     }
     
     private static Control? BuildStringControl(ConfigKeyViewModel vm)
     {
-        throw new System.NotImplementedException();
+        return new TextBlock
+        {
+            [!TextBlock.TextProperty] = new Binding("Value"),
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            VerticalAlignment = VerticalAlignment.Center
+        };
     }
     
     private static Control? BuildBoolControl(ConfigKeyViewModel vm)
     {
-        throw new System.NotImplementedException();
+        return new CheckBox
+        {
+            [!CheckBox.IsCheckedProperty] = new Binding("Value"),
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            VerticalAlignment = VerticalAlignment.Center
+        };
     }
 }

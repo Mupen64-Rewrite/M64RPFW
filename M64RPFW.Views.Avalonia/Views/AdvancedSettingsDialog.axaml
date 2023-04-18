@@ -11,48 +11,23 @@
         Closed="TopLevel_OnClosed"
         Title="Mupen Settings">
     <!--TODO: Localize this dialog-->
-    <DockPanel LastChildFill="True">
-        <Grid RowDefinitions="*" ColumnDefinitions="Auto,*" DockPanel.Dock="Top">
+    <DockPanel LastChildFill="True" Margin="{StaticResource ContentPadding}">
+        <Grid RowDefinitions="*" ColumnDefinitions="Auto,*" Margin="{StaticResource SpaceBelowThickness}" DockPanel.Dock="Top">
             <Label Grid.Row="0" Grid.Column="0" Content="Current section: "/>
             <ComboBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{Binding ConfigSectionNames}" SelectedItem="{Binding SectionName}"/>
         </Grid>
-        <ScrollViewer>
-            <ItemsControl ItemsSource="{Binding CurrentSection}" Grid.IsSharedSizeScope="True">
-                <ItemsControl.DataTemplates>
-                    <DataTemplate DataType="vm:ConfigKeyViewModel">
-                    
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" SharedSizeGroup="Key"></ColumnDefinition>
-                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding Name}"/>
-
-                            <ContentControl Grid.Column="1" Content="{Binding Value}">
-                                <ContentControl.DataTemplates>
-                                    <DataTemplate DataType="{x:Type system:Int32}">
-                                        <NumericUpDown Increment="1" Value="{Binding}"/>
-                                    </DataTemplate>
-                                    <DataTemplate DataType="{x:Type system:Single}">
-                                        <NumericUpDown Increment="0.1" Value="{Binding}"/>
-                                    </DataTemplate>
-                                    <DataTemplate DataType="{x:Type system:String}">
-                                        <TextBox Text="{Binding}"/>
-                                    </DataTemplate>
-                                    <DataTemplate DataType="{x:Type system:Boolean}">
-                                        <ToggleButton IsChecked="{Binding}"/>
-                                    </DataTemplate>
-                                </ContentControl.DataTemplates>
-                            </ContentControl>
-                        </Grid>
-             
-                   
-                    </DataTemplate>
-                </ItemsControl.DataTemplates>
-            </ItemsControl>
-        </ScrollViewer>
-        
-        
-       
+        <DataGrid AutoGenerateColumns="False" Items="{Binding CurrentSection}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" IsReadOnly="True"/>
+                <DataGridTemplateColumn Header="Value">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <conv:ConfigDataTemplate/>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <conv:ConfigEditingDataTemplate/>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
     </DockPanel>
 </Window>
