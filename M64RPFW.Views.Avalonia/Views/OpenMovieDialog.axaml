@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:M64RPFW.Views.Avalonia.Controls"
         xmlns:vm="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels"
-        xmlns:ext="clr-namespace:M64RPFW.Views.Avalonia.MarkupExtensions"
+        xmlns:ext="clr-namespace:M64RPFW.Views.Avalonia.Markup"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="M64RPFW.Views.Avalonia.Views.OpenMovieDialog"
         x:CompileBindings="True"
