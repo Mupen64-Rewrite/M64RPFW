@@ -302,5 +302,29 @@ namespace M64RPFW.Views.Avalonia.Resources {
                 return ResourceManager.GetString("VideoWidth", resourceCulture);
             }
         }
+        
+        internal static string AdvancedSettings {
+            get {
+                return ResourceManager.GetString("AdvancedSettings", resourceCulture);
+            }
+        }
+        
+        internal static string ConfigKey {
+            get {
+                return ResourceManager.GetString("ConfigKey", resourceCulture);
+            }
+        }
+        
+        internal static string ConfigValue {
+            get {
+                return ResourceManager.GetString("ConfigValue", resourceCulture);
+            }
+        }
+        
+        internal static string CurrentSection {
+            get {
+                return ResourceManager.GetString("CurrentSection", resourceCulture);
+            }
+        }
     }
 }

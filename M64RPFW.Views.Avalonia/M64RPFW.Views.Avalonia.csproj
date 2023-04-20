@@ -49,6 +49,9 @@
         <DependentUpon>Resources.de-DE.resx</DependentUpon>
       </Compile>
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Binding\" />
+    </ItemGroup>
     
     <PropertyGroup>
         <!-- For Microsoft.CodeAnalysis -->

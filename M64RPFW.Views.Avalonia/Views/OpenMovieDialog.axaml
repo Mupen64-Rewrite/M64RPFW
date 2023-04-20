@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:M64RPFW.Views.Avalonia.Controls"
         xmlns:vm="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels"
-        xmlns:markupExtensions="clr-namespace:M64RPFW.Views.Avalonia.MarkupExtensions"
+        xmlns:ext="clr-namespace:M64RPFW.Views.Avalonia.MarkupExtensions"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="M64RPFW.Views.Avalonia.Views.OpenMovieDialog"
         x:CompileBindings="True"
@@ -13,36 +13,36 @@
         Classes.IsNotEditable="{Binding !IsEditable}">
     <Window.Styles>
         <Style Selector="StackPanel">
-            <Setter Property="Margin" Value="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[Ok]'}" />
+            <Setter Property="Margin" Value="{ext:Localize Ok}" />
         </Style>
         <Style Selector="Window.IsEditable">
             <Style.Setters>
-                <Setter Property="Title" Value="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[StartRecording]'}"/>
+                <Setter Property="Title" Value="{ext:Localize StartRecording}"/>
             </Style.Setters>
         </Style>
         <Style Selector="Window.IsNotEditable">
             <Style.Setters>
-                <Setter Property="Title" Value="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[StartPlaying]'}"/>
+                <Setter Property="Title" Value="{ext:Localize StartPlaying}"/>
             </Style.Setters>
         </Style>
     </Window.Styles>
     <DockPanel LastChildFill="True">
         <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right" Orientation="Horizontal">
-            <Button Content="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[Ok]'}" IsDefault="True" Command="{Binding ReturnSuccessCommand}" />
-            <Button Content="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[Cancel]'}" Command="{Binding ReturnFailureCommand}" />
+            <Button Content="{ext:Localize Ok}" IsDefault="True" Command="{Binding ReturnSuccessCommand}" />
+            <Button Content="{ext:Localize Cancel}" Command="{Binding ReturnFailureCommand}" />
         </StackPanel>
         <ScrollViewer>
             <StackPanel>
                 <controls:FileBrowser CurrentPath="{Binding Path}"
                                       PickerOptions="{Binding MoviePickerOptions, Mode=OneTime}"
                                       IsOpenDialog="{Binding !IsEditable}" />
-                <TextBlock Classes="h3" Text="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[StartFrom]'}" />
+                <TextBlock Classes="h3" Text="{ext:Localize StartFrom}" />
 
                 <ComboBox Items="{Binding StartTypes, Mode=OneTime}"
                           SelectedItem="{Binding StartType}" IsEnabled="{Binding IsEditable}" />
-                <TextBlock Classes="h3" Text="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[Author]'}" />
+                <TextBlock Classes="h3" Text="{ext:Localize Author}" />
                 <TextBox Text="{Binding Authors}" TextWrapping="Wrap" IsEnabled="{Binding IsEditable}" />
-                <TextBlock Classes="h3" Text="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[Description]'}" />
+                <TextBlock Classes="h3" Text="{ext:Localize Description}" />
                 <TextBox AcceptsReturn="True" Text="{Binding Description}" IsEnabled="{Binding IsEditable}" />
 
 

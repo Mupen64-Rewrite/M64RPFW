@@ -151,4 +151,16 @@
     <data name="VideoWidth" xml:space="preserve">
         <value>Video Width</value>
     </data>
+    <data name="AdvancedSettings" xml:space="preserve">
+        <value>Advanced Settings...</value>
+    </data>
+    <data name="ConfigKey" xml:space="preserve">
+        <value>Key</value>
+    </data>
+    <data name="ConfigValue" xml:space="preserve">
+        <value>Value</value>
+    </data>
+    <data name="CurrentSection" xml:space="preserve">
+        <value>Current Section</value>
+    </data>
 </root>
