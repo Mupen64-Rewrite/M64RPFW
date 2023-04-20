@@ -10,7 +10,7 @@
         x:DataType="viewModels:SettingsViewModel"
         Title="Settings" Width="500" Height="500"
         xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-        xmlns:ext="clr-namespace:M64RPFW.Views.Avalonia.MarkupExtensions"
+        xmlns:ext="clr-namespace:M64RPFW.Views.Avalonia.Markup"
         Closed="TopLevel_OnClosed">
     <Window.Resources>
         <x:Double x:Key="IconSize">28</x:Double>

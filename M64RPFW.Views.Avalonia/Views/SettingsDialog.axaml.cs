@@ -6,7 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using M64RPFW.ViewModels;
-using M64RPFW.Views.Avalonia.MarkupExtensions;
+using M64RPFW.Views.Avalonia.Markup;
 
 namespace M64RPFW.Views.Avalonia.Views;
 

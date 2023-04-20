@@ -13,7 +13,7 @@ using M64RPFW.Services.Abstractions;
 using M64RPFW.ViewModels;
 using M64RPFW.Views.Avalonia.Controls;
 using M64RPFW.Views.Avalonia.Controls.Helpers;
-using M64RPFW.Views.Avalonia.MarkupExtensions;
+using M64RPFW.Views.Avalonia.Markup;
 using M64RPFW.Views.Avalonia.Services;
 
 namespace M64RPFW.Views.Avalonia.Views;

@@ -2,7 +2,7 @@ using System;
 using Avalonia;
 using Avalonia.Data;
 
-namespace M64RPFW.Views.Avalonia.MarkupExtensions;
+namespace M64RPFW.Views.Avalonia.Markup;
 
 public class LocalizeExtension : IBinding
 {

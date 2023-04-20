@@ -5,7 +5,7 @@
                   xmlns:ctrls="clr-namespace:M64RPFW.Views.Avalonia.Controls"
                   xmlns:views="clr-namespace:M64RPFW.Views.Avalonia.Views"
                   xmlns:vm="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels"
-                  xmlns:ext="clr-namespace:M64RPFW.Views.Avalonia.MarkupExtensions"
+                  xmlns:ext="clr-namespace:M64RPFW.Views.Avalonia.Markup"
                   mc:Ignorable="d"
                   x:Class="M64RPFW.Views.Avalonia.Views.MainWindow"
                   Icon="/Assets/rpfw.ico"

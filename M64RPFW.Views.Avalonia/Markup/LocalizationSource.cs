@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Resources;
 using System.Threading;
 
-namespace M64RPFW.Views.Avalonia.MarkupExtensions;
+namespace M64RPFW.Views.Avalonia.Markup;
 
 public class LocalizationSource : INotifyPropertyChanged
 {
