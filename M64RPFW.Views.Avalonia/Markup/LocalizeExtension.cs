@@ -1,26 +1,33 @@
 using System;
 using Avalonia;
 using Avalonia.Data;
+using Avalonia.Markup.Xaml.MarkupExtensions;
 
 namespace M64RPFW.Views.Avalonia.Markup;
 
-public class LocalizeExtension : IBinding
+/// <summary>
+/// Binds to a string in localization data.
+/// </summary>
+public class LocalizeExtension
 {
-    public LocalizeExtension(string path)
+    /// <summary>
+    /// Binds to the localization entry with the specified key.
+    /// </summary>
+    /// <param name="key">the localization key.</param>
+    public LocalizeExtension(string key)
     {
-        Path = path;
+        Key = key;
     }
 
-    public string Path { get; }
+    public string Key { get; }
 
+    // ReSharper disable once UnusedMember.Global
     public IBinding ProvideValue(IServiceProvider sp)
     {
-        return this;
-    }
-    
-    public InstancedBinding? Initiate(AvaloniaObject target, AvaloniaProperty? targetProperty, object? anchor = null,
-        bool enableDataValidation = false)
-    {
-        return InstancedBinding.OneWay(LocalizationSource.Instance.GetObservable(Path));
+        ReflectionBindingExtension rbe = new($"[{Key}]")
+        {
+            Source = LocalizationSource.Instance
+        };
+        return rbe.ProvideValue(sp);
     }
 }
