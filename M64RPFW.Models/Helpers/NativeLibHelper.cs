@@ -27,7 +27,7 @@ public static class NativeLibHelper
     public static T? GetFunction<T>(IntPtr lib, string name)
     {
         IntPtr res = NativeLibrary.GetExport(lib, name);
-        return (res == IntPtr.Zero)? default(T) : Marshal.GetDelegateForFunctionPointer<T>(res);
+        return (res == IntPtr.Zero)? default : Marshal.GetDelegateForFunctionPointer<T>(res);
     }
     
     /// <summary>
