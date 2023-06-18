@@ -19,8 +19,8 @@ public static partial class Mupen64Plus
     /// <param name="context">the pointer provided as debugContext to CoreStartup</param>
     /// <param name="level">the message's logging level</param>
     /// <param name="message">the message to log</param>
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void DebugCallback(IntPtr context, Mupen64PlusTypes.MessageLevel level, string message);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    public unsafe delegate void DebugCallback(IntPtr context, Mupen64PlusTypes.MessageLevel level, byte* message);
 
     /// <summary>
     /// Responds to a Mupen64Plus core parameter changing.
