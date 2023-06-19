@@ -31,7 +31,12 @@ public static partial class Mupen64Plus
         ResolveConfigFunctions();
         ResolveVCRFunctions();
 
-        _debugCallback = OnLogMessage;
+        _debugCallback = (context, level, message) =>
+        {
+            int messageLen = 0;
+            while (message[messageLen] != 0) messageLen++;
+            OnLogMessage(context, level, Encoding.ASCII.GetString(message, messageLen));
+        };
         _stateCallback = OnStateChange;
         _vcrMsgFunc = (lvl, msg) =>
         {
@@ -132,7 +137,11 @@ public static partial class Mupen64Plus
             Mupen64PlusTypes.MessageLevel.Verbose => "TRACE",
             _ => "??   "
         };
+        #if false
         Console.WriteLine($"[{sourceString} {typeString} {levelString}] {message}");
+        #else
+        Debug.WriteLine($"[{sourceString} {typeString} {levelString}] {message}");
+        #endif
     }
 
     private static void OnStateChange(IntPtr context, Mupen64PlusTypes.CoreParam param, int newValue)
@@ -483,7 +492,7 @@ public static partial class Mupen64Plus
 
 
         var startup = NativeLibHelper.GetFunction<DPluginStartup>(pluginLib, "PluginStartup");
-        err = startup(_libHandle, (IntPtr) (int) type, OnLogMessage);
+        err = startup(_libHandle, (IntPtr) (int) type, _debugCallback);
         ThrowForError(err);
 
         err = _fnCoreAttachPlugin(type, pluginLib);
