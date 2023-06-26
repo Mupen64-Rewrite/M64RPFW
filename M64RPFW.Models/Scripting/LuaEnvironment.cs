@@ -96,6 +96,81 @@ public class LuaEnvironment : IDisposable
                 ismainwindowinforeground = __dummy,
                 screenshot = __dummy,
             }
+            memory = {
+                inttofloat = __dummy,
+                inttodouble = __dummy,
+                floattoint = __dummy,
+                doubletoint = __dummy,
+                qwordtonumber = __dummy,
+                readbytesigned = __dummy,
+                readbyte = __dummy,
+                readwordsigned = __dummy,
+                readword = __dummy,
+                readdwordsigned = __dummy,
+                readdword = __dummy,
+                readqwordsigned = __dummy,
+                readqword = __dummy,
+                readfloat = __dummy,
+                readdouble = __dummy,
+                readsize = __dummy,
+                writebyte = __dummy,
+                writeword = __dummy,
+                writedword = __dummy,
+                writeqword = __dummy,
+                writedouble = __dummy,
+                writesize = __dummy,
+            }
+            wgui = {
+                fill_rectangle = __dummy,
+                draw_rectangle = __dummy,
+                fill_ellipse = __dummy,
+                draw_ellipse = __dummy,
+                draw_line = __dummy,
+                draw_text = __dummy,
+                get_text_size = __dummy,
+                push_clip = __dummy,
+                pop_clip = __dummy,
+                fill_rounded_rectangle = __dummy,
+                draw_rounded_rectangle = __dummy,
+                load_image = __dummy,
+                free_image = __dummy,
+                draw_image = __dummy,
+                get_image_info = __dummy,
+                set_text_antialias_mode = __dummy,
+                set_antialias_mode = __dummy,
+                gdip_fillpolygona = __dummy,
+                info = __dummy,
+                resize = __dummy,
+            }
+            input = {
+                get = __dummy,
+                diff = __dummy,
+                prompt = __dummy,
+                get_key_name_text = __dummy,
+                map_virtual_key_ex = __dummy,
+            }
+            joypad = {
+                get = __dummy,
+                set = __dummy,
+                reegister = __dummy,
+                count = __dummy,
+            }
+            movie = {
+                playmovie = __dummy,
+                stopmovie = __dummy,
+                getmoviefilename = __dummy,
+            }
+            savestate = {
+                savefile = __dummy,
+                loadfile = __dummy,
+            }
+            iohelper = {
+                filedialog = __dummy,
+            }
+            avi = {
+                startcapture = __dummy,
+                stopcapture = __dummy,
+            }
         ");
     }
 
