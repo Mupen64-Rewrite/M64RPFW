@@ -1,4 +1,5 @@
 ﻿using M64RPFW.Services;
+using M64RPFW.ViewModels;
 using M64RPFW.Views.Avalonia.Views;
 
 namespace M64RPFW.Views.Avalonia.Services;
@@ -8,6 +9,7 @@ namespace M64RPFW.Views.Avalonia.Services;
 public class FrontendScriptingService : IFrontendScriptingService
 {
     private readonly LuaWindow _luaWindow;
+    private LuaViewModel LuaViewModel => LuaWindow.LuaViewModels[_luaWindow].ViewModel;
     
     public FrontendScriptingService(LuaWindow luaWindow)
     {
@@ -17,5 +19,10 @@ public class FrontendScriptingService : IFrontendScriptingService
     public void Print(string value)
     {
         _luaWindow.Print(value);
+    }
+
+    public void Stop()
+    {
+        // FIXME: can't be implemented
     }
 }
