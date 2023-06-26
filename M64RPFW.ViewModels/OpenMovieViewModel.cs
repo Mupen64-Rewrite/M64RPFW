@@ -19,7 +19,7 @@ public partial class OpenMovieViewModel : ObservableObject
 
     public VCRStartType[] StartTypes => Enum.GetValues<VCRStartType>();
 
-    public FilePickerOption[] MoviePickerOptions => new FilePickerOption[]
+    public FilePickerOption[] PickerOptions => new FilePickerOption[]
     {
         new("Mupen64 movie (.m64)", new[] {"*.m64"})
     };

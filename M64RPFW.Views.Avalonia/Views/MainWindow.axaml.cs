@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using M64RPFW.Models.Emulation;
@@ -148,5 +149,10 @@ public partial class MainWindow : Window, IWindowSizingService, IViewDialogServi
         var scancode = SDLHelpers.ToSDLScancode(e.Key);
         var modifiers = SDLHelpers.ToSDLKeymod(e.KeyModifiers);
         ViewModel.ForwardSDLKeyUp(scancode, modifiers);
+    }
+
+    private void MenuItem_OnClick(object? sender, RoutedEventArgs e)
+    {
+        new LuaWindow().Show();
     }
 }

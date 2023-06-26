@@ -159,4 +159,7 @@
     <data name="VideoWidth" xml:space="preserve">
         <value>Videobreite</value>
     </data>
+    <data name="OpenScript" xml:space="preserve">
+        <value>Skript öffnen...</value>
+    </data>
 </root>
