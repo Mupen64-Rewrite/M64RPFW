@@ -73,17 +73,18 @@
         <ItemGroup>
             <LibraryList Include="Libraries\$(OSLibraryDir)\*.*" />
         </ItemGroup>
+        <Error Condition="!Exists('Libraries\$(OSLibraryDir)')" Text="No platform libraries found!" />
         <Message Text="Copying $(OSLibraryDir) libraries" />
-        <Error Condition="!Exists('Libraries\$(OSLibraryDir)')" Text="We don't have libraries for this platform!" />
         <Copy SourceFiles="@(LibraryList)" DestinationFolder="$(OutDir)/Libraries" SkipUnchangedFiles="true" />
+        
     </Target>
 
     <Target Name="CopyCustomLibrariesPublish" AfterTargets="AfterPublish">
         <ItemGroup>
             <LibraryList Include="Libraries\$(OSLibraryDir)\*.*" />
         </ItemGroup>
+        <Error Condition="!Exists('Libraries\$(OSLibraryDir)')" Text="No platform libraries found!" />
         <Message Text="Copying $(OSLibraryDir) libraries" />
-        <Error Condition="!Exists('Libraries\$(OSLibraryDir)')" Text="We don't have libraries for this platform!" />
         <Copy SourceFiles="@(LibraryList)" DestinationFolder="$(PublishDir)/Libraries" SkipUnchangedFiles="true" />
     </Target>
 </Project>
