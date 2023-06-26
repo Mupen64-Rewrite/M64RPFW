@@ -185,6 +185,10 @@
                     Header="{ext:Localize StopEncoder}"
                     IsEnabled="False" />
             </MenuItem>
+            <MenuItem Header="{ext:Localize Lua}">
+                <MenuItem
+                    Header="{ext:Localize NewLuaInstance}" Click="MenuItem_OnClick" />
+            </MenuItem>
         </Menu>
         <ctrls:VidextControl Grid.Row="1" Name="EmulatorWindow" />
         <StackPanel Grid.Row="2" Orientation="Horizontal">

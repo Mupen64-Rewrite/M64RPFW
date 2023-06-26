@@ -276,6 +276,15 @@ namespace M64RPFW.Views.Avalonia.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Skript öffnen....
+        /// </summary>
+        internal static string OpenScript {
+            get {
+                return ResourceManager.GetString("OpenScript", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pausieren/Fortsetzen.
         /// </summary>
         internal static string PauseOrResume {

@@ -34,7 +34,7 @@
         <ScrollViewer>
             <StackPanel>
                 <controls:FileBrowser CurrentPath="{Binding Path}"
-                                      PickerOptions="{Binding MoviePickerOptions, Mode=OneTime}"
+                                      PickerOptions="{Binding PickerOptions, Mode=OneTime}"
                                       IsOpenDialog="{Binding !IsEditable}" />
                 <TextBlock Classes="h3" Text="{ext:Localize StartFrom}" />
 
