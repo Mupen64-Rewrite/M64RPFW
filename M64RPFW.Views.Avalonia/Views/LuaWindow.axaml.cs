@@ -6,6 +6,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using M64RPFW.ViewModels;
 using M64RPFW.Views.Avalonia.Services;
 
@@ -44,6 +45,9 @@ public partial class LuaWindow : Window
 
     public void Print(string value)
     {
-        this.FindControl<TextBox>("LogTextBox").Text += $"{value}\r\n";
+        Dispatcher.UIThread.Post(() =>
+        {
+            this.FindControl<TextBox>("LogTextBox").Text += $"{value}\r\n";
+        });
     }
 }

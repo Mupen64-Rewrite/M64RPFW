@@ -10,7 +10,6 @@ namespace M64RPFW.Models.Emulation;
 
 public static partial class Mupen64Plus
 {
-    
     private static readonly DebugCallback _debugCallback;
     private static readonly StateCallback _stateCallback;
     private static readonly FrameCallback _frameCallback;
@@ -44,7 +43,7 @@ public static partial class Mupen64Plus
             return true;
         };
         _vcrStateCallback = OnVCRStateChange;
-
+    
         Mupen64PlusTypes.Error err = _fnCoreStartup(
             0x020000, null, expectedPath, (nint) (int) Mupen64PlusTypes.PluginType.Core,
             _debugCallback, IntPtr.Zero, _stateCallback);
@@ -153,7 +152,7 @@ public static partial class Mupen64Plus
     {
         VCRStateChanged?.Invoke(null, new VCRStateChangeEventArgs {Param = param, NewValue = newValue});
     }
-
+    
     private static void OnFrameComplete(int frameIndex)
     {
         FrameComplete?.Invoke(null, frameIndex);
