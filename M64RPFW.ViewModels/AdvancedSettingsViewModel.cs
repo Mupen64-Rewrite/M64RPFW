@@ -7,19 +7,20 @@ namespace M64RPFW.ViewModels;
 
 public partial class AdvancedSettingsViewModel : ObservableObject
 {
-
     [ObservableProperty] private ObservableCollection<ConfigKeyViewModel> _currentSection = new();
     [ObservableProperty] private string _sectionName = "";
 
-    private List<string> _sectionNames = new();
-    private Dictionary<string, ObservableCollection<ConfigKeyViewModel>> _sectionCache = new();
+    private readonly List<string> _sectionNames = new();
+    private readonly Dictionary<string, ObservableCollection<ConfigKeyViewModel>> _sectionCache = new();
 
     public AdvancedSettingsViewModel()
     {
         // Load sections
         Mupen64Plus.ConfigForEachSection(_sectionNames.Add);
+
+        if (_sectionNames.Count > 0) SectionName = _sectionNames[0];
     }
-    
+
     partial void OnSectionNameChanged(string value)
     {
         if (!_sectionCache.TryGetValue(value, out var sect))
@@ -30,7 +31,7 @@ public partial class AdvancedSettingsViewModel : ObservableObject
 
         CurrentSection = sect;
     }
-    
+
     public void OnClosed()
     {
         Mupen64Plus.ConfigSaveFile();

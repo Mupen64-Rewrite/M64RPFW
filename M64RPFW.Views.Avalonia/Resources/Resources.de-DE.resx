@@ -141,4 +141,25 @@
     <data name="RecentRoms" xml:space="preserve">
         <value>Aktuelle Roms</value>
     </data>
+    <data name="AdvancedSettings" xml:space="preserve">
+        <value>Erweiterte Einstellungen...</value>
+    </data>
+    <data name="ConfigKey" xml:space="preserve">
+        <value>Id</value>
+    </data>
+    <data name="ConfigValue" xml:space="preserve">
+        <value>Wert</value>
+    </data>
+    <data name="CurrentSection" xml:space="preserve">
+        <value>Ausgewählter Bereich</value>
+    </data>
+    <data name="VideoHeight" xml:space="preserve">
+        <value>Videohöhe</value>
+    </data>
+    <data name="VideoWidth" xml:space="preserve">
+        <value>Videobreite</value>
+    </data>
+    <data name="OpenScript" xml:space="preserve">
+        <value>Skript öffnen...</value>
+    </data>
 </root>

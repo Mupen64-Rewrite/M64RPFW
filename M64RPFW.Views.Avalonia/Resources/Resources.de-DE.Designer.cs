@@ -60,6 +60,15 @@ namespace M64RPFW.Views.Avalonia.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Erweiterte Einstellungen....
+        /// </summary>
+        internal static string AdvancedSettings {
+            get {
+                return ResourceManager.GetString("AdvancedSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Audio.
         /// </summary>
         internal static string Audio {
@@ -105,11 +114,38 @@ namespace M64RPFW.Views.Avalonia.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Id.
+        /// </summary>
+        internal static string ConfigKey {
+            get {
+                return ResourceManager.GetString("ConfigKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wert.
+        /// </summary>
+        internal static string ConfigValue {
+            get {
+                return ResourceManager.GetString("ConfigValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Kern.
         /// </summary>
         internal static string Core {
             get {
                 return ResourceManager.GetString("Core", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ausgewählter Bereich.
+        /// </summary>
+        internal static string CurrentSection {
+            get {
+                return ResourceManager.GetString("CurrentSection", resourceCulture);
             }
         }
         
@@ -236,6 +272,15 @@ namespace M64RPFW.Views.Avalonia.Resources {
         internal static string OpenRom {
             get {
                 return ResourceManager.GetString("OpenRom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Skript öffnen....
+        /// </summary>
+        internal static string OpenScript {
+            get {
+                return ResourceManager.GetString("OpenScript", resourceCulture);
             }
         }
         
@@ -416,6 +461,24 @@ namespace M64RPFW.Views.Avalonia.Resources {
         internal static string Video {
             get {
                 return ResourceManager.GetString("Video", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Videohöhe.
+        /// </summary>
+        internal static string VideoHeight {
+            get {
+                return ResourceManager.GetString("VideoHeight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Videobreite.
+        /// </summary>
+        internal static string VideoWidth {
+            get {
+                return ResourceManager.GetString("VideoWidth", resourceCulture);
             }
         }
     }

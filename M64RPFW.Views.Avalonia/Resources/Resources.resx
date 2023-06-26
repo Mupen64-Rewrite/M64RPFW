@@ -163,4 +163,11 @@
     <data name="CurrentSection" xml:space="preserve">
         <value>Current Section</value>
     </data>
+    <data name="Lua" xml:space="preserve">
+        <value>Lua</value>
+        <comment>@Invariant</comment>
+    </data>
+    <data name="NewLuaInstance" xml:space="preserve">
+        <value>New Instance...</value>
+    </data>
 </root>

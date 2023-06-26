@@ -11,19 +11,18 @@
         Closed="TopLevel_OnClosed"
         Title="Mupen Settings">
     <DockPanel LastChildFill="True" Margin="{StaticResource ContentPadding}">
-        <Grid RowDefinitions="*" ColumnDefinitions="Auto,*" Margin="{StaticResource SpaceBelowThickness}" DockPanel.Dock="Top">
-            <Label Grid.Row="0" Grid.Column="0" Content="{ext:Localize CurrentSection}"/>
-            <ComboBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{Binding ConfigSectionNames}" SelectedItem="{Binding SectionName}"/>
-        </Grid>
+        <ComboBox Margin="{StaticResource SpaceBelowThickness}" DockPanel.Dock="Top" HorizontalAlignment="Stretch"
+                  ItemsSource="{Binding ConfigSectionNames}" SelectedItem="{Binding SectionName}" />
+
         <DataGrid AutoGenerateColumns="False" Items="{Binding CurrentSection}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="{ext:Localize ConfigKey}" Binding="{Binding Name}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="{ext:Localize ConfigKey}" Binding="{Binding Name}" IsReadOnly="True" />
                 <DataGridTemplateColumn Header="{ext:Localize ConfigValue}">
                     <DataGridTemplateColumn.CellTemplate>
-                        <conv:ConfigDataTemplate/>
+                        <conv:ConfigDataTemplate />
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.CellEditingTemplate>
-                        <conv:ConfigEditingDataTemplate/>
+                        <conv:ConfigEditingDataTemplate />
                     </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
