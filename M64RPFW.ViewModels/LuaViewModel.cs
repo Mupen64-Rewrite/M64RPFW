@@ -13,7 +13,7 @@ public partial class LuaViewModel : ObservableObject
 
     private LuaEnvironment? _luaEnvironment;
 
-    [ObservableProperty] private string _path = "C:\\Users\\Alex\\Desktop\\test.lua";
+    [ObservableProperty] private string _path = string.Empty;
 
     public bool IsRunning { get; private set; }
 
