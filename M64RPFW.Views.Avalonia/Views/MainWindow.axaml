@@ -25,9 +25,9 @@
         </Style>
     </Window.Styles>
     <Window.KeyBindings>
-        <!--Maybe make this an attached property or something, I have no idea-->
-        <KeyBinding Command="{Binding OpenRomCommand}"
-                    Gesture="{Binding OpenRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+        <!-- TODO: See M64RPFW.Views.Avalonia.Markup.HotKeys (WIP)-->
+        <!-- <KeyBinding Command="{Binding OpenRomCommand}" -->
+        <!--             Gesture="{Binding OpenRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" /> -->
         <KeyBinding Command="{Binding CloseRomCommand}"
                     Gesture="{Binding CloseRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
         <KeyBinding Command="{Binding ResetRomCommand}"
@@ -57,11 +57,11 @@
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="{ext:Localize File}">
                 <!-- Opening a ROM depends on the window, thus it's part of view -->
-                <!-- TODO: implement attached property or behaviour for applying both HotKey and InputGesture from a single binding value -->
+                <!-- TODO: implement attached property or behaviour for applying both HotKey and InputGesture from a single binding value (see HotKeys.cs) -->
                 <MenuItem
                     Header="{ext:Localize OpenRom}"
                     Command="{Binding OpenRomCommand}"
-                    InputGesture="{Binding OpenRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+                    ext:GlobalHotkeys.KeyString="{Binding OpenRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}}" />
                 <!-- TODO: MenuItem itemscontrol container retemplating -->
                 <!-- <MenuItem -->
                 <!--     Header="{Binding Source={x:Static markupExtensions:LocalizationSource.Instance}, Path='[RecentRoms]'}" -->
@@ -77,6 +77,7 @@
                 <MenuItem
                     Header="{ext:Localize CloseRom}"
                     Command="{Binding CloseRomCommand}"
+                    
                     InputGesture="{Binding CloseRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
                 <MenuItem
                     Header="{ext:Localize ResetRom}"
@@ -153,8 +154,8 @@
             <MenuItem Header="{ext:Localize Movie}">
                 <MenuItem
                     Header="{ext:Localize StartPlaying}"
-                    Command="{Binding StartMovieCommand}"
-                    InputGesture="{Binding StartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+                    ext:GlobalHotkeys.KeyString="{Binding StartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}}"
+                    Command="{Binding StartMovieCommand}" />
                 <MenuItem
                     Header="{ext:Localize StartRecording}"
                     Command="{Binding StartRecordingCommand}"
