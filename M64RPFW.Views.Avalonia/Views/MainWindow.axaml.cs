@@ -1,10 +1,13 @@
 using System;
+using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using M64RPFW.Models.Emulation;
@@ -154,5 +157,30 @@ public partial class MainWindow : Window, IWindowSizingService, IViewDialogServi
     private void MenuItem_OnClick(object? sender, RoutedEventArgs e)
     {
         new LuaWindow().Show();
+    }
+
+    private void Control_OnLoaded(object? sender, RoutedEventArgs e)
+     {
+        // add window keybindings automatically based off of all menuitems
+        foreach (var menuItem in this.GetLogicalDescendants().OfType<MenuItem>())
+        {
+            if (menuItem.InputGesture == null || menuItem.Command == null)
+            {
+                Debug.Print($"{menuItem} has no input gesture or command, ignoring...");
+                continue;
+            }
+
+#if DEBUG
+            if (KeyBindings.Any(x => x.Command == menuItem.Command || x.Gesture == menuItem.InputGesture))
+            {
+                Debug.Print($"{menuItem.InputGesture} already registered");
+            }
+#endif
+            KeyBindings.Add(new KeyBinding()
+            {
+                Command = menuItem.Command,
+                Gesture = menuItem.InputGesture
+            });
+        }
     }
 }

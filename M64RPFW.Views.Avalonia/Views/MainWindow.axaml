@@ -17,6 +17,7 @@
                   SizeChanged="Window_OnSizeChanged"
                   KeyDown="Window_OnKeyDown"
                   KeyUp="Window_OnKeyUp"
+                  Loaded="Control_OnLoaded"
                   x:CompileBindings="True"
                   x:DataType="vm:EmulatorViewModel">
     <Window.Styles>
@@ -25,33 +26,7 @@
         </Style>
     </Window.Styles>
     <Window.KeyBindings>
-        <!--Maybe make this an attached property or something, I have no idea-->
-        <KeyBinding Command="{Binding OpenRomCommand}"
-                    Gesture="{Binding OpenRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
-        <KeyBinding Command="{Binding CloseRomCommand}"
-                    Gesture="{Binding CloseRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
-        <KeyBinding Command="{Binding ResetRomCommand}"
-                    Gesture="{Binding ResetRomHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
-        <KeyBinding Command="{Binding PauseOrResumeCommand}"
-                    Gesture="{Binding PauseOrResumeHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
-        <KeyBinding Command="{Binding FrameAdvanceCommand}"
-                    Gesture="{Binding FrameAdvanceHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
-        <KeyBinding Command="{Binding LoadFromFileCommand}"
-                    Gesture="{Binding LoadFromFileHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
-        <KeyBinding Command="{Binding SaveToFileCommand}"
-                    Gesture="{Binding SaveToFileHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
-        <KeyBinding Command="{Binding LoadCurrentSlotCommand}"
-                    Gesture="{Binding LoadCurrentSlotHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
-        <KeyBinding Command="{Binding SaveCurrentSlotCommand}"
-                    Gesture="{Binding SaveCurrentSlotHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
-        <KeyBinding Command="{Binding StartMovieCommand}"
-                    Gesture="{Binding StartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
-        <KeyBinding Command="{Binding StartRecordingCommand}"
-                    Gesture="{Binding StartRecordingHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
-        <KeyBinding Command="{Binding StopMovieCommand}"
-                    Gesture="{Binding StopMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
-        <KeyBinding Command="{Binding RestartMovieCommand}"
-                    Gesture="{Binding RestartMovieHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}" />
+        <!-- add non-menuitem keybindings here -->
     </Window.KeyBindings>
     <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" RowDefinitions="Auto,*,Auto">
         <Menu DockPanel.Dock="Top">
