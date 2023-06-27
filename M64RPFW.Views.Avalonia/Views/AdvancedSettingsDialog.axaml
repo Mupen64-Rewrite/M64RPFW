@@ -14,7 +14,7 @@
         <ComboBox Margin="{StaticResource SpaceBelowThickness}" DockPanel.Dock="Top" HorizontalAlignment="Stretch"
                   ItemsSource="{Binding ConfigSectionNames}" SelectedItem="{Binding SectionName}" />
 
-        <DataGrid AutoGenerateColumns="False" Items="{Binding CurrentSection}">
+        <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding CurrentSection}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="{ext:Localize ConfigKey}" Binding="{Binding Name}" IsReadOnly="True" />
                 <DataGridTemplateColumn Header="{ext:Localize ConfigValue}">

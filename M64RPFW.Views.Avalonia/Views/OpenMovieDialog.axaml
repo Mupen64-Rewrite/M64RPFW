@@ -38,7 +38,7 @@
                                       IsOpenDialog="{Binding !IsEditable}" />
                 <TextBlock Classes="h3" Text="{ext:Localize StartFrom}" />
 
-                <ComboBox Items="{Binding StartTypes, Mode=OneTime}"
+                <ComboBox ItemsSource="{Binding StartTypes, Mode=OneTime}"
                           SelectedItem="{Binding StartType}" IsEnabled="{Binding IsEditable}" />
                 <TextBlock Classes="h3" Text="{ext:Localize Author}" />
                 <TextBox Text="{Binding Authors}" TextWrapping="Wrap" IsEnabled="{Binding IsEditable}" />

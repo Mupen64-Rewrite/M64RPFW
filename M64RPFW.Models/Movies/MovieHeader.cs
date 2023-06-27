@@ -97,7 +97,7 @@ public class MovieHeader
     {
         if (enc == null)
             enc = Encoding.UTF8;
-        s = (s.Length > 31 ? s[..31] : s) + '\0';
+        s = (s.Length > (maxLen - 1) ? s[..(maxLen - 1)] : s) + '\0';
         enc.GetBytes(s, new Span<byte>(p, maxLen));
     }
 

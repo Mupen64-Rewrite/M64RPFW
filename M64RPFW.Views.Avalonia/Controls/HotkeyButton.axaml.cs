@@ -42,7 +42,7 @@ public partial class HotkeyButton : UserControl
         CurrentHotkey = e.Key == Key.Escape ? new KeyGesture(Key.None) : new KeyGesture(e.Key, e.KeyModifiers);
 
         // unfocus this element
-        e.Device?.SetFocusedElement(null, NavigationMethod.Unspecified, KeyModifiers.None);
+        (this.GetVisualRoot() as InputElement)?.Focus();
         Button.IsChecked = false;
     }
 
