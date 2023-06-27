@@ -16,6 +16,7 @@ public class LuaEnvironment : IDisposable
 
     private readonly Lua _lua;
     private readonly IFrontendScriptingService _frontendScriptingService;
+    private readonly IWindowSizingService _windowSizingService;
     private readonly string _path;
 
     public event Action<bool>? StateChanged;
@@ -39,9 +40,10 @@ public class LuaEnvironment : IDisposable
         ActiveLuaEnvironments.ForEach(action);
     }
 
-    public LuaEnvironment(IFrontendScriptingService frontendScriptingService, string path)
+    public LuaEnvironment(IFrontendScriptingService frontendScriptingService, IWindowSizingService windowSizingService, string path)
     {
         _frontendScriptingService = frontendScriptingService;
+        _windowSizingService = windowSizingService;
         _path = path;
 
         _lua = new Lua();
@@ -62,7 +64,11 @@ public class LuaEnvironment : IDisposable
             typeof(LuaEnvironment).GetMethod(nameof(GetPause), EnvironmentBindingFlags));
         _lua.RegisterFunction("_isreadonly", this,
             typeof(LuaEnvironment).GetMethod(nameof(GetVcrReadOnly), EnvironmentBindingFlags));
-        
+        _lua.RegisterFunction("_info", this,
+            typeof(LuaEnvironment).GetMethod(nameof(GetWindowSize), EnvironmentBindingFlags));
+        _lua.RegisterFunction("_resize", this,
+            typeof(LuaEnvironment).GetMethod(nameof(SetWindowSize), EnvironmentBindingFlags));
+
         // HACK: NLua doesn't walk the virtual tree when registering functions to ensure validity of operations, so we have to create
         // sub-table functions as weirdly named globals and then execute code to properly set up the tables
         _lua.DoString(@"
@@ -139,8 +145,8 @@ public class LuaEnvironment : IDisposable
                 set_text_antialias_mode = __dummy,
                 set_antialias_mode = __dummy,
                 gdip_fillpolygona = __dummy,
-                info = __dummy,
-                resize = __dummy,
+                info = _info,
+                resize = _resize,
             }
             input = {
                 get = __dummy,
@@ -181,6 +187,10 @@ public class LuaEnvironment : IDisposable
 
         try
         {
+            // synchronously executes the entire file, but doesn't destroy the environment after finishing
+            // instead, execution sleeps and is allowed to jump into callbacks arbitrarily on the lua thread 
+            // be careful:
+            // NOTE: some calls from lua side might arrive on another thread 
             _lua.DoFile(_path);
         }
         catch (LuaScriptException e)
@@ -244,5 +254,19 @@ public class LuaEnvironment : IDisposable
         return Mupen64Plus.VCR_DisableWrites;
     }
 
+    private LuaTable GetWindowSize()
+    {
+        _lua.NewTable("dimensions");
+        var table = _lua.GetTable("dimensions");
+        table["width"] = _frontendScriptingService.GetWindowSize().Width;
+        table["height"] = _frontendScriptingService.GetWindowSize().Height;
+        return table;
+    }
+    
+    private void SetWindowSize(int width, int height)
+    {
+        _frontendScriptingService.SetWindowSize(width, height);
+    }
+    
     #endregion
 }

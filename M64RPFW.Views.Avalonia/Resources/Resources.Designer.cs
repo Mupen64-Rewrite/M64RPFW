@@ -114,6 +114,15 @@ namespace M64RPFW.Views.Avalonia.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clear.
+        /// </summary>
+        internal static string Clear {
+            get {
+                return ResourceManager.GetString("Clear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close Rom.
         /// </summary>
         internal static string CloseRom {
@@ -348,6 +357,15 @@ namespace M64RPFW.Views.Avalonia.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Restart.
+        /// </summary>
+        internal static string Restart {
+            get {
+                return ResourceManager.GetString("Restart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Restart Movie.
         /// </summary>
         internal static string RestartMovie {
@@ -402,6 +420,15 @@ namespace M64RPFW.Views.Avalonia.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Start.
+        /// </summary>
+        internal static string Start {
+            get {
+                return ResourceManager.GetString("Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Start Encoder....
         /// </summary>
         internal static string StartEncoder {
@@ -434,6 +461,15 @@ namespace M64RPFW.Views.Avalonia.Resources {
         internal static string StartRecording {
             get {
                 return ResourceManager.GetString("StartRecording", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop.
+        /// </summary>
+        internal static string Stop {
+            get {
+                return ResourceManager.GetString("Stop", resourceCulture);
             }
         }
         

@@ -12,7 +12,15 @@ public interface IFrontendScriptingService
     public void Print(string value);
 
     /// <summary>
-    ///     Stops the current script
+    ///     Gets the size of the main window
     /// </summary>
-    public void Stop();
+    /// <returns>The size of the main window</returns>
+    public (int Width, int Height) GetWindowSize();
+
+    /// <summary>
+    ///     Sets the size of the main window
+    /// </summary>
+    /// <param name="width">The width</param>
+    /// <param name="height">The height</param>
+    public void SetWindowSize(int width, int height);
 }
