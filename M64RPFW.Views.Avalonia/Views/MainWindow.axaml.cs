@@ -34,8 +34,6 @@ public partial class MainWindow : Window, IWindowSizingService, IViewDialogServi
         DataContext = new EmulatorViewModel(this.Find<VidextControl>("EmulatorWindow")!, (App) Application.Current!,
             FilePickerService.Instance, this, this);
 
-        _shouldBlockSizeChangeEvents = false;
-
 
         // handling "special-case" settings here or in the SettingsDialog code-behind doesn't make a big difference
         // (except that here we don't have to worry about leaking due to strong refs)
@@ -86,20 +84,7 @@ public partial class MainWindow : Window, IWindowSizingService, IViewDialogServi
 
     private void Window_OnSizeChanged(object? sender, SizeChangedEventArgs e)
     {
-        if (!_shouldBlockSizeChangeEvents)
-        {
-            ViewModel.OnSizeChanged();
-        }
-        else
-        {
-            if (CanResize)
-            {
-                _vidextControl.MinHeight = _prevVidextMinHeight;
-                _vidextControl.MinWidth = _prevVidextMinWidth;
-            }
-
-            _shouldBlockSizeChangeEvents = false;
-        }
+        ViewModel.OnSizeChanged();
     }
 
     public WindowSize GetWindowSize()
@@ -109,7 +94,6 @@ public partial class MainWindow : Window, IWindowSizingService, IViewDialogServi
 
     public void LayoutToFit(WindowSize size)
     {
-        _shouldBlockSizeChangeEvents = true;
         _prevVidextMinWidth = _vidextControl.MinWidth;
         _prevVidextMinHeight = _vidextControl.MinHeight;
         _vidextControl.MinWidth = size.Width;
@@ -118,7 +102,6 @@ public partial class MainWindow : Window, IWindowSizingService, IViewDialogServi
     }
 
     private readonly VidextControl _vidextControl;
-    private bool _shouldBlockSizeChangeEvents;
     private double _prevVidextMinWidth, _prevVidextMinHeight;
 
     public Task ShowSettingsDialog()
