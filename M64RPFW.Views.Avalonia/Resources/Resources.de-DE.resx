@@ -159,7 +159,13 @@
     <data name="VideoWidth" xml:space="preserve">
         <value>Videobreite</value>
     </data>
-    <data name="OpenScript" xml:space="preserve">
-        <value>Skript öffnen...</value>
+    <data name="Clear" xml:space="preserve">
+        <value>Leeren</value>
+    </data>
+    <data name="Stop" xml:space="preserve">
+        <value>Anhalten</value>
+    </data>
+    <data name="Restart" xml:space="preserve">
+        <value>Neu starten</value>
     </data>
 </root>

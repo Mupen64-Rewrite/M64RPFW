@@ -4,11 +4,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:M64RPFW.Views.Avalonia.Controls"
         xmlns:vm="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels"
+        xmlns:markup="clr-namespace:M64RPFW.Views.Avalonia.Markup"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="M64RPFW.Views.Avalonia.Views.LuaWindow"
         x:CompileBindings="True"
         x:DataType="vm:LuaViewModel"
-        Title="Lua Instance"
+        Title="{markup:Localize Lua}"
         Width="300"
         Height="280"
         Closing="Window_OnClosing">
@@ -17,9 +18,9 @@
         <controls:FileBrowser Grid.ColumnSpan="3" CurrentPath="{Binding Path}"
                               PickerOptions="{Binding PickerOptions, Mode=OneTime}" />
 
-        <Button Grid.Row="1" Grid.Column="0" Content="Clear" />
-        <Button Grid.Row="1" Grid.Column="1" Content="Stop" />
-        <Button Grid.Row="1" Grid.Column="2" Content="Start" Command="{Binding RunCommand}" />
+        <Button Grid.Row="1" Grid.Column="0" Content="{markup:Localize Clear}" Click="Button_OnClick" />
+        <Button Grid.Row="1" Grid.Column="1" Content="{markup:Localize Stop}" Command="{Binding StopCommand}" />
+        <Button Grid.Row="1" Grid.Column="2" Content="{markup:Localize Start}" Command="{Binding RunCommand}" />
 
         <TextBox Grid.Row="2" Grid.ColumnSpan="3" IsReadOnly="True" x:Name="LogTextBox" />
     </Grid>
