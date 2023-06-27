@@ -56,7 +56,7 @@
                     <TextBlock Classes="h3"
                                Text="{ext:Localize Core}" />
                     <ComboBox
-                        Items="{Binding EmulatorTypes,Mode=OneTime}"
+                        ItemsSource="{Binding EmulatorTypes,Mode=OneTime}"
                         SelectedItem="{Binding CoreType,Mode=TwoWay}" />
                     <CheckBox
                         Content="{ext:Localize DisableExpansionPakMemory}" />
