@@ -9,12 +9,13 @@ using M64RPFW.Models.Helpers;
 using M64RPFW.Models.Settings;
 using M64RPFW.Models.Types.Settings;
 using M64RPFW.Services.Abstractions;
+using M64RPFW.ViewModels.Extensions;
 using M64RPFW.ViewModels.Helpers;
 using M64RPFW.ViewModels.Messages;
 
 namespace M64RPFW.ViewModels;
 
-public sealed partial class SettingsViewModel : ObservableObject, IRecipient<RomLoadingMessage>
+public sealed partial class SettingsViewModel : ObservableObject, IRecipient<RomLoadingMessage>, IRecipient<LuaLoadingMessage>
 {
     private SettingsViewModel()
     {
@@ -47,6 +48,12 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
     {
         get => RPFWSettings.Instance.View.RecentRoms;
         set => SetRPFWSetting((inst, val) => inst.View.RecentRoms = val, value);
+    }
+    
+    public ObservableCollection<string> RecentLuaScripts
+    {
+        get => RPFWSettings.Instance.View.RecentLuaScripts;
+        set => SetRPFWSetting((inst, val) => inst.View.RecentLuaScripts = val, value);
     }
     
     public string VideoPluginPath
@@ -221,7 +228,12 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
 
     public void Receive(RomLoadingMessage message)
     {
-        RecentRoms.Add(message.Value);
+        RecentRoms.InsertUniqueAtFront(message.Value);
+    }
+    
+    public void Receive(LuaLoadingMessage message)
+    {
+        RecentLuaScripts.InsertUniqueAtFront(message.Value);
     }
 
     // HACK: notify all properties changed on this class

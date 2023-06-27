@@ -1,8 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using M64RPFW.Models.Scripting;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
+using M64RPFW.ViewModels.Messages;
 
 namespace M64RPFW.ViewModels;
 
@@ -41,7 +43,10 @@ public partial class LuaViewModel : ObservableObject
 
         _luaEnvironment = new LuaEnvironment(_frontendScriptingService, _windowSizingService, Path);
         _luaEnvironment.StateChanged += LuaEnvironmentStateChanged;
-        _luaEnvironment.Run();
+        if (_luaEnvironment.Run())
+        {
+            WeakReferenceMessenger.Default.Send(new LuaLoadingMessage(Path));
+        }
     }
 
     private void LuaEnvironmentStateChanged(bool obj)
