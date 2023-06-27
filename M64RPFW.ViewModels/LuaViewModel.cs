@@ -9,6 +9,8 @@ namespace M64RPFW.ViewModels;
 public partial class LuaViewModel : ObservableObject
 {
     private readonly IFrontendScriptingService _frontendScriptingService;
+    private readonly IWindowSizingService _windowSizingService;
+
     private LuaEnvironment? _luaEnvironment;
 
     [ObservableProperty] private string _path = "C:\\Users\\Alex\\Desktop\\test.lua";
@@ -20,9 +22,10 @@ public partial class LuaViewModel : ObservableObject
         new("Lua script (.lua)", new[] { "*.lua" })
     };
 
-    public LuaViewModel(IFrontendScriptingService frontendScriptingService)
+    public LuaViewModel(IFrontendScriptingService frontendScriptingService, IWindowSizingService windowSizingService)
     {
         _frontendScriptingService = frontendScriptingService;
+        _windowSizingService = windowSizingService;
     }
 
     [RelayCommand(CanExecute = nameof(IsRunning))]
@@ -36,7 +39,7 @@ public partial class LuaViewModel : ObservableObject
     {
         if (IsRunning) StopCommand.Execute(null);
 
-        _luaEnvironment = new LuaEnvironment(_frontendScriptingService, Path);
+        _luaEnvironment = new LuaEnvironment(_frontendScriptingService, _windowSizingService, Path);
         _luaEnvironment.StateChanged += LuaEnvironmentStateChanged;
         _luaEnvironment.Run();
     }
