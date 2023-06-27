@@ -9,14 +9,12 @@ public class StringToKeyGestureConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is string @string)
+        return value switch
         {
-            return KeyGesture.Parse(@string);
-        }
-        else
-        {
-            throw new ArgumentException($"Expected {nameof(String)}, got {value?.GetType()}");
-        }
+            string @string => KeyGesture.Parse(@string),
+            null => null,
+            _ => throw new ArgumentException($"Expected {nameof(String)}, got {value?.GetType()}")
+        };
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
