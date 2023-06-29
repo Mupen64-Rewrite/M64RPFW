@@ -167,7 +167,7 @@
         </Menu>
         <ctrls:VidextControl Grid.Row="1" Name="EmulatorWindow" />
         <StackPanel Grid.Row="2" Orientation="Horizontal">
-            
+            <!--TODO: Status bar-->
         </StackPanel>
     </Grid>
 
