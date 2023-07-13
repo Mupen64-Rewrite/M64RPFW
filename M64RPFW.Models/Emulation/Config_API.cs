@@ -1,5 +1,4 @@
 using System.Diagnostics.Contracts;
-using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using M64RPFW.Models.Helpers;
 using M64RPFW.Models.Types;

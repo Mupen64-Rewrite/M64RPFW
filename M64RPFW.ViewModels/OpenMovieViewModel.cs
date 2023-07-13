@@ -1,6 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Movies;
 using M64RPFW.Services.Abstractions;
 using static M64RPFW.Models.Types.Mupen64PlusTypes;

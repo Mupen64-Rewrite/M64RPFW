@@ -7,8 +7,6 @@ using Tomlyn;
 using Tomlyn.Model;
 
 namespace M64RPFW.Models.Settings;
-using LogSources = Mupen64Plus.LogSources;
-using MessageLevel = Mupen64PlusTypes.MessageLevel;
 
 /// <summary>
 /// Settings handler for the M64RPFW frontend.

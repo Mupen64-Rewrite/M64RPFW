@@ -6,6 +6,7 @@
                   xmlns:views="clr-namespace:M64RPFW.Views.Avalonia.Views"
                   xmlns:vm="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels"
                   xmlns:ext="clr-namespace:M64RPFW.Views.Avalonia.Markup"
+                  xmlns:gl="clr-namespace:M64RPFW.Views.Avalonia.Controls.OpenGL"
                   mc:Ignorable="d"
                   x:Class="M64RPFW.Views.Avalonia.Views.MainWindow"
                   Icon="/Assets/rpfw.ico"
@@ -165,7 +166,9 @@
                     Header="{ext:Localize NewLuaInstance}" Click="MenuItem_OnClick" />
             </MenuItem>
         </Menu>
-        <ctrls:VidextControl Grid.Row="1" Name="EmulatorWindow" />
+        <ctrls:VisualToggle Grid.Row="1" Name="VidextToggle">
+            <gl:IndependentGLControl Name="GlControl"/>
+        </ctrls:VisualToggle>
         <StackPanel Grid.Row="2" Orientation="Horizontal">
             <!--TODO: Status bar-->
         </StackPanel>
