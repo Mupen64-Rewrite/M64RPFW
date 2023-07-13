@@ -24,29 +24,32 @@ public class IndependentGLControl : CompositionControl
 
     // Option variables
     private int _requestedGlVersionMajor;
-    private int _glVersionMinor;
-    private GlProfileType _glProfileType;
+    private int _requestedGlVersionMinor;
+    private GlProfileType _requestedGlProfileType;
     private bool _vSync;
+    private int _depthSize = 0;
 
     public static readonly DirectProperty<IndependentGLControl, int> RequestedGlVersionMajorProperty =
         AvaloniaProperty.RegisterDirect<IndependentGLControl, int>(nameof(RequestedGlVersionMajor), c => c._requestedGlVersionMajor,
             (c, value) => c._requestedGlVersionMajor = value);
 
     public static readonly DirectProperty<IndependentGLControl, int> RequestedGlVersionMinorProperty =
-        AvaloniaProperty.RegisterDirect<IndependentGLControl, int>(nameof(GlVersionMinor), c => c._glVersionMinor,
-            (c, value) => c._glVersionMinor = value);
+        AvaloniaProperty.RegisterDirect<IndependentGLControl, int>(nameof(RequestedGlVersionMinor), c => c._requestedGlVersionMinor,
+            (c, value) => c._requestedGlVersionMinor = value);
 
     public static readonly DirectProperty<IndependentGLControl, GlProfileType> RequestedGlProfileTypeProperty =
-        AvaloniaProperty.RegisterDirect<IndependentGLControl, GlProfileType>(nameof(GlProfileType),
-            c => c._glProfileType, (c, value) => c._glProfileType = value);
+        AvaloniaProperty.RegisterDirect<IndependentGLControl, GlProfileType>(nameof(RequestedGlProfileType),
+            c => c._requestedGlProfileType, (c, value) => c._requestedGlProfileType = value);
 
     public static readonly DirectProperty<IndependentGLControl, bool> VSyncProperty =
         AvaloniaProperty.RegisterDirect<IndependentGLControl, bool>(nameof(VSync), c => c._vSync,
             (c, value) => c._vSync = value);
 
+    public static readonly DirectProperty<IndependentGLControl, int> DepthSizeProperty = AvaloniaProperty.RegisterDirect<IndependentGLControl, int>(nameof(DepthSize), c => c._depthSize, (c, value) => c._depthSize = value);
+
     // Option values
 
-    public GlVersion GlVersion => new(_glProfileType, RequestedGlVersionMajor, GlVersionMinor);
+    public GlVersion GlVersion => new(_requestedGlProfileType, RequestedGlVersionMajor, RequestedGlVersionMinor);
 
     public bool VSync
     {
@@ -60,16 +63,22 @@ public class IndependentGLControl : CompositionControl
         set => SetAndRaise(RequestedGlVersionMajorProperty, ref _requestedGlVersionMajor, value);
     }
 
-    public int GlVersionMinor
+    public int RequestedGlVersionMinor
     {
-        get => _glVersionMinor;
-        set => SetAndRaise(RequestedGlVersionMinorProperty, ref _glVersionMinor, value);
+        get => _requestedGlVersionMinor;
+        set => SetAndRaise(RequestedGlVersionMinorProperty, ref _requestedGlVersionMinor, value);
     }
 
-    public GlProfileType GlProfileType
+    public GlProfileType RequestedGlProfileType
     {
-        get => _glProfileType;
-        set => SetAndRaise(RequestedGlProfileTypeProperty, ref _glProfileType, value);
+        get => _requestedGlProfileType;
+        set => SetAndRaise(RequestedGlProfileTypeProperty, ref _requestedGlProfileType, value);
+    }
+
+    public int DepthSize
+    {
+        get => _depthSize;
+        set => SetAndRaise(DepthSizeProperty, ref _depthSize, value);
     }
 
     public IndependentGLControl()
@@ -93,7 +102,10 @@ public class IndependentGLControl : CompositionControl
         if (!_sharingFeature.CanCreateSharedContext)
             throw new PlatformNotSupportedException("Can't create shared context");
 
-        _glContext = _sharingFeature.CreateSharedContext(new[] { GlVersion }) ??
+        _glContext = _sharingFeature.CreateSharedContext(new[]
+                     {
+                         GlVersion
+                     }) ??
                      throw new ApplicationException("Couldn't create shared context");
 
         _bufferQueue = new GLBufferQueue(compositor, interop, surface, _sharingFeature, _glContext);
@@ -132,9 +144,15 @@ public class IndependentGLControl : CompositionControl
         gl.BindFramebuffer(FramebufferTarget.Framebuffer, _renderFbo);
         {
             var oldRenderbuffer = (uint) gl.GetInteger(GLEnum.Renderbuffer);
-            var depthFormat = _glContext!.Version.Type == GlProfileType.OpenGLES
-                ? InternalFormat.DepthComponent16
-                : InternalFormat.DepthComponent;
+            var depthFormat = _depthSize switch
+            {
+                < 16 => _glContext!.Version.Type == GlProfileType.OpenGLES
+                    ? InternalFormat.DepthComponent16
+                    : InternalFormat.DepthComponent,
+                >= 16 and < 24 => InternalFormat.DepthComponent16,
+                >= 24 and < 32 => InternalFormat.DepthComponent24,
+                >= 32 => InternalFormat.DepthComponent32,
+            };
 
             try
             {
@@ -154,7 +172,7 @@ public class IndependentGLControl : CompositionControl
                 gl.BindRenderbuffer(RenderbufferTarget.Renderbuffer, oldRenderbuffer);
             }
         }
-        
+
         // Attach the new buffer to the FBO, and make sure it's working
         gl.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, GLEnum.Texture2D,
             buffer.TextureObject, 0);
@@ -171,17 +189,17 @@ public class IndependentGLControl : CompositionControl
     {
         if (_bufferQueue == null || _glContext == null)
             return;
-        
+
         // ASSUME that the context is current
         using (_glContext.MakeCurrent())
         {
             var gl = GL.GetApi(_glContext.GlInterface.GetProcAddress);
-        
+
             gl.Flush();
-        
+
             await _bufferQueue.SwapBuffers(WindowSize);
             var curr = _bufferQueue.CurrentBuffer;
-        
+
             InitGLBuffers(gl, curr);
         }
     }

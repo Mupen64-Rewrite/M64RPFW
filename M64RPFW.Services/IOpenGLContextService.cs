@@ -70,5 +70,5 @@ public interface IOpenGLContextService
     /// <remarks>
     ///     Might be non-0 on some devices
     /// </remarks>
-    int GetDefaultFramebuffer();
+    uint GetDefaultFramebuffer();
 }

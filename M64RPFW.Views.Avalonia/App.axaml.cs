@@ -35,5 +35,10 @@ public class App : Application, IDispatcherService
     {
         Dispatcher.UIThread.Post(action);
     }
-    
+
+    public void ExecuteAndWait(Action action)
+    {
+        Dispatcher.UIThread.Invoke(action);
+    }
+
 }

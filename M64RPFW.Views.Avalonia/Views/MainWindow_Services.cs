@@ -1,9 +1,12 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.OpenGL;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
 using Silk.NET.OpenGL;
@@ -22,8 +25,7 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
 
     public void LayoutToFit(WindowSize size)
     {
-        GlControl.MinWidth = size.Width;
-        GlControl.MinHeight = size.Height;
+        GlControl.WindowSize = new PixelSize((int) size.Width, (int) size.Height);
         SizeToContent = SizeToContent.WidthAndHeight;
     }
 
@@ -56,14 +58,14 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
 
     public void InitWindow()
     {
-        // VidextToggle.IsChildAttached = true;
     }
 
     public void QuitWindow()
     {
         _contextHandle?.Dispose();
         _contextHandle = null;
-        // VidextToggle.IsChildAttached = false;
+        
+        GlControl.Cleanup();
     }
 
     public void SetGLAttribute(GLAttribute attr, int value)
@@ -80,29 +82,29 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
                 GLAttribute.AlphaSize:
                 // this is out of our control
                 break;
+            case GLAttribute.DepthSize:
+                Dispatcher.UIThread.Invoke(() => GlControl.DepthSize = value);
+                break;
             case GLAttribute.SwapControl:
-                GlControl.VSync = (value != 0);
+                Dispatcher.UIThread.Invoke(() => GlControl.VSync = value != 0);
                 break;
             case GLAttribute.MultisampleBuffers or
                 GLAttribute.MultisampleSamples:
                 // this is also out of our control
                 break;
             case GLAttribute.ContextMajorVersion:
-                GlControl.RequestedGlVersionMajor = value;
+                Dispatcher.UIThread.Invoke(() => GlControl.RequestedGlVersionMajor = value);
                 break;
             case GLAttribute.ContextMinorVersion:
-                GlControl.GlVersionMinor = value;
+                Dispatcher.UIThread.Invoke(() => GlControl.RequestedGlVersionMinor = value);
                 break;
             case GLAttribute.ContextProfileMask:
-                switch ((GLContextType) value)
+                Dispatcher.UIThread.Invoke(() => GlControl.RequestedGlProfileType = (GLContextType) value switch
                 {
-                    case GLContextType.Core or GLContextType.Compatibilty:
-                        GlControl.GlProfileType = GlProfileType.OpenGL;
-                        break;
-                    case GLContextType.ES:
-                        GlControl.GlProfileType = GlProfileType.OpenGLES;
-                        break;
-                }
+                    GLContextType.Core or GLContextType.Compatibilty => GlProfileType.OpenGL,
+                    GLContextType.ES => GlProfileType.OpenGLES,
+                    _ => GlControl.RequestedGlProfileType
+                });
                 break;
 
         }
@@ -132,7 +134,7 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
                                           FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0, 
                                           FramebufferAttachmentParameterName.AlphaSize),
             GLAttribute.DepthSize => gl.GetFramebufferAttachmentParameter(
-                FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0, 
+                FramebufferTarget.DrawFramebuffer, FramebufferAttachment.DepthAttachment, 
                 FramebufferAttachmentParameterName.DepthSize),
             GLAttribute.RedSize => gl.GetFramebufferAttachmentParameter(
                 FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0, 
@@ -163,13 +165,19 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
 
     public void CreateWindow(int width, int height, int bitsPerPixel)
     {
-        GlControl.WindowSize = new PixelSize(width, height);
-        // VidextToggle.IsChildAttached = true;
+        Dispatcher.UIThread.InvokeAsync(async () =>
+        {
+            GlControl.WindowSize = new PixelSize(width, height);
+            await GlControl.Initialize();
+        }).Wait();
     }
 
     public void ResizeWindow(int width, int height)
     {
-        GlControl.WindowSize = new PixelSize(width, height);
+        Dispatcher.UIThread.Invoke(() =>
+        {
+            GlControl.WindowSize = new PixelSize(width, height);
+        });
     }
 
     private IDisposable? _contextHandle;
@@ -192,9 +200,9 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
         return str != null ? GlControl.GetProcAddress(str) : IntPtr.Zero;
     }
 
-    public int GetDefaultFramebuffer()
+    public uint GetDefaultFramebuffer()
     {
-        return (int) GlControl.RenderFBO;
+        return GlControl.RenderFBO;
     }
 
     #endregion

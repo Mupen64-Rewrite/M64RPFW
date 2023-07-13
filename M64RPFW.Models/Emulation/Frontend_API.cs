@@ -136,7 +136,7 @@ public static partial class Mupen64Plus
             Mupen64PlusTypes.MessageLevel.Verbose => "TRACE",
             _ => "??   "
         };
-        #if false
+        #if true
         Console.WriteLine($"[{sourceString} {typeString} {levelString}] {message}");
         #else
         Debug.WriteLine($"[{sourceString} {typeString} {levelString}] {message}");

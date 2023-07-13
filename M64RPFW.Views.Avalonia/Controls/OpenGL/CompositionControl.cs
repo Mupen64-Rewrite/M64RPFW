@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Rendering.Composition;
+using M64RPFW.Models.Emulation;
+using M64RPFW.Models.Types;
 using M64RPFW.Views.Avalonia.Controls.Helpers;
 
 namespace M64RPFW.Views.Avalonia.Controls.OpenGL;
@@ -28,7 +30,7 @@ public abstract class CompositionControl : Control
         });
     }
 
-    protected Task? InitTask { get; private set; }
+    public Task? InitTask { get; private set; }
     protected Compositor? Compositor { get; private set; }
     protected CompositionDrawingSurface? Surface { get; private set; }
     protected ICompositionGpuInterop? Interop { get; private set; }
@@ -55,19 +57,12 @@ public abstract class CompositionControl : Control
     /// <returns></returns>
     protected abstract Task FreeGpuResources();
 
-    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    public Task Initialize()
     {
-        base.OnAttachedToVisualTree(e);
-        InitTask = Initialize();
+        return InitTask = DoInitialize();
     }
-
-    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
-    {
-        base.OnDetachedFromVisualTree(e);
-        Cleanup();
-    }
-
-    private async Task Initialize()
+    
+    public async Task DoInitialize()
     {
         Compositor = ElementComposition.GetElementVisual(this)!.Compositor;
         Surface = Compositor.CreateDrawingSurface();
@@ -83,7 +78,7 @@ public abstract class CompositionControl : Control
         ElementComposition.SetElementChildVisual(this, _visual);
     }
 
-    private async void Cleanup()
+    public async void Cleanup()
     {
         if (InitTask is { Status: TaskStatus.RanToCompletion })
         {
