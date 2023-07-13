@@ -2,7 +2,6 @@ using System.Runtime.InteropServices;
 using M64RPFW.Models.Helpers;
 using M64RPFW.Models.Types;
 using static M64RPFW.Models.Types.Mupen64PlusTypes;
-using Type = System.Type;
 
 namespace M64RPFW.Models.Emulation;
 

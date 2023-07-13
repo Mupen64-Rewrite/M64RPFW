@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -71,8 +70,44 @@ public static class CompositionHelpers
         }
     }
 
-    public static CompositionUpdateAwaitable NextVSync(this Compositor compositor)
+    public static CompositionUpdateAwaitable NextCompositionUpdate(this Compositor compositor)
     {
         return new CompositionUpdateAwaitable(compositor);
+    }
+
+    private class FuncObserver<T> : IObserver<T>
+    {
+        public void OnCompleted()
+        {
+            
+        }
+
+        public void OnError(Exception error)
+        {
+            
+        }
+
+        public void OnNext(T value)
+        {
+            ObserveAction(value);
+        }
+        
+        public Action<T> ObserveAction { private get; init; }
+    }
+
+    public static IObserver<T> Observe<T>(Action<T> func)
+    {
+        return new FuncObserver<T>
+        {
+            ObserveAction = func
+        };
+    }
+
+    public static IDisposable Subscribe<T>(this IObservable<T> obj, Action<T> func)
+    {
+        return obj.Subscribe(new FuncObserver<T>
+        {
+            ObserveAction = func
+        });
     }
 }

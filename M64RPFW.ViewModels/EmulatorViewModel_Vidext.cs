@@ -1,5 +1,4 @@
 using M64RPFW.Models.Emulation;
-using M64RPFW.Models.Interfaces;
 using M64RPFW.Models.Types;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;

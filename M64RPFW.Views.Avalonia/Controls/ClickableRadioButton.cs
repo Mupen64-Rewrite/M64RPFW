@@ -1,6 +1,5 @@
 using System;
 using Avalonia.Controls;
-using Avalonia.Styling;
 
 namespace M64RPFW.Views.Avalonia.Controls;
 

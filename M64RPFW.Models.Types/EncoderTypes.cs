@@ -1,5 +1,3 @@
-using System.Runtime.InteropServices;
-
 namespace M64RPFW.Models.Types;
 
 public partial class Mupen64PlusTypes

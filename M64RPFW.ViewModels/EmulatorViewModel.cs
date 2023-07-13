@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.ComponentModel;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Interfaces;
 using M64RPFW.Services;
