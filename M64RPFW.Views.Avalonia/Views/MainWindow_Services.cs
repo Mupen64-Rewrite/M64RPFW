@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.OpenGL;
 using M64RPFW.Services;
@@ -16,13 +17,13 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
 
     public WindowSize GetWindowSize()
     {
-        return new WindowSize(VidextToggle.Width, VidextToggle.Height);
+        return new WindowSize(GlControl.Width, GlControl.Height);
     }
 
     public void LayoutToFit(WindowSize size)
     {
-        VidextToggle.MinWidth = size.Width;
-        VidextToggle.MinHeight = size.Height;
+        GlControl.MinWidth = size.Width;
+        GlControl.MinHeight = size.Height;
         SizeToContent = SizeToContent.WidthAndHeight;
     }
 
@@ -55,18 +56,20 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
 
     public void InitWindow()
     {
-        throw new NotImplementedException();
+        // VidextToggle.IsChildAttached = true;
     }
 
     public void QuitWindow()
     {
-        throw new NotImplementedException();
+        _contextHandle?.Dispose();
+        _contextHandle = null;
+        // VidextToggle.IsChildAttached = false;
     }
 
     public void SetGLAttribute(GLAttribute attr, int value)
     {
-        if (VidextToggle.IsChildAttached)
-            throw new InvalidOperationException("OpenGL is already initialized");
+        // if (VidextToggle.IsChildAttached)
+        //     throw new InvalidOperationException("OpenGL is already initialized");
         switch (attr)
         {
             case GLAttribute.DoubleBuffer or
@@ -107,8 +110,7 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
 
     public int GetGLAttribute(GLAttribute attr)
     {
-        if (_contextHandle == null)
-            _contextHandle = GlControl.MakeContextCurrent();
+        _contextHandle ??= GlControl.MakeContextCurrent();
         if (_contextHandle == null)
             throw new ApplicationException("big screwup here");
 
@@ -161,12 +163,13 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
 
     public void CreateWindow(int width, int height, int bitsPerPixel)
     {
-        throw new NotImplementedException();
+        GlControl.WindowSize = new PixelSize(width, height);
+        // VidextToggle.IsChildAttached = true;
     }
 
     public void ResizeWindow(int width, int height)
     {
-        throw new NotImplementedException();
+        GlControl.WindowSize = new PixelSize(width, height);
     }
 
     private IDisposable? _contextHandle;

@@ -24,7 +24,7 @@ public partial class MainWindow : Window
 {
     public MainWindow()
     {
-        AvaloniaXamlLoader.Load(this);
+        InitializeComponent();
 
         DataContext = new EmulatorViewModel(this, (App) Application.Current!,
             FilePickerService.Instance, this, this);

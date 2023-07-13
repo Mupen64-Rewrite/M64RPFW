@@ -21,8 +21,9 @@ public unsafe partial class EmulatorViewModel : IVideoExtensionService
             _openGlContextService.InitWindow();
             return Error.Success;
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            Console.WriteLine(e);
             return Error.Internal;
         }
     }
