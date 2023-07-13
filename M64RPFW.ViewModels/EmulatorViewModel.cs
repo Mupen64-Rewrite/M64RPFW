@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using M64RPFW.Models.Emulation;
-using M64RPFW.Models.Interfaces;
 using M64RPFW.Services;
 using static M64RPFW.Models.Types.Mupen64PlusTypes;
 

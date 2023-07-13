@@ -123,7 +123,7 @@ public unsafe class VidextControl : NativeControlHost, IOpenGLContextService
         return (IntPtr) SDL.GLGetProcAddress((byte*) strSymbol);
     }
 
-    public int GetDefaultFramebuffer()
+    public uint GetDefaultFramebuffer()
     {
         return 0;
     }

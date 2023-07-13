@@ -102,7 +102,7 @@ public partial class MainWindow : Window
     }
 
     private void Control_OnLoaded(object? sender, RoutedEventArgs e)
-     {
+    {
         // add window keybindings automatically based off of all menuitems
         foreach (var menuItem in this.GetLogicalDescendants().OfType<MenuItem>())
         {

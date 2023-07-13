@@ -73,17 +73,14 @@ public class GLBufferQueue : IBufferQueue<GLQueuableImage>
     {
         if (_currentBuffer != null)
         {
-            Console.WriteLine("wait display");
             await Dispatcher.UIThread.Invoke(async () => await DisplayNext(_currentBuffer));
             if (_currentBuffer.Size == size && _disposing == 0)
             {
                 _pendingBuffers.Enqueue(_currentBuffer);
-                Console.WriteLine("return");
             }
             else
             {
                 _currentBuffer.DisposeAsync();
-                Console.WriteLine("no return");
             }
         }
 
@@ -94,12 +91,10 @@ public class GLBufferQueue : IBufferQueue<GLQueuableImage>
         }
         else if (_pendingBuffers.Count < 3)
         {
-            Console.WriteLine("new");
             _currentBuffer = new GLQueuableImage(size, _glSharing, _glContext);
         }
         else
         {
-            Console.WriteLine("old");
             _currentBuffer = _pendingBuffers.Dequeue();
         }
     }

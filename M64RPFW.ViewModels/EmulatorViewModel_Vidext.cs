@@ -70,14 +70,15 @@ public unsafe partial class EmulatorViewModel : IVideoExtensionService
             {
                 _windowSizingService.LayoutToFit(new WindowSize(width, height));
             });
-                
-                
             _openGlContextService.CreateWindow(width, height, bpp);
+            
+            _openGlContextService.MakeCurrent();
 
             return Error.Success;
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            Mupen64Plus.Log(LogSources.Vidext, MessageLevel.Error, $"SetVideoMode threw: {e}");
             return Error.Internal;
         }
     }
@@ -159,7 +160,7 @@ public unsafe partial class EmulatorViewModel : IVideoExtensionService
 
     public uint VidextGLGetDefaultFramebuffer()
     {
-        return 0;
+        return _openGlContextService.GetDefaultFramebuffer();
     }
 
     #endregion
