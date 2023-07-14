@@ -2,6 +2,8 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.OpenGL;
 using Avalonia.Rendering.Composition;
+using M64RPFW.Models.Emulation;
+using M64RPFW.Models.Types;
 
 namespace M64RPFW.Views.Avalonia.Controls.Helpers;
 

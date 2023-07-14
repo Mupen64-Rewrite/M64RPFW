@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.OpenGL;
 using Avalonia.Rendering.Composition;
+using M64RPFW.Models.Emulation;
+using M64RPFW.Models.Types;
 using M64RPFW.Views.Avalonia.Controls.Helpers;
 using Silk.NET.OpenGL;
 
@@ -112,7 +114,7 @@ public class IndependentGLControl : CompositionControl
 
         using (_glContext.MakeCurrent())
         {
-            GL gl = GL.GetApi(_glContext.GlInterface.GetProcAddress);
+            var gl = GL.GetApi(_glContext.GlInterface.GetProcAddress);
             _renderFbo = gl.GenFramebuffer();
         }
 
@@ -142,6 +144,8 @@ public class IndependentGLControl : CompositionControl
     private void InitGLBuffers(GL gl, GLQueuableImage buffer)
     {
         gl.BindFramebuffer(FramebufferTarget.Framebuffer, _renderFbo);
+        gl.FramebufferParameter(FramebufferTarget.Framebuffer, FramebufferParameterName.Width, WindowSize.Width);
+        gl.FramebufferParameter(FramebufferTarget.Framebuffer, FramebufferParameterName.Height, WindowSize.Height);
         {
             var oldRenderbuffer = (uint) gl.GetInteger(GLEnum.Renderbuffer);
             var depthFormat = _depthSize switch
@@ -196,11 +200,15 @@ public class IndependentGLControl : CompositionControl
             var gl = GL.GetApi(_glContext.GlInterface.GetProcAddress);
 
             gl.Flush();
+        }
 
-            await _bufferQueue.SwapBuffers(WindowSize);
+        await _bufferQueue.SwapBuffers(WindowSize);
+        using (_glContext.MakeCurrent())
+        {
+            var gl = GL.GetApi(_glContext.GlInterface.GetProcAddress);
+
             var curr = _bufferQueue.CurrentBuffer;
-
-            InitGLBuffers(gl, curr);
+            InitGLBuffers(gl, curr); 
         }
     }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace M64RPFW.Views.Avalonia.Controls.Helpers;
 /// </summary>
 public class GLBufferQueue : IBufferQueue<GLQueuableImage>
 {
-    private Queue<GLQueuableImage> _pendingBuffers;
+    private ConcurrentQueue<GLQueuableImage> _pendingBuffers;
     private GLQueuableImage? _currentBuffer;
     private int _disposing;
 
@@ -33,8 +34,8 @@ public class GLBufferQueue : IBufferQueue<GLQueuableImage>
         _target = target;
         _glSharing = glSharing;
         _glContext = glContext;
+        _pendingBuffers = new ConcurrentQueue<GLQueuableImage>();
         _currentBuffer = null;
-        _pendingBuffers = new Queue<GLQueuableImage>();
         _disposing = 0;
     }
 
@@ -50,38 +51,32 @@ public class GLBufferQueue : IBufferQueue<GLQueuableImage>
 
     public bool VSync { get; set; }
 
-    private async Task DisplayNext(GLQueuableImage img)
+    async Task DisplayNext(GLQueuableImage img, PixelSize size)
     {
-        ICompositionImportedGpuImage? import = null;
-        try
-        {
-            if (VSync)
-                await _compositor.NextCompositionUpdate();
-            import = img.Import(_interop);
-            await import.ImportCompeted;
-            await _target.UpdateAsync(import);
-        }
-        finally
-        {
-            if (import != null)
-                await import.DisposeAsync();
-        }
-    }
+        var import = img.Import(_interop);
+        await import.ImportCompeted;
 
+        async void Continuation()
+        {
+            await _target.UpdateAsync(import);
+            _compositor.RequestCommitAsync();
+
+            if (img.Size == size && _disposing != 0)
+                _pendingBuffers.Enqueue(img);
+            else
+                img.DisposeAsync();
+        }
+        Continuation();
+    }
 #pragma warning disable CS4014
     public async Task SwapBuffers(PixelSize size)
     {
+        
         if (_currentBuffer != null)
         {
-            await Dispatcher.UIThread.Invoke(async () => await DisplayNext(_currentBuffer));
-            if (_currentBuffer.Size == size && _disposing == 0)
-            {
-                _pendingBuffers.Enqueue(_currentBuffer);
-            }
-            else
-            {
-                _currentBuffer.DisposeAsync();
-            }
+            var copyCurrentBuffer = _currentBuffer;
+            Dispatcher.UIThread.InvokeAsync(async () => await DisplayNext(copyCurrentBuffer, size));
+            _currentBuffer = null;
         }
 
         // pull new buffer from incoming queue
@@ -89,13 +84,16 @@ public class GLBufferQueue : IBufferQueue<GLQueuableImage>
         {
             ; // absolutely nothing
         }
-        else if (_pendingBuffers.Count < 3)
+        else if (_pendingBuffers.Count <= 3)
         {
             _currentBuffer = new GLQueuableImage(size, _glSharing, _glContext);
         }
         else
         {
-            _currentBuffer = _pendingBuffers.Dequeue();
+            while (_pendingBuffers.TryDequeue(out _currentBuffer) && _currentBuffer.Size != size)
+            {
+                ; // nothing
+            }
         }
     }
 #pragma warning restore CS4014
@@ -108,7 +106,12 @@ public class GLBufferQueue : IBufferQueue<GLQueuableImage>
         if (_currentBuffer != null)
             waitList.Add(_currentBuffer.DisposeAsync().AsTask());
         while (_pendingBuffers.Count > 0)
-            waitList.Add(_pendingBuffers.Dequeue().DisposeAsync().AsTask());
+        {
+            if (_pendingBuffers.TryDequeue(out var buf))
+            {
+                waitList.Add(buf.DisposeAsync().AsTask());
+            }
+        }
 
         await Task.WhenAll(waitList);
     }
