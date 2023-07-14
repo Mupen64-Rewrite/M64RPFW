@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Avalonia.Controls;
 using Avalonia.OpenGL;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using M64RPFW.Models.Emulation;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
 using Silk.NET.OpenGL;
@@ -181,6 +183,7 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
     }
 
     private IDisposable? _contextHandle;
+    private Stopwatch _sw = new Stopwatch();
 
     public void MakeCurrent()
     {
@@ -189,9 +192,12 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
 
     public void SwapBuffers()
     {
+        _sw.Restart();
         _contextHandle?.Dispose();
         GlControl.SwapBuffers().Wait();
         _contextHandle = GlControl.MakeContextCurrent();
+        _sw.Stop();
+        Console.WriteLine($"Buffer swap took {_sw.ElapsedMilliseconds} ms");
     }
 
     public nint GetProcAddress(nint strSymbol)

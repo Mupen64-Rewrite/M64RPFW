@@ -152,8 +152,9 @@ public unsafe partial class EmulatorViewModel : IVideoExtensionService
             _openGlContextService.SwapBuffers();
             return Error.Success;
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            Mupen64Plus.Log(LogSources.Vidext, MessageLevel.Error, $"VidextSwapBuffers: {e}");
             return Error.Internal;
         }
     }

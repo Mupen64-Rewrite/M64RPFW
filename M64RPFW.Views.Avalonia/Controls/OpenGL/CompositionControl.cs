@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Rendering.Composition;
+using Avalonia.Threading;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Types;
 using M64RPFW.Views.Avalonia.Controls.Helpers;
@@ -61,7 +62,7 @@ public abstract class CompositionControl : Control
     {
         return InitTask = DoInitialize();
     }
-    
+
     public async Task DoInitialize()
     {
         Compositor = ElementComposition.GetElementVisual(this)!.Compositor;
@@ -80,6 +81,11 @@ public abstract class CompositionControl : Control
 
     public async void Cleanup()
     {
+        if (!Dispatcher.UIThread.CheckAccess())
+        {
+            Dispatcher.UIThread.Post(Cleanup);
+            return;
+        }
         if (InitTask is { Status: TaskStatus.RanToCompletion })
         {
             await FreeGpuResources();
