@@ -51,6 +51,11 @@ public class IndependentGlControlResources : IDisposable
     {
         _back = Interlocked.Exchange(ref _middle, _back);
 
+        InitBackBuffer(size, depth);
+    }
+
+    public void InitBackBuffer(PixelSize size, int depth)
+    {
         _back ??= new GlBufferGroup(_glSharing, _context, size, CalculateDepthFormat(depth, _context.Version));
         var gl = GL.GetApi(_context.GlInterface.GetProcAddress);
         gl.BindFramebuffer(FramebufferTarget.Framebuffer, _back.FBO);
@@ -74,7 +79,7 @@ public class IndependentGlControlResources : IDisposable
         
     }
 
-    public uint FBO => _back!.FBO;
+    public uint? FBO => _back?.FBO;
 
     public GlVersion ContextVersion => _context.Version;
 

@@ -124,7 +124,9 @@ public class IndependentGlControl : CompositionControl
     public IDisposable MakeContextCurrent()
     {
         CheckInitialized();
-        return _resources.MakeCurrent();
+        var res = _resources.MakeCurrent();
+        _resources.InitBackBuffer(WindowSize, DepthSize);
+        return res;
     }
 
     public void SwapBuffers()
@@ -138,7 +140,7 @@ public class IndependentGlControl : CompositionControl
         get
         {
             CheckInitialized();
-            return _resources.FBO;
+            return _resources.FBO ?? 0;
         }
     }
 }
