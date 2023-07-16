@@ -166,7 +166,7 @@
                     Header="{ext:Localize NewLuaInstance}" Click="MenuItem_OnClick" />
             </MenuItem>
         </Menu>
-        <gl:IndependentGLControl Grid.Row="1" Name="GlControl"/>
+        <gl:IndependentGlControl Grid.Row="1" Name="GlControl"/>
         <StackPanel Grid.Row="2" Orientation="Horizontal">
             <!--TODO: Status bar-->
         </StackPanel>
