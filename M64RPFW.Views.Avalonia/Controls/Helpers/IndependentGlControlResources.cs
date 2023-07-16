@@ -14,6 +14,7 @@ public class IndependentGlControlResources : IDisposable
     private IOpenGlTextureSharingRenderInterfaceContextFeature _glSharing;
     private IGlContext _context;
     private GlBufferGroup? _front, _middle, _back;
+    private int _hasSwapped = 0;
     
     private static InternalFormat CalculateDepthFormat(int depthSize, GlVersion version)
     {
@@ -49,8 +50,10 @@ public class IndependentGlControlResources : IDisposable
 
     public void SwapBuffers(PixelSize size, int depth)
     {
+        var gl = GL.GetApi(_context.GlInterface.GetProcAddress);
+        gl.Finish();
         _back = Interlocked.Exchange(ref _middle, _back);
-
+        _hasSwapped = 1;
         InitBackBuffer(size, depth);
     }
 
@@ -63,20 +66,14 @@ public class IndependentGlControlResources : IDisposable
 
     public async Task PresentNext(ICompositionGpuInterop interop, CompositionDrawingSurface surface)
     {
-        _front = Interlocked.Exchange(ref _middle, _front);
+        if (Interlocked.Exchange(ref _hasSwapped, 0) != 0)
+            _front = Interlocked.Exchange(ref _middle, _front);
         
         if (_front == null)
             return;
-        try
-        {
-            var import = _front.Import(interop);
-            await surface.UpdateAsync(import);
-        }
-        catch (OpenGlException)
-        {
-            // ignored
-        }
         
+        var import = _front.Import(interop);
+        await surface.UpdateAsync(import);
     }
 
     public uint? FBO => _back?.FBO;
@@ -86,5 +83,8 @@ public class IndependentGlControlResources : IDisposable
     public void Dispose()
     {
         _context.Dispose();
+        _front?.Dispose();
+        _middle?.Dispose();
+        _back?.Dispose();
     }
 }
