@@ -28,7 +28,6 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
     public void LayoutToFit(WindowSize size)
     {
         GlControl.WindowSize = new PixelSize((int) size.Width, (int) size.Height);
-        SizeToContent = SizeToContent.WidthAndHeight;
     }
 
     #endregion
@@ -153,9 +152,9 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
             GLAttribute.SwapControl => GlControl.VSync? 1 : 0,
             GLAttribute.MultisampleBuffers => 0,
             GLAttribute.MultisampleSamples => 0,
-            GLAttribute.ContextMajorVersion => GlControl.ContextVersion?.Major ?? throw new InvalidOperationException("OpenGL context not init"),
-            GLAttribute.ContextMinorVersion => GlControl.ContextVersion?.Minor ?? throw new InvalidOperationException("OpenGL context not init"),
-            GLAttribute.ContextProfileMask => (GlControl.ContextVersion?.Type ?? throw new InvalidOperationException("OpenGL context not init")) switch
+            GLAttribute.ContextMajorVersion => GlControl.ContextVersion.Major,
+            GLAttribute.ContextMinorVersion => GlControl.ContextVersion.Minor,
+            GLAttribute.ContextProfileMask => GlControl.ContextVersion.Type switch
             {
                 GlProfileType.OpenGL => (int) GLContextType.Core,
                 GlProfileType.OpenGLES => (int) GLContextType.ES,
@@ -193,11 +192,8 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
     public void SwapBuffers()
     {
         _sw.Restart();
-        _contextHandle?.Dispose();
-        GlControl.SwapBuffers().Wait();
-        _contextHandle = GlControl.MakeContextCurrent();
+        GlControl.SwapBuffers();
         _sw.Stop();
-        Console.WriteLine($"Buffer swap took {_sw.ElapsedMilliseconds} ms");
     }
 
     public nint GetProcAddress(nint strSymbol)
