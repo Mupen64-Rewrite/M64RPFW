@@ -13,7 +13,6 @@ public class GlBufferGroup : IDisposable
 {
     private readonly IGlContext _context;
     private readonly ICompositionImportableOpenGlSharedTexture _texture;
-    private readonly uint _fbo;
     private readonly uint _depthRbo;
 
     ICompositionImportedGpuImage? _import;
@@ -30,17 +29,13 @@ public class GlBufferGroup : IDisposable
             var gl = GL.GetApi(context.GlInterface.GetProcAddress);
 
             _texture = glSharing.CreateSharedTextureForComposition(context, size);
-            _fbo = gl.GenFramebuffer();
             _depthRbo = gl.GenRenderbuffer();
 
             {
                 uint prevRbo = (uint) gl.GetInteger(GetPName.RenderbufferBinding);
-                uint prevDrawFbo = (uint) gl.GetInteger(GetPName.DrawFramebufferBinding);
-                uint prevReadFbo = (uint) gl.GetInteger(GetPName.ReadFramebufferBinding);
 
                 try
                 {
-                    gl.BindFramebuffer(FramebufferTarget.Framebuffer, _fbo);
                     gl.BindRenderbuffer(RenderbufferTarget.Renderbuffer, _depthRbo);
 
                     gl.RenderbufferStorage(RenderbufferTarget.Renderbuffer,
@@ -62,15 +57,11 @@ public class GlBufferGroup : IDisposable
                 finally
                 {
                     gl.BindRenderbuffer(RenderbufferTarget.Renderbuffer, prevRbo);
-                    gl.BindFramebuffer(FramebufferTarget.DrawFramebuffer, prevDrawFbo);
-                    gl.BindFramebuffer(FramebufferTarget.ReadFramebuffer, prevReadFbo);
                 }
             }
         }
 
     }
-
-    public uint FBO => _fbo;
 
     public ICompositionImportedGpuImage Import(ICompositionGpuInterop interop)
     {
@@ -85,6 +76,14 @@ public class GlBufferGroup : IDisposable
         return _import ??= interop.ImportImage(_texture);
     }
 
+    public void AttachToCurrentFBO(GL gl)
+    {
+        gl.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, 
+            TextureTarget.Texture2D, (uint) _texture.TextureId, 0);
+        gl.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, 
+            RenderbufferTarget.Renderbuffer, _depthRbo);
+    }
+
     public void Dispose()
     {
         _texture.Dispose();
@@ -92,7 +91,6 @@ public class GlBufferGroup : IDisposable
         {
             var gl = GL.GetApi(_context.GlInterface.GetProcAddress);
             gl.DeleteRenderbuffer(_depthRbo);
-            gl.DeleteFramebuffer(_fbo);
         }
     }
 }
