@@ -13,7 +13,6 @@
                   Title="{ext:Localize AppName}"
                   Width="640"
                   Height="480"
-                  CanResize="{Binding Resizable,Mode=OneWay}"
                   Closed="Window_OnClosed"
                   SizeChanged="Window_OnSizeChanged"
                   KeyDown="Window_OnKeyDown"
