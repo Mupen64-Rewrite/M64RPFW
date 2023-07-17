@@ -182,7 +182,6 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
     }
 
     private IDisposable? _contextHandle;
-    private Stopwatch _sw = new Stopwatch();
 
     public void MakeCurrent()
     {
@@ -191,9 +190,7 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
 
     public void SwapBuffers()
     {
-        _sw.Restart();
         GlControl.SwapBuffers();
-        _sw.Stop();
     }
 
     public nint GetProcAddress(nint strSymbol)
