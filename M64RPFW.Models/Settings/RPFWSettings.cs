@@ -55,6 +55,8 @@ public class RPFWSettings : ITomlMetadataProvider
 
         public string PauseOrResume { get; set; } = "P";
         public string FrameAdvance { get; set; } = "F";
+        
+        public string FastForward { get; set; } = "Z";
 
         public string LoadFromFile { get; set; } = "Ctrl+Shift+O";
         public string SaveToFile { get; set; } = "Ctrl+Shift+S";

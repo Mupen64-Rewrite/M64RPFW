@@ -168,4 +168,7 @@
     <data name="Restart" xml:space="preserve">
         <value>Neu starten</value>
     </data>
+    <data name="FastForward" xml:space="preserve">
+        <value>Vorspulen</value>
+    </data>
 </root>

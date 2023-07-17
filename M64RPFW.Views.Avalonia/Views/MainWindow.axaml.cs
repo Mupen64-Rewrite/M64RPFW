@@ -17,11 +17,16 @@ using M64RPFW.Views.Avalonia.Controls;
 using M64RPFW.Views.Avalonia.Controls.Helpers;
 using M64RPFW.Views.Avalonia.Markup;
 using M64RPFW.Views.Avalonia.Services;
+using M64RPFW.Views.Avalonia.Extensions;
+using M64RPFW.Views.Avalonia.Helpers;
+using M64RPFW.Views.Avalonia.Services;
 
 namespace M64RPFW.Views.Avalonia.Views;
 
 public partial class MainWindow : Window
 {
+  
+    
     public MainWindow()
     {
         InitializeComponent();
@@ -82,8 +87,14 @@ public partial class MainWindow : Window
         ViewModel.OnSizeChanged();
     }
 
+    private KeyGesture FastForwardKeyGesture => KeyGesture.Parse(SettingsViewModel.Instance.FastForwardHotkey);
+    
     private void Window_OnKeyDown(object? sender, KeyEventArgs e)
     {
+        if (FastForwardKeyGesture.Matches(e))
+        {
+            ViewModel.SetSpeedLimiterCommand.ExecuteIfPossible(false, false);
+        }
         var scancode = SDLHelpers.ToSDLScancode(e.Key);
         var modifiers = SDLHelpers.ToSDLKeymod(e.KeyModifiers);
         ViewModel.ForwardSDLKeyDown(scancode, modifiers);
@@ -91,6 +102,10 @@ public partial class MainWindow : Window
 
     private void Window_OnKeyUp(object? sender, KeyEventArgs e)
     {
+        if (FastForwardKeyGesture.Matches(e))
+        {
+            ViewModel.SetSpeedLimiterCommand.ExecuteIfPossible(true, true);
+        }
         var scancode = SDLHelpers.ToSDLScancode(e.Key);
         var modifiers = SDLHelpers.ToSDLKeymod(e.KeyModifiers);
         ViewModel.ForwardSDLKeyUp(scancode, modifiers);

@@ -213,6 +213,15 @@ namespace M64RPFW.Views.Avalonia.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fast-forward.
+        /// </summary>
+        internal static string FastForward {
+            get {
+                return ResourceManager.GetString("FastForward", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to File.
         /// </summary>
         internal static string File {

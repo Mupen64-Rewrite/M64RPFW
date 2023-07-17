@@ -71,7 +71,7 @@
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <TextBlock Classes="h3"
                                Text="{ext:Localize Emulator}" />
-                    <Grid RowDefinitions="*,*,*,*,*,*,*,*,*" ColumnDefinitions="*,*">
+                    <Grid RowDefinitions="*,*,*,*,*,*,*,*,*,*" ColumnDefinitions="*,*">
                         <Label Grid.Row="0" Grid.Column="0"
                                Content="{ext:Localize OpenRom}" />
                         <ctrls:HotkeyButton Grid.Row="0" Grid.Column="1"
@@ -93,20 +93,24 @@
                         <ctrls:HotkeyButton Grid.Row="4" Grid.Column="1"
                                             CurrentHotkey="{Binding FrameAdvanceHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
                         <Label Grid.Row="5" Grid.Column="0"
-                               Content="{ext:Localize LoadFromFile}" />
+                               Content="{ext:Localize FastForward}" />
                         <ctrls:HotkeyButton Grid.Row="5" Grid.Column="1"
-                                            CurrentHotkey="{Binding LoadFromFileHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                                            CurrentHotkey="{Binding FastForwardHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
                         <Label Grid.Row="6" Grid.Column="0"
-                               Content="{ext:Localize SaveToFile}" />
+                               Content="{ext:Localize LoadFromFile}" />
                         <ctrls:HotkeyButton Grid.Row="6" Grid.Column="1"
-                                            CurrentHotkey="{Binding SaveToFileHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                                            CurrentHotkey="{Binding LoadFromFileHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
                         <Label Grid.Row="7" Grid.Column="0"
-                               Content="{ext:Localize LoadCurrentSlot}" />
+                               Content="{ext:Localize SaveToFile}" />
                         <ctrls:HotkeyButton Grid.Row="7" Grid.Column="1"
-                                            CurrentHotkey="{Binding LoadCurrentSlotHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                                            CurrentHotkey="{Binding SaveToFileHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
                         <Label Grid.Row="8" Grid.Column="0"
-                               Content="{ext:Localize SaveCurrentSlot}" />
+                               Content="{ext:Localize LoadCurrentSlot}" />
                         <ctrls:HotkeyButton Grid.Row="8" Grid.Column="1"
+                                            CurrentHotkey="{Binding LoadCurrentSlotHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
+                        <Label Grid.Row="9" Grid.Column="0"
+                               Content="{ext:Localize SaveCurrentSlot}" />
+                        <ctrls:HotkeyButton Grid.Row="9" Grid.Column="1"
                                             CurrentHotkey="{Binding SaveCurrentSlotHotkey, Converter={StaticResource StringToKeyGestureConverter}}" />
                     </Grid>
                     <TextBlock Classes="h3"
