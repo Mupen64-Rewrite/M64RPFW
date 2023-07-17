@@ -1,5 +1,4 @@
 using M64RPFW.Models.Emulation;
-using M64RPFW.Models.Interfaces;
 using M64RPFW.Models.Types;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
@@ -22,8 +21,9 @@ public unsafe partial class EmulatorViewModel : IVideoExtensionService
             _openGlContextService.InitWindow();
             return Error.Success;
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            Console.WriteLine(e);
             return Error.Internal;
         }
     }
@@ -33,7 +33,10 @@ public unsafe partial class EmulatorViewModel : IVideoExtensionService
         try
         {
             _openGlContextService.QuitWindow();
-            Resizable = true;
+            _dispatcherService.Execute(() =>
+            {
+                _windowSizingService.UnlockWindowSize();
+            });
             return Error.Success;
         }
         catch (Exception)
@@ -63,21 +66,20 @@ public unsafe partial class EmulatorViewModel : IVideoExtensionService
                 return Error.Unsupported;
             
             Mupen64Plus.Log(LogSources.Vidext, MessageLevel.Info, $"Setting video mode {width}x{height}");
-            if ((flags & Mupen64PlusTypes.VideoFlags.SupportResizing) == 0)
-                Resizable = false;
             
             _dispatcherService.Execute(() =>
             {
-                _windowSizingService.LayoutToFit(new WindowSize(width, height));
+                _windowSizingService.SizeToFit(new WindowSize(width, height));
             });
-                
-                
             _openGlContextService.CreateWindow(width, height, bpp);
+            
+            _openGlContextService.MakeCurrent();
 
             return Error.Success;
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            Mupen64Plus.Log(LogSources.Vidext, MessageLevel.Error, $"SetVideoMode threw: {e}");
             return Error.Internal;
         }
     }
@@ -151,15 +153,16 @@ public unsafe partial class EmulatorViewModel : IVideoExtensionService
             _openGlContextService.SwapBuffers();
             return Error.Success;
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            Mupen64Plus.Log(LogSources.Vidext, MessageLevel.Error, $"VidextSwapBuffers: {e}");
             return Error.Internal;
         }
     }
 
     public uint VidextGLGetDefaultFramebuffer()
     {
-        return 0;
+        return _openGlContextService.GetDefaultFramebuffer();
     }
 
     #endregion

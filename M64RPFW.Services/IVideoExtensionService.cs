@@ -1,4 +1,5 @@
-﻿using M64RPFW.Models.Types;
+﻿using System.Runtime.InteropServices;
+using M64RPFW.Models.Types;
 
 namespace M64RPFW.Services;
 
@@ -121,4 +122,35 @@ public interface IVideoExtensionService
     /// </summary>
     /// <returns>the default OpenGL framebuffer's ID</returns>
     uint VidextGLGetDefaultFramebuffer();
+}
+
+public static class VideoExtensionServiceExtensions
+{
+    public static unsafe Mupen64PlusTypes.VideoExtensionFunctions ToVidextStruct(this IVideoExtensionService s)
+    {
+        return new Mupen64PlusTypes.VideoExtensionFunctions
+        {
+            Functions = 14,
+            VidExtFuncInit = s.VidextInit,
+            VidExtFuncQuit = s.VidextQuit,
+            VidExtFuncListModes = s.VidextListFullscreenModes,
+            VidExtFuncListRates = s.VidextListFullscreenRates,
+            VidExtFuncSetMode = s.VidextSetVideoMode,
+            VidExtFuncSetModeWithRate = s.VidextSetVideoModeWithRate,
+            VidExtFuncGLGetProc = s.VidextGLGetProcAddress,
+            VidExtFuncGLSetAttr = s.VidextGLSetAttr,
+            VidExtFuncGLGetAttr = s.VidextGLGetAttr,
+            VidExtFuncGLSwapBuf = s.VidextSwapBuffers,
+            VidExtFuncSetCaption = title =>
+            {
+                var str = Marshal.PtrToStringAnsi((IntPtr) title);
+                if (str != null)
+                    s.VidextSetCaption(str);
+                return Mupen64PlusTypes.Error.Success;
+            },
+            VidExtFuncToggleFS = s.VidextToggleFullscreen,
+            VidExtFuncResizeWindow = s.VidextResizeWindow,
+            VidExtFuncGLGetDefaultFramebuffer = s.VidextGLGetDefaultFramebuffer
+        };
+    }
 }

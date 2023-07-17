@@ -1,8 +1,6 @@
-using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Data;
-using Avalonia.Data.Converters;
 using Avalonia.Layout;
 using M64RPFW.ViewModels;
 
