@@ -25,13 +25,13 @@ class Program
             .LogToTrace()
             .With(new Win32PlatformOptions
             {
-                // add options here as needed
-                UseWgl = true
+                // default values and fallbacks suffice
+                RenderingMode = new[] { Win32RenderingMode.Wgl }
             })
             .With(new X11PlatformOptions
             {
                 // this seems to be necessary
-                UseEGL = true
+                RenderingMode = new[] { X11RenderingMode.Egl }
             });
         // Native file dialogs on Linux broke in Avalonia 10, so...
         // if (OperatingSystem.IsLinux())
