@@ -11,6 +11,10 @@
     </PropertyGroup>
     <ItemGroup>
         <AvaloniaResource Include="Assets\**" />
+        <AvaloniaXaml Remove="Binding\**" />
+        <Compile Remove="Binding\**" />
+        <EmbeddedResource Remove="Binding\**" />
+        <None Remove="Binding\**" />
         <None Remove=".gitignore" />
     </ItemGroup>
     <ItemGroup>
@@ -50,9 +54,6 @@
         <DependentUpon>Resources.de-DE.resx</DependentUpon>
       </Compile>
       <Compile Remove="Markup\Test.cs" />
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Binding\" />
     </ItemGroup>
     
     <PropertyGroup>

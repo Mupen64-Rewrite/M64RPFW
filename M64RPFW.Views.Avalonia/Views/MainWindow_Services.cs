@@ -29,16 +29,20 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
 
     public void SizeToFit(WindowSize size)
     {
-        GlControl.WindowSize = new PixelSize((int) size.Width, (int) size.Height);
+        Dispatcher.UIThread.Invoke(() =>
+        {
+            GlControl.WindowSize = new PixelSize((int) size.Width, (int) size.Height);
 
-        oldMinWidth = GlControl.MinWidth;
-        oldMinHeight = GlControl.MinHeight;
+            oldMinWidth = GlControl.MinWidth;
+            oldMinHeight = GlControl.MinHeight;
         
-        GlControl.MinWidth = size.Width;
-        GlControl.MinHeight = size.Height;
+            GlControl.MinWidth = size.Width;
+            GlControl.MinHeight = size.Height;
 
-        SizeToContent = SizeToContent.WidthAndHeight;
-        CanResize = false;
+            SizeToContent = SizeToContent.WidthAndHeight;
+            CanResize = false;
+            InvalidateMeasure();
+        });
     }
 
     public void UnlockWindowSize()

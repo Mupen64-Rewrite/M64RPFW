@@ -26,6 +26,7 @@ class Program
             .With(new Win32PlatformOptions
             {
                 // add options here as needed
+                UseWgl = true
             })
             .With(new X11PlatformOptions
             {
