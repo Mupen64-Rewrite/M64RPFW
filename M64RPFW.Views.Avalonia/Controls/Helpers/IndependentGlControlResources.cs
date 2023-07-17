@@ -99,6 +99,6 @@ public class IndependentGlControlResources : IDisposable
         _front?.Dispose();
         _middle?.Dispose();
         _back?.Dispose();
-        _context.Dispose();
+        // _context.Dispose();
     }
 }
