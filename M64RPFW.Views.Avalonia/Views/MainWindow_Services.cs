@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -25,7 +26,7 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
         return new WindowSize(GlControl.Width, GlControl.Height);
     }
 
-    double? oldMinWidth, oldMinHeight;
+    double? oldMaxWidth, oldMaxHeight;
 
     public void SizeToFit(WindowSize size)
     {
@@ -33,11 +34,11 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
         {
             GlControl.WindowSize = new PixelSize((int) size.Width, (int) size.Height);
 
-            oldMinWidth = GlControl.MinWidth;
-            oldMinHeight = GlControl.MinHeight;
+            oldMaxWidth = ContainerPanel.MaxWidth;
+            oldMaxHeight = ContainerPanel.MaxHeight;
         
-            GlControl.MinWidth = size.Width;
-            GlControl.MinHeight = size.Height;
+            ContainerPanel.MaxWidth = size.Width;
+            ContainerPanel.MaxHeight = size.Height;
 
             SizeToContent = SizeToContent.WidthAndHeight;
             CanResize = false;
@@ -47,10 +48,10 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
 
     public void UnlockWindowSize()
     {
-        if (oldMinWidth != null)
-            GlControl.MinHeight = oldMinWidth.Value;
-        if (oldMinHeight != null)
-            GlControl.MinHeight = oldMinHeight.Value;
+        if (oldMaxWidth != null)
+            ContainerPanel.MaxWidth = oldMaxWidth.Value;
+        if (oldMaxHeight != null)
+            ContainerPanel.MaxHeight = oldMaxHeight.Value;
         
         SizeToContent = SizeToContent.Manual;
         CanResize = true;
