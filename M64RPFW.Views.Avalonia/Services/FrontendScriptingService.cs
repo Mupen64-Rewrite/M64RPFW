@@ -1,6 +1,4 @@
-﻿using System;
-using System.Numerics;
-using M64RPFW.Services;
+﻿using M64RPFW.Services;
 using M64RPFW.ViewModels;
 using M64RPFW.Views.Avalonia.Helpers;
 using M64RPFW.Views.Avalonia.Views;

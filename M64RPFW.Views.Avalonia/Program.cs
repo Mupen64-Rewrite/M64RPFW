@@ -1,6 +1,5 @@
 ﻿using System;
 using Avalonia;
-using Avalonia.Dialogs;
 
 namespace M64RPFW.Views.Avalonia;
 
@@ -23,7 +22,16 @@ class Program
         // does not support the xdg-decoration protocol for SSD.
         var builder = AppBuilder.Configure<App>()
             .UsePlatformDetect()
-            .LogToTrace();
+            .LogToTrace()
+            .With(new Win32PlatformOptions
+            {
+                // add options here as needed
+            })
+            .With(new X11PlatformOptions
+            {
+                // this seems to be necessary
+                UseEGL = true
+            });
         // Native file dialogs on Linux broke in Avalonia 10, so...
         // if (OperatingSystem.IsLinux())
         //     builder = builder.UseManagedSystemDialogs();
