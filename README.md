@@ -6,5 +6,5 @@
   M64RPFW
 </h1>
 <p align="center">
-  Rerecording-capable emulator powered by <a href="https://github.com/Mupen64-Rewrite/M64P-RR">M64P-RR</a>
+  Rerecording-capable lua-extended emulator powered by <a href="https://github.com/Mupen64-Rewrite/M64P-RR">M64P-RR</a>
 </p>

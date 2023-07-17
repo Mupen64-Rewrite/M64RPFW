@@ -40,7 +40,8 @@ public class LuaEnvironment : IDisposable
         ActiveLuaEnvironments.ForEach(action);
     }
 
-    public LuaEnvironment(IFrontendScriptingService frontendScriptingService, IWindowSizingService windowSizingService, string path)
+    public LuaEnvironment(IFrontendScriptingService frontendScriptingService, IWindowSizingService windowSizingService,
+        string path)
     {
         _frontendScriptingService = frontendScriptingService;
         _windowSizingService = windowSizingService;
@@ -180,7 +181,14 @@ public class LuaEnvironment : IDisposable
         ");
     }
 
-    public void Run()
+    /// <summary>
+    ///     Runs the lua script from the current path
+    /// </summary>
+    /// <returns>
+    ///     Whether execution succeeded initially
+    ///     NOTE: The script may fail later at runtime
+    /// </returns>
+    public bool Run()
     {
         ActiveLuaEnvironments.Add(this);
         StateChanged?.Invoke(true);
@@ -197,7 +205,10 @@ public class LuaEnvironment : IDisposable
         {
             _frontendScriptingService.Print($"{e.Source} {e.Message}");
             AtStop();
+            return false;
         }
+
+        return true;
     }
 
     public void Dispose()
@@ -262,11 +273,11 @@ public class LuaEnvironment : IDisposable
         table["height"] = _frontendScriptingService.GetWindowSize().Height;
         return table;
     }
-    
+
     private void SetWindowSize(int width, int height)
     {
         _frontendScriptingService.SetWindowSize(width, height);
     }
-    
+
     #endregion
 }
