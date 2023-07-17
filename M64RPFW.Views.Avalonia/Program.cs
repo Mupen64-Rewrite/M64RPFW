@@ -25,10 +25,11 @@ class Program
             .LogToTrace()
             .With(new Win32PlatformOptions
             {
-                UseWgl = true
+                // add options here as needed
             })
             .With(new X11PlatformOptions
             {
+                // this seems to be necessary
                 UseEGL = true
             });
         // Native file dialogs on Linux broke in Avalonia 10, so...

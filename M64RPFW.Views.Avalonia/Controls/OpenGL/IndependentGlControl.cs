@@ -81,11 +81,12 @@ public class IndependentGlControl : CompositionControl
         Compositor!.RequestCompositionUpdate(_doPresent);
     }
 
-    protected override Task FreeGpuResources()
+    protected async override Task FreeGpuResources()
     {
         _runCompositionLoop = 0;
+        // BIG HACK, maybe need a nicer way to fix this
+        await Task.Delay(5);
         _resources?.Dispose();
-        return Task.CompletedTask;
     }
 
 #pragma warning disable CS8774
@@ -102,6 +103,8 @@ public class IndependentGlControl : CompositionControl
 
     private async void DoPresent()
     {
+        if (_runCompositionLoop == 0)
+            return;
         CheckInitialized();
         try
         {

@@ -7,7 +7,6 @@ namespace M64RPFW.ViewModels;
 
 public partial class EmulatorViewModel : ObservableObject
 {
-    [ObservableProperty] private bool _resizable = true;
     [ObservableProperty] private object? _currentSlotMenuItem;
     
     private readonly IOpenGLContextService _openGlContextService;
