@@ -63,7 +63,7 @@ public class IndependentGlControlResources : IDisposable
         InitBuffers(size, depth);
     }
 
-    public void InitBuffers(PixelSize size, int depth)
+    public void InitBuffers(PixelSize size, int depth, bool setViewport = false)
     {
         var gl = GL.GetApi(_context.GlInterface.GetProcAddress);
         
@@ -74,6 +74,8 @@ public class IndependentGlControlResources : IDisposable
         
         gl.BindFramebuffer(FramebufferTarget.Framebuffer, _fbo);
         _back.AttachToCurrentFBO(gl);
+        if (setViewport)
+            gl.Viewport(0, 0, (uint) size.Width, (uint) size.Height);
     }
 
     public async Task PresentNext(ICompositionGpuInterop interop, CompositionDrawingSurface surface)
