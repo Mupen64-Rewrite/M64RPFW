@@ -28,7 +28,7 @@
     <Window.KeyBindings>
         <!-- add non-menuitem keybindings here -->
     </Window.KeyBindings>
-    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" RowDefinitions="Auto,*,Auto">
+    <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" LastChildFill="True">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="{ext:Localize File}">
                 <!-- Opening a ROM depends on the window, thus it's part of view -->
@@ -165,10 +165,24 @@
                     Header="{ext:Localize NewLuaInstance}" Click="MenuItem_OnClick" />
             </MenuItem>
         </Menu>
-        <gl:IndependentGlControl Grid.Row="1" Name="GlControl"/>
-        <StackPanel Grid.Row="2" Orientation="Horizontal">
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" x:Name="StatusBar">
             <!--TODO: Status bar-->
         </StackPanel>
-    </Grid>
+        <RelativePanel Name="ContainerPanel">
+            <!--Background rectangle-->
+            <Rectangle Fill="Black"
+                       RelativePanel.AlignTopWithPanel="True"
+                       RelativePanel.AlignBottomWithPanel="True"
+                       RelativePanel.AlignLeftWithPanel="True"
+                       RelativePanel.AlignRightWithPanel="True"></Rectangle>
+            <!--Emulator output-->
+            <gl:IndependentGlControl Name="GlControl" 
+                                     VerticalAlignment="Top" 
+                                     HorizontalAlignment="Left"
+                                     RelativePanel.AlignTopWithPanel="True"
+                                     RelativePanel.AlignLeftWithPanel="True"/>
+            <!--insert SkiaCanvas Here-->
+        </RelativePanel>
+    </DockPanel>
 
 </views:MainWindow>
