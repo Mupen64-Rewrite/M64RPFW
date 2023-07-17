@@ -41,18 +41,6 @@ public class GlBufferGroup : IDisposable
                     gl.RenderbufferStorage(RenderbufferTarget.Renderbuffer,
                         depthFormat,
                         (uint) size.Width, (uint) size.Height);
-
-                    gl.FramebufferTexture2D(FramebufferTarget.Framebuffer,
-                        FramebufferAttachment.ColorAttachment0,
-                        TextureTarget.Texture2D, (uint) _texture.TextureId, 0);
-                    gl.FramebufferRenderbuffer(FramebufferTarget.Framebuffer,
-                        FramebufferAttachment.DepthAttachment,
-                        RenderbufferTarget.Renderbuffer, _depthRbo);
-
-                    if (gl.CheckFramebufferStatus(FramebufferTarget.Framebuffer) != GLEnum.FramebufferComplete)
-                    {
-                        throw new ApplicationException("BAD FRAMEBUFFER IDEA: i don't know, but yeah, that was a bad idea");
-                    }
                 }
                 finally
                 {
@@ -82,6 +70,11 @@ public class GlBufferGroup : IDisposable
             TextureTarget.Texture2D, (uint) _texture.TextureId, 0);
         gl.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, 
             RenderbufferTarget.Renderbuffer, _depthRbo);
+
+        if (gl.CheckFramebufferStatus(FramebufferTarget.Framebuffer) != GLEnum.FramebufferComplete)
+        {
+            throw new ApplicationException("BAD FRAMEBUFFER IDEA: i don't know, but yeah, that was a bad idea");
+        }
     }
 
     public void Dispose()

@@ -22,7 +22,15 @@ class Program
         // does not support the xdg-decoration protocol for SSD.
         var builder = AppBuilder.Configure<App>()
             .UsePlatformDetect()
-            .LogToTrace();
+            .LogToTrace()
+            .With(new Win32PlatformOptions
+            {
+                UseWgl = true
+            })
+            .With(new X11PlatformOptions
+            {
+                UseEGL = true
+            });
         // Native file dialogs on Linux broke in Avalonia 10, so...
         // if (OperatingSystem.IsLinux())
         //     builder = builder.UseManagedSystemDialogs();
