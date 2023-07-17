@@ -7,6 +7,7 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using M64RPFW.ViewModels;
+using M64RPFW.Views.Avalonia.Extensions;
 using M64RPFW.Views.Avalonia.Helpers;
 using M64RPFW.Views.Avalonia.Services;
 
@@ -42,6 +43,7 @@ public partial class LuaWindow : Window
 
     private void Window_OnClosing(object? sender, WindowClosingEventArgs e)
     {
+        ViewModel.StopCommand.ExecuteIfPossible();
         LuaViewModels.Remove(this);
     }
 
