@@ -182,4 +182,7 @@
     <data name="Restart" xml:space="preserve">
         <value>Restart</value>
     </data>
+    <data name="FastForward" xml:space="preserve">
+        <value>Fast-forward</value>
+    </data>
 </root>

@@ -134,6 +134,12 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         set => SetRPFWSetting((inst, val) => inst.Hotkeys.FrameAdvance = val, value);
     }
 
+    public string FastForwardHotkey
+    {
+        get => RPFWSettings.Instance.Hotkeys.FastForward;
+        set => SetRPFWSetting((inst, val) => inst.Hotkeys.FastForward = val, value);
+    }
+
     public string LoadFromFileHotkey
     {
         get => RPFWSettings.Instance.Hotkeys.LoadFromFile;

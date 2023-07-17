@@ -206,6 +206,12 @@ public partial class EmulatorViewModel
         // toggle the current readonly state
         Mupen64Plus.VCR_DisableWrites = !Mupen64Plus.VCR_DisableWrites;
     }
+    
+    [RelayCommand(CanExecute = nameof(MupenIsActive))]
+    private void SetSpeedLimiter(bool value)
+    {
+        Mupen64Plus.CoreStateSet(CoreParam.SpeedLimiter, value ? 1 : 0);
+    }
 
     #endregion
 
