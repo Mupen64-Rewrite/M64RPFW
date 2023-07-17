@@ -125,7 +125,7 @@ public class IndependentGlControl : CompositionControl
     {
         CheckInitialized();
         var res = _resources.MakeCurrent();
-        _resources.InitBuffers(WindowSize, DepthSize);
+        _resources.InitBuffers(WindowSize, DepthSize, true);
         return res;
     }
 
