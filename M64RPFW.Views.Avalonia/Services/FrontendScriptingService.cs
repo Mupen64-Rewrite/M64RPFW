@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using Avalonia;
+using Avalonia.Input;
 using M64RPFW.Services;
 using M64RPFW.ViewModels;
 using M64RPFW.Views.Avalonia.Helpers;
@@ -21,6 +24,12 @@ public class FrontendScriptingService : IFrontendScriptingService
 
     public IWindowSizingService WindowSizingService => WindowHelper.MainWindow;
     public event Action<SKCanvas>? OnUpdateScreen;
+
+    public (double X, double Y) PointerPosition => (WindowHelper.MainWindow.PointerPosition.X,
+        WindowHelper.MainWindow.PointerPosition.Y);
+
+    public bool IsPrimaryPointerButtonHeld => WindowHelper.MainWindow.IsPrimaryPointerButtonHeld;
+    public ICollection<string> HeldKeys => new List<string>(); // TODO: implement
 
     public void Print(string value)
     {

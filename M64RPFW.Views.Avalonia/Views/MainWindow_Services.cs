@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.OpenGL;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
@@ -21,6 +22,9 @@ namespace M64RPFW.Views.Avalonia.Views;
 
 public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpenGLContextService
 {
+    public Point PointerPosition { get; private set; } = new();
+    public bool IsPrimaryPointerButtonHeld { get; private set; } = false;
+    
     #region IWindowSizingService
 
     public WindowSize GetWindowSize()
@@ -258,5 +262,20 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
         {
             value.FrontendScriptingService.InvokeOnUpdateScreen(obj.Canvas);
         }
+    }
+
+    private void InputElement_OnPointerMoved(object? sender, PointerEventArgs e)
+    {
+        PointerPosition = e.GetPosition(this);
+    }
+
+    private void InputElement_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        IsPrimaryPointerButtonHeld = true;
+    }
+
+    private void InputElement_OnPointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        IsPrimaryPointerButtonHeld = false;
     }
 }
