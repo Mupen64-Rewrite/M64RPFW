@@ -20,7 +20,8 @@ public partial class LuaWindow : Window
         LuaViewModels = new();
 
     public LuaViewModel ViewModel => (LuaViewModel)DataContext!;
-
+    private TextBox LoggingTextBox => this.FindControl<TextBox>("LogTextBox")!;
+    
     public LuaWindow()
     {
         InitializeComponent();
@@ -34,7 +35,7 @@ public partial class LuaWindow : Window
         AvaloniaXamlLoader.Load(this);
 
         var frontendScriptingService = new FrontendScriptingService(this);
-        LuaViewModels[this] = (new LuaViewModel(frontendScriptingService, WindowHelper.MainWindow),
+        LuaViewModels[this] = (new LuaViewModel(frontendScriptingService),
             frontendScriptingService);
 
         DataContext = LuaViewModels[this].ViewModel;
@@ -49,11 +50,11 @@ public partial class LuaWindow : Window
 
     public void Print(string value)
     {
-        Dispatcher.UIThread.Post(() => { this.FindControl<TextBox>("LogTextBox").Text += $"{value}\r\n"; });
+        Dispatcher.UIThread.Post(() => { LoggingTextBox.Text += $"{value}\r\n"; });
     }
 
     private void Button_OnClick(object? sender, RoutedEventArgs e)
     {
-        this.FindControl<TextBox>("LogTextBox").Text = "";
+        LoggingTextBox.Text = "";
     }
 }
