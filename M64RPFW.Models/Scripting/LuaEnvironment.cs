@@ -9,7 +9,7 @@ using NLua.Exceptions;
 
 namespace M64RPFW.Models.Scripting;
 
-public class LuaEnvironment : IDisposable
+public partial class LuaEnvironment : IDisposable
 {
     private static int _frameIndex;
     private static List<LuaEnvironment> ActiveLuaEnvironments { get; } = new();
@@ -160,7 +160,7 @@ public class LuaEnvironment : IDisposable
             joypad = {
                 get = __dummy,
                 set = __dummy,
-                reegister = __dummy,
+                register = __dummy,
                 count = __dummy,
             }
             movie = {
@@ -226,61 +226,9 @@ public class LuaEnvironment : IDisposable
         StateChanged?.Invoke(false);
     }
 
-    #region Function Registry
-
-    private void Dummy()
-    {
-    }
-
     private void Stop()
     {
         _lua.State.Error("Execution terminated via stop()");
     }
 
-    private void RegisterAtVi(LuaFunction luaFunction)
-    {
-        _viCallback = luaFunction;
-    }
-
-    private void RegisterAtStop(LuaFunction luaFunction)
-    {
-        _stopCallback = luaFunction;
-    }
-
-    private int GetFrameIndex()
-    {
-        return _frameIndex;
-    }
-
-    private void Pause()
-    {
-        Mupen64Plus.Pause();
-    }
-
-    private bool GetPause()
-    {
-        return Mupen64Plus.CoreStateQuery(Mupen64PlusTypes.CoreParam.EmuState) == (int)Mupen64PlusTypes.EmuState.Paused;
-    }
-
-    private bool GetVcrReadOnly()
-    {
-        return Mupen64Plus.VCR_DisableWrites;
-    }
-
-    private LuaTable GetWindowSize()
-    {
-        _lua.NewTable("dimensions");
-        var table = _lua.GetTable("dimensions");
-        var winSize = _windowSizingService.GetWindowSize();
-        table["width"] = (int) winSize.Width;
-        table["height"] = (int) winSize.Height;
-        return table;
-    }
-
-    private void SetWindowSize(int width, int height)
-    {
-        _windowSizingService.SizeToFit(new WindowSize(width, height), false);
-    }
-
-    #endregion
 }
