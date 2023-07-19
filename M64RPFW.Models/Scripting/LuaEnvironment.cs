@@ -1,5 +1,7 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Reflection;
+using System.Text;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Scripting.Extensions;
 using M64RPFW.Models.Types;
@@ -14,6 +16,17 @@ namespace M64RPFW.Models.Scripting;
 
 public partial class LuaEnvironment : IDisposable
 {
+    [AttributeUsage(AttributeTargets.Method)]
+    private class LuaFunctionAttribute : Attribute
+    {
+        public LuaFunctionAttribute(string path)
+        {
+            Path = path;
+        }
+        
+        public string Path { get; }
+    }
+    
     private static int _frameIndex;
     private static List<LuaEnvironment> ActiveLuaEnvironments { get; } = new();
 
@@ -51,174 +64,50 @@ public partial class LuaEnvironment : IDisposable
         _frontendScriptingService = frontendScriptingService;
         _path = path;
         _frontendScriptingService.OnUpdateScreen += AtUpdateScreen;
+
+        
         
         _lua = new Lua();
-        // TODO: attribute-based registration
-        _lua.RegisterFunction("print", this, typeof(LuaEnvironment).GetMethod(nameof(Print), environmentBindingFlags));
-        _lua.RegisterFunction("stop", this, typeof(LuaEnvironment).GetMethod(nameof(Stop), environmentBindingFlags));
-        _lua.RegisterFunction("_atvi", this,
-            typeof(LuaEnvironment).GetMethod(nameof(RegisterAtVi), environmentBindingFlags));
-        _lua.RegisterFunction("_atupdatescreen", this,
-            typeof(LuaEnvironment).GetMethod(nameof(RegisterAtUpdateScreen), environmentBindingFlags));
+        
+        // Register the internal functions and determine which ones belong in tables.
+        // ==========================================================================
+        var tables = new SortedDictionary<string, List<(string src, string name)>>();
+        foreach (var method in typeof(LuaEnvironment).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic))
+        {
+            if (method.GetCustomAttribute<LuaFunctionAttribute>() is not { } attr)
+                continue;
+            Console.WriteLine($"Found method {method.DeclaringType?.FullName}.{method.Name}");
 
-        _lua.RegisterFunction("_atstop", this,
-            typeof(LuaEnvironment).GetMethod(nameof(RegisterAtStop), environmentBindingFlags));
-        _lua.RegisterFunction("_framecount", this,
-            typeof(LuaEnvironment).GetMethod(nameof(GetFrameIndex), environmentBindingFlags));
-        _lua.RegisterFunction("_pause", this,
-            typeof(LuaEnvironment).GetMethod(nameof(Pause), environmentBindingFlags));
-        _lua.RegisterFunction("_getpause", this,
-            typeof(LuaEnvironment).GetMethod(nameof(GetPause), environmentBindingFlags));
-        _lua.RegisterFunction("_isreadonly", this,
-            typeof(LuaEnvironment).GetMethod(nameof(GetVcrReadOnly), environmentBindingFlags));
-        _lua.RegisterFunction("_info", this,
-            typeof(LuaEnvironment).GetMethod(nameof(GetWindowSize), environmentBindingFlags));
-        _lua.RegisterFunction("_resize", this,
-            typeof(LuaEnvironment).GetMethod(nameof(SetWindowSize), environmentBindingFlags));
-        _lua.RegisterFunction("_get", this,
-            typeof(LuaEnvironment).GetMethod(nameof(GetInput), environmentBindingFlags));
-
-        _lua.RegisterFunction("_fill_rectangle", this,
-            typeof(LuaEnvironment).GetMethod(nameof(FillRectangle), environmentBindingFlags));
-        _lua.RegisterFunction("_draw_rectangle", this,
-            typeof(LuaEnvironment).GetMethod(nameof(DrawRectangle), environmentBindingFlags));
-        _lua.RegisterFunction("_fill_ellipse", this,
-            typeof(LuaEnvironment).GetMethod(nameof(FillEllipse), environmentBindingFlags));
-        _lua.RegisterFunction("_draw_ellipse", this,
-            typeof(LuaEnvironment).GetMethod(nameof(DrawEllipse), environmentBindingFlags));
-        _lua.RegisterFunction("_draw_line", this,
-            typeof(LuaEnvironment).GetMethod(nameof(DrawLine), environmentBindingFlags));
-        _lua.RegisterFunction("_draw_text", this,
-            typeof(LuaEnvironment).GetMethod(nameof(DrawText), environmentBindingFlags));
-        _lua.RegisterFunction("_get_text_size", this,
-            typeof(LuaEnvironment).GetMethod(nameof(GetTextSize), environmentBindingFlags));
-        _lua.RegisterFunction("_push_clip", this,
-            typeof(LuaEnvironment).GetMethod(nameof(PushClip), environmentBindingFlags));
-        _lua.RegisterFunction("_pop_clip", this,
-            typeof(LuaEnvironment).GetMethod(nameof(PopClip), environmentBindingFlags));
-        _lua.RegisterFunction("_fill_rounded_rectangle", this,
-            typeof(LuaEnvironment).GetMethod(nameof(FillRoundedRectangle), environmentBindingFlags));
-        _lua.RegisterFunction("_draw_rounded_rectangle", this,
-            typeof(LuaEnvironment).GetMethod(nameof(DrawRoundedRectangle), environmentBindingFlags));
-        _lua.RegisterFunction("_load_image", this,
-            typeof(LuaEnvironment).GetMethod(nameof(LoadImage), environmentBindingFlags));
-        _lua.RegisterFunction("_free_image", this,
-            typeof(LuaEnvironment).GetMethod(nameof(FreeImage), environmentBindingFlags));
-        _lua.RegisterFunction("_draw_image", this,
-            typeof(LuaEnvironment).GetMethod(nameof(DrawImage), environmentBindingFlags));
-        _lua.RegisterFunction("_get_image_info", this,
-            typeof(LuaEnvironment).GetMethod(nameof(GetImageInfo), environmentBindingFlags));
-
-        // HACK: NLua doesn't walk the virtual tree when registering functions to ensure validity of operations, so we have to create
-        // sub-table functions as weirdly named globals and then execute code to properly set up the tables
-        _lua.DoString(@"
-            __dummy = function() end
-            emu = {
-                console = __dummy,
-                debugview = __dummy,
-                statusbar = __dummy,
-                atvi = _atvi,
-                atupdatescreen = _atupdatescreen,
-                atinput = __dummy,
-                atstop = _atstop,
-                atwindowmessage = __dummy,
-                atstopmovie = __dummy,
-                atloadstate = __dummy,
-                atsavestate = __dummy,
-                atreset = __dummy,
-                framecount = _framecount,
-                samplecount = __dummy,
-                inputcount = __dummy,
-                getversion = __dummy,
-                pause = _pause,
-                getpause = _getpause,
-                getspeed = __dummy,
-                speed = __dummy,
-                speedmode = __dummy,
-                setgfx = __dummy,
-                getaddress = __dummy,
-                isreadonly = _isreadonly,
-                getsystemmetrics = __dummy,
-                ismainwindowinforeground = __dummy,
-                screenshot = __dummy,
+            int splitPoint = attr.Path.LastIndexOf('.');
+            string? luaNs = splitPoint != -1 ? attr.Path[..splitPoint] : null;
+            string luaName = attr.Path[(splitPoint + 1)..];
+            if (luaNs == null)
+            {
+                _lua.RegisterFunction(luaName, method);
             }
-            memory = {
-                inttofloat = __dummy,
-                inttodouble = __dummy,
-                floattoint = __dummy,
-                doubletoint = __dummy,
-                qwordtonumber = __dummy,
-                readbytesigned = __dummy,
-                readbyte = __dummy,
-                readwordsigned = __dummy,
-                readword = __dummy,
-                readdwordsigned = __dummy,
-                readdword = __dummy,
-                readqwordsigned = __dummy,
-                readqword = __dummy,
-                readfloat = __dummy,
-                readdouble = __dummy,
-                readsize = __dummy,
-                writebyte = __dummy,
-                writeword = __dummy,
-                writedword = __dummy,
-                writeqword = __dummy,
-                writedouble = __dummy,
-                writesize = __dummy,
+            else
+            {
+                // HACK: NLua doesn't walk the virtual tree when registering functions to ensure validity of operations, so we have to create
+                // sub-table functions as weirdly named globals and then execute code to properly set up the tables
+                string genName = "__0" + attr.Path.Replace(".", "_0");
+                if (!tables.ContainsKey(luaNs))
+                    tables[luaNs] = new List<(string src, string name)>();
+                tables[luaNs].Add((genName, luaName));
+                
+                _lua.RegisterFunction(genName, method);
             }
-            wgui = {
-                fill_rectangle = _fill_rectangle,
-                draw_rectangle = _draw_rectangle,
-                fill_ellipse = _fill_ellipse,
-                draw_ellipse = _draw_ellipse,
-                draw_line = _draw_line,
-                draw_text = _draw_text,
-                get_text_size = _get_text_size,
-                push_clip = _push_clip,
-                pop_clip = _pop_clip,
-                fill_rounded_rectangle = _fill_rounded_rectangle,
-                draw_rounded_rectangle = _draw_rounded_rectangle,
-                load_image = _load_image,
-                free_image = _free_image,
-                draw_image = _draw_image,
-                get_image_info = _get_image_info,
-                set_text_antialias_mode = __dummy,
-                set_antialias_mode = __dummy,
-                gdip_fillpolygona = __dummy,
-                info = _info,
-                resize = _resize,
-            }
-            input = {
-                get = _get,
-                diff = __dummy,
-                prompt = __dummy,
-                get_key_name_text = __dummy,
-                map_virtual_key_ex = __dummy,
-            }
-            joypad = {
-                get = __dummy,
-                set = __dummy,
-                reegister = __dummy,
-                count = __dummy,
-            }
-            movie = {
-                playmovie = __dummy,
-                stopmovie = __dummy,
-                getmoviefilename = __dummy,
-            }
-            savestate = {
-                savefile = __dummy,
-                loadfile = __dummy,
-            }
-            iohelper = {
-                filedialog = __dummy,
-            }
-            -- replace with encoder??
-            avi = {
-                startcapture = __dummy,
-                stopcapture = __dummy,
-            }
-        ");
+        }
+        var tableSetup = new StringBuilder();
+        // Put all the table functions in tables.
+        // ======================================
+        // The sorted dict is necessary, as it guarantees that every table is created before its sub-tables.
+        foreach ((string table, var entries) in tables)
+        {
+            var entrySetup = string.Join(",\n", entries.Select(entry => $"  {entry.name} = {entry.src}"));
+            tableSetup.Append($"{table} = {{\n{entrySetup}\n}}\n");
+        }
+        Console.WriteLine(tableSetup);
+        _lua.DoString(tableSetup.ToString());
     }
 
     /// <summary>

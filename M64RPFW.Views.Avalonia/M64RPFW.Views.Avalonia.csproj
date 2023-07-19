@@ -6,8 +6,8 @@
         <TrimMode>copyused</TrimMode>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>11</LangVersion>
-        <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
         <AssemblyVersion>0.1.0</AssemblyVersion>
+        <TargetFrameworks>net7.0</TargetFrameworks>
     </PropertyGroup>
     <ItemGroup>
         <AvaloniaResource Include="Assets\**" />
