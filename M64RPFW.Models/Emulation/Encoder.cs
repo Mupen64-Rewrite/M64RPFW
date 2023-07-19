@@ -10,12 +10,15 @@ public unsafe partial class Mupen64Plus
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [return: MarshalAs(UnmanagedType.I1)]
+    [RuntimeDllImport]
     private delegate bool DEncoder_IsActive();
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate Mupen64PlusTypes.Error DEncoder_Start(byte* path, Mupen64PlusTypes.EncoderFormat format);
+    [RuntimeDllImport]
+    private delegate Mupen64PlusTypes.Error DEncoder_Start(byte* path, byte* format);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    [RuntimeDllImport]
     private delegate Mupen64PlusTypes.Error DEncoder_Stop([MarshalAs(UnmanagedType.I1)] bool discard);
 
     #endregion
