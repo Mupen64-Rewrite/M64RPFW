@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ctrls="clr-namespace:M64RPFW.Views.Avalonia.Controls"
+             xmlns:ext="clr-namespace:M64RPFW.Views.Avalonia.Markup"
+             xmlns:viewModels="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="M64RPFW.Views.Avalonia.Views.Settings.PluginSettingsPage"
+             x:CompileBindings="True"
+             x:DataType="viewModels:SettingsViewModel">
+    <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <TextBlock Classes="h3"
+                   Text="{ext:Localize Video}" />
+        <ctrls:FileBrowser CurrentPath="{Binding VideoPluginPath}"
+                           PickerOptions="{Binding DllPickerOptions}" />
+        <TextBlock Classes="h3"
+                   Text="{ext:Localize Audio}" />
+        <ctrls:FileBrowser CurrentPath="{Binding AudioPluginPath}"
+                           PickerOptions="{Binding DllPickerOptions}" />
+        <TextBlock Classes="h3"
+                   Text="{ext:Localize Input}" />
+        <ctrls:FileBrowser CurrentPath="{Binding InputPluginPath}"
+                           PickerOptions="{Binding DllPickerOptions}" />
+        <TextBlock Classes="h3"
+                   Text="{ext:Localize Rsp}" />
+        <ctrls:FileBrowser CurrentPath="{Binding RspPluginPath}" PickerOptions="{Binding DllPickerOptions}" />
+    </StackPanel>
+</UserControl>

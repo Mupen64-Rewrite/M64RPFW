@@ -32,10 +32,15 @@ public partial class AdvancedSettingsViewModel : ObservableObject
         CurrentSection = sect;
     }
 
-    public void OnClosed()
+    public void Save()
     {
         Mupen64Plus.ConfigSaveFile();
     }
 
     public IEnumerable<string> ConfigSectionNames => _sectionNames;
+
+    public void Revert()
+    {
+        Mupen64Plus.ConfigForEachSection(sect => Mupen64Plus.ConfigRevertChanges(sect));
+    }
 }

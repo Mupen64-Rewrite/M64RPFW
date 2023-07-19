@@ -17,7 +17,7 @@ namespace M64RPFW.ViewModels;
 
 public sealed partial class SettingsViewModel : ObservableObject, IRecipient<RomLoadingMessage>, IRecipient<LuaLoadingMessage>
 {
-    private SettingsViewModel()
+    public SettingsViewModel()
     {
         RPFWSettings.Load();
         WeakReferenceMessenger.Default.RegisterAll(this);

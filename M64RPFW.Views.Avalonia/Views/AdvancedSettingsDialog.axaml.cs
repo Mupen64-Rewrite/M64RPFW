@@ -1,6 +1,7 @@
 using System;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using M64RPFW.ViewModels;
 
@@ -16,6 +17,8 @@ public partial class AdvancedSettingsDialog : Window
 #endif
     }
 
+    private bool _didSave = false;
+
     public AdvancedSettingsViewModel ViewModel => (AdvancedSettingsViewModel) DataContext!;
 
     private void InitializeComponent()
@@ -26,7 +29,27 @@ public partial class AdvancedSettingsDialog : Window
 
     private void TopLevel_OnClosed(object? sender, EventArgs e)
     {
-        ViewModel.OnClosed();
+        if (!_didSave)
+            ViewModel.Revert();
+    }
+
+    private void OnApplyClicked(object? sender, RoutedEventArgs e)
+    {
+        ViewModel.Save();
         SettingsViewModel.Instance.NotifyAllPropertiesChanged();
+        _didSave = true;
+    }
+
+    private void OnCancelClicked(object? sender, RoutedEventArgs e)
+    {
+        Close();
+    }
+
+    private void OnOKClicked(object? sender, RoutedEventArgs e)
+    {
+        ViewModel.Save();
+        SettingsViewModel.Instance.NotifyAllPropertiesChanged();
+        _didSave = true;
+        Close();
     }
 }
