@@ -11,7 +11,6 @@ namespace M64RPFW.ViewModels;
 public partial class LuaViewModel : ObservableObject
 {
     private readonly IFrontendScriptingService _frontendScriptingService;
-    private readonly IWindowSizingService _windowSizingService;
 
     private LuaEnvironment? _luaEnvironment;
 
@@ -24,10 +23,9 @@ public partial class LuaViewModel : ObservableObject
         new("Lua script (.lua)", new[] { "*.lua" })
     };
 
-    public LuaViewModel(IFrontendScriptingService frontendScriptingService, IWindowSizingService windowSizingService)
+    public LuaViewModel(IFrontendScriptingService frontendScriptingService)
     {
         _frontendScriptingService = frontendScriptingService;
-        _windowSizingService = windowSizingService;
     }
 
     [RelayCommand(CanExecute = nameof(IsRunning))]
@@ -41,7 +39,7 @@ public partial class LuaViewModel : ObservableObject
     {
         if (IsRunning) StopCommand.Execute(null);
 
-        _luaEnvironment = new LuaEnvironment(_frontendScriptingService, _windowSizingService, Path);
+        _luaEnvironment = new LuaEnvironment(_frontendScriptingService, Path);
         _luaEnvironment.StateChanged += LuaEnvironmentStateChanged;
         if (_luaEnvironment.Run())
         {
