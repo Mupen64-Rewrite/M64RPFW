@@ -16,7 +16,11 @@ public partial class LuaEnvironment
     {
         _stopCallback = luaFunction;
     }
-    
+
+    private void RegisterAtUpdateScreen(LuaFunction luaFunction)
+    {
+        _updateScreenCallback = luaFunction;
+    }
     
     private int GetFrameIndex()
     {
