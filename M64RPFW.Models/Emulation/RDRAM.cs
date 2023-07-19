@@ -14,7 +14,7 @@ public unsafe partial class Mupen64Plus
     
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [RuntimeDllImport]
-    private delegate Mupen64PlusTypes.Error DRDRAM_WriteAligned(uint addr, uint value, uint mask);
+    private delegate Mupen64PlusTypes.Error DRDRAM_WriteAligned(uint addr, uint value, uint mask = 0xFFFFFFFFU);
 
     #endregion
 
