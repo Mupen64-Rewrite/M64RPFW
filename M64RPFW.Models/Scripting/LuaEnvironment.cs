@@ -272,7 +272,6 @@ public class LuaEnvironment : IDisposable
         _lua.NewTable("dimensions");
         var table = _lua.GetTable("dimensions");
         var winSize = _windowSizingService.GetWindowSize();
-        Console.WriteLine($"Size: {winSize.Width}x{winSize.Height}");
         table["width"] = (int) winSize.Width;
         table["height"] = (int) winSize.Height;
         return table;
@@ -280,7 +279,7 @@ public class LuaEnvironment : IDisposable
 
     private void SetWindowSize(int width, int height)
     {
-        _windowSizingService.SizeToFit(new WindowSize(width, height));
+        _windowSizingService.SizeToFit(new WindowSize(width, height), false);
     }
 
     #endregion

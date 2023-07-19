@@ -23,20 +23,22 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
 
     public WindowSize GetWindowSize()
     {
-        Console.WriteLine($"Size: {ContainerPanel.Bounds.Size}");
-        return new WindowSize(ContainerPanel.Width, ContainerPanel.Height);
+        return new WindowSize(ContainerPanel.Bounds.Width, ContainerPanel.Bounds.Height);
     }
 
     bool _isSizedToFit = false;
     double? _oldMaxWidth, _oldMaxHeight;
 
-    public void SizeToFit(WindowSize size)
+    public void SizeToFit(WindowSize size, bool sizeGlWindow)
     {
         Dispatcher.UIThread.Invoke(() =>
         {
-            GlControl.WindowSize = new PixelSize((int) size.Width, (int) size.Height);
-            GlControl.Width = size.Width;
-            GlControl.Height = size.Height;
+            if (sizeGlWindow)
+            {
+                GlControl.WindowSize = new PixelSize((int) size.Width, (int) size.Height);
+                GlControl.Width = size.Width;
+                GlControl.Height = size.Height;
+            }
 
             if (!_isSizedToFit)
             {
