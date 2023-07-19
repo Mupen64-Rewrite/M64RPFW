@@ -186,7 +186,7 @@
                                      RelativePanel.AlignTopWithPanel="True"
                                      RelativePanel.AlignLeftWithPanel="True" />
             <!--insert SkiaCanvas Here-->
-            <ctrls:SkiaCanvas RelativePanel.AlignTopWithPanel="True"
+            <ctrls:SkiaCanvas Name="SkiaCanvas" RelativePanel.AlignTopWithPanel="True"
                               RelativePanel.AlignBottomWithPanel="True"
                               RelativePanel.AlignLeftWithPanel="True"
                               RelativePanel.AlignRightWithPanel="True" RenderSkia="SkiaCanvas_OnRenderSkia">

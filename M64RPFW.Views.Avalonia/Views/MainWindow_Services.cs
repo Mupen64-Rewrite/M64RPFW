@@ -14,6 +14,7 @@ using M64RPFW.Models.Emulation;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
 using M64RPFW.Views.Avalonia.Controls;
+using M64RPFW.Views.Avalonia.Controls.OpenGL;
 using Silk.NET.OpenGL;
 using SkiaSharp;
 using static M64RPFW.Models.Types.Mupen64PlusTypes;
@@ -24,7 +25,7 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
 {
     public Point PointerPosition { get; private set; } = new();
     public bool IsPrimaryPointerButtonHeld { get; private set; } = false;
-    
+
     #region IWindowSizingService
 
     public WindowSize GetWindowSize()
@@ -41,7 +42,7 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
         {
             if (sizeGlWindow)
             {
-                GlControl.WindowSize = new PixelSize((int) size.Width, (int) size.Height);
+                GlControl.WindowSize = new PixelSize((int)size.Width, (int)size.Height);
                 GlControl.Width = size.Width;
                 GlControl.Height = size.Height;
             }
@@ -52,7 +53,7 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
                 _oldMaxHeight = ContainerPanel.MaxHeight;
                 _isSizedToFit = true;
             }
-        
+
             ContainerPanel.MaxWidth = size.Width;
             ContainerPanel.MaxHeight = size.Height;
 
@@ -112,7 +113,7 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
     {
         _contextHandle?.Dispose();
         _contextHandle = null;
-        
+
         GlControl.Cleanup();
     }
 
@@ -147,14 +148,13 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
                 Dispatcher.UIThread.Invoke(() => GlControl.RequestedGlVersionMinor = value);
                 break;
             case GLAttribute.ContextProfileMask:
-                Dispatcher.UIThread.Invoke(() => GlControl.RequestedGlProfileType = (GLContextType) value switch
+                Dispatcher.UIThread.Invoke(() => GlControl.RequestedGlProfileType = (GLContextType)value switch
                 {
                     GLContextType.Core or GLContextType.Compatibilty => GlProfileType.OpenGL,
                     GLContextType.ES => GlProfileType.OpenGLES,
                     _ => GlControl.RequestedGlProfileType
                 });
                 break;
-
         }
     }
 
@@ -170,41 +170,41 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
         {
             GLAttribute.DoubleBuffer => 1,
             GLAttribute.BufferSize => gl.GetFramebufferAttachmentParameter(
-                                          FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0, 
+                                          FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0,
                                           FramebufferAttachmentParameterName.RedSize) +
                                       gl.GetFramebufferAttachmentParameter(
-                                          FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0, 
+                                          FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0,
                                           FramebufferAttachmentParameterName.GreenSize) +
                                       gl.GetFramebufferAttachmentParameter(
-                                          FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0, 
+                                          FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0,
                                           FramebufferAttachmentParameterName.BlueSize) +
                                       gl.GetFramebufferAttachmentParameter(
-                                          FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0, 
+                                          FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0,
                                           FramebufferAttachmentParameterName.AlphaSize),
             GLAttribute.DepthSize => gl.GetFramebufferAttachmentParameter(
-                FramebufferTarget.DrawFramebuffer, FramebufferAttachment.DepthAttachment, 
+                FramebufferTarget.DrawFramebuffer, FramebufferAttachment.DepthAttachment,
                 FramebufferAttachmentParameterName.DepthSize),
             GLAttribute.RedSize => gl.GetFramebufferAttachmentParameter(
-                FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0, 
+                FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0,
                 FramebufferAttachmentParameterName.RedSize),
             GLAttribute.GreenSize => gl.GetFramebufferAttachmentParameter(
-                FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0, 
+                FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0,
                 FramebufferAttachmentParameterName.GreenSize),
             GLAttribute.BlueSize => gl.GetFramebufferAttachmentParameter(
-                FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0, 
+                FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0,
                 FramebufferAttachmentParameterName.BlueSize),
             GLAttribute.AlphaSize => gl.GetFramebufferAttachmentParameter(
-                FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0, 
+                FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0,
                 FramebufferAttachmentParameterName.AlphaSize),
-            GLAttribute.SwapControl => GlControl.VSync? 1 : 0,
+            GLAttribute.SwapControl => GlControl.VSync ? 1 : 0,
             GLAttribute.MultisampleBuffers => 0,
             GLAttribute.MultisampleSamples => 0,
             GLAttribute.ContextMajorVersion => GlControl.ContextVersion.Major,
             GLAttribute.ContextMinorVersion => GlControl.ContextVersion.Minor,
             GLAttribute.ContextProfileMask => GlControl.ContextVersion.Type switch
             {
-                GlProfileType.OpenGL => (int) GLContextType.Core,
-                GlProfileType.OpenGLES => (int) GLContextType.ES,
+                GlProfileType.OpenGL => (int)GLContextType.Core,
+                GlProfileType.OpenGLES => (int)GLContextType.ES,
                 _ => throw new ApplicationException("INVALID PROFILE TYPE")
             },
             _ => 0
@@ -222,10 +222,7 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
 
     public void ResizeWindow(int width, int height)
     {
-        Dispatcher.UIThread.Invoke(() =>
-        {
-            GlControl.WindowSize = new PixelSize(width, height);
-        });
+        Dispatcher.UIThread.Invoke(() => { GlControl.WindowSize = new PixelSize(width, height); });
     }
 
     private IDisposable? _contextHandle;
@@ -266,7 +263,7 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
 
     private void InputElement_OnPointerMoved(object? sender, PointerEventArgs e)
     {
-        PointerPosition = e.GetPosition(this);
+        PointerPosition = e.GetPosition(this.Find<SkiaCanvas>("SkiaCanvas"));
     }
 
     private void InputElement_OnPointerPressed(object? sender, PointerPressedEventArgs e)

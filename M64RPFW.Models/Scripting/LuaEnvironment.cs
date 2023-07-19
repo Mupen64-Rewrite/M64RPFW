@@ -279,15 +279,15 @@ public partial class LuaEnvironment : IDisposable
     {
     }
 
-    private void Print(object value)
+    private void Print(object? value)
     {
-        var formatted = value.ToString();
-        
-        if (value is LuaTable luaTable)
+        var formatted = value switch
         {
-            formatted = luaTable.ToString();
-        }
-        
+            null => "nil",
+            LuaTable luaTable => luaTable.ToString(),
+            _ => value.ToString()!
+        };
+
         _frontendScriptingService.Print(formatted);
     }
     private void Stop()
