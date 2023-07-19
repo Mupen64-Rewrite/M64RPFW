@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 using M64RPFW.Models.Emulation;
+using M64RPFW.Models.Scripting.Extensions;
 using M64RPFW.Models.Types;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
@@ -15,11 +16,9 @@ public partial class LuaEnvironment : IDisposable
 {
     private static int _frameIndex;
     private static List<LuaEnvironment> ActiveLuaEnvironments { get; } = new();
-    private const BindingFlags EnvironmentBindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
 
     private readonly Lua _lua;
     private readonly IFrontendScriptingService _frontendScriptingService;
-    private readonly IWindowSizingService _windowSizingService;
     private readonly string _path;
 
     public event Action<bool>? StateChanged;
@@ -51,11 +50,11 @@ public partial class LuaEnvironment : IDisposable
 
         _frontendScriptingService = frontendScriptingService;
         _path = path;
-
+        _frontendScriptingService.OnUpdateScreen += AtUpdateScreen;
+        
         _lua = new Lua();
         // TODO: attribute-based registration
-        _lua.RegisterFunction("print", _frontendScriptingService,
-            typeof(IFrontendScriptingService).GetMethod(nameof(IFrontendScriptingService.Print)));
+        _lua.RegisterFunction("print", this, typeof(LuaEnvironment).GetMethod(nameof(Print), environmentBindingFlags));
         _lua.RegisterFunction("stop", this, typeof(LuaEnvironment).GetMethod(nameof(Stop), environmentBindingFlags));
         _lua.RegisterFunction("_atvi", this,
             typeof(LuaEnvironment).GetMethod(nameof(RegisterAtVi), environmentBindingFlags));
@@ -113,7 +112,7 @@ public partial class LuaEnvironment : IDisposable
         // HACK: NLua doesn't walk the virtual tree when registering functions to ensure validity of operations, so we have to create
         // sub-table functions as weirdly named globals and then execute code to properly set up the tables
         _lua.DoString(@"
-            __dummy = function() print('Function not implemented in M64RPFW') end
+            __dummy = function() end
             emu = {
                 console = __dummy,
                 debugview = __dummy,
@@ -254,6 +253,7 @@ public partial class LuaEnvironment : IDisposable
 
     public void Dispose()
     {
+        _frontendScriptingService.OnUpdateScreen -= AtUpdateScreen;
         ForEachEnvironment(x => x._stopCallback?.Call());
         AtStop();
         _lua.Dispose();
@@ -279,6 +279,17 @@ public partial class LuaEnvironment : IDisposable
     {
     }
 
+    private void Print(object value)
+    {
+        var formatted = value.ToString();
+        
+        if (value is LuaTable luaTable)
+        {
+            formatted = luaTable.ToString();
+        }
+        
+        _frontendScriptingService.Print(formatted);
+    }
     private void Stop()
     {
         _lua.State.Error("Execution terminated via stop()");

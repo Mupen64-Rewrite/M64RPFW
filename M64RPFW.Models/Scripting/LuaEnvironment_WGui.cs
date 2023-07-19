@@ -9,9 +9,9 @@ public partial class LuaEnvironment
 {
     private LuaTable GetWindowSize()
     {
-        _lua.NewTable("dimensions");
-        var table = _lua.GetTable("dimensions");
-        var winSize = _windowSizingService.GetWindowSize();
+        _lua.NewTable("___dimensions");
+        var table = _lua.GetTable("___dimensions");
+        var winSize = _frontendScriptingService.WindowSizingService.GetWindowSize();
         table["width"] = (int) winSize.Width;
         table["height"] = (int) winSize.Height;
         return table;
@@ -19,7 +19,7 @@ public partial class LuaEnvironment
 
     private void SetWindowSize(int width, int height)
     {
-        _windowSizingService.SizeToFit(new WindowSize(width, height), false);
+        _frontendScriptingService.WindowSizingService.SizeToFit(new WindowSize(width, height), false);
     }
     
     
@@ -84,8 +84,8 @@ public partial class LuaEnvironment
     private LuaTable GetTextSize(string text, string fontName, float fontSize, float maximumWidth, float maximumHeight)
     {
         // TODO: implement
-        _lua.NewTable("text_size");
-        var table = _lua.GetTable("text_size");
+        _lua.NewTable("___text_size");
+        var table = _lua.GetTable("___text_size");
         table["width"] = 0;
         table["height"] = 0;
         return table;
@@ -143,8 +143,8 @@ public partial class LuaEnvironment
     private LuaTable GetImageInfo()
     {
         // TODO: implement
-        _lua.NewTable("image_info");
-        var table = _lua.GetTable("image_info");
+        _lua.NewTable("___image_info");
+        var table = _lua.GetTable("___image_info");
         table["width"] = 0;
         table["height"] = 0;
         return table;
