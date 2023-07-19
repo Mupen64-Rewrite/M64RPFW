@@ -23,19 +23,27 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
 
     public WindowSize GetWindowSize()
     {
-        return new WindowSize(GlControl.Width, GlControl.Height);
+        Console.WriteLine($"Size: {ContainerPanel.Bounds.Size}");
+        return new WindowSize(ContainerPanel.Width, ContainerPanel.Height);
     }
 
-    double? oldMaxWidth, oldMaxHeight;
+    bool _isSizedToFit = false;
+    double? _oldMaxWidth, _oldMaxHeight;
 
     public void SizeToFit(WindowSize size)
     {
         Dispatcher.UIThread.Invoke(() =>
         {
             GlControl.WindowSize = new PixelSize((int) size.Width, (int) size.Height);
+            GlControl.Width = size.Width;
+            GlControl.Height = size.Height;
 
-            oldMaxWidth = ContainerPanel.MaxWidth;
-            oldMaxHeight = ContainerPanel.MaxHeight;
+            if (!_isSizedToFit)
+            {
+                _oldMaxWidth = ContainerPanel.MaxWidth;
+                _oldMaxHeight = ContainerPanel.MaxHeight;
+                _isSizedToFit = true;
+            }
         
             ContainerPanel.MaxWidth = size.Width;
             ContainerPanel.MaxHeight = size.Height;
@@ -50,12 +58,13 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
     {
         Dispatcher.UIThread.Invoke(() =>
         {
-            if (oldMaxWidth != null)
-                ContainerPanel.MaxWidth = oldMaxWidth.Value;
-            if (oldMaxHeight != null)
-                ContainerPanel.MaxHeight = oldMaxHeight.Value;
+            if (_oldMaxWidth != null)
+                ContainerPanel.MaxWidth = _oldMaxWidth.Value;
+            if (_oldMaxHeight != null)
+                ContainerPanel.MaxHeight = _oldMaxHeight.Value;
 
             SizeToContent = SizeToContent.Manual;
+            _isSizedToFit = false;
             CanResize = true;
         });
     }
