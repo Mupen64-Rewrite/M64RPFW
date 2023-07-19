@@ -12,7 +12,9 @@ using Avalonia.VisualTree;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
+using M64RPFW.Views.Avalonia.Controls;
 using Silk.NET.OpenGL;
+using SkiaSharp;
 using static M64RPFW.Models.Types.Mupen64PlusTypes;
 
 namespace M64RPFW.Views.Avalonia.Views;
@@ -246,4 +248,15 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
     }
 
     #endregion
+
+    private void SkiaCanvas_OnRenderSkia(SkiaRenderEventArgs obj)
+    {
+        // equivalent of atupdatescreen in old mupen
+        // NOTE: we are on render thread
+
+        foreach (var (_, value) in LuaWindow.LuaViewModels)
+        {
+            value.FrontendScriptingService.InvokeOnUpdateScreen(obj.Canvas);
+        }
+    }
 }

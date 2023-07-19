@@ -12,4 +12,8 @@
       <ProjectReference Include="..\M64RPFW.Models.Types\M64RPFW.Models.Types.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="SkiaSharp" Version="2.88.3" />
+    </ItemGroup>
+
 </Project>

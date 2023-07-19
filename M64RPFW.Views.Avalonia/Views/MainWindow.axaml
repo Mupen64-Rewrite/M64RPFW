@@ -174,14 +174,20 @@
                        RelativePanel.AlignTopWithPanel="True"
                        RelativePanel.AlignBottomWithPanel="True"
                        RelativePanel.AlignLeftWithPanel="True"
-                       RelativePanel.AlignRightWithPanel="True"></Rectangle>
+                       RelativePanel.AlignRightWithPanel="True">
+            </Rectangle>
             <!--Emulator output-->
-            <gl:IndependentGlControl Name="GlControl" 
-                                     VerticalAlignment="Top" 
+            <gl:IndependentGlControl Name="GlControl"
+                                     VerticalAlignment="Top"
                                      HorizontalAlignment="Left"
                                      RelativePanel.AlignTopWithPanel="True"
-                                     RelativePanel.AlignLeftWithPanel="True"/>
+                                     RelativePanel.AlignLeftWithPanel="True" />
             <!--insert SkiaCanvas Here-->
+            <ctrls:SkiaCanvas RelativePanel.AlignTopWithPanel="True"
+                              RelativePanel.AlignBottomWithPanel="True"
+                              RelativePanel.AlignLeftWithPanel="True"
+                              RelativePanel.AlignRightWithPanel="True" RenderSkia="SkiaCanvas_OnRenderSkia">
+            </ctrls:SkiaCanvas>
         </RelativePanel>
     </DockPanel>
 
