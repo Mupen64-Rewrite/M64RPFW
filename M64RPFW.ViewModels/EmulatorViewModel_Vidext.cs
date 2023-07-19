@@ -163,16 +163,6 @@ public unsafe partial class EmulatorViewModel : IVideoExtensionService
     }
 
     #endregion
-
-    public void OnSizeChanged()
-    {
-        if (!MupenIsActive)
-            return;
-        var size = _windowSizingService.GetWindowSize();
-        var width = Math.Min((uint) size.Width, 65535);
-        var height = Math.Min((uint) size.Height, 65535);
-        Mupen64Plus.CoreStateSet(Mupen64PlusTypes.CoreParam.VideoSize, (width << 16) | height);
-    }
     
     public void ForwardSDLKeyDown(Scancode scancode, Keymod modifiers)
     {

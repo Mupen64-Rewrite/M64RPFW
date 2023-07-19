@@ -21,15 +21,4 @@ public class FrontendScriptingService : IFrontendScriptingService
     {
         _luaWindow.Print(value);
     }
-
-    public (int Width, int Height) GetWindowSize()
-    {
-        return ((int Width, int Height))(WindowHelper.MainWindow.Width, WindowHelper.MainWindow.Height);
-    }
-
-    public void SetWindowSize(int width, int height)
-    {
-        WindowHelper.MainWindow.Width = width;
-        WindowHelper.MainWindow.Height = height;
-    }
 }

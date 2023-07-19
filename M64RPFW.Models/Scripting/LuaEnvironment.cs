@@ -3,6 +3,7 @@ using System.Reflection;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Types;
 using M64RPFW.Services;
+using M64RPFW.Services.Abstractions;
 using NLua;
 using NLua.Exceptions;
 
@@ -174,6 +175,7 @@ public class LuaEnvironment : IDisposable
             iohelper = {
                 filedialog = __dummy,
             }
+            -- replace with encoder??
             avi = {
                 startcapture = __dummy,
                 stopcapture = __dummy,
@@ -269,14 +271,16 @@ public class LuaEnvironment : IDisposable
     {
         _lua.NewTable("dimensions");
         var table = _lua.GetTable("dimensions");
-        table["width"] = _frontendScriptingService.GetWindowSize().Width;
-        table["height"] = _frontendScriptingService.GetWindowSize().Height;
+        var winSize = _windowSizingService.GetWindowSize();
+        Console.WriteLine($"Size: {winSize.Width}x{winSize.Height}");
+        table["width"] = (int) winSize.Width;
+        table["height"] = (int) winSize.Height;
         return table;
     }
 
     private void SetWindowSize(int width, int height)
     {
-        _frontendScriptingService.SetWindowSize(width, height);
+        _windowSizingService.SizeToFit(new WindowSize(width, height));
     }
 
     #endregion

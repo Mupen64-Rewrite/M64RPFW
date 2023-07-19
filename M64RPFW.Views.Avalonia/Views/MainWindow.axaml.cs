@@ -84,7 +84,6 @@ public partial class MainWindow : Window
 
     private void Window_OnSizeChanged(object? sender, SizeChangedEventArgs e)
     {
-        ViewModel.OnSizeChanged();
     }
 
     private KeyGesture FastForwardKeyGesture => KeyGesture.Parse(SettingsViewModel.Instance.FastForwardHotkey);
@@ -94,6 +93,8 @@ public partial class MainWindow : Window
         if (FastForwardKeyGesture.Matches(e))
         {
             ViewModel.SetSpeedLimiterCommand.ExecuteIfPossible(false, false);
+            e.Handled = true;
+            return;
         }
         var scancode = SDLHelpers.ToSDLScancode(e.Key);
         var modifiers = SDLHelpers.ToSDLKeymod(e.KeyModifiers);
@@ -105,6 +106,8 @@ public partial class MainWindow : Window
         if (FastForwardKeyGesture.Matches(e))
         {
             ViewModel.SetSpeedLimiterCommand.ExecuteIfPossible(true, true);
+            e.Handled = true;
+            return;
         }
         var scancode = SDLHelpers.ToSDLScancode(e.Key);
         var modifiers = SDLHelpers.ToSDLKeymod(e.KeyModifiers);
@@ -133,7 +136,7 @@ public partial class MainWindow : Window
                 Debug.Print($"{menuItem.InputGesture} already registered");
             }
 #endif
-            KeyBindings.Add(new KeyBinding()
+            KeyBindings.Add(new KeyBinding
             {
                 Command = menuItem.Command,
                 Gesture = menuItem.InputGesture
