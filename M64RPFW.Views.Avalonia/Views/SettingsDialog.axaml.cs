@@ -1,5 +1,6 @@
 using System;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using M64RPFW.ViewModels;
 
@@ -13,8 +14,21 @@ public partial class SettingsDialog : Window
         DataContext = SettingsViewModel.Instance;
     }
 
-    private void TopLevel_OnClosed(object? sender, EventArgs e)
+    public SettingsViewModel ViewModel => (SettingsViewModel) DataContext!;
+
+    private void OnApplyClicked(object? sender, RoutedEventArgs e)
     {
-        ((SettingsViewModel)DataContext!).SaveCommand.Execute(null);
+        ViewModel.SaveCommand.Execute(null);
+    }
+
+    private void OnCancelClicked(object? sender, RoutedEventArgs e)
+    {
+        Close();
+    }
+
+    private void OnOKClicked(object? sender, RoutedEventArgs e)
+    {
+        ViewModel.SaveCommand.Execute(null);
+        Close();
     }
 }

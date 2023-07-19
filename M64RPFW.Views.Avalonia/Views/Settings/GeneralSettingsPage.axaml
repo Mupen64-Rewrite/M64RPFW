@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ext="clr-namespace:M64RPFW.Views.Avalonia.Markup"
+             xmlns:viewModels="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="M64RPFW.Views.Avalonia.Views.Settings.GeneralSettingsPage"
+             x:CompileBindings="True"
+             x:DataType="viewModels:SettingsViewModel">
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <!-- TODO: find a way to polyfill selectedvaluepath, because we need localization support for comboboxitems -->
+            <TextBlock Classes="h3"
+                       Text="{ext:Localize Culture}" />
+            <ComboBox
+                SelectedValue="{Binding Culture,Mode=TwoWay}">
+                <ComboBox.Items>
+                    <x:String>en-US</x:String>
+                    <x:String>de-DE</x:String>
+                </ComboBox.Items>
+            </ComboBox>
+            <TextBlock Classes="h3"
+                       Text="{ext:Localize Theme}" />
+            <ComboBox
+                SelectedValue="{Binding Theme,Mode=TwoWay}">
+                <ComboBox.Items>
+                    <x:String>Default</x:String>
+                    <x:String>Light</x:String>
+                    <x:String>Dark</x:String>
+                </ComboBox.Items>
+            </ComboBox>
+        </StackPanel>
+</UserControl>

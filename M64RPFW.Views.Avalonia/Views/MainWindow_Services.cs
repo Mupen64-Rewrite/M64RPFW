@@ -48,13 +48,16 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
 
     public void UnlockWindowSize()
     {
-        if (oldMaxWidth != null)
-            ContainerPanel.MaxWidth = oldMaxWidth.Value;
-        if (oldMaxHeight != null)
-            ContainerPanel.MaxHeight = oldMaxHeight.Value;
-        
-        SizeToContent = SizeToContent.Manual;
-        CanResize = true;
+        Dispatcher.UIThread.Invoke(() =>
+        {
+            if (oldMaxWidth != null)
+                ContainerPanel.MaxWidth = oldMaxWidth.Value;
+            if (oldMaxHeight != null)
+                ContainerPanel.MaxHeight = oldMaxHeight.Value;
+
+            SizeToContent = SizeToContent.Manual;
+            CanResize = true;
+        });
     }
 
     #endregion
