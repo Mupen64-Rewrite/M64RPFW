@@ -73,10 +73,10 @@
         <value>Aufnahme</value>
     </data>
     <data name="Ok" xml:space="preserve">
-        <value>Ok</value>
+        <value>OK</value>
     </data>
     <data name="OpenRom" xml:space="preserve">
-        <value>Rom öffnen...</value>
+        <value>ROM öffnen...</value>
     </data>
     <data name="PauseOrResume" xml:space="preserve">
         <value>Pausieren/Fortsetzen</value>
@@ -88,7 +88,7 @@
         <value>Rerecording</value>
     </data>
     <data name="ResetRom" xml:space="preserve">
-        <value>Rom neu laden</value>
+        <value>ROM neu laden</value>
     </data>
     <data name="RestartMovie" xml:space="preserve">
         <value>Aufnahme neu starten</value>
@@ -139,7 +139,7 @@
         <value>Farbschema</value>
     </data>
     <data name="RecentRoms" xml:space="preserve">
-        <value>Aktuelle Roms</value>
+        <value>Aktuelle ROMs</value>
     </data>
     <data name="AdvancedSettings" xml:space="preserve">
         <value>Erweiterte Einstellungen...</value>
@@ -170,5 +170,8 @@
     </data>
     <data name="FastForward" xml:space="preserve">
         <value>Vorspulen</value>
+    </data>
+    <data name="Lua" xml:space="preserve">
+        <value>Lua</value>
     </data>
 </root>

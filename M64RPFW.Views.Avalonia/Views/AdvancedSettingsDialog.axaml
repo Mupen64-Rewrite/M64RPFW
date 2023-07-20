@@ -16,9 +16,9 @@
                   ItemsSource="{Binding ConfigSectionNames}" SelectedItem="{Binding SectionName}" />
         
         <StackPanel Classes="dialog-btns" DockPanel.Dock="Bottom">
-            <Button Content="Apply" Click="OnApplyClicked"/>
-            <Button Content="Cancel" Click="OnCancelClicked"/>
-            <Button Content="OK" Click="OnOKClicked"/>
+            <Button Content="{ext:Localize Apply}" Click="OnApplyClicked"/>
+            <Button Content="{ext:Localize Cancel}" Click="OnCancelClicked"/>
+            <Button Content="{ext:Localize Ok}" Click="OnOKClicked"/>
         </StackPanel>
 
         <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding CurrentSection}">

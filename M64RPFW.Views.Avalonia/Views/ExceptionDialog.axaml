@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:M64RPFW.Views.Avalonia.Views"
+        xmlns:ext="clr-namespace:M64RPFW.Views.Avalonia.Markup"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="M64RPFW.Views.Avalonia.Views.ExceptionDialog"
         x:CompileBindings="True"
@@ -11,7 +12,7 @@
         <TextBlock DockPanel.Dock="Top" Margin="{StaticResource ContentPadding}" 
                    FontWeight="Bold" Text="{Binding Message, RelativeSource={RelativeSource FindAncestor, AncestorType=views:ExceptionDialog}}"/>
         <StackPanel Classes="dialog-btns" DockPanel.Dock="Bottom">
-            <Button Content="OK" Click="OnOKClicked"/>
+            <Button Content="{ext:Localize Ok}" Click="OnOKClicked"/>
         </StackPanel>
         <TextBox IsReadOnly="True" TextWrapping="WrapWithOverflow" Text="{Binding Detail, RelativeSource={RelativeSource FindAncestor, AncestorType=views:ExceptionDialog}}"/>
     </DockPanel>

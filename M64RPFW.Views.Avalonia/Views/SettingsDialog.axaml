@@ -6,6 +6,7 @@
         xmlns:ctrls="clr-namespace:M64RPFW.Views.Avalonia.Controls"
         xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         xmlns:settings="clr-namespace:M64RPFW.Views.Avalonia.Views.Settings"
+        xmlns:ext="clr-namespace:M64RPFW.Views.Avalonia.Markup"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="M64RPFW.Views.Avalonia.Views.SettingsDialog"
         x:CompileBindings="True"
@@ -24,9 +25,9 @@
     </Window.Styles>
     <DockPanel LastChildFill="True">
         <StackPanel Classes="dialog-btns" DockPanel.Dock="Bottom">
-            <Button Content="Apply" Click="OnApplyClicked"/>
-            <Button Content="Cancel" Click="OnCancelClicked"/>
-            <Button Content="OK" Click="OnOKClicked"/>
+            <Button Content="{ext:Localize Apply}" Click="OnApplyClicked"/>
+            <Button Content="{ext:Localize Cancel}" Click="OnCancelClicked"/>
+            <Button Content="{ext:Localize Ok}" Click="OnOKClicked"/>
         </StackPanel>
         <TabControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TabStripPlacement="Top">
             <TabItem Header="{materialIcons:MaterialIconExt Kind=HammerWrench, Size={StaticResource IconSize}}">
