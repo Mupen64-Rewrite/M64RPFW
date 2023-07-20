@@ -12,12 +12,18 @@ public unsafe partial class Mupen64Plus
         return _encoderIsActive();
     }
 
-    public static void Encoder_Start(string path, Mupen64PlusTypes.EncoderFormat fmt)
+    public static void Encoder_Start(string path, string fmt)
     {
         byte[] pathData = Encoding.ASCII.GetBytes(path + char.MinValue);
-        fixed (byte* pPathData = pathData)
+        byte[] fmtData = Encoding.ASCII.GetBytes(fmt + char.MinValue);
+        fixed (byte* pPathData = pathData, pFmtData = fmtData)
         {
-            _encoderStart(pPathData, Mupen64PlusTypes.EncoderFormat.Infer);
+            _encoderStart(pPathData, pFmtData);
         }
+    }
+
+    public static void Encoder_Stop(bool discard)
+    {
+        _encoderStop(discard);
     }
 }

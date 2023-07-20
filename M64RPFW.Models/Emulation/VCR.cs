@@ -70,7 +70,7 @@ public static partial class Mupen64Plus
 
     #endregion
 
-    private static void ResolveVCRFunctions()
+    private static void ResolveVcrFunctions()
     {
         ResolveDelegate(_libHandle, out _vcrSetErrorCallback);
         ResolveDelegate(_libHandle, out _vcrSetStateCallback);
