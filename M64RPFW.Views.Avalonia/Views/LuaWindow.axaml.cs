@@ -48,9 +48,12 @@ public partial class LuaWindow : Window
         LuaViewModels.Remove(this);
     }
 
-    public void Print(string value)
+    public void Print(string value) 
     {
-        Dispatcher.UIThread.Post(() => { LoggingTextBox.Text += $"{value}\r\n"; });
+        Dispatcher.UIThread.Post(() => { 
+            LoggingTextBox.Text += $"{value}\r\n";
+            this.FindControl<ScrollViewer>("LogScrollViewer")!.ScrollToEnd();
+        });
     }
 
     private void Button_OnClick(object? sender, RoutedEventArgs e)
