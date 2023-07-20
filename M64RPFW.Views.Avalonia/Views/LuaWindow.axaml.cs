@@ -20,7 +20,6 @@ public partial class LuaWindow : Window
         LuaViewModels = new();
 
     public LuaViewModel ViewModel => (LuaViewModel)DataContext!;
-    private TextBox LoggingTextBox => this.FindControl<TextBox>("LogTextBox")!;
     
     public LuaWindow()
     {
@@ -51,13 +50,13 @@ public partial class LuaWindow : Window
     public void Print(string value) 
     {
         Dispatcher.UIThread.Post(() => { 
-            LoggingTextBox.Text += $"{value}\r\n";
+            LogTextBox.Text += $"{value}\r\n";
             this.FindControl<ScrollViewer>("LogScrollViewer")!.ScrollToEnd();
         });
     }
 
     private void Button_OnClick(object? sender, RoutedEventArgs e)
     {
-        LoggingTextBox.Text = "";
+        LogTextBox.Text = "";
     }
 }
