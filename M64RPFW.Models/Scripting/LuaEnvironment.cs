@@ -14,6 +14,9 @@ using SkiaExtensions = M64RPFW.Models.Scripting.Extensions.SkiaExtensions;
 
 namespace M64RPFW.Models.Scripting;
 
+/// <summary>
+/// 
+/// </summary>
 public partial class LuaEnvironment : IDisposable
 {
     [AttributeUsage(AttributeTargets.Method)]
@@ -83,18 +86,20 @@ public partial class LuaEnvironment : IDisposable
             string luaName = attr.Path[(splitPoint + 1)..];
             if (luaNs == null)
             {
-                _lua.RegisterFunction(luaName, method);
+                Console.WriteLine($"Registering function {luaName}");
+                _lua.RegisterFunction(luaName, this, method);
             }
             else
             {
                 // HACK: NLua doesn't walk the virtual tree when registering functions to ensure validity of operations, so we have to create
                 // sub-table functions as weirdly named globals and then execute code to properly set up the tables
                 string genName = "__0" + attr.Path.Replace(".", "_0");
+                Console.WriteLine($"Registering function {genName}");
                 if (!tables.ContainsKey(luaNs))
                     tables[luaNs] = new List<(string src, string name)>();
                 tables[luaNs].Add((genName, luaName));
                 
-                _lua.RegisterFunction(genName, method);
+                _lua.RegisterFunction(genName, this, method);
             }
         }
         var tableSetup = new StringBuilder();
@@ -107,7 +112,9 @@ public partial class LuaEnvironment : IDisposable
             tableSetup.Append($"{table} = {{\n{entrySetup}\n}}\n");
         }
         Console.WriteLine(tableSetup);
-        _lua.DoString(tableSetup.ToString());
+        _lua.DoString(tableSetup.ToString(), "setup");
+        // prevent users from importing CLR APIs
+        _lua.DoString("import = function () end");
     }
 
     /// <summary>
@@ -168,6 +175,7 @@ public partial class LuaEnvironment : IDisposable
     {
     }
 
+    [LuaFunction("print")]
     private void Print(object? value)
     {
         var formatted = value switch
@@ -179,6 +187,7 @@ public partial class LuaEnvironment : IDisposable
 
         _frontendScriptingService.Print(formatted);
     }
+    [LuaFunction("stop")]
     private void Stop()
     {
         _lua.State.Error("Execution terminated via stop()");
