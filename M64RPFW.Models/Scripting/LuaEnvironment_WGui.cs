@@ -10,8 +10,8 @@ public partial class LuaEnvironment
     [LuaFunction("wgui.info")]
     private LuaTable GetWindowSize()
     {
-        _lua.NewTable("___dimensions");
-        var table = _lua.GetTable("___dimensions");
+        _lua.NewTable("__2dimensions");
+        var table = _lua.GetTable("__2dimensions");
         var winSize = _frontendScriptingService.WindowSizingService.GetWindowSize();
         table["width"] = (int) winSize.Width;
         table["height"] = (int) winSize.Height;
