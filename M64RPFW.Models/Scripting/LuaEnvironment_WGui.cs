@@ -1,7 +1,9 @@
+using M64RPFW.Models.Scripting.Extensions;
 using M64RPFW.Services.Abstractions;
 using NLua;
 using SkiaSharp;
 using SkiaExtensions = M64RPFW.Models.Scripting.Extensions.SkiaExtensions;
+
 // ReSharper disable UnusedMember.Local
 
 namespace M64RPFW.Models.Scripting;
@@ -11,8 +13,7 @@ public partial class LuaEnvironment
     [LuaFunction("wgui.info")]
     private LuaTable GetWindowSize()
     {
-        _lua.NewTable("__2dimensions");
-        var table = _lua.GetTable("__2dimensions");
+        var table = _lua.NewUnnamedTable();
         var winSize = _frontendScriptingService.WindowSizingService.GetWindowSize();
         table["width"] = (int) winSize.Width;
         table["height"] = (int) winSize.Height;
@@ -29,9 +30,9 @@ public partial class LuaEnvironment
     private void FillRectangle(float x, float y, float right, float bottom, float red, float green, float blue,
         float alpha)
     {
-        _skCanvas?.DrawRect(x, y, right - x, bottom - y, new SKPaint()
+        _skCanvas?.DrawRect(x, y, right - x, bottom - y, new SKPaint
         {
-            Color = Extensions.SkiaExtensions.FromFloats(red, green, blue, alpha)
+            Color = SkiaExtensions.FromFloats(red, green, blue, alpha)
         });
     }
     
@@ -39,9 +40,9 @@ public partial class LuaEnvironment
     private void DrawRectangle(float x, float y, float right, float bottom, float red, float green, float blue,
         float alpha, float thickness)
     {
-        _skCanvas?.DrawRect(x, y, right - x, bottom - y, new SKPaint()
+        _skCanvas?.DrawRect(x, y, right - x, bottom - y, new SKPaint
         {
-            Color = Extensions.SkiaExtensions.FromFloats(red, green, blue, alpha),
+            Color = SkiaExtensions.FromFloats(red, green, blue, alpha),
             Style = SKPaintStyle.Stroke,
             StrokeWidth = thickness
         });
@@ -51,9 +52,9 @@ public partial class LuaEnvironment
     private void FillEllipse(float x, float y, float radiusX, float radiusY, float red, float green, float blue,
         float alpha)
     {
-        _skCanvas?.DrawOval(x, y, radiusX, radiusY, new SKPaint()
+        _skCanvas?.DrawOval(x, y, radiusX, radiusY, new SKPaint
         {
-            Color = Extensions.SkiaExtensions.FromFloats(red, green, blue, alpha)
+            Color = SkiaExtensions.FromFloats(red, green, blue, alpha)
         });
     }
     
@@ -61,9 +62,9 @@ public partial class LuaEnvironment
     private void DrawEllipse(float x, float y, float radiusX, float radiusY, float red, float green, float blue,
         float alpha, float thickness)
     {
-        _skCanvas?.DrawOval(x, y, radiusX, radiusY, new SKPaint()
+        _skCanvas?.DrawOval(x, y, radiusX, radiusY, new SKPaint
         {
-            Color = Extensions.SkiaExtensions.FromFloats(red, green, blue, alpha),
+            Color = SkiaExtensions.FromFloats(red, green, blue, alpha),
             Style = SKPaintStyle.Stroke,
             StrokeWidth = thickness
         });
@@ -73,9 +74,9 @@ public partial class LuaEnvironment
     private void DrawLine(float x0, float y0, float x1, float y1, float red, float green, float blue, float alpha,
         float thickness)
     {
-        _skCanvas?.DrawLine(x0, y0, x1, y1, new SKPaint()
+        _skCanvas?.DrawLine(x0, y0, x1, y1, new SKPaint
         {
-            Color = Extensions.SkiaExtensions.FromFloats(red, green, blue, alpha),
+            Color = SkiaExtensions.FromFloats(red, green, blue, alpha),
             Style = SKPaintStyle.Stroke,
             StrokeWidth = thickness
         });
@@ -93,8 +94,7 @@ public partial class LuaEnvironment
     private LuaTable GetTextSize(string text, string fontName, float fontSize, float maximumWidth, float maximumHeight)
     {
         // TODO: implement
-        _lua.NewTable("___text_size");
-        var table = _lua.GetTable("___text_size");
+        var table = _lua.NewUnnamedTable();
         table["width"] = 0;
         table["height"] = 0;
         return table;
@@ -117,9 +117,9 @@ public partial class LuaEnvironment
         float red, float green, float blue,
         float alpha)
     {
-        _skCanvas?.DrawRoundRect(x, y, right - x, bottom - y, radiusX, radiusY, new SKPaint()
+        _skCanvas?.DrawRoundRect(x, y, right - x, bottom - y, radiusX, radiusY, new SKPaint
         {
-            Color = Extensions.SkiaExtensions.FromFloats(red, green, blue, alpha)
+            Color = SkiaExtensions.FromFloats(red, green, blue, alpha)
         });
     }
 
@@ -128,7 +128,7 @@ public partial class LuaEnvironment
         float red, float green, float blue,
         float alpha, float thickness)
     {
-        _skCanvas?.DrawRoundRect(x, y, right - x, bottom - y, radiusX, radiusY, new SKPaint()
+        _skCanvas?.DrawRoundRect(x, y, right - x, bottom - y, radiusX, radiusY, new SKPaint
         {
             Color = SkiaExtensions.FromFloats(red, green, blue, alpha),
             Style = SKPaintStyle.Stroke,
@@ -160,8 +160,7 @@ public partial class LuaEnvironment
     private LuaTable GetImageInfo()
     {
         // TODO: implement
-        _lua.NewTable("___image_info");
-        var table = _lua.GetTable("___image_info");
+        var table = _lua.NewUnnamedTable();
         table["width"] = 0;
         table["height"] = 0;
         return table;

@@ -1,4 +1,6 @@
+using M64RPFW.Models.Scripting.Extensions;
 using NLua;
+
 // ReSharper disable UnusedMember.Local
 
 namespace M64RPFW.Models.Scripting;
@@ -8,8 +10,7 @@ public partial class LuaEnvironment
     [LuaFunction("input.get")]
     private LuaTable GetInput()
     {
-        _lua.NewTable("___input");
-        var table = _lua.GetTable("___input");
+        var table = _lua.NewUnnamedTable();
         table["xmouse"] = (int)_frontendScriptingService.PointerPosition.X;
         table["ymouse"] = (int)_frontendScriptingService.PointerPosition.Y;
 
