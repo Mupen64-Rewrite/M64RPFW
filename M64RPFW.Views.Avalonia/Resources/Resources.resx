@@ -26,13 +26,13 @@
         <value>File</value>
     </data>
     <data name="OpenRom" xml:space="preserve">
-        <value>Open Rom...</value>
+        <value>Open ROM...</value>
     </data>
     <data name="CloseRom" xml:space="preserve">
-        <value>Close Rom</value>
+        <value>Close ROM</value>
     </data>
     <data name="ResetRom" xml:space="preserve">
-        <value>Reset Rom</value>
+        <value>Reset ROM</value>
     </data>
     <data name="Settings" xml:space="preserve">
         <value>Settings</value>
@@ -119,7 +119,7 @@
         <value>Rerecording</value>
     </data>
     <data name="Ok" xml:space="preserve">
-        <value>Ok</value>
+        <value>OK</value>
     </data>
     <data name="Cancel" xml:space="preserve">
         <value>Cancel</value>
@@ -143,7 +143,7 @@
         <value>Theme</value>
     </data>
     <data name="RecentRoms" xml:space="preserve">
-        <value>Recent Roms</value>
+        <value>Recent ROMs</value>
     </data>
     <data name="VideoHeight" xml:space="preserve">
         <value>Video Height</value>
@@ -184,5 +184,8 @@
     </data>
     <data name="FastForward" xml:space="preserve">
         <value>Fast-forward</value>
+    </data>
+    <data name="Apply" xml:space="preserve">
+        <value>Apply</value>
     </data>
 </root>

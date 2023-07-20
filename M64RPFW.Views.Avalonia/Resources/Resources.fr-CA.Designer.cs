@@ -14,21 +14,21 @@ namespace M64RPFW.Views.Avalonia.Resources {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources_de_DE {
+    internal class Resources_fr_CA {
         
         private static System.Resources.ResourceManager resourceMan;
         
         private static System.Globalization.CultureInfo resourceCulture;
         
         [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources_de_DE() {
+        internal Resources_fr_CA() {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         internal static System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.Equals(null, resourceMan)) {
-                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager("M64RPFW.Views.Avalonia.Resources.Resources_de_DE", typeof(Resources_de_DE).Assembly);
+                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager("M64RPFW.Views.Avalonia.Resources.Resources_fr_CA", typeof(Resources_fr_CA).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -45,9 +45,9 @@ namespace M64RPFW.Views.Avalonia.Resources {
             }
         }
         
-        internal static string File {
+        internal static string Author {
             get {
-                return ResourceManager.GetString("File", resourceCulture);
+                return ResourceManager.GetString("Author", resourceCulture);
             }
         }
         
@@ -57,9 +57,15 @@ namespace M64RPFW.Views.Avalonia.Resources {
             }
         }
         
-        internal static string Author {
+        internal static string Apply {
             get {
-                return ResourceManager.GetString("Author", resourceCulture);
+                return ResourceManager.GetString("Apply", resourceCulture);
+            }
+        }
+        
+        internal static string AdvancedSettings {
+            get {
+                return ResourceManager.GetString("AdvancedSettings", resourceCulture);
             }
         }
         
@@ -75,15 +81,39 @@ namespace M64RPFW.Views.Avalonia.Resources {
             }
         }
         
+        internal static string Clear {
+            get {
+                return ResourceManager.GetString("Clear", resourceCulture);
+            }
+        }
+        
         internal static string CloseRom {
             get {
                 return ResourceManager.GetString("CloseRom", resourceCulture);
             }
         }
         
+        internal static string ConfigKey {
+            get {
+                return ResourceManager.GetString("ConfigKey", resourceCulture);
+            }
+        }
+        
+        internal static string ConfigValue {
+            get {
+                return ResourceManager.GetString("ConfigValue", resourceCulture);
+            }
+        }
+        
         internal static string Core {
             get {
                 return ResourceManager.GetString("Core", resourceCulture);
+            }
+        }
+        
+        internal static string CurrentSection {
+            get {
+                return ResourceManager.GetString("CurrentSection", resourceCulture);
             }
         }
         
@@ -117,6 +147,18 @@ namespace M64RPFW.Views.Avalonia.Resources {
             }
         }
         
+        internal static string FastForward {
+            get {
+                return ResourceManager.GetString("FastForward", resourceCulture);
+            }
+        }
+        
+        internal static string File {
+            get {
+                return ResourceManager.GetString("File", resourceCulture);
+            }
+        }
+        
         internal static string FrameAdvance {
             get {
                 return ResourceManager.GetString("FrameAdvance", resourceCulture);
@@ -147,9 +189,21 @@ namespace M64RPFW.Views.Avalonia.Resources {
             }
         }
         
+        internal static string Lua {
+            get {
+                return ResourceManager.GetString("Lua", resourceCulture);
+            }
+        }
+        
         internal static string Movie {
             get {
                 return ResourceManager.GetString("Movie", resourceCulture);
+            }
+        }
+        
+        internal static string NewLuaInstance {
+            get {
+                return ResourceManager.GetString("NewLuaInstance", resourceCulture);
             }
         }
         
@@ -177,15 +231,21 @@ namespace M64RPFW.Views.Avalonia.Resources {
             }
         }
         
-        internal static string Rerecording {
+        internal static string RecentRoms {
             get {
-                return ResourceManager.GetString("Rerecording", resourceCulture);
+                return ResourceManager.GetString("RecentRoms", resourceCulture);
             }
         }
         
         internal static string ResetRom {
             get {
                 return ResourceManager.GetString("ResetRom", resourceCulture);
+            }
+        }
+        
+        internal static string Restart {
+            get {
+                return ResourceManager.GetString("Restart", resourceCulture);
             }
         }
         
@@ -225,9 +285,9 @@ namespace M64RPFW.Views.Avalonia.Resources {
             }
         }
         
-        internal static string StartFrom {
+        internal static string Start {
             get {
-                return ResourceManager.GetString("StartFrom", resourceCulture);
+                return ResourceManager.GetString("Start", resourceCulture);
             }
         }
         
@@ -237,15 +297,21 @@ namespace M64RPFW.Views.Avalonia.Resources {
             }
         }
         
+        internal static string StartFrom {
+            get {
+                return ResourceManager.GetString("StartFrom", resourceCulture);
+            }
+        }
+        
         internal static string StartPlaying {
             get {
                 return ResourceManager.GetString("StartPlaying", resourceCulture);
             }
         }
         
-        internal static string StartRecording {
+        internal static string Stop {
             get {
-                return ResourceManager.GetString("StartRecording", resourceCulture);
+                return ResourceManager.GetString("Stop", resourceCulture);
             }
         }
         
@@ -261,6 +327,18 @@ namespace M64RPFW.Views.Avalonia.Resources {
             }
         }
         
+        internal static string StartRecording {
+            get {
+                return ResourceManager.GetString("StartRecording", resourceCulture);
+            }
+        }
+        
+        internal static string Theme {
+            get {
+                return ResourceManager.GetString("Theme", resourceCulture);
+            }
+        }
+        
         internal static string ToggleDisableWrites {
             get {
                 return ResourceManager.GetString("ToggleDisableWrites", resourceCulture);
@@ -273,42 +351,6 @@ namespace M64RPFW.Views.Avalonia.Resources {
             }
         }
         
-        internal static string Theme {
-            get {
-                return ResourceManager.GetString("Theme", resourceCulture);
-            }
-        }
-        
-        internal static string RecentRoms {
-            get {
-                return ResourceManager.GetString("RecentRoms", resourceCulture);
-            }
-        }
-        
-        internal static string AdvancedSettings {
-            get {
-                return ResourceManager.GetString("AdvancedSettings", resourceCulture);
-            }
-        }
-        
-        internal static string ConfigKey {
-            get {
-                return ResourceManager.GetString("ConfigKey", resourceCulture);
-            }
-        }
-        
-        internal static string ConfigValue {
-            get {
-                return ResourceManager.GetString("ConfigValue", resourceCulture);
-            }
-        }
-        
-        internal static string CurrentSection {
-            get {
-                return ResourceManager.GetString("CurrentSection", resourceCulture);
-            }
-        }
-        
         internal static string VideoHeight {
             get {
                 return ResourceManager.GetString("VideoHeight", resourceCulture);
@@ -318,36 +360,6 @@ namespace M64RPFW.Views.Avalonia.Resources {
         internal static string VideoWidth {
             get {
                 return ResourceManager.GetString("VideoWidth", resourceCulture);
-            }
-        }
-        
-        internal static string Clear {
-            get {
-                return ResourceManager.GetString("Clear", resourceCulture);
-            }
-        }
-        
-        internal static string Stop {
-            get {
-                return ResourceManager.GetString("Stop", resourceCulture);
-            }
-        }
-        
-        internal static string Restart {
-            get {
-                return ResourceManager.GetString("Restart", resourceCulture);
-            }
-        }
-        
-        internal static string FastForward {
-            get {
-                return ResourceManager.GetString("FastForward", resourceCulture);
-            }
-        }
-        
-        internal static string Lua {
-            get {
-                return ResourceManager.GetString("Lua", resourceCulture);
             }
         }
     }

@@ -16,6 +16,15 @@
         <EmbeddedResource Remove="Binding\**" />
         <None Remove="Binding\**" />
         <None Remove=".gitignore" />
+        <EmbeddedResource Update="Resources\Resources.fr-CA.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>Resources.fr-CA.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <Compile Update="Resources\Resources.fr-CA.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>Resources.fr-CA.resx</DependentUpon>
+        </Compile>
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Avalonia" Version="11.0.0" />
