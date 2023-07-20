@@ -174,4 +174,7 @@
     <data name="Lua" xml:space="preserve">
         <value>Lua</value>
     </data>
+    <data name="AppName" xml:space="preserve">
+        <value>M64RPFW</value>
+    </data>
 </root>
