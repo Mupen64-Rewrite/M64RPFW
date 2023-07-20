@@ -17,6 +17,7 @@
                 <ComboBox.Items>
                     <x:String>en-US</x:String>
                     <x:String>de-DE</x:String>
+                    <x:String>fr-CA</x:String>
                 </ComboBox.Items>
             </ComboBox>
             <TextBlock Classes="h3"

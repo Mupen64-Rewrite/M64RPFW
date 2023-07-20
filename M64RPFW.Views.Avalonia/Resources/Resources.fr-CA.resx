@@ -82,7 +82,7 @@
         <value>Avancer</value>
     </data>
     <data name="Input" xml:space="preserve">
-        <value>Donnée</value>
+        <value>Entrée</value>
     </data>
     <data name="LoadCurrentSlot" xml:space="preserve">
         <value>Charger la partie actuelle</value>
@@ -179,5 +179,8 @@
     </data>
     <data name="VideoWidth" xml:space="preserve">
         <value>Largeur de vidéo</value>
+    </data>
+    <data name="AppName" xml:space="preserve">
+        <value>M64RPFW</value>
     </data>
 </root>

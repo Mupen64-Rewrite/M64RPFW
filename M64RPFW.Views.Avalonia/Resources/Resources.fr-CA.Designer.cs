@@ -362,5 +362,11 @@ namespace M64RPFW.Views.Avalonia.Resources {
                 return ResourceManager.GetString("VideoWidth", resourceCulture);
             }
         }
+        
+        internal static string AppName {
+            get {
+                return ResourceManager.GetString("AppName", resourceCulture);
+            }
+        }
     }
 }
