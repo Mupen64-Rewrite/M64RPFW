@@ -142,7 +142,7 @@
         <value>Aktuelle ROMs</value>
     </data>
     <data name="AdvancedSettings" xml:space="preserve">
-        <value>Erweiterte Einstellungen...</value>
+        <value>Erweiterte Einstellungen</value>
     </data>
     <data name="ConfigKey" xml:space="preserve">
         <value>Id</value>

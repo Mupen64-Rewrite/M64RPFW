@@ -10,7 +10,7 @@
         x:CompileBindings="True" x:DataType="vm:AdvancedSettingsViewModel"
         Closed="TopLevel_OnClosed"
         Width="500" Height="500"
-        Title="Mupen Settings">
+        Title="{ext:Localize AdvancedSettings}">
     <DockPanel LastChildFill="True" Margin="{StaticResource ContentPadding}">
         <ComboBox Margin="{StaticResource SpaceBelowThickness}" DockPanel.Dock="Top" HorizontalAlignment="Stretch"
                   ItemsSource="{Binding ConfigSectionNames}" SelectedItem="{Binding SectionName}" />

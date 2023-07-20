@@ -7,7 +7,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="M64RPFW.Views.Avalonia.Views.ExceptionDialog"
         x:CompileBindings="True"
-        Title="Exception">
+        Title="{ext:Localize Error}">
     <DockPanel LastChildFill="True">
         <TextBlock DockPanel.Dock="Top" Margin="{StaticResource ContentPadding}" 
                    FontWeight="Bold" Text="{Binding Message, RelativeSource={RelativeSource FindAncestor, AncestorType=views:ExceptionDialog}}"/>
