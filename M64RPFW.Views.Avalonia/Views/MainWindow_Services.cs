@@ -15,6 +15,7 @@ using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
 using M64RPFW.Views.Avalonia.Controls;
 using M64RPFW.Views.Avalonia.Controls.OpenGL;
+using MsBox.Avalonia.Dto;
 using Silk.NET.OpenGL;
 using SkiaSharp;
 using static M64RPFW.Models.Types.Mupen64PlusTypes;
@@ -99,6 +100,16 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
         OpenMovieDialog d = new();
         d.ViewModel.IsEditable = paramsEditable;
         return d.ShowDialog<OpenMovieDialogResult?>(this);
+    }
+
+    public Task ShowExceptionDialog(Exception e, string? msg = null)
+    {
+        ExceptionDialog d = new ExceptionDialog
+        {
+            Detail = e.ToString(),
+            Message = msg ?? "Error occurred"
+        };
+        return d.ShowDialog(this);
     }
 
     #endregion

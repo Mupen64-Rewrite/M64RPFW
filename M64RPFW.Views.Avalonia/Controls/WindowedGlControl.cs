@@ -11,9 +11,13 @@ using SDL_Window = Silk.NET.SDL.Window;
 
 namespace M64RPFW.Views.Avalonia.Controls;
 
-public unsafe class VidextControl : NativeControlHost, IOpenGLContextService
+/// <summary>
+/// Control that displays OpenGL output on a separate window.
+/// </summary>
+[Obsolete]
+public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
 {
-    public VidextControl()
+    public WindowedGlControl()
     {
         
     }
