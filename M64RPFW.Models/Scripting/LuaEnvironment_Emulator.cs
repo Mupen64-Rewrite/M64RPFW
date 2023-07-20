@@ -1,6 +1,7 @@
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Types;
 using NLua;
+// ReSharper disable UnusedMember.Local
 
 namespace M64RPFW.Models.Scripting;
 

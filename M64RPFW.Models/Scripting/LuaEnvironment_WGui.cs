@@ -2,6 +2,7 @@ using M64RPFW.Services.Abstractions;
 using NLua;
 using SkiaSharp;
 using SkiaExtensions = M64RPFW.Models.Scripting.Extensions.SkiaExtensions;
+// ReSharper disable UnusedMember.Local
 
 namespace M64RPFW.Models.Scripting;
 
