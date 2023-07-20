@@ -72,49 +72,39 @@ public partial class LuaEnvironment : IDisposable
         
         _lua = new Lua();
         
-        // Register the internal functions and determine which ones belong in tables.
-        // ==========================================================================
-        var tables = new SortedDictionary<string, List<(string src, string name)>>();
+        // Register global functions and save the ones that belong in tables.
+        // ====================================================================
+        var tables = new SortedDictionary<string, List<(string src, MethodInfo name)>>();
         foreach (var method in typeof(LuaEnvironment).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic))
         {
             if (method.GetCustomAttribute<LuaFunctionAttribute>() is not { } attr)
                 continue;
-            Console.WriteLine($"Found method {method.DeclaringType?.FullName}.{method.Name}");
 
             int splitPoint = attr.Path.LastIndexOf('.');
             string? luaNs = splitPoint != -1 ? attr.Path[..splitPoint] : null;
             string luaName = attr.Path[(splitPoint + 1)..];
             if (luaNs == null)
             {
-                Console.WriteLine($"Registering function {luaName}");
                 _lua.RegisterFunction(luaName, this, method);
             }
             else
             {
-                // HACK: NLua doesn't walk the virtual tree when registering functions to ensure validity of operations, so we have to create
-                // sub-table functions as weirdly named globals and then execute code to properly set up the tables
-                string genName = "__0" + attr.Path.Replace(".", "_0");
-                Console.WriteLine($"Registering function {genName}");
+                // Save anything in a table to a sorted dictionary. The sorting ensures that
+                // every table is always setup before its sub-tables.
                 if (!tables.ContainsKey(luaNs))
-                    tables[luaNs] = new List<(string src, string name)>();
-                tables[luaNs].Add((genName, luaName));
-                
-                _lua.RegisterFunction(genName, this, method);
+                    tables[luaNs] = new List<(string name, MethodInfo func)>();
+                tables[luaNs].Add((luaName, method));
             }
         }
-        var tableSetup = new StringBuilder();
-        // Put all the table functions in tables.
-        // ======================================
-        // The sorted dict is necessary, as it guarantees that every table is created before its sub-tables.
-        foreach ((string table, var entries) in tables)
+        foreach ((string ns, var entries) in tables)
         {
-            var entrySetup = string.Join(",\n", entries.Select(entry => $"  {entry.name} = {entry.src}"));
-            tableSetup.Append($"{table} = {{\n{entrySetup}\n}}\n");
+            // We have to create the tables explicitly.
+            _lua.NewTable(ns);
+            foreach ((string src, MethodInfo func) in entries)
+            {
+                _lua.RegisterFunction($"{ns}.{src}", this, func);
+            }
         }
-        Console.WriteLine(tableSetup);
-        _lua.DoString(tableSetup.ToString(), "setup");
-        // prevent users from importing CLR APIs
-        _lua.DoString("import = function () end");
     }
 
     /// <summary>
