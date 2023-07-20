@@ -17,17 +17,33 @@ public partial class EmulatorViewModel
 {
     #region Emulator thread
 
-    private static void EmulatorThreadRun(object? romPathObj)
+    private void EmulatorThreadRun(object? romPathObj)
     {
-        string romPath = (string) romPathObj!;
-        string bundlePath = Mupen64Plus.GetBundledLibraryPath();
+        var (romPath, tcs) = ((string, TaskCompletionSource)) romPathObj!;
         Mupen64Plus.OpenRom(romPath);
+        
+        try
+        {
+            Mupen64Plus.AttachPlugin(PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.VideoPath), PluginType.Graphics);
+            Mupen64Plus.AttachPlugin(PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.AudioPath), PluginType.Audio);
+            Mupen64Plus.AttachPlugin(PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.InputPath), PluginType.Input);
+            Mupen64Plus.AttachPlugin(PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.RspPath), PluginType.RSP);
+            tcs.SetResult();
+        }
+        catch (Exception e)
+        {
+            tcs.SetException(e);
 
-        Mupen64Plus.AttachPlugin(PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.VideoPath));
-        Mupen64Plus.AttachPlugin(PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.AudioPath));
-        Mupen64Plus.AttachPlugin(PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.InputPath));
-        Mupen64Plus.AttachPlugin(PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.RspPath));
+            Mupen64Plus.CloseRom();
 
+            Mupen64Plus.DetachPlugin(PluginType.Graphics);
+            Mupen64Plus.DetachPlugin(PluginType.Audio);
+            Mupen64Plus.DetachPlugin(PluginType.Input);
+            Mupen64Plus.DetachPlugin(PluginType.RSP);
+            return;
+        }
+        
+        
         Mupen64Plus.Execute();
 
         Mupen64Plus.CloseRom();
@@ -56,9 +72,19 @@ public partial class EmulatorViewModel
             return;
 
         WeakReferenceMessenger.Default.Send(new RomLoadingMessage(files[0]));
-        
+
+        var loadTaskSource = new TaskCompletionSource();
         _emuThread = new Thread(EmulatorThreadRun);
-        _emuThread.Start(files[0]);
+        _emuThread.Start((files[0], loadTaskSource));
+
+        try
+        {
+            await loadTaskSource.Task;
+        }
+        catch (Exception e)
+        {
+            await _viewDialogService.ShowExceptionDialog(e, "Failed to load ROM");
+        }
     }
 
     [RelayCommand(CanExecute = nameof(MupenIsActive))]

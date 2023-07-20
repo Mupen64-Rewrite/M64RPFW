@@ -181,6 +181,10 @@ public static partial class Mupen64Plus
 
     #region Core Commands
 
+    /// <summary>
+    /// Loads a ROM from the given path to the core. This does not support zipped ROMs.
+    /// </summary>
+    /// <param name="path">The path to the ROM file.</param>
     public static unsafe void OpenRom(string path)
     {
         ArgumentNullException.ThrowIfNull(path);
@@ -463,41 +467,75 @@ public static partial class Mupen64Plus
     /// </list>
     /// </summary>
     /// <param name="path">Path to the plugin's .so file</param>
+    /// <param name="intendedType">The intended plugin type. If Null, it will be inferred from the plugin's type.</param>
     /// <exception cref="InvalidOperationException">If the located plugin's type already has an attached plugin</exception>
-    public static unsafe void AttachPlugin(string path)
+    /// <exception cref="FileNotFoundException">If the located plugin doesn't exist, can't be loaded, or is the wrong type.</exception>
+    public static unsafe void AttachPlugin(string path, Mupen64PlusTypes.PluginType intendedType = Mupen64PlusTypes.PluginType.Null)
     {
-        IntPtr pluginLib = NativeLibrary.Load(path);
-        // Implicitly
-        var getVersion = NativeLibHelper.GetFunction<DPluginGetVersion>(pluginLib, "PluginGetVersion");
-
-        Mupen64PlusTypes.Error err = getVersion(out var type, out _, out _, out _, out _);
-        ThrowForError(err);
-
-        if (!_pluginDict.TryAdd(type, pluginLib))
+        IntPtr pluginLib = IntPtr.Zero;
+        DPluginGetVersion? getVersion;
+        bool didStartup = false;
+        try
         {
-            IntPtr oldLib = _pluginDict[type];
-            var oldLibGetVersion = NativeLibHelper.GetFunction<DPluginGetVersion>(pluginLib, "PluginGetVersion");
+            // Load the plugin
+            try
+            {
+                pluginLib = NativeLibrary.Load(path);
+                getVersion = NativeLibHelper.GetFunction<DPluginGetVersion>(pluginLib, "PluginGetVersion");
 
-            err = oldLibGetVersion(out _, out _, out _, out var oldNameBytes, out _);
+            }
+            catch (DllNotFoundException e)
+            {
+                throw new FileNotFoundException($"{path} does not specify a shared library", e);
+            }
+            catch (Exception e) when (e is EntryPointNotFoundException or 
+                                          ArgumentNullException or 
+                                          BadImageFormatException)
+            {
+                throw new FileNotFoundException($"{path} is not a valid plugin", e);
+            }
+            
+            // Check its type and ensure it's what we need
+            Mupen64PlusTypes.Error err = getVersion(out var type, out _, out _, out _, out _);
             ThrowForError(err);
 
-            // Manually strlen() oldNameBytes, then convert to string
-            int oldNameLen = 0;
-            while (oldNameBytes[oldNameLen] != 0) oldNameLen++;
-            string oldName = Encoding.ASCII.GetString(oldNameBytes, oldNameLen);
+            if (intendedType != Mupen64PlusTypes.PluginType.Null && type != intendedType)
+            {
+                throw new FileNotFoundException($"Expected a plugin of type {intendedType}, instead got {type}");
+            }
+        
+            if (!_pluginDict.TryAdd(type, pluginLib))
+            {
+                IntPtr oldLib = _pluginDict[type];
+                var oldLibGetVersion = NativeLibHelper.GetFunction<DPluginGetVersion>(pluginLib, "PluginGetVersion");
 
-            NativeLibrary.Free(pluginLib);
-            throw new InvalidOperationException(
-                $"Plugin type {type} already has a plugin registered ({oldName})");
+                err = oldLibGetVersion(out _, out _, out _, out var oldNameBytes, out _);
+                ThrowForError(err);
+
+                // Manually strlen() oldNameBytes, then convert to string
+                int oldNameLen = 0;
+                while (oldNameBytes[oldNameLen] != 0) oldNameLen++;
+                string oldName = Encoding.UTF8.GetString(oldNameBytes, oldNameLen);
+
+                throw new InvalidOperationException(
+                    $"Plugin type {type} already has a plugin registered ({oldName})");
+            }
+            // Start up the plugin and attach it
+            var startup = NativeLibHelper.GetFunction<DPluginStartup>(pluginLib, "PluginStartup");
+            err = startup(_libHandle, (IntPtr) (int) type, _debugCallback);
+            ThrowForError(err);
+            didStartup = true;
+
+            err = _fnCoreAttachPlugin(type, pluginLib);
+            ThrowForError(err);
         }
-
-
-        var startup = NativeLibHelper.GetFunction<DPluginStartup>(pluginLib, "PluginStartup");
-        err = startup(_libHandle, (IntPtr) (int) type, _debugCallback);
-        ThrowForError(err);
-
-        err = _fnCoreAttachPlugin(type, pluginLib);
-        ThrowForError(err);
+        catch
+        {
+            if (didStartup)
+                NativeLibHelper.GetFunction<DPluginShutdown>(pluginLib, "PluginShutdown")();
+            NativeLibrary.Free(pluginLib);
+            throw;
+        }
     }
 
     /// <summary>

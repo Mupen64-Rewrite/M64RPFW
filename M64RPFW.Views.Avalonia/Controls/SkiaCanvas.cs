@@ -16,7 +16,7 @@ public class SkiaRenderEventArgs
     public SKCanvas Canvas { get; init; }
 }
 
-public class SkiaCanvas : UserControl
+public class SkiaCanvas : Control
 {
     private class SkiaCallbackRenderOperation : ICustomDrawOperation
     {

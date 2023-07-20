@@ -23,6 +23,14 @@ public class RuntimeDllImportAttribute : Attribute
 
 public static class NativeLibHelper
 {
+    /// <summary>
+    /// Tries to get a function from a library.
+    /// </summary>
+    /// <param name="lib">The library</param>
+    /// <param name="name">The name of the function</param>
+    /// <typeparam name="T">A delegate type to call the function</typeparam>
+    /// <exception cref="EntryPointNotFoundException">If the function can't be found.</exception>
+    /// <returns></returns>
     public static T? GetFunction<T>(IntPtr lib, string name)
     {
         IntPtr res = NativeLibrary.GetExport(lib, name);
