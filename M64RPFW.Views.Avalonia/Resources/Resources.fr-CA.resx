@@ -55,10 +55,10 @@
         <value>Langue</value>
     </data>
     <data name="CurrentSection" xml:space="preserve">
-        <value>Partie actuelle</value>
+        <value>Partie courant</value>
     </data>
     <data name="CurrentSlot" xml:space="preserve">
-        <value>Position actuelle</value>
+        <value>Statut courant</value>
     </data>
     <data name="Description" xml:space="preserve">
         <value>Description</value>
