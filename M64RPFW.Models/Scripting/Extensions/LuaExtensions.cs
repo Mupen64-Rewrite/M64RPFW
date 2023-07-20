@@ -25,4 +25,9 @@ public static class LuaExtensions
 
         return value;
     }
+
+    public static LuaTable NewUnnamedTable(this Lua lua)
+    {
+        return (LuaTable) lua.DoString("return {}")[0];
+    }
 }
