@@ -28,7 +28,9 @@ public static partial class Mupen64Plus
 
         ResolveFrontendFunctions();
         ResolveConfigFunctions();
-        ResolveVCRFunctions();
+        ResolveVcrFunctions();
+        ResolveEncoderFunctions();
+        ResolveRdramFunctions();
 
         _debugCallback = (context, level, message) =>
         {
