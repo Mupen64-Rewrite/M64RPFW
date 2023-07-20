@@ -28,7 +28,7 @@
         <value>Appliquer</value>
     </data>
     <data name="AdvancedSettings" xml:space="preserve">
-        <value>Réglages avancés...</value>
+        <value>Réglages avancés</value>
     </data>
     <data name="Browse" xml:space="preserve">
         <value>Chercher...</value>
@@ -182,5 +182,8 @@
     </data>
     <data name="AppName" xml:space="preserve">
         <value>M64RPFW</value>
+    </data>
+    <data name="Error" xml:space="preserve">
+        <value>Erreur</value>
     </data>
 </root>

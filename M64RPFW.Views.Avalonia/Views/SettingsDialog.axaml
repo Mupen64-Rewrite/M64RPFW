@@ -11,7 +11,7 @@
         x:Class="M64RPFW.Views.Avalonia.Views.SettingsDialog"
         x:CompileBindings="True"
         x:DataType="viewModels:SettingsViewModel"
-        Title="Settings" Width="500" Height="500">
+        Title="{ext:Localize Settings}" Width="500" Height="500">
     <Window.Resources>
         <x:Double x:Key="IconSize">28</x:Double>
     </Window.Resources>

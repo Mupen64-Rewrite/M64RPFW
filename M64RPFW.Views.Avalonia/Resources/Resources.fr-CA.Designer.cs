@@ -368,5 +368,11 @@ namespace M64RPFW.Views.Avalonia.Resources {
                 return ResourceManager.GetString("AppName", resourceCulture);
             }
         }
+        
+        internal static string Error {
+            get {
+                return ResourceManager.GetString("Error", resourceCulture);
+            }
+        }
     }
 }

@@ -152,7 +152,7 @@
         <value>Video Width</value>
     </data>
     <data name="AdvancedSettings" xml:space="preserve">
-        <value>Advanced Settings...</value>
+        <value>Advanced Settings</value>
     </data>
     <data name="ConfigKey" xml:space="preserve">
         <value>Key</value>
@@ -187,5 +187,8 @@
     </data>
     <data name="Apply" xml:space="preserve">
         <value>Apply</value>
+    </data>
+    <data name="Error" xml:space="preserve">
+        <value>Error</value>
     </data>
 </root>
