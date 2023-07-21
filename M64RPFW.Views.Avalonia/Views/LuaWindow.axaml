@@ -29,8 +29,8 @@
         <Button Grid.Row="1" Grid.Column="1" Content="{markup:Localize Stop}" Command="{Binding StopCommand}" />
         <Button Grid.Row="1" Grid.Column="2" Content="{markup:Localize Start}" Command="{Binding RunCommand}" />
 
-		<ScrollViewer Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" x:Name="LogScrollViewer">
-            <TextBox IsReadOnly="True" x:Name="LogTextBox" />
+		<ScrollViewer Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Name="LogScrollViewer">
+            <TextBox IsReadOnly="True" Name="LogTextBox" />
 		</ScrollViewer>
     </Grid>
 </Window>
