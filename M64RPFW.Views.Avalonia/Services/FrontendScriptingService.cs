@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Avalonia;
-using Avalonia.Input;
 using M64RPFW.Services;
 using M64RPFW.ViewModels;
 using M64RPFW.Views.Avalonia.Helpers;
