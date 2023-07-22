@@ -1,7 +1,11 @@
+using System.Runtime.InteropServices;
+using System.Text;
 using M64RPFW.Models.Scripting.Extensions;
 using M64RPFW.Services.Abstractions;
 using NLua;
 using SkiaSharp;
+using SkiaSharp.HarfBuzz;
+using Topten.RichTextKit;
 using SkiaExtensions = M64RPFW.Models.Scripting.Extensions.SkiaExtensions;
 
 // ReSharper disable UnusedMember.Local
@@ -88,28 +92,89 @@ public partial class LuaEnvironment
         int horizontalAlignment, int verticalAlignment, int options)
     {
         // TODO: implement
+        
+        if (_skCanvas == null)
+            return;
+        
+        // RichTextKit handles most layout shenanigans
+        var block = new TextBlock
+        {
+            MaxWidth = right - x,
+            MaxHeight = bottom - y,
+            Alignment = horizontalAlignment switch
+            {
+                0 => TextAlignment.Left,
+                1 => TextAlignment.Right,
+                2 => TextAlignment.Center,
+                _ => throw new ArgumentException("Invalid horizontal alignment")
+            }
+        };
+        block.AddText(text, new Style
+        {
+            FontFamily = fontName,
+            FontSize = fontSize,
+            FontWeight = fontWeight,
+            FontItalic = fontStyle switch
+            {
+                0 => false,
+                1 => true,
+                2 => true, // oblique != italic sometimes, but oh well
+                _ => throw new ArgumentException("Invalid font italic")
+            },
+            TextColor = SkiaExtensions.FromFloats(red, green, blue, alpha),
+        });
+        
+        // Vertical alignment
+        float realY = verticalAlignment switch
+        {
+            // Top-aligned
+            0 => y,
+            // Bottom-aligned
+            1 => bottom - block.MeasuredHeight,
+            // Center-aligned
+            2 => (y + bottom - block.MeasuredHeight) / 2,
+            // Unknown
+            _ => throw new ArgumentException("Invalid vertical alignment")
+        };
+        
+        block.Paint(_skCanvas, new SKPoint(x, realY), TextPaintOptions.Default);
     }
 
     [LuaFunction("wgui.get_text_size")]
     private LuaTable GetTextSize(string text, string fontName, float fontSize, float maximumWidth, float maximumHeight)
     {
         // TODO: implement
+        var block = new TextBlock
+        {
+            MaxWidth = maximumWidth,
+            MaxHeight = maximumHeight
+        };
+        block.AddText(text, new Style
+        {
+            FontFamily = fontName,
+            FontSize = fontSize
+        });
+        
         var table = _lua.NewUnnamedTable();
-        table["width"] = 0;
-        table["height"] = 0;
+        table["width"] = block.MeasuredWidth;
+        table["height"] = block.MeasuredHeight;
         return table;
     }
 
     [LuaFunction("wgui.push_clip")]
     private void PushClip(float x, float y, float right, float bottom)
     {
-        // TODO: implement
+        if (_skCanvas == null)
+            return;
+        
+        _skCanvas.Save();
+        _skCanvas.ClipRect(SKRect.Create(x, y, right - x, bottom - y));
     }
 
     [LuaFunction("wgui.pop_clip")]
     private void PopClip()
     {
-        // TODO: implement
+        _skCanvas?.Restore();
     }
 
     [LuaFunction("wgui.fill_rounded_rectangle")]
