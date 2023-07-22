@@ -34,56 +34,61 @@ public partial class LuaEnvironment
     private void FillRectangle(float x, float y, float right, float bottom, float red, float green, float blue,
         float alpha)
     {
-        _skCanvas?.DrawRect(x, y, right - x, bottom - y, new SKPaint
+        using var paint = new SKPaint
         {
-            Color = SkiaExtensions.FromFloats(red, green, blue, alpha)
-        });
+            Color = SkiaExtensions.ColorFromFloats(red, green, blue, alpha)
+        };
+        _skCanvas?.DrawRect(x, y, right - x, bottom - y, paint);
     }
     
     [LuaFunction("wgui.draw_rectangle")]
     private void DrawRectangle(float x, float y, float right, float bottom, float red, float green, float blue,
         float alpha, float thickness)
     {
-        _skCanvas?.DrawRect(x, y, right - x, bottom - y, new SKPaint
+        using var paint = new SKPaint
         {
-            Color = SkiaExtensions.FromFloats(red, green, blue, alpha),
+            Color = SkiaExtensions.ColorFromFloats(red, green, blue, alpha),
             Style = SKPaintStyle.Stroke,
             StrokeWidth = thickness
-        });
+        };
+        _skCanvas?.DrawRect(x, y, right - x, bottom - y, paint);
     }
 
     [LuaFunction("wgui.fill_ellipse")]
     private void FillEllipse(float x, float y, float radiusX, float radiusY, float red, float green, float blue,
         float alpha)
     {
-        _skCanvas?.DrawOval(x, y, radiusX, radiusY, new SKPaint
+        using var skPaint = new SKPaint
         {
-            Color = SkiaExtensions.FromFloats(red, green, blue, alpha)
-        });
+            Color = SkiaExtensions.ColorFromFloats(red, green, blue, alpha)
+        };
+        _skCanvas?.DrawOval(x, y, radiusX, radiusY, skPaint);
     }
     
     [LuaFunction("wgui.draw_ellipse")]
     private void DrawEllipse(float x, float y, float radiusX, float radiusY, float red, float green, float blue,
         float alpha, float thickness)
     {
-        _skCanvas?.DrawOval(x, y, radiusX, radiusY, new SKPaint
+        using var paint = new SKPaint
         {
-            Color = SkiaExtensions.FromFloats(red, green, blue, alpha),
+            Color = SkiaExtensions.ColorFromFloats(red, green, blue, alpha),
             Style = SKPaintStyle.Stroke,
             StrokeWidth = thickness
-        });
+        };
+        _skCanvas?.DrawOval(x, y, radiusX, radiusY, paint);
     }
 
     [LuaFunction("wgui.draw_line")]
     private void DrawLine(float x0, float y0, float x1, float y1, float red, float green, float blue, float alpha,
         float thickness)
     {
-        _skCanvas?.DrawLine(x0, y0, x1, y1, new SKPaint
+        using var paint = new SKPaint
         {
-            Color = SkiaExtensions.FromFloats(red, green, blue, alpha),
+            Color = SkiaExtensions.ColorFromFloats(red, green, blue, alpha),
             Style = SKPaintStyle.Stroke,
             StrokeWidth = thickness
-        });
+        };
+        _skCanvas?.DrawLine(x0, y0, x1, y1, paint);
     }
 
     [LuaFunction("wgui.draw_text")]
@@ -121,7 +126,7 @@ public partial class LuaEnvironment
                 2 => true, // oblique != italic sometimes, but oh well
                 _ => throw new ArgumentException("Invalid font italic")
             },
-            TextColor = SkiaExtensions.FromFloats(red, green, blue, alpha),
+            TextColor = SkiaExtensions.ColorFromFloats(red, green, blue, alpha),
         });
         
         // Vertical alignment
@@ -182,10 +187,11 @@ public partial class LuaEnvironment
         float red, float green, float blue,
         float alpha)
     {
-        _skCanvas?.DrawRoundRect(x, y, right - x, bottom - y, radiusX, radiusY, new SKPaint
+        using var paint = new SKPaint
         {
-            Color = SkiaExtensions.FromFloats(red, green, blue, alpha)
-        });
+            Color = SkiaExtensions.ColorFromFloats(red, green, blue, alpha)
+        };
+        _skCanvas?.DrawRoundRect(x, y, right - x, bottom - y, radiusX, radiusY, paint);
     }
 
     [LuaFunction("wgui.draw_rounded_rectangle")]
@@ -193,24 +199,35 @@ public partial class LuaEnvironment
         float red, float green, float blue,
         float alpha, float thickness)
     {
-        _skCanvas?.DrawRoundRect(x, y, right - x, bottom - y, radiusX, radiusY, new SKPaint
+        using var paint = new SKPaint
         {
-            Color = SkiaExtensions.FromFloats(red, green, blue, alpha),
+            Color = SkiaExtensions.ColorFromFloats(red, green, blue, alpha),
             Style = SKPaintStyle.Stroke,
             StrokeWidth = thickness
-        });
+        };
+        _skCanvas?.DrawRoundRect(x, y, right - x, bottom - y, radiusX, radiusY, paint);
     }
+
+    private Dictionary<string, SKImage> _imageDict;
 
     [LuaFunction("wgui.load_image")]
     private void LoadImage(string path, string identifier)
     {
         // TODO: implement
+        if (_imageDict.ContainsKey(identifier))
+            throw new InvalidOperationException($"{identifier} already exists");
+        var image = SKImage.FromEncodedData(path);
+        _imageDict.Add(identifier, image);
     }
 
     [LuaFunction("wgui.free_image")]
-    private void FreeImage()
+    private void FreeImage(string identifier)
     {
         // TODO: implement
+        if (!_imageDict.Remove(identifier, out var image))
+            return;
+        
+        image.Dispose();
     }
 
     [LuaFunction("wgui.draw_image")]
@@ -219,6 +236,26 @@ public partial class LuaEnvironment
         string identifier, float opacity, int interpolation)
     {
         // TODO: implement
+        if (!_imageDict.TryGetValue(identifier, out var image))
+            return;
+
+        // This complicated setup simply multiplies the alpha component by `opacity`.
+        // ==========================================================================
+        using var solidPaint = new SKPaint
+        {
+            Color = SkiaExtensions.ColorFromFloats(1.0f, 1.0f, 1.0f, opacity)
+        };
+        using var solidFilter = SKImageFilter.CreatePaint(solidPaint);
+        using var filter = SKImageFilter.CreateBlendMode(SKBlendMode.Modulate, solidFilter);
+        using var paint = new SKPaint
+        {
+            FilterQuality = interpolation == 1 ? SKFilterQuality.Medium : SKFilterQuality.None,
+            ImageFilter = filter
+        };
+        _skCanvas?.DrawImage(image, 
+            source: SKRect.Create(sourceX, sourceY, sourceRight - sourceX, sourceBottom - sourceY), 
+            dest: SKRect.Create(destinationX, destinationY, destinationRight - destinationX, destinationBottom - destinationY),
+            paint);
     }
 
     [LuaFunction("wgui.get_image_info")]
