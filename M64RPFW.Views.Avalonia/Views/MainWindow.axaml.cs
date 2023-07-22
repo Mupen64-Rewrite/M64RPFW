@@ -58,11 +58,17 @@ public partial class MainWindow : Window
 
                     break;
                 case nameof(SettingsViewModel.Theme):
-
-                    Application.Current!.RequestedThemeVariant =
-                        SettingsViewModel.Instance.Theme.Equals("Dark", StringComparison.InvariantCultureIgnoreCase)
-                            ? ThemeVariant.Dark
-                            : ThemeVariant.Light;
+                    
+                    // Application.Current!.RequestedThemeVariant =
+                    //     SettingsViewModel.Instance.Theme.Equals("Dark", StringComparison.InvariantCultureIgnoreCase)
+                    //         ? ThemeVariant.Dark
+                    //         : ThemeVariant.Light;
+                    Application.Current!.RequestedThemeVariant = SettingsViewModel.Instance.Theme switch
+                    {
+                        "Dark" => ThemeVariant.Dark,
+                        "Light" => ThemeVariant.Light,
+                        _ => ThemeVariant.Default
+                    };
 
                     break;
             }
