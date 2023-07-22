@@ -237,7 +237,7 @@ public partial class LuaEnvironment
     {
         // TODO: implement
         if (!_imageDict.TryGetValue(identifier, out var image))
-            return;
+            throw new ArgumentException("Identifier does not exist");
 
         // This complicated setup simply multiplies the alpha component by `opacity`.
         // ==========================================================================
@@ -259,12 +259,15 @@ public partial class LuaEnvironment
     }
 
     [LuaFunction("wgui.get_image_info")]
-    private LuaTable GetImageInfo()
+    private LuaTable GetImageInfo(string identifier)
     {
         // TODO: implement
+        if (!_imageDict.TryGetValue(identifier, out var image))
+            throw new ArgumentException("Identifier does not exist");
+
         var table = _lua.NewUnnamedTable();
-        table["width"] = 0;
-        table["height"] = 0;
+        table["width"] = image.Width;
+        table["height"] = image.Height;
         return table;
     }
     

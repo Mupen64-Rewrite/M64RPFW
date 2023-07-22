@@ -116,7 +116,8 @@ public partial class MainWindow : Window
 
     private void MenuItem_OnClick(object? sender, RoutedEventArgs e)
     {
-        new LuaWindow().Show();
+        var win = new LuaWindow();
+        win.Show(this);
     }
 
     private void Control_OnLoaded(object? sender, RoutedEventArgs e)
