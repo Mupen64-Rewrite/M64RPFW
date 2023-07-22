@@ -15,7 +15,7 @@ internal static class SkiaExtensions
     /// <param name="b">The blue channel</param>
     /// <param name="a">The alpha channel</param>
     /// <returns>An <see cref="SKColor"/> from float channels</returns>
-    public static SKColor FromFloats(float r, float g, float b, float a)
+    public static SKColor ColorFromFloats(float r, float g, float b, float a)
     {
         return new SKColor((byte)(r * byte.MaxValue), (byte)(g * byte.MaxValue), (byte)(b * byte.MaxValue), (byte)(a * byte.MaxValue));
     }
