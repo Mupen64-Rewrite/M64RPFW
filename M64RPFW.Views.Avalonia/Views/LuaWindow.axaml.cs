@@ -15,12 +15,10 @@ namespace M64RPFW.Views.Avalonia.Views;
 
 public partial class LuaWindow : Window
 {
-    // we need to correlate a lua window reference to a vm and frontend scripting service 
-    public static Dictionary<LuaWindow, (LuaViewModel ViewModel, FrontendScriptingService FrontendScriptingService)>
-        LuaViewModels = new();
 
     public LuaViewModel ViewModel => (LuaViewModel)DataContext!;
     private TextBox LoggingTextBox => this.FindControl<TextBox>("LogTextBox")!;
+    public FrontendScriptingService ScriptingService { get; }
 
     public LuaWindow()
     {
@@ -29,18 +27,13 @@ public partial class LuaWindow : Window
         this.AttachDevTools();
 #endif
         // Attach viewmodel (this crashes for some reason)
-        var frontendScriptingService = new FrontendScriptingService(this);
-        LuaViewModels[this] = (new LuaViewModel(frontendScriptingService),
-            frontendScriptingService);
-
-        DataContext = LuaViewModels[this].ViewModel;
-        Debug.Print(string.Join(", ", LuaViewModels.Select(pair => $"{pair.Key} => {pair.Value}")));
+        ScriptingService = new FrontendScriptingService(this);
+        DataContext = new LuaViewModel(ScriptingService);
     }
 
     private void Window_OnClosing(object? sender, WindowClosingEventArgs e)
     {
         ViewModel.StopCommand.ExecuteIfPossible();
-        LuaViewModels.Remove(this);
     }
 
     public void Print(string value) 
@@ -51,7 +44,7 @@ public partial class LuaWindow : Window
         });
     }
 
-    private void Button_OnClick(object? sender, RoutedEventArgs e)
+    private void OnClearClicked(object? sender, RoutedEventArgs e)
     {
         LogTextBox.Text = "";
     }

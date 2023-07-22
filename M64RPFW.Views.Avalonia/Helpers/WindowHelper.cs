@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -18,6 +19,11 @@ internal static class WindowHelper
             .FirstOrDefault(
                 x => x?.IsActive ?? false,
                 (Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)!.MainWindow!);
+    }
+
+    internal static IEnumerable<Window> IterateWindows()
+    {
+        return ((IClassicDesktopStyleApplicationLifetime) Application.Current!.ApplicationLifetime!).Windows;
     }
 
     internal static MainWindow MainWindow =>

@@ -13,7 +13,7 @@ namespace M64RPFW.Views.Avalonia.Services;
 public class FrontendScriptingService : IFrontendScriptingService
 {
     private readonly LuaWindow _luaWindow;
-    private LuaViewModel LuaViewModel => LuaWindow.LuaViewModels[_luaWindow].ViewModel;
+    private LuaViewModel LuaViewModel => _luaWindow.ViewModel;
 
     public FrontendScriptingService(LuaWindow luaWindow)
     {
