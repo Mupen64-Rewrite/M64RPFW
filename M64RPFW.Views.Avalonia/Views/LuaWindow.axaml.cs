@@ -28,12 +28,7 @@ public partial class LuaWindow : Window
 #if DEBUG
         this.AttachDevTools();
 #endif
-    }
-
-    private void InitializeComponent()
-    {
-        AvaloniaXamlLoader.Load(this);
-
+        // Attach viewmodel (this crashes for some reason)
         var frontendScriptingService = new FrontendScriptingService(this);
         LuaViewModels[this] = (new LuaViewModel(frontendScriptingService),
             frontendScriptingService);
@@ -51,13 +46,13 @@ public partial class LuaWindow : Window
     public void Print(string value) 
     {
         Dispatcher.UIThread.Post(() => {
-            LoggingTextBox.Text += $"{value}\r\n";
-            this.FindControl<ScrollViewer>("LogScrollViewer")!.ScrollToEnd();
+            LogTextBox.Text += $"{value}\r\n";
+            LogScrollViewer.ScrollToEnd();
         });
     }
 
     private void Button_OnClick(object? sender, RoutedEventArgs e)
     {
-        LoggingTextBox.Text = "";
+        LogTextBox.Text = "";
     }
 }

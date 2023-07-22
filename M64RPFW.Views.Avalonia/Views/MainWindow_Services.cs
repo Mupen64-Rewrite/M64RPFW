@@ -15,7 +15,6 @@ using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
 using M64RPFW.Views.Avalonia.Controls;
 using M64RPFW.Views.Avalonia.Controls.OpenGL;
-using MsBox.Avalonia.Dto;
 using Silk.NET.OpenGL;
 using SkiaSharp;
 using static M64RPFW.Models.Types.Mupen64PlusTypes;
