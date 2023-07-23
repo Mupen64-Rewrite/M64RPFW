@@ -241,16 +241,10 @@ public partial class LuaEnvironment
 
         // This complicated setup simply multiplies the alpha component by `opacity`.
         // ==========================================================================
-        using var solidPaint = new SKPaint
-        {
-            Color = SkiaExtensions.ColorFromFloats(1.0f, 1.0f, 1.0f, opacity)
-        };
-        using var solidFilter = SKImageFilter.CreatePaint(solidPaint);
-        using var filter = SKImageFilter.CreateBlendMode(SKBlendMode.Modulate, solidFilter);
         using var paint = new SKPaint
         {
             FilterQuality = interpolation == 1 ? SKFilterQuality.Medium : SKFilterQuality.None,
-            ImageFilter = filter
+            MaskFilter = SKMaskFilter.CreateClip((byte) (opacity * byte.MaxValue), (byte) (opacity * byte.MaxValue))
         };
         _skCanvas?.DrawImage(image, 
             source: SKRect.Create(sourceX, sourceY, sourceRight - sourceX, sourceBottom - sourceY), 
