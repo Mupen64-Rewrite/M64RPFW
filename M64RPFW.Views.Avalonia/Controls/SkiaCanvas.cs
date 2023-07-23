@@ -1,8 +1,10 @@
 ﻿using System;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.Platform;
+using Avalonia.Rendering.Composition;
 using Avalonia.Rendering.SceneGraph;
 using Avalonia.Skia;
 using Avalonia.Threading;
@@ -53,17 +55,26 @@ public class SkiaCanvas : Control
     public event Action<SkiaRenderEventArgs>? RenderSkia;
     private readonly SkiaCallbackRenderOperation _skiaCallbackRenderOperation;
 
+    private bool _isOrange = true;
+
     public SkiaCanvas()
     {
         _skiaCallbackRenderOperation = new SkiaCallbackRenderOperation
         {
             RenderCall = canvas =>
             {
-                RenderSkia?.Invoke(new SkiaRenderEventArgs
+                if (RenderSkia != null)
                 {
-                    Sender = this,
-                    Canvas = canvas
-                });
+                    RenderSkia.Invoke(new SkiaRenderEventArgs
+                    {
+                        Sender = this,
+                        Canvas = canvas
+                    });
+                }
+                else
+                {
+                    canvas.Clear(SKColors.Transparent);
+                }
             }
         };
         ClipToBounds = true;
@@ -79,6 +90,6 @@ public class SkiaCanvas : Control
         // Jump into SkiaCallbackRenderOperation.Render
         context.Custom(_skiaCallbackRenderOperation);
 
-        Dispatcher.UIThread.InvokeAsync(InvalidateVisual, DispatcherPriority.Background);
+        TopLevel.GetTopLevel(this)?.RequestAnimationFrame(_ => InvalidateVisual());
     }
 }

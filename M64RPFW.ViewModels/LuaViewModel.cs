@@ -18,6 +18,8 @@ public partial class LuaViewModel : ObservableObject
 
     public bool IsRunning { get; private set; }
 
+    public bool IsNotRunning => !IsRunning;
+
     public FilePickerOption[] PickerOptions => new FilePickerOption[]
     {
         new("Lua script (.lua)", new[] { "*.lua" })
@@ -34,7 +36,7 @@ public partial class LuaViewModel : ObservableObject
         _luaEnvironment?.Dispose();
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(IsNotRunning))]
     private void Run()
     {
         if (IsRunning) StopCommand.Execute(null);
