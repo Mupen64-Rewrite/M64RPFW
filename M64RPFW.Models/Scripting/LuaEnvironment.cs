@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 using M64RPFW.Models.Emulation;
+using M64RPFW.Models.Scripting.Extensions;
 using M64RPFW.Services;
+using M64RPFW.Services.Abstractions;
 using NLua;
 using NLua.Exceptions;
 using SkiaSharp;
@@ -9,7 +11,7 @@ using SkiaSharp;
 namespace M64RPFW.Models.Scripting;
 
 /// <summary>
-/// 
+/// Manages the lifetime of a Lua runtime.
 /// </summary>
 public partial class LuaEnvironment : IDisposable
 {
@@ -25,11 +27,15 @@ public partial class LuaEnvironment : IDisposable
     }
     
     private static int _frameIndex;
-    private static List<LuaEnvironment> ActiveLuaEnvironments { get; } = new();
+    private static readonly List<LuaEnvironment> ActiveLuaEnvironments = new();
 
     private readonly Lua _lua;
     private readonly IFrontendScriptingService _frontendScriptingService;
     private readonly string _path;
+    
+    // Synchronization stuff
+    private ReaderWriterLockSlim _luaLock;
+    private bool _isActive;
 
     public event Action<bool>? StateChanged;
 
@@ -43,29 +49,55 @@ public partial class LuaEnvironment : IDisposable
         Debug.Print("Hooking Lua functionality to core...");
         Mupen64Plus.FrameComplete += (_, i) =>
         {
-            ForEachEnvironment(x => x._viCallback?.Call());
+            ForEachEnvironment(env =>
+            {
+                if (!env._isActive)
+                    return;
+                using (env._luaLock.ReadLock())
+                {
+                    env._viCallback?.Call();
+                }
+                if (!env._isActive)
+                    env.TryDisposeLock();
+            });
             _frameIndex = i;
         };
     }
 
     private static void ForEachEnvironment(Action<LuaEnvironment> action)
     {
-        ActiveLuaEnvironments.ForEach(action);
+        try
+        {
+            ActiveLuaEnvironments.ForEach(action);
+        }
+        catch (InvalidOperationException)
+        {
+            // ignored, this might be a bit of a kludge
+        }
     }
 
     public LuaEnvironment(IFrontendScriptingService frontendScriptingService,
         string path)
     {
-        const BindingFlags environmentBindingFlags = BindingFlags.Instance | BindingFlags.NonPublic;
-
         _frontendScriptingService = frontendScriptingService;
         _path = path;
-        _frontendScriptingService.OnUpdateScreen += AtUpdateScreen;
+        _frontendScriptingService.WindowAccessService.OnSkiaRender += AtUpdateScreen;
 
-        
-        
-        _lua = new Lua();
-        
+        _luaLock = new ReaderWriterLockSlim();
+        _isActive = false;
+
+        using (_luaLock.WriteLock())
+        {
+            _lua = new Lua();
+            RegisterTaggedFunctions();
+        }
+    }
+    
+    /// <summary>
+    /// Registers all functions tagged with <see cref="LuaFunctionAttribute"/>.
+    /// </summary>
+    private void RegisterTaggedFunctions()
+    {
         // Register global functions and save the ones that belong in tables.
         // ====================================================================
         var tables = new SortedDictionary<string, List<(string src, MethodInfo name)>>();
@@ -102,7 +134,7 @@ public partial class LuaEnvironment : IDisposable
     }
 
     /// <summary>
-    ///     Runs the lua script from the current path
+    ///     Runs the Lua script from the current path
     /// </summary>
     /// <returns>
     ///     Whether execution succeeded initially
@@ -110,7 +142,10 @@ public partial class LuaEnvironment : IDisposable
     /// </returns>
     public bool Run()
     {
-        ActiveLuaEnvironments.Add(this);
+        lock (ActiveLuaEnvironments)
+        {
+            ActiveLuaEnvironments.Add(this);
+        }
         StateChanged?.Invoke(true);
 
         try
@@ -119,12 +154,16 @@ public partial class LuaEnvironment : IDisposable
             // instead, execution sleeps and is allowed to jump into callbacks arbitrarily on the lua thread 
             // be careful:
             // NOTE: some calls from lua side might arrive on another thread 
-            _lua.DoFile(_path);
+            using (_luaLock.ReadLock())
+            {
+                _isActive = true;
+                _lua.DoFile(_path);
+            }
         }
         catch (LuaScriptException e)
         {
-            _frontendScriptingService.Print($"{e.Source} {e.Message}");
             AtStop();
+            _frontendScriptingService.Print($"{e.Source} {e.Message}");
             return false;
         }
 
@@ -133,24 +172,64 @@ public partial class LuaEnvironment : IDisposable
 
     public void Dispose()
     {
-        _frontendScriptingService.OnUpdateScreen -= AtUpdateScreen;
-        ForEachEnvironment(x => x._stopCallback?.Call());
-        AtStop();
-        _lua.Dispose();
+        if (!_isActive)
+            return;
+        using (_luaLock.WriteLock())
+        {
+            AtStop();
+            _frontendScriptingService.WindowAccessService.OnSkiaRender -= AtUpdateScreen;
+            _stopCallback?.Call();
+
+            _stopCallback = null;
+            _viCallback = null;
+            _updateScreenCallback = null;
+            
+            _lua.Dispose();
+        }
+        TryDisposeLock();
+    }
+
+    private void TryDisposeLock()
+    {
+        try
+        {
+            _luaLock.Dispose();
+        }
+        catch (SynchronizationLockException)
+        {
+            // ignored
+        }
     }
 
     private void AtStop()
     {
-        ActiveLuaEnvironments.Remove(this);
+        _isActive = false;
+        lock (ActiveLuaEnvironments)
+        {
+            ActiveLuaEnvironments.Remove(this);
+        }
         StateChanged?.Invoke(false);
     }
 
-    private void AtUpdateScreen(SKCanvas canvas)
+    private void AtUpdateScreen(object? sender, SkiaRenderEventArgs args)
     {
         // lua side can only issue drawcalls during updatescreen, anytime else it should be ignored (same as old mupen)
-        _skCanvas = canvas;
-        _updateScreenCallback?.Call();
-        _skCanvas = null;
+        if (!_isActive)
+            return;
+        using (_luaLock.ReadLock())
+        {
+            try
+            {
+                _skCanvas = args.Canvas;
+                _updateScreenCallback?.Call();
+            }
+            finally
+            {
+                _skCanvas = null;
+            }
+        }
+        if (!_isActive)
+            TryDisposeLock();
     }
 
     #region Function Registry

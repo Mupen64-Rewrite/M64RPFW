@@ -22,10 +22,8 @@ using static M64RPFW.Models.Types.Mupen64PlusTypes;
 
 namespace M64RPFW.Views.Avalonia.Views;
 
-public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpenGLContextService
+public partial class MainWindow : IWindowAccessService, IViewDialogService, IOpenGLContextService
 {
-    public Point PointerPosition { get; private set; } = new();
-    public bool IsPrimaryPointerButtonHeld { get; private set; } = false;
 
     #region IWindowSizingService
 
@@ -261,31 +259,37 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, IOpe
 
     #endregion
 
-    private void SkiaCanvas_OnRenderSkia(SkiaRenderEventArgs e)
-    {
-        // equivalent of atupdatescreen in old mupen
-        // NOTE: we are on render thread
+    public WindowPoint PointerPosition { get; private set; } = new(0, 0);
+    public MouseButtonMask PointerButtons { get; private set; } = 0;
+    public event EventHandler<SkiaRenderEventArgs>? OnSkiaRender;
 
-        foreach (var window in OwnedWindows)
-        {
-            if (window is not LuaWindow lua)
-                continue;
-            lua.ScriptingService.InvokeOnUpdateScreen(e.Canvas);
-        }
+    private void SkiaOnRender(object? s, SkiaRenderEventArgs e)
+    {
+        var canvas = e.Canvas;
+        OnSkiaRender?.Invoke(s, e);
     }
 
-    private void InputElement_OnPointerMoved(object? sender, PointerEventArgs e)
+    private void SkiaOnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        PointerPosition = e.GetPosition(this.Find<SkiaCanvas>("SkiaCanvas"));
+        SkiaOnPointerUpdate(sender, e);
+    }
+    private void SkiaOnPointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        SkiaOnPointerUpdate(sender, e);
     }
 
-    private void InputElement_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    private void SkiaOnPointerUpdate(object? sender, PointerEventArgs e)
     {
-        IsPrimaryPointerButtonHeld = true;
-    }
+        var pointerPoint = e.GetCurrentPoint(SkiaCanvas);
+        var pointerPos = pointerPoint.Position;
+        var pointerProps = pointerPoint.Properties;
 
-    private void InputElement_OnPointerReleased(object? sender, PointerReleasedEventArgs e)
-    {
-        IsPrimaryPointerButtonHeld = false;
+        PointerPosition = new WindowPoint(pointerPos.X, pointerPos.Y);
+        PointerButtons =
+            (pointerProps.IsLeftButtonPressed ? MouseButtonMask.Primary : 0) |
+            (pointerProps.IsMiddleButtonPressed ? MouseButtonMask.Middle : 0) |
+            (pointerProps.IsRightButtonPressed ? MouseButtonMask.Secondary : 0);
+        
+        
     }
 }

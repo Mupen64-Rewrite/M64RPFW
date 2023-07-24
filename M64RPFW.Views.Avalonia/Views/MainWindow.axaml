@@ -19,10 +19,7 @@
                   KeyUp="Window_OnKeyUp"
                   Loaded="Control_OnLoaded"
                   x:CompileBindings="True"
-                  x:DataType="vm:EmulatorViewModel"
-                  PointerMoved="InputElement_OnPointerMoved"
-                  PointerPressed="InputElement_OnPointerPressed"
-                  PointerReleased="InputElement_OnPointerReleased">
+                  x:DataType="vm:EmulatorViewModel">
     <Window.Styles>
         <Style Selector="WrapPanel.menu-header Layoutable">
             <Setter Property="VerticalAlignment" Value="Stretch" />
@@ -185,8 +182,13 @@
                               RelativePanel.AlignTopWithPanel="True"
                               RelativePanel.AlignBottomWithPanel="True"
                               RelativePanel.AlignLeftWithPanel="True"
-                              RelativePanel.AlignRightWithPanel="True" 
-                              RenderSkia="SkiaCanvas_OnRenderSkia">
+                              RelativePanel.AlignRightWithPanel="True"
+                              PointerPressed="SkiaOnPointerPressed"
+                              PointerMoved="SkiaOnPointerUpdate"
+                              PointerReleased="SkiaOnPointerReleased"
+                              PointerEntered="SkiaOnPointerUpdate"
+                              PointerExited="SkiaOnPointerUpdate"
+                              RenderSkia="SkiaOnRender">
             </ctrls:SkiaCanvas>
         </RelativePanel>
     </DockPanel>

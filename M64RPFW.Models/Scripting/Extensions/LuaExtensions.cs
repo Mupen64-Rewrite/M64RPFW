@@ -30,4 +30,18 @@ public static class LuaExtensions
     {
         return (LuaTable) lua.DoString("return {}")[0];
     }
+
+    public static long GetLength(this Lua lua, LuaTable table)
+    {
+        var luaState = lua.State;
+
+        luaState.CheckStack(2, "Can't check table length");
+        
+        lua.Push(table);
+        luaState.PushLength(-1);
+        long result = luaState.ToInteger(-1);
+        
+        luaState.Pop(2);
+        return result;
+    }
 }
