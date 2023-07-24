@@ -262,17 +262,11 @@ public partial class MainWindow : IWindowAccessService, IViewDialogService, IOpe
     public WindowPoint PointerPosition { get; private set; } = new(0, 0);
     public MouseButtonMask PointerButtons { get; private set; } = 0;
     public event EventHandler<SkiaRenderEventArgs>? OnSkiaRender;
-    
-    private Stopwatch _sw = new();
 
     private void SkiaOnRender(object? s, SkiaRenderEventArgs e)
     {
         var canvas = e.Canvas;
-        Console.WriteLine("Render Start");
-        _sw.Restart();
         OnSkiaRender?.Invoke(s, e);
-        var us = _sw.ElapsedTicks / 10;
-        Console.WriteLine($"Render took {us} us");
     }
 
     private void SkiaOnPointerPressed(object? sender, PointerPressedEventArgs e)
