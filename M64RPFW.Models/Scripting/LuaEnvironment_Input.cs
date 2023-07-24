@@ -1,4 +1,5 @@
 using M64RPFW.Models.Scripting.Extensions;
+using M64RPFW.Services.Abstractions;
 using NLua;
 
 // ReSharper disable UnusedMember.Local
@@ -11,10 +12,11 @@ public partial class LuaEnvironment
     private LuaTable GetInput()
     {
         var table = _lua.NewUnnamedTable();
-        table["xmouse"] = (int)_frontendScriptingService.PointerPosition.X;
-        table["ymouse"] = (int)_frontendScriptingService.PointerPosition.Y;
+        var winService = _frontendScriptingService.WindowAccessService;
+        table["xmouse"] = (int)winService.PointerPosition.X;
+        table["ymouse"] = (int)winService.PointerPosition.Y;
 
-        if (_frontendScriptingService.IsPrimaryPointerButtonHeld)
+        if ((winService.PointerButtons & MouseButtonMask.Primary) != 0)
         {
             // otherwise, leave dont even make a table entry for it
             table["leftclick"] = true;

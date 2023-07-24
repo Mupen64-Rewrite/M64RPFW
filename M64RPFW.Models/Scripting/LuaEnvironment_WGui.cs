@@ -18,7 +18,7 @@ public partial class LuaEnvironment
     private LuaTable GetWindowSize()
     {
         var table = _lua.NewUnnamedTable();
-        var winSize = _frontendScriptingService.WindowSizingService.GetWindowSize();
+        var winSize = _frontendScriptingService.WindowAccessService.GetWindowSize();
         table["width"] = (int) winSize.Width;
         table["height"] = (int) winSize.Height;
         return table;
@@ -27,7 +27,7 @@ public partial class LuaEnvironment
     [LuaFunction("wgui.resize")]
     private void SetWindowSize(int width, int height)
     {
-        _frontendScriptingService.WindowSizingService.SizeToFit(new WindowSize(width, height), false);
+        _frontendScriptingService.WindowAccessService.SizeToFit(new WindowSize(width, height), false);
     }
     
     [LuaFunction("wgui.fill_rectangle")]
