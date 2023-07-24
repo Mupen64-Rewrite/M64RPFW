@@ -1,10 +1,8 @@
-using System.Runtime.InteropServices;
-using System.Text;
 using M64RPFW.Models.Scripting.Extensions;
 using M64RPFW.Services.Abstractions;
 using NLua;
 using SkiaSharp;
-using SkiaSharp.HarfBuzz;
+using System.Linq;
 using Topten.RichTextKit;
 using SkiaExtensions = M64RPFW.Models.Scripting.Extensions.SkiaExtensions;
 
@@ -18,7 +16,7 @@ public partial class LuaEnvironment
     private LuaTable GetWindowSize()
     {
         var table = _lua.NewUnnamedTable();
-        var winSize = _frontendScriptingService.WindowSizingService.GetWindowSize();
+        var winSize = _frontendScriptingService.WindowAccessService.GetWindowSize();
         table["width"] = (int) winSize.Width;
         table["height"] = (int) winSize.Height;
         return table;
@@ -27,9 +25,9 @@ public partial class LuaEnvironment
     [LuaFunction("wgui.resize")]
     private void SetWindowSize(int width, int height)
     {
-        _frontendScriptingService.WindowSizingService.SizeToFit(new WindowSize(width, height), false);
+        _frontendScriptingService.WindowAccessService.SizeToFit(new WindowSize(width, height), false);
     }
-    
+
     [LuaFunction("wgui.fill_rectangle")]
     private void FillRectangle(float x, float y, float right, float bottom, float red, float green, float blue,
         float alpha)
@@ -40,7 +38,7 @@ public partial class LuaEnvironment
         };
         _skCanvas?.DrawRect(x, y, right - x, bottom - y, paint);
     }
-    
+
     [LuaFunction("wgui.draw_rectangle")]
     private void DrawRectangle(float x, float y, float right, float bottom, float red, float green, float blue,
         float alpha, float thickness)
@@ -64,7 +62,7 @@ public partial class LuaEnvironment
         };
         _skCanvas?.DrawOval(x, y, radiusX, radiusY, skPaint);
     }
-    
+
     [LuaFunction("wgui.draw_ellipse")]
     private void DrawEllipse(float x, float y, float radiusX, float radiusY, float red, float green, float blue,
         float alpha, float thickness)
@@ -91,16 +89,24 @@ public partial class LuaEnvironment
         _skCanvas?.DrawLine(x0, y0, x1, y1, paint);
     }
 
+    private int _textAntialiasMode;
+
+    [LuaFunction("wgui.set_text_antialias_mode")]
+    private void SetTextAntialiasMode(int mode)
+    {
+        _textAntialiasMode = mode;
+    }
+
     [LuaFunction("wgui.draw_text")]
     private void DrawText(float x, float y, float right, float bottom, float red, float green, float blue,
         float alpha, string text, string fontName, float fontSize, int fontWeight, int fontStyle,
         int horizontalAlignment, int verticalAlignment, int options)
     {
         // TODO: implement
-        
+
         if (_skCanvas == null)
             return;
-        
+
         // RichTextKit handles most layout shenanigans
         var block = new TextBlock
         {
@@ -112,7 +118,7 @@ public partial class LuaEnvironment
                 1 => TextAlignment.Right,
                 2 => TextAlignment.Center,
                 _ => throw new ArgumentException("Invalid horizontal alignment")
-            }
+            },
         };
         block.AddText(text, new Style
         {
@@ -128,7 +134,7 @@ public partial class LuaEnvironment
             },
             TextColor = SkiaExtensions.ColorFromFloats(red, green, blue, alpha),
         });
-        
+
         // Vertical alignment
         float realY = verticalAlignment switch
         {
@@ -141,8 +147,18 @@ public partial class LuaEnvironment
             // Unknown
             _ => throw new ArgumentException("Invalid vertical alignment")
         };
-        
-        block.Paint(_skCanvas, new SKPoint(x, realY), TextPaintOptions.Default);
+
+        block.Paint(_skCanvas, new SKPoint(x, realY), new TextPaintOptions
+        {
+            Edging = _textAntialiasMode switch
+            {
+                0 => SKFontEdging.Antialias,
+                1 => SKFontEdging.SubpixelAntialias,
+                2 => SKFontEdging.Antialias,
+                3 => SKFontEdging.Alias,
+                _ => SKFontEdging.Alias
+            }
+        });
     }
 
     [LuaFunction("wgui.get_text_size")]
@@ -159,7 +175,7 @@ public partial class LuaEnvironment
             FontFamily = fontName,
             FontSize = fontSize
         });
-        
+
         var table = _lua.NewUnnamedTable();
         table["width"] = block.MeasuredWidth;
         table["height"] = block.MeasuredHeight;
@@ -171,7 +187,7 @@ public partial class LuaEnvironment
     {
         if (_skCanvas == null)
             return;
-        
+
         _skCanvas.Save();
         _skCanvas.ClipRect(SKRect.Create(x, y, right - x, bottom - y));
     }
@@ -208,7 +224,58 @@ public partial class LuaEnvironment
         _skCanvas?.DrawRoundRect(x, y, right - x, bottom - y, radiusX, radiusY, paint);
     }
 
-    private Dictionary<string, SKImage> _imageDict;
+    private void GdiPlusFillPolygonA(LuaTable pointsTable, float alpha, float red, float green, float blue)
+    {
+        // NLua API isn't good enough: we need KeraLua
+        KeraLua.Lua state = _lua.State!;
+        _lua.Push(pointsTable);
+        
+        // Utility functions (that restore the stack)
+        long GetLength()
+        {
+            state.PushLength(-1);
+            var res = state.ToInteger(-1);
+            state.Pop(1);
+            return res;
+        }
+        SKPoint GetPoint(long key)
+        {
+            // stack = [table, table[key]]
+            state.PushInteger(key);
+            state.GetTable(-2);
+            
+            // stack = [table, table[key], table[key][1], table[key][2]]
+            state.GetInteger(-1, 1);
+            state.GetInteger(-2, 2);
+
+            var res = new SKPoint((float) state.ToNumber(-2), (float) state.ToNumber(-1));
+            
+            state.Pop(3);
+            return res;
+        }
+
+        var points = new List<SKPoint>();
+
+        long len = GetLength();
+        for (long i = 1; i <= len; i++)
+        {
+            points.Add(GetPoint(i));
+        }
+        // All local functions restore the stack, so we need only pop the table 
+        state.Pop(1);
+
+        using var path = new SKPath();
+        path.AddPoly(points.ToArray());
+
+        using var paint = new SKPaint
+        {
+            Color = SkiaExtensions.ColorFromFloats(red, green, blue, alpha)
+        };
+        
+        _skCanvas?.DrawPath(path, paint);
+    }
+
+    private readonly Dictionary<string, SKImage> _imageDict = new();
 
     [LuaFunction("wgui.load_image")]
     private void LoadImage(string path, string identifier)
@@ -226,7 +293,7 @@ public partial class LuaEnvironment
         // TODO: implement
         if (!_imageDict.Remove(identifier, out var image))
             return;
-        
+
         image.Dispose();
     }
 
@@ -246,8 +313,8 @@ public partial class LuaEnvironment
             FilterQuality = interpolation == 1 ? SKFilterQuality.Medium : SKFilterQuality.None,
             MaskFilter = SKMaskFilter.CreateClip((byte) (opacity * byte.MaxValue), (byte) (opacity * byte.MaxValue))
         };
-        _skCanvas?.DrawImage(image, 
-            source: SKRect.Create(sourceX, sourceY, sourceRight - sourceX, sourceBottom - sourceY), 
+        _skCanvas?.DrawImage(image,
+            source: SKRect.Create(sourceX, sourceY, sourceRight - sourceX, sourceBottom - sourceY),
             dest: SKRect.Create(destinationX, destinationY, destinationRight - destinationX, destinationBottom - destinationY),
             paint);
     }
@@ -263,6 +330,7 @@ public partial class LuaEnvironment
         table["width"] = image.Width;
         table["height"] = image.Height;
         return table;
+        _lua.Pop();
     }
-    
+
 }
