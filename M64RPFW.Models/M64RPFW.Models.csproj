@@ -20,4 +20,8 @@
         <PackageReference Include="Tomlyn" Version="0.16.2" />
         <PackageReference Include="Topten.RichTextKit" Version="0.4.165" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Locks\" />
+    </ItemGroup>
 </Project>
