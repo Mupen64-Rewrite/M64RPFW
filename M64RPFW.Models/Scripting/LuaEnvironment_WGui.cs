@@ -91,6 +91,14 @@ public partial class LuaEnvironment
         _skCanvas?.DrawLine(x0, y0, x1, y1, paint);
     }
 
+    private int _textAntialiasMode;
+    
+    [LuaFunction("wgui.set_text_antialias_mode")]
+    private void SetTextAntialiasMode(int mode)
+    {
+        _textAntialiasMode = mode;
+    }
+
     [LuaFunction("wgui.draw_text")]
     private void DrawText(float x, float y, float right, float bottom, float red, float green, float blue,
         float alpha, string text, string fontName, float fontSize, int fontWeight, int fontStyle,
@@ -112,7 +120,7 @@ public partial class LuaEnvironment
                 1 => TextAlignment.Right,
                 2 => TextAlignment.Center,
                 _ => throw new ArgumentException("Invalid horizontal alignment")
-            }
+            },
         };
         block.AddText(text, new Style
         {
@@ -142,7 +150,17 @@ public partial class LuaEnvironment
             _ => throw new ArgumentException("Invalid vertical alignment")
         };
         
-        block.Paint(_skCanvas, new SKPoint(x, realY), TextPaintOptions.Default);
+        block.Paint(_skCanvas, new SKPoint(x, realY), new TextPaintOptions
+        {
+            Edging = _textAntialiasMode switch
+            {
+                0 => SKFontEdging.Antialias,
+                1 => SKFontEdging.SubpixelAntialias,
+                2 => SKFontEdging.Antialias,
+                3 => SKFontEdging.Alias,
+                _ => SKFontEdging.Alias
+            }
+        });
     }
 
     [LuaFunction("wgui.get_text_size")]
