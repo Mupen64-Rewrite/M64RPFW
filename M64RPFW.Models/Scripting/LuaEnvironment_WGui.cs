@@ -275,7 +275,7 @@ public partial class LuaEnvironment
         _skCanvas?.DrawPath(path, paint);
     }
 
-    private Dictionary<string, SKImage> _imageDict;
+    private readonly Dictionary<string, SKImage> _imageDict = new();
 
     [LuaFunction("wgui.load_image")]
     private void LoadImage(string path, string identifier)
