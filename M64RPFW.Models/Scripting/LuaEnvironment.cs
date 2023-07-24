@@ -2,6 +2,7 @@
 using System.Reflection;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Services;
+using M64RPFW.Services.Abstractions;
 using NLua;
 using NLua.Exceptions;
 using SkiaSharp;
@@ -60,7 +61,7 @@ public partial class LuaEnvironment : IDisposable
 
         _frontendScriptingService = frontendScriptingService;
         _path = path;
-        _frontendScriptingService.OnUpdateScreen += AtUpdateScreen;
+        _frontendScriptingService.WindowAccessService.OnSkiaRender += AtUpdateScreen;
 
         
         
@@ -133,8 +134,8 @@ public partial class LuaEnvironment : IDisposable
 
     public void Dispose()
     {
-        _frontendScriptingService.OnUpdateScreen -= AtUpdateScreen;
-        ForEachEnvironment(x => x._stopCallback?.Call());
+        _frontendScriptingService.WindowAccessService.OnSkiaRender -= AtUpdateScreen;
+        _stopCallback?.Call();
         AtStop();
         _lua.Dispose();
     }
@@ -145,12 +146,18 @@ public partial class LuaEnvironment : IDisposable
         StateChanged?.Invoke(false);
     }
 
-    private void AtUpdateScreen(SKCanvas canvas)
+    private void AtUpdateScreen(object? sender, SkiaRenderEventArgs args)
     {
         // lua side can only issue drawcalls during updatescreen, anytime else it should be ignored (same as old mupen)
-        _skCanvas = canvas;
-        _updateScreenCallback?.Call();
-        _skCanvas = null;
+        try
+        {
+            _skCanvas = args.Canvas;
+            _updateScreenCallback?.Call();
+        }
+        finally
+        {
+            _skCanvas = null;
+        }
     }
 
     #region Function Registry

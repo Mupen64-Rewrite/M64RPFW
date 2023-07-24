@@ -20,22 +20,10 @@ public class FrontendScriptingService : IFrontendScriptingService
         _luaWindow = luaWindow;
     }
 
-    public IWindowSizingService WindowSizingService => WindowHelper.MainWindow;
-    public event Action<SKCanvas>? OnUpdateScreen;
-
-    public (double X, double Y) PointerPosition => (WindowHelper.MainWindow.PointerPosition.X,
-        WindowHelper.MainWindow.PointerPosition.Y);
-
-    public bool IsPrimaryPointerButtonHeld => WindowHelper.MainWindow.IsPrimaryPointerButtonHeld;
-    public ICollection<string> HeldKeys => new List<string>(); // TODO: implement
+    public IWindowAccessService WindowAccessService => WindowHelper.MainWindow;
 
     public void Print(string value)
     {
         _luaWindow.Print(value);
-    }
-
-    public void InvokeOnUpdateScreen(SKCanvas canvas)
-    {
-        OnUpdateScreen?.Invoke(canvas);
     }
 }

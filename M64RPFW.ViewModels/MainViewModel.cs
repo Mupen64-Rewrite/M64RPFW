@@ -9,10 +9,10 @@ public class MainViewModel : ObservableObject
 
 
     public MainViewModel(IDispatcherService dispatcherService, IFilePickerService filePickerService,
-        IOpenGLContextService openGlContextService, IWindowSizingService windowSizingService,
+        IOpenGLContextService openGlContextService, IWindowAccessService windowAccessService,
         IViewDialogService viewDialogService)
     {
         EmulatorViewModel = new EmulatorViewModel(openGlContextService, dispatcherService, filePickerService,
-            windowSizingService, viewDialogService);
+            windowAccessService, viewDialogService);
     }
 }

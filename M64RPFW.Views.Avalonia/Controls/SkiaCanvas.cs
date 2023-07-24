@@ -8,16 +8,10 @@ using Avalonia.Rendering.Composition;
 using Avalonia.Rendering.SceneGraph;
 using Avalonia.Skia;
 using Avalonia.Threading;
+using M64RPFW.Services.Abstractions;
 using SkiaSharp;
 
 namespace M64RPFW.Views.Avalonia.Controls;
-
-public class SkiaRenderEventArgs
-{
-    public SkiaCanvas Sender { get; init; }
-    public SKCanvas Canvas { get; init; }
-}
-
 public class SkiaCanvas : Control
 {
     private class SkiaCallbackRenderOperation : ICustomDrawOperation
@@ -52,7 +46,7 @@ public class SkiaCanvas : Control
         }
     }
 
-    public event Action<SkiaRenderEventArgs>? RenderSkia;
+    public event EventHandler<SkiaRenderEventArgs>? RenderSkia;
     private readonly SkiaCallbackRenderOperation _skiaCallbackRenderOperation;
 
     private bool _isOrange = true;
@@ -65,9 +59,8 @@ public class SkiaCanvas : Control
             {
                 if (RenderSkia != null)
                 {
-                    RenderSkia.Invoke(new SkiaRenderEventArgs
+                    RenderSkia.Invoke(this, new SkiaRenderEventArgs
                     {
-                        Sender = this,
                         Canvas = canvas
                     });
                 }
