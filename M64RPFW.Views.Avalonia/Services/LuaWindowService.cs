@@ -8,19 +8,15 @@ using SkiaSharp;
 
 namespace M64RPFW.Views.Avalonia.Services;
 
-// NOTE: This reaches its tentacles into view state, since it's a monolithic multi-responsibility service
-// Don't attempt to clean up until an acceptable level of API compatibility and maturity is reached
-public class FrontendScriptingService : IFrontendScriptingService
+public class LuaWindowService : ILuaWindowService
 {
     private readonly LuaWindow _luaWindow;
     private LuaViewModel LuaViewModel => _luaWindow.ViewModel;
 
-    public FrontendScriptingService(LuaWindow luaWindow)
+    public LuaWindowService(LuaWindow luaWindow)
     {
         _luaWindow = luaWindow;
     }
-
-    public IWindowAccessService WindowAccessService => WindowHelper.MainWindow;
 
     public void Print(string value)
     {

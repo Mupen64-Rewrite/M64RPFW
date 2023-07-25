@@ -17,8 +17,7 @@ public partial class LuaWindow : Window
 {
 
     public LuaViewModel ViewModel => (LuaViewModel)DataContext!;
-    private TextBox LoggingTextBox => this.FindControl<TextBox>("LogTextBox")!;
-    public FrontendScriptingService ScriptingService { get; }
+    public LuaWindowService ScriptingService { get; }
 
     public LuaWindow()
     {
@@ -26,9 +25,8 @@ public partial class LuaWindow : Window
 #if DEBUG
         this.AttachDevTools();
 #endif
-        // Attach viewmodel (this crashes for some reason)
-        ScriptingService = new FrontendScriptingService(this);
-        DataContext = new LuaViewModel(ScriptingService);
+        ScriptingService = new LuaWindowService(this);
+        DataContext = new LuaViewModel(ScriptingService, WindowHelper.MainWindow, FilePickerService.Instance);
     }
 
     private void Window_OnClosing(object? sender, WindowClosingEventArgs e)

@@ -30,8 +30,10 @@ public partial class LuaEnvironment : IDisposable
     private static readonly List<LuaEnvironment> ActiveLuaEnvironments = new();
 
     private readonly Lua _lua;
-    private readonly IFrontendScriptingService _frontendScriptingService;
     private readonly string _path;
+    
+    private readonly ILuaWindowService _luaWindowService;
+    private readonly IWindowAccessService _windowAccessService;
     
     // Synchronization stuff
     private ReaderWriterLockSlim _luaLock;
@@ -76,12 +78,13 @@ public partial class LuaEnvironment : IDisposable
         }
     }
 
-    public LuaEnvironment(IFrontendScriptingService frontendScriptingService,
-        string path)
+    public LuaEnvironment(string path, ILuaWindowService luaWindowService, IWindowAccessService windowAccessService)
     {
-        _frontendScriptingService = frontendScriptingService;
+        // might seem stupid giving model access to view services, but we've already done that once
+        _luaWindowService = luaWindowService;
+        _windowAccessService = windowAccessService;
         _path = path;
-        _frontendScriptingService.WindowAccessService.OnSkiaRender += AtUpdateScreen;
+        _windowAccessService.OnSkiaRender += AtUpdateScreen;
 
         _luaLock = new ReaderWriterLockSlim();
         _isActive = false;
@@ -163,7 +166,7 @@ public partial class LuaEnvironment : IDisposable
         catch (LuaScriptException e)
         {
             AtStop();
-            _frontendScriptingService.Print($"{e.Source} {e.Message}");
+            _luaWindowService.Print($"{e.Source} {e.Message}");
             return false;
         }
 
@@ -177,7 +180,7 @@ public partial class LuaEnvironment : IDisposable
         using (_luaLock.WriteLock())
         {
             AtStop();
-            _frontendScriptingService.WindowAccessService.OnSkiaRender -= AtUpdateScreen;
+            _windowAccessService.OnSkiaRender -= AtUpdateScreen;
             _stopCallback?.Call();
 
             _stopCallback = null;
@@ -248,7 +251,7 @@ public partial class LuaEnvironment : IDisposable
             _ => value.ToString()!
         };
 
-        _frontendScriptingService.Print(formatted);
+        _luaWindowService.Print(formatted);
     }
     [LuaFunction("stop")]
     private void Stop()
