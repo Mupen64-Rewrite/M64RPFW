@@ -38,7 +38,7 @@ public partial class MainWindow : Window
         // handling "special-case" settings here or in the SettingsDialog code-behind doesn't make a big difference
         // (except that here we don't have to worry about leaking due to strong refs)
         // we would have to break single-responsibility anyway
-        SettingsViewModel.Instance.PropertyChanged += (sender, args) =>
+        SettingsViewModel.Instance.PropertyChanged += (_, args) =>
         {
             switch (args.PropertyName)
             {
@@ -102,6 +102,9 @@ public partial class MainWindow : Window
             e.Handled = true;
             return;
         }
+        
+        // This doesn't account for differences with e.Key, see
+        // https://github.com/AvaloniaUI/Avalonia/issues/11797
         var scancode = SDLHelpers.ToSDLScancode(e.Key);
         var modifiers = SDLHelpers.ToSDLKeymod(e.KeyModifiers);
         ViewModel.ForwardSDLKeyDown(scancode, modifiers);
@@ -115,6 +118,9 @@ public partial class MainWindow : Window
             e.Handled = true;
             return;
         }
+        
+        // This doesn't account for differences with e.Key, see
+        // https://github.com/AvaloniaUI/Avalonia/issues/11797
         var scancode = SDLHelpers.ToSDLScancode(e.Key);
         var modifiers = SDLHelpers.ToSDLKeymod(e.KeyModifiers);
         ViewModel.ForwardSDLKeyUp(scancode, modifiers);

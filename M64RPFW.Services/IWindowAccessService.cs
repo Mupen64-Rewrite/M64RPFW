@@ -5,7 +5,7 @@ using M64RPFW.Services.Abstractions;
 namespace M64RPFW.Services;
 
 /// <summary>
-/// Service that faciliates access to the main window.
+/// Service exposing direct functions of the main window.
 /// </summary>
 public interface IWindowAccessService
 {

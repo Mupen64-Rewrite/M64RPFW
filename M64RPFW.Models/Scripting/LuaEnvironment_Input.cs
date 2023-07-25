@@ -12,7 +12,7 @@ public partial class LuaEnvironment
     private LuaTable GetInput()
     {
         var table = _lua.NewUnnamedTable();
-        var winService = _frontendScriptingService.WindowAccessService;
+        var winService = _windowAccessService;
         table["xmouse"] = (int)winService.PointerPosition.X;
         table["ymouse"] = (int)winService.PointerPosition.Y;
 
