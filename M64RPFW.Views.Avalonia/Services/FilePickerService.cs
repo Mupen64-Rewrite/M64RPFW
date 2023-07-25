@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
 using M64RPFW.Views.Avalonia.Helpers;
@@ -21,6 +22,9 @@ public sealed class FilePickerService : IFilePickerService
 
     public async Task<string[]?> ShowOpenFilePickerAsync(string title = "Open file...", IReadOnlyList<FilePickerOption>? options = null, bool allowMultiple = false)
     {
+        if (!Dispatcher.UIThread.CheckAccess())
+            return await Dispatcher.UIThread.InvokeAsync(() => ShowOpenFilePickerAsync(title, options, allowMultiple));
+        
         var provider = WindowHelper.GetFirstActiveWindow().StorageProvider;
         var storageFiles = await provider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
@@ -33,6 +37,9 @@ public sealed class FilePickerService : IFilePickerService
 
     public async Task<string?> ShowSaveFilePickerAsync(string title = "Open file...", IReadOnlyList<FilePickerOption>? options = null)
     {
+        if (!Dispatcher.UIThread.CheckAccess())
+            return await Dispatcher.UIThread.InvokeAsync(() => ShowSaveFilePickerAsync(title, options));
+        
         var provider = WindowHelper.GetFirstActiveWindow().StorageProvider;
         var storageFile = await provider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
