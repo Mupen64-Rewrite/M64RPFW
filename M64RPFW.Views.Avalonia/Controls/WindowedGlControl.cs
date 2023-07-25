@@ -29,7 +29,7 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
         // HACK: make the window black and clear it
         {
             InitWindow();
-            CreateWindow((int) Width, (int) Height, 32);
+            CreateGlWindow((int) Width, (int) Height, 32);
             
             SDL.GLMakeCurrent(_sdlWin, _sdlGL);
             var gl = GL.GetApi(sym => (IntPtr) SDL.GLGetProcAddress(sym));
@@ -85,7 +85,7 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
         return SDL.GetMupenGLAttribute(attr);
     }
 
-    public void CreateWindow(int width, int height, int bitsPerPixel)
+    public void CreateGlWindow(int width, int height, int bitsPerPixel)
     {
         if (_sdlGL != null)
         {
@@ -96,7 +96,7 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
         _sdlGL = SDL.GLCreateContext(_sdlWin);
     }
 
-    public void ResizeWindow(int width, int height)
+    public void ResizeGlWindow(int width, int height)
     {
         if (_sdlGL != null)
         {

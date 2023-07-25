@@ -45,7 +45,7 @@ public partial class LuaViewModel : ObservableObject
     {
         if (IsRunning) StopCommand.Execute(null);
 
-        _luaEnvironment = new LuaEnvironment(Path, _luaWindowService, _windowAccessService);
+        _luaEnvironment = new LuaEnvironment(Path, _luaWindowService, _windowAccessService, _filePickerService);
         _luaEnvironment.StateChanged += LuaEnvironmentStateChanged;
         if (_luaEnvironment.Run())
         {

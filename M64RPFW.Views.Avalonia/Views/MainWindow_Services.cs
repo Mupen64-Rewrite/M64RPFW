@@ -220,7 +220,7 @@ public partial class MainWindow : IWindowAccessService, IViewDialogService, IOpe
         };
     }
 
-    public void CreateWindow(int width, int height, int bitsPerPixel)
+    public void CreateGlWindow(int width, int height, int bitsPerPixel)
     {
         Dispatcher.UIThread.InvokeAsync(async () =>
         {
@@ -229,7 +229,7 @@ public partial class MainWindow : IWindowAccessService, IViewDialogService, IOpe
         }).Wait();
     }
 
-    public void ResizeWindow(int width, int height)
+    public void ResizeGlWindow(int width, int height)
     {
         Dispatcher.UIThread.Invoke(() => { GlControl.WindowSize = new PixelSize(width, height); });
     }
