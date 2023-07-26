@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Media.Imaging;
 using Avalonia.OpenGL;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
@@ -289,7 +290,5 @@ public partial class MainWindow : IWindowAccessService, IViewDialogService, IOpe
             (pointerProps.IsLeftButtonPressed ? MouseButtonMask.Primary : 0) |
             (pointerProps.IsMiddleButtonPressed ? MouseButtonMask.Middle : 0) |
             (pointerProps.IsRightButtonPressed ? MouseButtonMask.Secondary : 0);
-        
-        
     }
 }
