@@ -1,5 +1,6 @@
 using FFmpeg.AutoGen;
 using M64RPFW.Models.Media.Helpers;
+using M64RPFW.Services;
 using static FFmpeg.AutoGen.ffmpeg;
 
 namespace M64RPFW.Models.Media.Encoder;
@@ -81,7 +82,7 @@ public unsafe partial class FFmpegEncoder
             AVHelpers.Dispose(ref _sws);
         }
 
-        public void ConsumeFrame(int width, int height, ReadScreenCallback readScreen)
+        public void ConsumeFrame(int width, int height, ICaptureService capture)
         {
             // This part has to run synchronously when the new frame arrives
             _sem.Wait();
@@ -90,8 +91,8 @@ public unsafe partial class FFmpegEncoder
                 if (width != _codecCtx->width || height != _codecCtx->height)
                     throw new Exception("INTERNAL: width/height should match");
 
-                AVHelpers.AllocVideoFrame(_frame1, width, height, AVPixelFormat.AV_PIX_FMT_RGB24, true);
-                readScreen(_frame1->data[0]);
+                AVHelpers.AllocVideoFrame(_frame1, width, height, AVPixelFormat.AV_PIX_FMT_RGBA);
+                capture.CaptureTo(new Span<byte>(_frame1->data[0], _frame1->linesize[0] * _frame1->height), (uint) _frame1->linesize[0]);
             }
             catch
             {

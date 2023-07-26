@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace M64RPFW.Models.Helpers;
@@ -21,9 +22,9 @@ public static unsafe class CHelpers
         return p - b;
     }
 
-    public static void memcpy(void* dst, void* src, ulong n)
+    public static void memcpy(void* dst, void* src, uint n)
     {
-        Buffer.MemoryCopy(src, dst, n, n);
+        Unsafe.CopyBlockUnaligned(dst, src, (uint) n);
     }
 }
 

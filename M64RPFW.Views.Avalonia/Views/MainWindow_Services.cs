@@ -23,7 +23,7 @@ using static M64RPFW.Models.Types.Mupen64PlusTypes;
 
 namespace M64RPFW.Views.Avalonia.Views;
 
-public partial class MainWindow : IWindowAccessService, IViewDialogService, IOpenGLContextService
+public partial class MainWindow : IWindowAccessService, IViewDialogService, IOpenGLContextService, ICaptureService
 {
 
     #region IWindowSizingService
@@ -42,7 +42,7 @@ public partial class MainWindow : IWindowAccessService, IViewDialogService, IOpe
         {
             if (sizeGlWindow)
             {
-                GlControl.WindowSize = new PixelSize((int)size.Width, (int)size.Height);
+                GlControl.WindowSize = new PixelSize((int) size.Width, (int) size.Height);
                 GlControl.Width = size.Width;
                 GlControl.Height = size.Height;
             }
@@ -158,7 +158,7 @@ public partial class MainWindow : IWindowAccessService, IViewDialogService, IOpe
                 Dispatcher.UIThread.Invoke(() => GlControl.RequestedGlVersionMinor = value);
                 break;
             case GLAttribute.ContextProfileMask:
-                Dispatcher.UIThread.Invoke(() => GlControl.RequestedGlProfileType = (GLContextType)value switch
+                Dispatcher.UIThread.Invoke(() => GlControl.RequestedGlProfileType = (GLContextType) value switch
                 {
                     GLContextType.Core or GLContextType.Compatibilty => GlProfileType.OpenGL,
                     GLContextType.ES => GlProfileType.OpenGLES,
@@ -213,8 +213,8 @@ public partial class MainWindow : IWindowAccessService, IViewDialogService, IOpe
             GLAttribute.ContextMinorVersion => GlControl.ContextVersion.Minor,
             GLAttribute.ContextProfileMask => GlControl.ContextVersion.Type switch
             {
-                GlProfileType.OpenGL => (int)GLContextType.Core,
-                GlProfileType.OpenGLES => (int)GLContextType.ES,
+                GlProfileType.OpenGL => (int) GLContextType.Core,
+                GlProfileType.OpenGLES => (int) GLContextType.ES,
                 _ => throw new ApplicationException("INVALID PROFILE TYPE")
             },
             _ => 0
@@ -260,6 +260,8 @@ public partial class MainWindow : IWindowAccessService, IViewDialogService, IOpe
 
     #endregion
 
+    #region ILuaInterfaceService
+
     public WindowPoint PointerPosition { get; private set; } = new(0, 0);
     public MouseButtonMask PointerButtons { get; private set; } = 0;
     public event EventHandler<SkiaRenderEventArgs>? OnSkiaRender;
@@ -274,6 +276,7 @@ public partial class MainWindow : IWindowAccessService, IViewDialogService, IOpe
     {
         SkiaOnPointerUpdate(sender, e);
     }
+
     private void SkiaOnPointerReleased(object? sender, PointerReleasedEventArgs e)
     {
         SkiaOnPointerUpdate(sender, e);
@@ -291,4 +294,25 @@ public partial class MainWindow : IWindowAccessService, IViewDialogService, IOpe
             (pointerProps.IsMiddleButtonPressed ? MouseButtonMask.Middle : 0) |
             (pointerProps.IsRightButtonPressed ? MouseButtonMask.Secondary : 0);
     }
+
+    #endregion
+
+    #region ICaptureService
+
+    public unsafe void CaptureTo(Span<byte> buffer, uint linesize)
+    {
+        var pixelBounds = new PixelRect(0, 0, (int) Math.Ceiling(ContainerPanel.Bounds.Width), (int) Math.Ceiling(ContainerPanel.Bounds.Height));
+        
+        var rtb = new RenderTargetBitmap(
+            pixelBounds.Size);
+        
+        rtb.Render(ContainerPanel);
+
+        fixed (byte* pBuffer = buffer)
+        {
+            rtb.CopyPixels(pixelBounds, (IntPtr) pBuffer, buffer.Length, (int) linesize);
+        }
+    }
+
+    #endregion
 }
