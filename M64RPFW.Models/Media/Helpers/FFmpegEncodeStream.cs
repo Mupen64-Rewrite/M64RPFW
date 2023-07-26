@@ -71,7 +71,7 @@ internal abstract unsafe class FFmpegEncodeStream : IDisposable
     /// <summary>
     /// Encodes a frame into this stream.
     /// </summary>
-    /// <param name="frame">A frame.</param>
+    /// <param name="frame">A frame, or null. If null, the stream is flushed.</param>
     protected void EncodeFrame(AVFrame* frame)
     {
         int err;
@@ -91,17 +91,25 @@ internal abstract unsafe class FFmpegEncodeStream : IDisposable
             throw new AVException(err);
     }
 
-    /// <summary>
-    /// Flushes any remaining packets from the encoder and writes them to the stream.
-    /// </summary>
-    public void Flush()
-    {
-        EncodeFrame(null);
-    }
-    
-    public virtual void Dispose()
+    protected virtual void ReleaseUnmanagedResources()
     {
         AVHelpers.Dispose(ref _codecCtx);
         AVHelpers.Dispose(ref _packet);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        ReleaseUnmanagedResources();
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~FFmpegEncodeStream()
+    {
+        Dispose(false);
     }
 }

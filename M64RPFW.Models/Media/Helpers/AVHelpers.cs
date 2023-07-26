@@ -97,28 +97,24 @@ internal static unsafe class AVHelpers
     /// <param name="reason">If returning null, holds the reason why a fallback is needed</param>
     /// <param name="name">A codec that </param>
     /// <returns>The desired codec, or null if a fallback is required.</returns>
-    public static AVCodec* CheckCodec(AVOutputFormat* ofmt, AVMediaType type, out string? reason, string? name = null)
+    public static AVCodec* CheckCodec(AVOutputFormat* ofmt, AVMediaType type, string? name = null)
     {
-        reason = null;
         if (name == null)
             return null;
 
         AVCodec* codec = avcodec_find_encoder_by_name(name);
         if (codec == null)
         {
-            reason = $"No codec named \"{name}\" exists";
-            return null;
+            throw new ArgumentException($"No codec named \"{name}\" exists");
         }
         if (codec->type != type)
         {
-            var typeString = av_get_media_type_string(type);
-            reason = $"Codec \"{name}\" is not {("aeiouy".Contains(typeString[0]) ? "an" : "a")} {typeString} codec";
-            return null;
+            var typeString = av_get_media_type_string(type) ?? "(GARBAGE)";
+            throw new ArgumentException($"Codec \"{name}\" is not {("aeiouy".Contains(typeString[0]) ? "an" : "a")} {typeString} codec");
         }
         if (avformat_query_codec(ofmt, codec->id, FF_COMPLIANCE_EXPERIMENTAL) == 0)
         {
-            reason = $"Format \"{CHelpers.DecodeString(ofmt->long_name)}\" does not support codec \"{name}\"";
-            return null;
+            throw new ArgumentException($"Format \"{CHelpers.DecodeString(ofmt->long_name)}\" does not support codec \"{name}\"");
         }
         return codec;
     }
@@ -130,31 +126,21 @@ internal static unsafe class AVHelpers
     /// <param name="type">The stream type</param>
     /// <param name="reason">Returns a reason if the method fails, unless it's because there is no default codec.</param>
     /// <returns>The default codec, or null if no default codec exists or is supported.</returns>
-    public static AVCodec* DefaultCodec(AVOutputFormat* ofmt, AVMediaType type, out string? reason)
+    public static AVCodec* DefaultCodec(AVOutputFormat* ofmt, AVMediaType type)
     {
-        reason = null;
-        AVCodecID codecId;
-        switch (type)
+        AVCodecID codecId = type switch
         {
-            case AVMediaType.AVMEDIA_TYPE_AUDIO:
-                codecId = ofmt->audio_codec;
-                break;
-            case AVMediaType.AVMEDIA_TYPE_VIDEO:
-                codecId = ofmt->video_codec;
-                break;
-            case AVMediaType.AVMEDIA_TYPE_SUBTITLE:
-                codecId = ofmt->subtitle_codec;
-                break;
-            default:
-                reason = $"Formats have no default {av_get_media_type_string(type)} codec";
-                return null;
-        }
+            AVMediaType.AVMEDIA_TYPE_AUDIO => ofmt->audio_codec,
+            AVMediaType.AVMEDIA_TYPE_VIDEO => ofmt->video_codec,
+            AVMediaType.AVMEDIA_TYPE_SUBTITLE => ofmt->subtitle_codec,
+            _ => throw new ArgumentException($"Formats have no default {av_get_media_type_string(type) ?? "(GARBAGE)"} codec")
+        };
         if (codecId == AVCodecID.AV_CODEC_ID_NONE)
             return null;
         
         AVCodec* codec = avcodec_find_encoder(codecId);
         if (codec == null)
-            reason = $"Default codec {avcodec_get_name(codecId)} does not have any available encoders";
+            throw new ArgumentException($"Default codec {avcodec_get_name(codecId)} does not have any available encoders");
         return codec;
     }
 

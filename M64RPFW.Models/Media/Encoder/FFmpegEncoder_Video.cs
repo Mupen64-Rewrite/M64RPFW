@@ -73,11 +73,12 @@ public unsafe partial class FFmpegEncoder
             };
         }
 
-        public override void Dispose()
+        protected override void ReleaseUnmanagedResources()
         {
-            base.Dispose();
+            base.ReleaseUnmanagedResources();
             AVHelpers.Dispose(ref _frame1);
             AVHelpers.Dispose(ref _frame2);
+            AVHelpers.Dispose(ref _sws);
         }
 
         public void ConsumeFrame(int width, int height, ReadScreenCallback readScreen)
@@ -133,6 +134,12 @@ public unsafe partial class FFmpegEncoder
             {
                 _sem.Release();
             }
+        }
+
+        public void Flush()
+        {
+            // Flush any remaining video packets
+            EncodeFrame(null);
         }
     }
 }
