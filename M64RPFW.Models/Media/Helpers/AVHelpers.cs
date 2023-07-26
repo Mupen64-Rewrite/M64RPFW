@@ -314,7 +314,7 @@ internal static unsafe class AVHelpers
         if (!BitConverter.IsLittleEndian)
         {
             // We can directly memcpy on big-endian systems
-            CHelpers.memcpy(src, dst, (ulong) len * 4);
+            CHelpers.memcpy(src, dst, (uint) len * 4);
         }
         else
         {

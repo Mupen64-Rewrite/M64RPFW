@@ -1,5 +1,6 @@
 using FFmpeg.AutoGen;
 using M64RPFW.Models.Media.Helpers;
+using M64RPFW.Services;
 using static FFmpeg.AutoGen.AVPixelFormat;
 using static FFmpeg.AutoGen.ffmpeg;
 
@@ -91,7 +92,7 @@ public unsafe partial class FFmpegEncoder : IVideoEncoder
         _videoStream = vCodec != null ? new VideoStream(_fmtCtx, vCodec, _audioStream, config?.VideoOptions) : null;
     }
     
-    public void ConsumeVideo(int width, int height, ReadScreenCallback readScreen)
+    public void ConsumeVideo(int width, int height, ICaptureService readScreen)
     {
         _videoStream?.ConsumeFrame(width, height, readScreen);
     }
