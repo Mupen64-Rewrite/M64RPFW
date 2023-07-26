@@ -61,11 +61,12 @@ public unsafe partial class FFmpegEncoder
             codecCtx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
         }
 
-        public override void Dispose()
+        protected override void ReleaseUnmanagedResources()
         {
-            base.Dispose();
+            base.ReleaseUnmanagedResources();
             AVHelpers.Dispose(ref _frame1);
             AVHelpers.Dispose(ref _frame2);
+            AVHelpers.Dispose(ref _swr);
         }
 
         public void SetSampleRate(int rate)
@@ -91,13 +92,12 @@ public unsafe partial class FFmpegEncoder
         {
             _sem.Wait();
 
-            int err;
-            int ilen = len / 4;
+            int iLen = len / 4;
 
             try
             {
-                AVHelpers.AllocAudioFrame(_frame1, ilen, in AVHelpers.AV_STEREO_CHANNEL_LAYOUT, AVSampleFormat.AV_SAMPLE_FMT_S16);
-                AVHelpers.CopySamples(samples, _frame1, ilen);
+                AVHelpers.AllocAudioFrame(_frame1, iLen, in AVHelpers.AV_STEREO_CHANNEL_LAYOUT, AVSampleFormat.AV_SAMPLE_FMT_S16);
+                AVHelpers.CopySamples(samples, _frame1, iLen);
             }
             catch
             {
@@ -110,9 +110,9 @@ public unsafe partial class FFmpegEncoder
 
         private void ConsumeSamplesCore()
         {
-            int err;
             try
             {
+                int err;
                 if ((err = swr_convert(_swr, null, 0, (byte**) &_frame1->data, _frame1->nb_samples)) < 0)
                     throw new AVException(err);
 
@@ -133,5 +133,31 @@ public unsafe partial class FFmpegEncoder
                 _sem.Release();
             }
         }
+        public void Flush()
+        {
+            try
+            {
+                int err;
+                // drain last bytes from resampler
+                int nbSamples = swr_get_out_samples(_swr, 0);
+
+                AVHelpers.AllocAudioFrame(_frame2, nbSamples, in _codecCtx->ch_layout, _codecCtx->sample_fmt);
+                
+                if ((err = swr_convert(_swr, (byte**) &_frame2->data, _frame2->nb_samples, null, 0)) < 0)
+                    throw new AVException(err);
+                
+                _frame2->pts = _pts;
+                _pts += _frame2->nb_samples;
+                
+                EncodeFrame(_frame2);
+                EncodeFrame(null);
+            }
+            finally
+            {
+                _sem.Release();
+            }
+        }
     }
+
+    
 }

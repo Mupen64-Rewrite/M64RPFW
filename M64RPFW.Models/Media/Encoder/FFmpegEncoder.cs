@@ -8,32 +8,12 @@ namespace M64RPFW.Models.Media.Encoder;
 /// <summary>
 /// Large complicated class handling all encoder logic.
 /// </summary>
-public unsafe partial class FFmpegEncoder
+public unsafe partial class FFmpegEncoder : IVideoEncoder
 {
     private AVFormatContext* _fmtCtx;
 
-    // Video stuff
-    private AVStream* _vStream;
-    private long _vPts;
-    private AVCodecContext* _vCodecCtx;
-    private AVCodec* _vCodec;
-    private AVPacket* _vPacket;
-    private AVFrame* _vFrame1;
-    private AVFrame* _vFrame2;
-    private SwsContext* _sws;
-    private SemaphoreSlim _vSem;
-
-    // Audio stuff
-    private AVStream* _aStream;
-    private long _aPts;
-    private AVCodecContext* _aCodecCtx;
-    private AVCodec* _aCodec;
-    private AVPacket* _aPacket;
-    private AVFrame* _aFrame1;
-    private AVFrame* _aFrame2;
-    private SwrContext* _swr;
-    private int _aFrameSize;
-    private SemaphoreSlim _aSem;
+    private VideoStream? _videoStream;
+    private AudioStream? _audioStream;
 
     public FFmpegEncoder(string path, string? mimeType, FFmpegConfig? config = null)
     {
@@ -45,9 +25,37 @@ public unsafe partial class FFmpegEncoder
             if ((err = avformat_alloc_output_context2(pFmtCtx, ofmt, null, path)) < 0)
                 throw new AVException(err);
         }
+        
+        InitCodecs(ofmt, config);
+
+        if ((ofmt->flags & AVFMT_GLOBALHEADER) != 0)
+            _fmtCtx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
+
+        if ((ofmt->flags & AVFMT_NOFILE) == 0)
+        {
+            if ((err = avio_open(&_fmtCtx->pb, path, AVIO_FLAG_WRITE)) < 0)
+                throw new AVException(err);
+        }
+
+        AVDictionary* dict = AVHelpers.ToAVDictionary(config?.FormatOptions);
+        try
+        {
+            if ((err = avformat_write_header(_fmtCtx, &dict)) < 0)
+                throw new AVException(err);
+        }
+        catch
+        {
+            _videoStream?.Dispose();
+            _audioStream?.Dispose();
+            throw;
+        }
+        finally
+        {
+            av_dict_free(&dict);
+        }
     }
 
-    private AVOutputFormat* SelectOutputFormat(string path, string? fmt)
+    private static AVOutputFormat* SelectOutputFormat(string path, string? fmt)
     {
         int err;
         AVOutputFormat* ofmt = fmt == null ? 
@@ -60,25 +68,77 @@ public unsafe partial class FFmpegEncoder
         return ofmt;
     }
 
+    private void InitCodecs(AVOutputFormat* ofmt, FFmpegConfig? config = null)
+    {
+        string? vCodecName = null, aCodecName = null;
+        if (config != null)
+        {
+            vCodecName = config.FormatOptions.GetValueOrDefault("video_codec");
+            aCodecName = config.FormatOptions.GetValueOrDefault("audio_codec");
+        }
+
+        AVCodec* vCodec, aCodec;
+        
+        vCodec = AVHelpers.CheckCodec(ofmt, AVMediaType.AVMEDIA_TYPE_VIDEO, vCodecName);
+        if (vCodec == null)
+            vCodec = AVHelpers.DefaultCodec(ofmt, AVMediaType.AVMEDIA_TYPE_VIDEO);
+
+        aCodec = AVHelpers.CheckCodec(ofmt, AVMediaType.AVMEDIA_TYPE_AUDIO, aCodecName);
+        if (aCodec == null)
+            aCodec = AVHelpers.DefaultCodec(ofmt, AVMediaType.AVMEDIA_TYPE_AUDIO);
+
+        _audioStream = aCodec != null ? new AudioStream(_fmtCtx, aCodec, config?.AudioOptions) : null;
+        _videoStream = vCodec != null ? new VideoStream(_fmtCtx, vCodec, _audioStream, config?.VideoOptions) : null;
+    }
+    
+    public void ConsumeVideo(int width, int height, ReadScreenCallback readScreen)
+    {
+        _videoStream?.ConsumeFrame(width, height, readScreen);
+    }
+
+    public void SetAudioSampleRate(int sampleRate)
+    {
+        _audioStream?.SetSampleRate(sampleRate);
+    }
+
+    public void ConsumeAudio(void* data, ulong len)
+    {
+        _audioStream?.ConsumeSamples(data, (int) len);
+    }
+
+    public void Finish()
+    {
+        int err;
+        _videoStream?.Flush();
+        _audioStream?.Flush();
+
+        if ((err = av_write_trailer(_fmtCtx)) < 0)
+            throw new AVException(err);
+    }
+
+    private void ReleaseUnmanagedResources()
+    {
+        AVHelpers.Dispose(ref _fmtCtx);
+    }
+
+    private void Dispose(bool disposing)
+    {
+        ReleaseUnmanagedResources();
+        if (disposing)
+        {
+            _videoStream?.Dispose();
+            _audioStream?.Dispose();
+        }
+    }
+
     public void Dispose()
     {
-        if (_vCodec != null)
-        {
-            AVHelpers.Dispose(ref _vCodecCtx);
-            AVHelpers.Dispose(ref _vPacket);
-            AVHelpers.Dispose(ref _vFrame1);
-            AVHelpers.Dispose(ref _vFrame2);
-            AVHelpers.Dispose(ref _sws);
-        }
-        if (_aCodec != null)
-        {
-            AVHelpers.Dispose(ref _aCodecCtx);
-            AVHelpers.Dispose(ref _aPacket);
-            AVHelpers.Dispose(ref _aFrame1);
-            AVHelpers.Dispose(ref _aFrame2);
-            AVHelpers.Dispose(ref _swr);
-        }
-        
-        AVHelpers.Dispose(ref _fmtCtx);
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~FFmpegEncoder()
+    {
+        Dispose(false);
     }
 }
