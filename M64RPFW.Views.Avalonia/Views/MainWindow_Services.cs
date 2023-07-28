@@ -9,6 +9,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media.Imaging;
 using Avalonia.OpenGL;
+using Avalonia.Platform;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using M64RPFW.Models.Emulation;
@@ -23,14 +24,14 @@ using static M64RPFW.Models.Types.Mupen64PlusTypes;
 
 namespace M64RPFW.Views.Avalonia.Views;
 
-public partial class MainWindow : IWindowAccessService, IViewDialogService, IOpenGLContextService, ICaptureService
+public partial class MainWindow : IWindowSizingService, IViewDialogService, ILuaInterfaceService
 {
 
     #region IWindowSizingService
 
     public WindowSize GetWindowSize()
     {
-        return new WindowSize(ContainerPanel.Bounds.Width, ContainerPanel.Bounds.Height);
+        return new WindowSize(GlControl.Bounds.Width, GlControl.Bounds.Height);
     }
 
     bool _isSizedToFit = false;
@@ -40,22 +41,8 @@ public partial class MainWindow : IWindowAccessService, IViewDialogService, IOpe
     {
         Dispatcher.UIThread.Invoke(() =>
         {
-            if (sizeGlWindow)
-            {
-                GlControl.WindowSize = new PixelSize((int) size.Width, (int) size.Height);
-                GlControl.Width = size.Width;
-                GlControl.Height = size.Height;
-            }
-
-            if (!_isSizedToFit)
-            {
-                _oldMaxWidth = ContainerPanel.MaxWidth;
-                _oldMaxHeight = ContainerPanel.MaxHeight;
-                _isSizedToFit = true;
-            }
-
-            ContainerPanel.MaxWidth = size.Width;
-            ContainerPanel.MaxHeight = size.Height;
+            GlControl.MinWidth = size.Width;
+            GlControl.MinHeight = size.Height;
 
             SizeToContent = SizeToContent.WidthAndHeight;
             CanResize = false;
@@ -68,9 +55,9 @@ public partial class MainWindow : IWindowAccessService, IViewDialogService, IOpe
         Dispatcher.UIThread.Invoke(() =>
         {
             if (_oldMaxWidth != null)
-                ContainerPanel.MaxWidth = _oldMaxWidth.Value;
+                GlControl.MinWidth = _oldMaxWidth.Value;
             if (_oldMaxHeight != null)
-                ContainerPanel.MaxHeight = _oldMaxHeight.Value;
+                GlControl.MinHeight = _oldMaxHeight.Value;
 
             SizeToContent = SizeToContent.Manual;
             _isSizedToFit = false;
@@ -113,205 +100,39 @@ public partial class MainWindow : IWindowAccessService, IViewDialogService, IOpe
 
     #endregion
 
-    #region IOpenGLContextService
-
-    public void InitWindow()
-    {
-    }
-
-    public void QuitWindow()
-    {
-        _contextHandle?.Dispose();
-        _contextHandle = null;
-
-        GlControl.Cleanup();
-    }
-
-    public void SetGLAttribute(GLAttribute attr, int value)
-    {
-        // if (VidextToggle.IsChildAttached)
-        //     throw new InvalidOperationException("OpenGL is already initialized");
-        switch (attr)
-        {
-            case GLAttribute.DoubleBuffer or
-                GLAttribute.BufferSize or
-                GLAttribute.RedSize or
-                GLAttribute.BlueSize or
-                GLAttribute.GreenSize or
-                GLAttribute.AlphaSize:
-                // this is out of our control
-                break;
-            case GLAttribute.DepthSize:
-                Dispatcher.UIThread.Invoke(() => GlControl.DepthSize = value);
-                break;
-            case GLAttribute.SwapControl:
-                Dispatcher.UIThread.Invoke(() => GlControl.VSync = value != 0);
-                break;
-            case GLAttribute.MultisampleBuffers or
-                GLAttribute.MultisampleSamples:
-                // this is also out of our control
-                break;
-            case GLAttribute.ContextMajorVersion:
-                Dispatcher.UIThread.Invoke(() => GlControl.RequestedGlVersionMajor = value);
-                break;
-            case GLAttribute.ContextMinorVersion:
-                Dispatcher.UIThread.Invoke(() => GlControl.RequestedGlVersionMinor = value);
-                break;
-            case GLAttribute.ContextProfileMask:
-                Dispatcher.UIThread.Invoke(() => GlControl.RequestedGlProfileType = (GLContextType) value switch
-                {
-                    GLContextType.Core or GLContextType.Compatibilty => GlProfileType.OpenGL,
-                    GLContextType.ES => GlProfileType.OpenGLES,
-                    _ => GlControl.RequestedGlProfileType
-                });
-                break;
-        }
-    }
-
-    public int GetGLAttribute(GLAttribute attr)
-    {
-        _contextHandle ??= GlControl.MakeContextCurrent();
-        if (_contextHandle == null)
-            throw new ApplicationException("big screwup here");
-
-        var gl = GL.GetApi(GlControl.GetProcAddress);
-
-        return attr switch
-        {
-            GLAttribute.DoubleBuffer => 1,
-            GLAttribute.BufferSize => gl.GetFramebufferAttachmentParameter(
-                                          FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0,
-                                          FramebufferAttachmentParameterName.RedSize) +
-                                      gl.GetFramebufferAttachmentParameter(
-                                          FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0,
-                                          FramebufferAttachmentParameterName.GreenSize) +
-                                      gl.GetFramebufferAttachmentParameter(
-                                          FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0,
-                                          FramebufferAttachmentParameterName.BlueSize) +
-                                      gl.GetFramebufferAttachmentParameter(
-                                          FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0,
-                                          FramebufferAttachmentParameterName.AlphaSize),
-            GLAttribute.DepthSize => gl.GetFramebufferAttachmentParameter(
-                FramebufferTarget.DrawFramebuffer, FramebufferAttachment.DepthAttachment,
-                FramebufferAttachmentParameterName.DepthSize),
-            GLAttribute.RedSize => gl.GetFramebufferAttachmentParameter(
-                FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0,
-                FramebufferAttachmentParameterName.RedSize),
-            GLAttribute.GreenSize => gl.GetFramebufferAttachmentParameter(
-                FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0,
-                FramebufferAttachmentParameterName.GreenSize),
-            GLAttribute.BlueSize => gl.GetFramebufferAttachmentParameter(
-                FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0,
-                FramebufferAttachmentParameterName.BlueSize),
-            GLAttribute.AlphaSize => gl.GetFramebufferAttachmentParameter(
-                FramebufferTarget.DrawFramebuffer, FramebufferAttachment.ColorAttachment0,
-                FramebufferAttachmentParameterName.AlphaSize),
-            GLAttribute.SwapControl => GlControl.VSync ? 1 : 0,
-            GLAttribute.MultisampleBuffers => 0,
-            GLAttribute.MultisampleSamples => 0,
-            GLAttribute.ContextMajorVersion => GlControl.ContextVersion.Major,
-            GLAttribute.ContextMinorVersion => GlControl.ContextVersion.Minor,
-            GLAttribute.ContextProfileMask => GlControl.ContextVersion.Type switch
-            {
-                GlProfileType.OpenGL => (int) GLContextType.Core,
-                GlProfileType.OpenGLES => (int) GLContextType.ES,
-                _ => throw new ApplicationException("INVALID PROFILE TYPE")
-            },
-            _ => 0
-        };
-    }
-
-    public void CreateGlWindow(int width, int height, int bitsPerPixel)
-    {
-        Dispatcher.UIThread.InvokeAsync(async () =>
-        {
-            GlControl.WindowSize = new PixelSize(width, height);
-            await GlControl.Initialize();
-        }).Wait();
-    }
-
-    public void ResizeGlWindow(int width, int height)
-    {
-        Dispatcher.UIThread.Invoke(() => { GlControl.WindowSize = new PixelSize(width, height); });
-    }
-
-    private IDisposable? _contextHandle;
-
-    public void MakeCurrent()
-    {
-        _contextHandle = GlControl.MakeContextCurrent();
-    }
-
-    public void SwapBuffers()
-    {
-        GlControl.SwapBuffers();
-    }
-
-    public nint GetProcAddress(nint strSymbol)
-    {
-        string? str = Marshal.PtrToStringAnsi(strSymbol);
-        return str != null ? GlControl.GetProcAddress(str) : IntPtr.Zero;
-    }
-
-    public uint GetDefaultFramebuffer()
-    {
-        return GlControl.RenderFBO;
-    }
-
-    #endregion
-
     #region ILuaInterfaceService
 
     public WindowPoint PointerPosition { get; private set; } = new(0, 0);
     public MouseButtonMask PointerButtons { get; private set; } = 0;
     public event EventHandler<SkiaRenderEventArgs>? OnSkiaRender;
-
+    
     private void SkiaOnRender(object? s, SkiaRenderEventArgs e)
     {
         var canvas = e.Canvas;
         OnSkiaRender?.Invoke(s, e);
     }
-
+    
     private void SkiaOnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
         SkiaOnPointerUpdate(sender, e);
     }
-
+    
     private void SkiaOnPointerReleased(object? sender, PointerReleasedEventArgs e)
     {
         SkiaOnPointerUpdate(sender, e);
     }
-
+    
     private void SkiaOnPointerUpdate(object? sender, PointerEventArgs e)
     {
-        var pointerPoint = e.GetCurrentPoint(SkiaCanvas);
+        var pointerPoint = e.GetCurrentPoint(GlControl);
         var pointerPos = pointerPoint.Position;
         var pointerProps = pointerPoint.Properties;
-
+    
         PointerPosition = new WindowPoint(pointerPos.X, pointerPos.Y);
         PointerButtons =
             (pointerProps.IsLeftButtonPressed ? MouseButtonMask.Primary : 0) |
             (pointerProps.IsMiddleButtonPressed ? MouseButtonMask.Middle : 0) |
             (pointerProps.IsRightButtonPressed ? MouseButtonMask.Secondary : 0);
-    }
-
-    #endregion
-
-    #region ICaptureService
-
-    public unsafe void CaptureTo(Span<byte> buffer, uint linesize)
-    {
-        var pixelBounds = new PixelRect(0, 0, (int) Math.Ceiling(ContainerPanel.Bounds.Width), (int) Math.Ceiling(ContainerPanel.Bounds.Height));
-        
-        var rtb = new RenderTargetBitmap(
-            pixelBounds.Size);
-        
-        rtb.Render(ContainerPanel);
-
-        fixed (byte* pBuffer = buffer)
-        {
-            rtb.CopyPixels(pixelBounds, (IntPtr) pBuffer, buffer.Length, (int) linesize);
-        }
     }
 
     #endregion

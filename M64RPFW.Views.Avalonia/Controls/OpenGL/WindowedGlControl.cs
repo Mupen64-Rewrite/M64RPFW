@@ -14,7 +14,6 @@ namespace M64RPFW.Views.Avalonia.Controls.OpenGL;
 /// <summary>
 /// Control that displays OpenGL output via an external window.
 /// </summary>
-[Obsolete]
 public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
 {
     public WindowedGlControl()

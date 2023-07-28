@@ -25,18 +25,19 @@ class Program
         var builder = AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .LogToTrace()
-            .With(new Win32PlatformOptions
-            {
-                // this seems to be necessary
-                RenderingMode = new[] { Win32RenderingMode.Wgl },
-                WglProfiles = new List<GlVersion>(new[] {new GlVersion(GlProfileType.OpenGL, 3, 3)})
-            })
-            .With(new X11PlatformOptions
-            {
-                // GLX is broken for some reason, we don't know.
-                RenderingMode = new[] { X11RenderingMode.Egl },
-                GlProfiles = new List<GlVersion>(new[] {new GlVersion(GlProfileType.OpenGL, 3, 3)})
-            });
+            // .With(new Win32PlatformOptions
+            // {
+            //     // this seems to be necessary
+            //     RenderingMode = new[] { Win32RenderingMode.Wgl },
+            //     WglProfiles = new List<GlVersion>(new[] {new GlVersion(GlProfileType.OpenGL, 3, 3)})
+            // })
+            // .With(new X11PlatformOptions
+            // {
+            //     // GLX is broken for some reason, we don't know.
+            //     RenderingMode = new[] { X11RenderingMode.Egl },
+            //     GlProfiles = new List<GlVersion>(new[] {new GlVersion(GlProfileType.OpenGL, 3, 3)})
+            // })
+            ;
         return builder;
     }
 }
