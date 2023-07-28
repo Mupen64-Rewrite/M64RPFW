@@ -168,7 +168,7 @@
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" x:Name="StatusBar">
             <!--TODO: Status bar-->
         </StackPanel>
-        <gl:WindowedGlControl x:Name="GlControl"/>
+        <gl:WindowedGlControl OnSkiaRender="SkiaOnRender" x:Name="GlControl"/>
     </DockPanel>
 
 </views:MainWindow>
