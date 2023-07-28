@@ -168,29 +168,7 @@
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" x:Name="StatusBar">
             <!--TODO: Status bar-->
         </StackPanel>
-        <RelativePanel Name="ContainerPanel" Background="Black">
-            <!--Emulator output-->
-            <gl:IndependentGlControl Name="GlControl"
-                                     VerticalAlignment="Top"
-                                     HorizontalAlignment="Left"
-                                     RelativePanel.AlignTopWithPanel="True"
-                                     RelativePanel.AlignLeftWithPanel="True" />
-            <!--insert SkiaCanvas Here-->
-            <ctrls:SkiaCanvas Name="SkiaCanvas"
-                              VerticalAlignment="Stretch"
-                              HorizontalAlignment="Stretch"
-                              RelativePanel.AlignTopWithPanel="True"
-                              RelativePanel.AlignBottomWithPanel="True"
-                              RelativePanel.AlignLeftWithPanel="True"
-                              RelativePanel.AlignRightWithPanel="True"
-                              PointerPressed="SkiaOnPointerPressed"
-                              PointerMoved="SkiaOnPointerUpdate"
-                              PointerReleased="SkiaOnPointerReleased"
-                              PointerEntered="SkiaOnPointerUpdate"
-                              PointerExited="SkiaOnPointerUpdate"
-                              RenderSkia="SkiaOnRender">
-            </ctrls:SkiaCanvas>
-        </RelativePanel>
+        <gl:WindowedGlControl x:Name="GlControl"/>
     </DockPanel>
 
 </views:MainWindow>
