@@ -37,7 +37,7 @@ public partial class MainWindow : IWindowSizingService, IViewDialogService, ILua
     bool _isSizedToFit = false;
     double? _oldMaxWidth, _oldMaxHeight;
 
-    public void SizeToFit(WindowSize size, bool sizeGlWindow)
+    public void SizeToFit(WindowSize size)
     {
         Dispatcher.UIThread.Invoke(() =>
         {
