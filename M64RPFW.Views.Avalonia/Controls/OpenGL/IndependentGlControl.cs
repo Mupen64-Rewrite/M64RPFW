@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.OpenGL;
@@ -10,6 +11,9 @@ using M64RPFW.Views.Avalonia.Controls.Helpers;
 
 namespace M64RPFW.Views.Avalonia.Controls.OpenGL;
 
+/// <summary>
+/// Control that displays OpenGL output using Avalonia's texture interop mechanism.
+/// </summary>
 public class IndependentGlControl : CompositionControl
 {
     private IOpenGlTextureSharingRenderInterfaceContextFeature? _glSharing;

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Avalonia;
+using Avalonia.OpenGL;
 
 namespace M64RPFW.Views.Avalonia;
 
@@ -25,17 +27,16 @@ class Program
             .LogToTrace()
             .With(new Win32PlatformOptions
             {
-                // default values and fallbacks suffice
-                RenderingMode = new[] { Win32RenderingMode.Wgl }
+                // this seems to be necessary
+                RenderingMode = new[] { Win32RenderingMode.Wgl },
+                WglProfiles = new List<GlVersion>(new[] {new GlVersion(GlProfileType.OpenGL, 3, 3)})
             })
             .With(new X11PlatformOptions
             {
-                // this seems to be necessary
-                RenderingMode = new[] { X11RenderingMode.Egl }
+                // GLX is broken for some reason, we don't know.
+                RenderingMode = new[] { X11RenderingMode.Egl },
+                GlProfiles = new List<GlVersion>(new[] {new GlVersion(GlProfileType.OpenGL, 3, 3)})
             });
-        // Native file dialogs on Linux broke in Avalonia 10, so...
-        // if (OperatingSystem.IsLinux())
-        //     builder = builder.UseManagedSystemDialogs();
         return builder;
     }
 }
