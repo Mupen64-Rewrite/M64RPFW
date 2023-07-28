@@ -9,10 +9,10 @@ using Silk.NET.SDL;
 using static M64RPFW.Views.Avalonia.Controls.Helpers.SilkGlobals;
 using SDL_Window = Silk.NET.SDL.Window;
 
-namespace M64RPFW.Views.Avalonia.Controls;
+namespace M64RPFW.Views.Avalonia.Controls.OpenGL;
 
 /// <summary>
-/// Control that displays OpenGL output on a separate window.
+/// Control that displays OpenGL output via an external window.
 /// </summary>
 [Obsolete]
 public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
