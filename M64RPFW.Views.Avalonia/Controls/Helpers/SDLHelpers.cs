@@ -309,4 +309,30 @@ public static class SDLHelpers
         res |= (mod & KeyModifiers.Meta) == KeyModifiers.Meta ? Keymod.Gui : 0;
         return res;
     }
+
+    private unsafe class RestoreSdlContext : IDisposable
+    {
+        private Sdl _sdl;
+        private Window* _win;
+        private void* _gl;
+
+        public RestoreSdlContext(Sdl sdl)
+        {
+            _sdl = sdl;
+            _win = _sdl.GLGetCurrentWindow();
+            _gl = _sdl.GLGetCurrentContext();
+        }
+
+        public void Dispose()
+        {
+            _sdl.GLMakeCurrent(_win, _gl);
+        }
+    }
+
+    public static unsafe IDisposable GLMakeCurrentTemp(this Sdl sdl, Window* win, void* ctx)
+    {
+        var handle = new RestoreSdlContext(sdl);
+        sdl.GLMakeCurrent(win, ctx);
+        return handle;
+    }
 }

@@ -68,7 +68,7 @@ public unsafe partial class EmulatorViewModel : IVideoExtensionService
             Mupen64Plus.Log(LogSources.Vidext, MessageLevel.Info, $"Setting video mode {width}x{height}");
             
             _windowSizingService.SizeToFit(new WindowSize(width, height));
-            _openGlContextService.CreateGlWindow(width, height, bpp);
+            _openGlContextService.CreateViewport(width, height, bpp);
             
             _openGlContextService.MakeCurrent();
 
@@ -122,7 +122,7 @@ public unsafe partial class EmulatorViewModel : IVideoExtensionService
     {
         try
         {
-            _openGlContextService.ResizeGlWindow(width, height);
+            _openGlContextService.ResizeViewport(width, height);
             return Error.Success;
         }
         catch (Exception)

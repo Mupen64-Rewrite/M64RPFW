@@ -25,7 +25,7 @@ public partial class LuaEnvironment
     [LuaFunction("wgui.resize")]
     private void SetWindowSize(int width, int height)
     {
-        _luaInterfaceService.SizeToFit(new WindowSize(width, height), false);
+        _luaInterfaceService.SizeToFit(new WindowSize(width, height));
     }
 
     [LuaFunction("wgui.fill_rectangle")]

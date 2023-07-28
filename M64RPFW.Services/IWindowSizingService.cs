@@ -10,6 +10,6 @@ namespace M64RPFW.Services;
 public interface IWindowSizingService
 {
     WindowSize GetWindowSize();
-    void SizeToFit(WindowSize size, bool sizeGlWindow = true);
+    void SizeToFit(WindowSize size);
     void UnlockWindowSize();
 }
