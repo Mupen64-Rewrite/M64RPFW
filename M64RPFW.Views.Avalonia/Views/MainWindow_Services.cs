@@ -24,7 +24,7 @@ using static M64RPFW.Models.Types.Mupen64PlusTypes;
 
 namespace M64RPFW.Views.Avalonia.Views;
 
-public partial class MainWindow : IWindowSizingService, IViewDialogService, ILuaInterfaceService
+public partial class MainWindow : IViewDialogService, ILuaInterfaceService
 {
 
     #region IWindowSizingService

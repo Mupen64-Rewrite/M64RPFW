@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Platform;
 using M64RPFW.Models.Types;
 using M64RPFW.Services;
+using M64RPFW.Services.Abstractions;
 using M64RPFW.Views.Avalonia.Controls.Helpers;
 using Silk.NET.OpenGL;
 using Silk.NET.SDL;
@@ -22,11 +23,14 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
     private IntPtr _nativeWin;
     private SDL_Window* _sdlWin;
     private void* _emulatorGl;
-    
+
     private void* _skiaGl;
     private GRContext? _grContext;
     private SKSurface? _surface;
-    private int _surfaceDirty;
+    private int _sizeDirty;
+    private PixelSize _skiaSize;
+
+    public event EventHandler<SkiaRenderEventArgs>? OnSkiaRender;
 
     #region IOpenGLContextService
 
@@ -48,7 +52,6 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
             }
             SDL.GLSwapWindow(_sdlWin);
         }
-        InitSkia();
 
         return platHandle;
     }
@@ -65,7 +68,11 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
         if (OperatingSystem.IsLinux())
             SDL.SetHint("SDL_VIDEODRIVER", "x11");
         _sdlWin = SDL.CreateWindowFrom((void*) _nativeWin);
+        
+        InitSkia();
+        
         SDL.GLSetAttribute(GLattr.Doublebuffer, 1);
+        SDL.GLSetAttribute(GLattr.StencilSize, 8);
     }
 
     public void QuitWindow()
@@ -91,7 +98,6 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
             SDL.GLDeleteContext(_skiaGl);
             _grContext?.Dispose();
             _surface?.Dispose();
-            _surfaceDirty = 0;
         }
         SDL.DestroyWindow(_sdlWin);
         _sdlWin = null;
@@ -139,7 +145,6 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
     {
         if (_sdlWin == null || _emulatorGl == null)
             return;
-        
         TriggerSkiaRender();
         SDL.GLSwapWindow(_sdlWin);
     }
@@ -156,26 +161,31 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
 
     #endregion
 
-    #region Skia stuff
+    #region Skia implementation
 
     protected override void OnSizeChanged(SizeChangedEventArgs e)
     {
         base.OnSizeChanged(e);
-        _surfaceDirty = 1;
+        var scale = VisualRoot!.RenderScaling;
+        _skiaSize = new PixelSize(
+            Math.Max(1, (int) (Bounds.Width * scale)),
+            Math.Max(1, (int) (Bounds.Height * scale))
+        );
+        _sizeDirty = 1;
     }
 
     private void InitSurface(GL gl)
     {
         _surface?.Dispose();
 
-        int width, height, samples;
-        SDL.GetWindowSizeInPixels(_sdlWin, &width, &height);
+        int samples, stencilSize;
         SDL.GLGetAttribute(GLattr.Multisamplesamples, &samples);
-            
-        gl.Viewport(0, 0, (uint) width, (uint) height);
-        _surface = SKSurface.Create(_grContext, 
-            new GRBackendRenderTarget(width, height, samples, 0, new GRGlFramebufferInfo(0)), 
-            GRSurfaceOrigin.BottomLeft, SKColorType.Rgba8888);
+        SDL.GLGetAttribute(GLattr.StencilSize, &stencilSize);
+
+        gl.Viewport(0, 0, (uint) _skiaSize.Width, (uint) _skiaSize.Height);
+        _surface = SKSurface.Create(_grContext,
+            new GRBackendRenderTarget(_skiaSize.Width, _skiaSize.Height, samples, stencilSize, new GRGlFramebufferInfo(0, (uint) GLEnum.Rgb8)),
+            GRSurfaceOrigin.BottomLeft, SKColorType.Rgb888x);
     }
 
     private void InitSkia()
@@ -194,18 +204,22 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
 
     private void TriggerSkiaRender()
     {
-        if (_skiaGl == null || _grContext == null || _surface == null)
+        if (_skiaGl == null || _grContext == null)
             return;
 
         using (SDL.GLMakeCurrentTemp(_sdlWin, _skiaGl))
         {
-            if (Interlocked.Exchange(ref _surfaceDirty, 0) != 0)
+            if (Interlocked.Exchange(ref _sizeDirty, 0) != 0)
             {
                 var gl = GL.GetApi(sym => (IntPtr) SDL.GLGetProcAddress(sym));
                 InitSurface(gl);
             }
-            var canvas = _surface.Canvas;
-            // TODO: trigger lua drawing
+            if (_surface == null)
+                return;
+            OnSkiaRender?.Invoke(this, new SkiaRenderEventArgs
+            {
+                Canvas = _surface.Canvas
+            });
             _surface.Flush();
         }
     }
