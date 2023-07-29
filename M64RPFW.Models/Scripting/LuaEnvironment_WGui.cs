@@ -3,6 +3,8 @@ using M64RPFW.Services.Abstractions;
 using NLua;
 using SkiaSharp;
 using System.Linq;
+using BitFaster.Caching.Lru;
+using M64RPFW.Models.Scripting.Graphics;
 using Topten.RichTextKit;
 using SkiaExtensions = M64RPFW.Models.Scripting.Extensions.SkiaExtensions;
 
@@ -12,6 +14,12 @@ namespace M64RPFW.Models.Scripting;
 
 public partial class LuaEnvironment
 {
+    private const int TextLayoutCacheLimit = 1000;
+    
+    private readonly ClassicLru<TextLayoutParameters, TextBlock> _textLayoutCache = new(TextLayoutCacheLimit);
+    private int _textAntialiasMode;
+    private readonly Dictionary<string, SKImage> _imageDict = new();
+
     [LuaFunction("wgui.info")]
     private LuaTable GetWindowSize()
     {
@@ -89,7 +97,6 @@ public partial class LuaEnvironment
         _skCanvas?.DrawLine(x0, y0, x1, y1, paint);
     }
 
-    private int _textAntialiasMode;
 
     [LuaFunction("wgui.set_text_antialias_mode")]
     private void SetTextAntialiasMode(int mode)
@@ -102,40 +109,54 @@ public partial class LuaEnvironment
         float alpha, string text, string fontName, float fontSize, int fontWeight, int fontStyle,
         int horizontalAlignment, int verticalAlignment, int options)
     {
-        // TODO: implement
-
         if (_skCanvas == null)
             return;
-
-        // RichTextKit handles most layout shenanigans
-        var block = new TextBlock
+        
+        // Cache laid-out text blocks. Unfortunately, I have to key with
+        // colour, though I wish I didn't need to.
+        var cacheKey = new TextLayoutParameters(
+            MaxWidth: right - x,
+            MaxHeight: bottom - y,
+            FontName: fontName,
+            FontSize: fontSize,
+            FontWeight: fontWeight,
+            FontStyle: fontStyle,
+            HorizontalAlignment: horizontalAlignment,
+            Color: SkiaExtensions.ColorFromFloats(red, green, blue, alpha)
+        );
+        var block = _textLayoutCache.GetOrAdd(cacheKey, key =>
         {
-            MaxWidth = right - x,
-            MaxHeight = bottom - y,
-            Alignment = horizontalAlignment switch
+            var block = new TextBlock
             {
-                0 => TextAlignment.Left,
-                1 => TextAlignment.Right,
-                2 => TextAlignment.Center,
-                _ => throw new ArgumentException("Invalid horizontal alignment")
-            },
-        };
-        block.AddText(text, new Style
-        {
-            FontFamily = fontName,
-            FontSize = fontSize,
-            FontWeight = fontWeight,
-            FontItalic = fontStyle switch
+                MaxWidth = key.MaxWidth,
+                MaxHeight = key.MaxHeight,
+                Alignment = key.HorizontalAlignment switch
+                {
+                    0 => TextAlignment.Left,
+                    1 => TextAlignment.Right,
+                    2 => TextAlignment.Center,
+                    _ => throw new ArgumentException("Invalid horizontal alignment")
+                },
+            };
+            block.AddText(text, new Style
             {
-                0 => false,
-                1 => true,
-                2 => true, // oblique != italic sometimes, but oh well
-                _ => throw new ArgumentException("Invalid font italic")
-            },
-            TextColor = SkiaExtensions.ColorFromFloats(red, green, blue, alpha),
+                FontFamily = key.FontName,
+                FontSize = key.FontSize,
+                FontWeight = key.FontWeight,
+                FontItalic = key.FontStyle switch
+                {
+                    0 => false,
+                    1 => true,
+                    2 => true, // oblique != italic sometimes, but oh well
+                    _ => throw new ArgumentException("Invalid font italic")
+                },
+                TextColor = key.Color
+            });
+            return block;
         });
-
-        // Vertical alignment
+        
+        // Vertical alignment. This only changes the position I render the text
+        // from, so it doesn't need to be cached.
         float realY = verticalAlignment switch
         {
             // Top-aligned
@@ -164,7 +185,6 @@ public partial class LuaEnvironment
     [LuaFunction("wgui.get_text_size")]
     private LuaTable GetTextSize(string text, string fontName, float fontSize, float maximumWidth, float maximumHeight)
     {
-        // TODO: implement
         var block = new TextBlock
         {
             MaxWidth = maximumWidth,
@@ -175,6 +195,8 @@ public partial class LuaEnvironment
             FontFamily = fontName,
             FontSize = fontSize
         });
+
+        SKPaint sp;
 
         var table = _lua.NewUnnamedTable();
         table["width"] = block.MeasuredWidth;
@@ -229,7 +251,7 @@ public partial class LuaEnvironment
         // NLua API isn't good enough: we need KeraLua
         KeraLua.Lua state = _lua.State!;
         _lua.Push(pointsTable);
-        
+
         // Utility functions (that restore the stack)
         long GetLength()
         {
@@ -238,18 +260,19 @@ public partial class LuaEnvironment
             state.Pop(1);
             return res;
         }
+
         SKPoint GetPoint(long key)
         {
             // stack = [table, table[key]]
             state.PushInteger(key);
             state.GetTable(-2);
-            
+
             // stack = [table, table[key], table[key][1], table[key][2]]
             state.GetInteger(-1, 1);
             state.GetInteger(-2, 2);
 
             var res = new SKPoint((float) state.ToNumber(-2), (float) state.ToNumber(-1));
-            
+
             state.Pop(3);
             return res;
         }
@@ -271,11 +294,10 @@ public partial class LuaEnvironment
         {
             Color = SkiaExtensions.ColorFromFloats(red, green, blue, alpha)
         };
-        
+
         _skCanvas?.DrawPath(path, paint);
     }
 
-    private readonly Dictionary<string, SKImage> _imageDict = new();
 
     [LuaFunction("wgui.load_image")]
     private void LoadImage(string path, string identifier)
