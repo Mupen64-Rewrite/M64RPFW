@@ -173,11 +173,10 @@ public partial class LuaEnvironment
         {
             Edging = _textAntialiasMode switch
             {
-                0 => SKFontEdging.Antialias,
                 1 => SKFontEdging.SubpixelAntialias,
                 2 => SKFontEdging.Antialias,
                 3 => SKFontEdging.Alias,
-                _ => SKFontEdging.Alias
+                _ => SKFontEdging.SubpixelAntialias
             }
         });
     }
@@ -195,8 +194,6 @@ public partial class LuaEnvironment
             FontFamily = fontName,
             FontSize = fontSize
         });
-
-        SKPaint sp;
 
         var table = _lua.NewUnnamedTable();
         table["width"] = block.MeasuredWidth;
@@ -246,7 +243,8 @@ public partial class LuaEnvironment
         _skCanvas?.DrawRoundRect(x, y, right - x, bottom - y, radiusX, radiusY, paint);
     }
 
-    private void GdiPlusFillPolygonA(LuaTable pointsTable, float alpha, float red, float green, float blue)
+    [LuaFunction("wgui.gdip_fillpolygona")]
+    private void GdiPlusFillPolygonA(LuaTable pointsTable, byte alpha, byte red, byte green, byte blue)
     {
         // NLua API isn't good enough: we need KeraLua
         KeraLua.Lua state = _lua.State!;
@@ -292,7 +290,7 @@ public partial class LuaEnvironment
 
         using var paint = new SKPaint
         {
-            Color = SkiaExtensions.ColorFromFloats(red, green, blue, alpha)
+            Color = new SKColor(red, green, blue, alpha)
         };
 
         _skCanvas?.DrawPath(path, paint);
@@ -302,7 +300,6 @@ public partial class LuaEnvironment
     [LuaFunction("wgui.load_image")]
     private void LoadImage(string path, string identifier)
     {
-        // TODO: implement
         if (_imageDict.ContainsKey(identifier))
             throw new InvalidOperationException($"{identifier} already exists");
         var image = SKImage.FromEncodedData(path);
@@ -312,7 +309,6 @@ public partial class LuaEnvironment
     [LuaFunction("wgui.free_image")]
     private void FreeImage(string identifier)
     {
-        // TODO: implement
         if (!_imageDict.Remove(identifier, out var image))
             return;
 
@@ -324,7 +320,6 @@ public partial class LuaEnvironment
         float destinationY, float destinationRight, float destinationBottom,
         string identifier, float opacity, int interpolation)
     {
-        // TODO: implement
         if (!_imageDict.TryGetValue(identifier, out var image))
             throw new ArgumentException("Identifier does not exist");
 
@@ -344,7 +339,6 @@ public partial class LuaEnvironment
     [LuaFunction("wgui.get_image_info")]
     private LuaTable GetImageInfo(string identifier)
     {
-        // TODO: implement
         if (!_imageDict.TryGetValue(identifier, out var image))
             throw new ArgumentException("Identifier does not exist");
 
@@ -352,7 +346,6 @@ public partial class LuaEnvironment
         table["width"] = image.Width;
         table["height"] = image.Height;
         return table;
-        _lua.Pop();
     }
 
 }
