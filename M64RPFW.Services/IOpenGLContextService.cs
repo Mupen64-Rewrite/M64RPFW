@@ -37,14 +37,14 @@ public interface IOpenGLContextService
     /// <param name="width">The window's width</param>
     /// <param name="height">The window's height</param>
     /// <param name="bitsPerPixel">The amount of bits used to represent one pixel</param>
-    void CreateGlWindow(int width, int height, int bitsPerPixel);
+    void CreateViewport(int width, int height, int bitsPerPixel);
 
     /// <summary>
     ///     Notifies the window that it's being resized.
     /// </summary>
     /// <param name="width">The window's width</param>
     /// <param name="height">The window's height</param>
-    void ResizeGlWindow(int width, int height);
+    void ResizeViewport(int width, int height);
 
     /// <summary>
     ///     Makes this window's OpenGL context current on this thread.

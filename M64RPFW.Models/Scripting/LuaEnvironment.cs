@@ -33,7 +33,7 @@ public partial class LuaEnvironment : IDisposable
     private readonly string _path;
     
     private readonly ILuaWindowService _luaWindowService;
-    private readonly IWindowAccessService _windowAccessService;
+    private readonly ILuaInterfaceService _luaInterfaceService;
     private readonly IFilePickerService _filePickerService;
 
     // Synchronization stuff
@@ -79,14 +79,14 @@ public partial class LuaEnvironment : IDisposable
         }
     }
 
-    public LuaEnvironment(string path, ILuaWindowService luaWindowService, IWindowAccessService windowAccessService, IFilePickerService filePickerService)
+    public LuaEnvironment(string path, ILuaWindowService luaWindowService, ILuaInterfaceService luaInterfaceService, IFilePickerService filePickerService)
     {
         // might seem stupid giving model access to view services, but we've already done that once
         _luaWindowService = luaWindowService;
-        _windowAccessService = windowAccessService;
+        _luaInterfaceService = luaInterfaceService;
         _filePickerService = filePickerService;
         _path = path;
-        _windowAccessService.OnSkiaRender += AtUpdateScreen;
+        _luaInterfaceService.OnSkiaRender += AtUpdateScreen;
 
         _luaLock = new ReaderWriterLockSlim();
         _isActive = false;
@@ -182,7 +182,7 @@ public partial class LuaEnvironment : IDisposable
         using (_luaLock.WriteLock())
         {
             AtStop();
-            _windowAccessService.OnSkiaRender -= AtUpdateScreen;
+            _luaInterfaceService.OnSkiaRender -= AtUpdateScreen;
             _stopCallback?.Call();
 
             _stopCallback = null;

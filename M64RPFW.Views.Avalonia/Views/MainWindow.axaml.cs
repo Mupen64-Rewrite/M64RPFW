@@ -31,7 +31,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
-        DataContext = new EmulatorViewModel(this, (App) Application.Current!,
+        DataContext = new EmulatorViewModel(GlControl, (App) Application.Current!,
             FilePickerService.Instance, this, this);
 
 
