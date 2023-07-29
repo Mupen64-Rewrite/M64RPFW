@@ -115,11 +115,11 @@ public unsafe partial class FFmpegEncoder
                         EncodeFrame(_frame2);
                     }
                 }
-                
+                // might be possible to do this on the GPU for speed
                 AVHelpers.AllocVideoFrame(_frame2, _codecCtx->width, _codecCtx->height, _codecCtx->pix_fmt);
                 AVHelpers.SwsSetupFrames(ref _sws, _frame1, _frame2);
                 
-                // ReadScreen2 flips the image for some reason, so we have to flip the image while scaling
+                // glReadPixels returns flipped data, so we have to flip the image while scaling
                 int err;
                 AVHelpers.SetupVFlipPointers(_frame1, out var flipData, out var flipLinesize);
                 if ((err = sws_scale(_sws, flipData, flipLinesize, 0, _frame1->height, _frame2->data, _frame2->linesize)) < 0)

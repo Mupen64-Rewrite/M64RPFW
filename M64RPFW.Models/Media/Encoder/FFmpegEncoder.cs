@@ -70,24 +70,17 @@ public unsafe partial class FFmpegEncoder : IVideoEncoder
 
     private void InitCodecs(AVOutputFormat* ofmt, FFmpegConfig? config = null)
     {
-        string? vCodecName = null, aCodecName = null;
-        if (config != null)
-        {
-            vCodecName = config.FormatOptions.GetValueOrDefault("video_codec");
-            aCodecName = config.FormatOptions.GetValueOrDefault("audio_codec");
-        }
-
         AVCodec* vCodec, aCodec;
         
-        vCodec = AVHelpers.CheckCodec(ofmt, AVMediaType.AVMEDIA_TYPE_VIDEO, vCodecName);
+        vCodec = AVHelpers.CheckCodec(ofmt, AVMediaType.AVMEDIA_TYPE_VIDEO, config?.VideoCodec);
         if (vCodec == null)
             vCodec = AVHelpers.DefaultCodec(ofmt, AVMediaType.AVMEDIA_TYPE_VIDEO);
 
-        aCodec = AVHelpers.CheckCodec(ofmt, AVMediaType.AVMEDIA_TYPE_AUDIO, aCodecName);
+        aCodec = AVHelpers.CheckCodec(ofmt, AVMediaType.AVMEDIA_TYPE_AUDIO, config?.AudioCodec);
         if (aCodec == null)
             aCodec = AVHelpers.DefaultCodec(ofmt, AVMediaType.AVMEDIA_TYPE_AUDIO);
 
-        _audioStream = aCodec != null ? new AudioStream(_fmtCtx, aCodec, config?.AudioOptions) : null;
+        _audioStream = aCodec != null && !(config?.NoAudio ?? false) ? new AudioStream(_fmtCtx, aCodec, config?.AudioOptions) : null;
         _videoStream = vCodec != null ? new VideoStream(_fmtCtx, vCodec, _audioStream, config?.VideoOptions) : null;
     }
     

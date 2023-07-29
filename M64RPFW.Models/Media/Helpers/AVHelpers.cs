@@ -293,9 +293,10 @@ internal static unsafe class AVHelpers
     /// <param name="linesize">The array of line-size pointers. Must have 8 elements.</param>
     public static void SetupVFlipPointers(AVFrame* frame, out byte_ptrArray8 data, out int_array8 linesize)
     {
+        var limit = av_pix_fmt_count_planes((AVPixelFormat) frame->format);
         data = new byte_ptrArray8();
         linesize = new int_array8();
-        for (uint i = 0; i < 4; i++)
+        for (uint i = 0; i < limit; i++)
         {
             data[i] = frame->data[i] + frame->linesize[i] * (frame->height - 1);
             linesize[i] = -frame->linesize[i];

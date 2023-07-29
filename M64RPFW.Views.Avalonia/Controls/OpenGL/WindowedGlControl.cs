@@ -7,6 +7,7 @@ using M64RPFW.Models.Types;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
 using M64RPFW.Views.Avalonia.Controls.Helpers;
+using Silk.NET.Core.Contexts;
 using Silk.NET.OpenGL;
 using Silk.NET.SDL;
 using SkiaSharp;
@@ -22,9 +23,11 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
 {
     private IntPtr _nativeWin;
     private SDL_Window* _sdlWin;
-    private void* _emulatorGl;
+    private void* _emuCtx;
+    private GL? _emuGl;
 
-    private void* _skiaGl;
+    private void* _skiaCtx;
+    private GL? _skiaGl;
     private GRContext? _grContext;
     private SKSurface? _surface;
     private int _sizeDirty;
@@ -44,9 +47,9 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
             InitWindow();
             CreateViewport((int) Width, (int) Height, 32);
 
-            using (SDL.GLMakeCurrentTemp(_sdlWin, _emulatorGl))
+            using (SDL.GLMakeCurrentTemp(_sdlWin, _emuCtx))
             {
-                var gl = GL.GetApi(sym => (IntPtr) SDL.GLGetProcAddress(sym));
+                var gl = _emuGl!;
                 gl.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
                 gl.Clear(ClearBufferMask.ColorBufferBit);
             }
@@ -79,10 +82,10 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
     {
         if (_sdlWin == null)
             return;
-        if (_emulatorGl != null)
+        if (_emuCtx != null)
         {
             // clear the screen to black
-            using (SDL.GLMakeCurrentTemp(_sdlWin, _emulatorGl))
+            using (SDL.GLMakeCurrentTemp(_sdlWin, _emuCtx))
             {
                 var gl = GL.GetApi(sym => (IntPtr) SDL.GLGetProcAddress(sym));
                 gl.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -90,12 +93,12 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
             }
             SDL.GLSwapWindow(_sdlWin);
 
-            SDL.GLDeleteContext(_emulatorGl);
-            _emulatorGl = null;
+            SDL.GLDeleteContext(_emuCtx);
+            _emuCtx = null;
         }
-        if (_skiaGl != null)
+        if (_skiaCtx != null)
         {
-            SDL.GLDeleteContext(_skiaGl);
+            SDL.GLDeleteContext(_skiaCtx);
             _grContext?.Dispose();
             _surface?.Dispose();
         }
@@ -120,12 +123,13 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
 
     public void CreateViewport(int width, int height, int bitsPerPixel)
     {
-        if (_emulatorGl != null)
+        if (_emuCtx != null)
         {
             SDL.GLMakeCurrent(_sdlWin, null);
-            SDL.GLDeleteContext(_emulatorGl);
+            SDL.GLDeleteContext(_emuCtx);
         }
-        _emulatorGl = SDL.GLCreateContext(_sdlWin);
+        _emuCtx = SDL.GLCreateContext(_sdlWin);
+        _emuGl = GL.GetApi(sym => (IntPtr) SDL.GLGetProcAddress(sym));
     }
 
     public void ResizeViewport(int width, int height)
@@ -135,17 +139,18 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
 
     public void MakeCurrent()
     {
-        if (_sdlWin == null || _emulatorGl == null)
+        if (_sdlWin == null || _emuCtx == null)
             return;
 
-        SDL.GLMakeCurrent(_sdlWin, _emulatorGl);
+        SDL.GLMakeCurrent(_sdlWin, _emuCtx);
     }
 
     public void SwapBuffers()
     {
-        if (_sdlWin == null || _emulatorGl == null)
+        if (_sdlWin == null || _emuCtx == null)
             return;
         TriggerSkiaRender();
+        
         SDL.GLSwapWindow(_sdlWin);
     }
 
@@ -190,12 +195,12 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
 
     private void InitSkia()
     {
-        if (_skiaGl == null)
-            _skiaGl = SDL.GLCreateContext(_sdlWin);
+        if (_skiaCtx == null)
+            _skiaCtx = SDL.GLCreateContext(_sdlWin);
 
-        using (SDL.GLMakeCurrentTemp(_sdlWin, _skiaGl))
+        using (SDL.GLMakeCurrentTemp(_sdlWin, _skiaCtx))
         {
-            var gl = GL.GetApi(sym => (IntPtr) SDL.GLGetProcAddress(sym));
+            var gl = _skiaGl = GL.GetApi(sym => (IntPtr) SDL.GLGetProcAddress(sym));
             _grContext = GRContext.CreateGl();
 
             InitSurface(gl);
@@ -204,15 +209,14 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
 
     private void TriggerSkiaRender()
     {
-        if (_skiaGl == null || _grContext == null)
+        if (_skiaCtx == null || _grContext == null)
             return;
 
-        using (SDL.GLMakeCurrentTemp(_sdlWin, _skiaGl))
+        using (SDL.GLMakeCurrentTemp(_sdlWin, _skiaCtx))
         {
             if (Interlocked.Exchange(ref _sizeDirty, 0) != 0)
             {
-                var gl = GL.GetApi(sym => (IntPtr) SDL.GLGetProcAddress(sym));
-                InitSurface(gl);
+                InitSurface(_skiaGl!);
             }
             if (_surface == null)
                 return;
@@ -222,6 +226,15 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
             });
             _surface.Flush();
         }
+    }
+
+    #endregion
+
+    #region Capture
+
+    public void CaptureTo(Span<byte> buffer, uint linesize)
+    {
+        
     }
 
     #endregion
