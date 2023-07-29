@@ -5,8 +5,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Rendering.Composition;
 using Avalonia.Threading;
-using M64RPFW.Models.Emulation;
-using M64RPFW.Models.Types;
 
 namespace M64RPFW.Views.Avalonia.Controls.OpenGL;
 

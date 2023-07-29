@@ -1,7 +1,5 @@
 using M64RPFW.Models.Emulation;
-using M64RPFW.Models.Scripting.Extensions;
 using M64RPFW.Services.Abstractions;
-using NLua;
 
 // ReSharper disable UnusedMember.Local
 

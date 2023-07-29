@@ -1,8 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Text;
-using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Helpers;
-using M64RPFW.Models.Types;
 using Tomlyn;
 using Tomlyn.Model;
 

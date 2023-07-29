@@ -2,7 +2,6 @@ using M64RPFW.Models.Scripting.Extensions;
 using M64RPFW.Services.Abstractions;
 using NLua;
 using SkiaSharp;
-using System.Linq;
 using BitFaster.Caching.Lru;
 using M64RPFW.Models.Scripting.Graphics;
 using Topten.RichTextKit;

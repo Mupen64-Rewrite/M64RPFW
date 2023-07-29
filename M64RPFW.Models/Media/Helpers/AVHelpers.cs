@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using FFmpeg.AutoGen;
 using M64RPFW.Models.Helpers;
 using static FFmpeg.AutoGen.ffmpeg;

@@ -1,26 +1,10 @@
 using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Media.Imaging;
-using Avalonia.OpenGL;
-using Avalonia.Platform;
 using Avalonia.Threading;
-using Avalonia.VisualTree;
-using M64RPFW.Models.Emulation;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
-using M64RPFW.Views.Avalonia.Controls;
-using M64RPFW.Views.Avalonia.Controls.OpenGL;
-using M64RPFW.Views.Avalonia.Helpers;
-using Silk.NET.OpenGL;
-using SkiaSharp;
-using static M64RPFW.Models.Types.Mupen64PlusTypes;
 
 namespace M64RPFW.Views.Avalonia.Views;
 

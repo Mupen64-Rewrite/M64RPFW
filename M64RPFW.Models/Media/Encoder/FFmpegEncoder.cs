@@ -1,7 +1,6 @@
 using FFmpeg.AutoGen;
 using M64RPFW.Models.Media.Helpers;
 using M64RPFW.Services;
-using static FFmpeg.AutoGen.AVPixelFormat;
 using static FFmpeg.AutoGen.ffmpeg;
 
 namespace M64RPFW.Models.Media.Encoder;

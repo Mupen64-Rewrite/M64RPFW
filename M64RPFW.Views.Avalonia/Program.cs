@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using Avalonia;
-using Avalonia.OpenGL;
 
 namespace M64RPFW.Views.Avalonia;
 

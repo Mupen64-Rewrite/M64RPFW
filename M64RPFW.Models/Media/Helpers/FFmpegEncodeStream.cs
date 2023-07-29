@@ -1,6 +1,5 @@
 using FFmpeg.AutoGen;
 using static FFmpeg.AutoGen.ffmpeg;
-using static M64RPFW.Models.Media.Helpers.AVException;
 
 namespace M64RPFW.Models.Media.Helpers;
 
