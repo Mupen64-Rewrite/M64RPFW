@@ -7,6 +7,9 @@ namespace M64RPFW.Views.Avalonia.Controls.Helpers;
 
 public static class SDLHelpers
 {
+    private static Sdl? _sdl;
+    public static Sdl sdl = _sdl ??= Sdl.GetApi();
+    
     public static GLattr ToSdlAttr(Mupen64PlusTypes.GLAttribute attr)
     {
         return attr switch
@@ -332,7 +335,8 @@ public static class SDLHelpers
     public static unsafe IDisposable GLMakeCurrentTemp(this Sdl sdl, Window* win, void* ctx)
     {
         var handle = new RestoreSdlContext(sdl);
-        sdl.GLMakeCurrent(win, ctx);
+        if (sdl.GLMakeCurrent(win, ctx) < 0)
+            throw new SDLException();
         return handle;
     }
 }

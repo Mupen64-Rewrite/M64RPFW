@@ -168,14 +168,16 @@
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" x:Name="StatusBar">
             <!--TODO: Status bar-->
         </StackPanel>
-        <gl:WindowedGlControl 
-            PointerPressed="SkiaOnPointerPressed"
-            PointerReleased="SkiaOnPointerReleased"
-            PointerMoved="SkiaOnPointerUpdate"
-            PointerEntered="SkiaOnPointerUpdate"
-            PointerExited="SkiaOnPointerUpdate"
-            OnSkiaRender="SkiaOnRender" 
-            x:Name="GlControl"/>
+        <Border Background="Black">
+            <gl:WindowedGlControl 
+                PointerPressed="SkiaOnPointerPressed"
+                PointerReleased="SkiaOnPointerReleased"
+                PointerMoved="SkiaOnPointerUpdate"
+                PointerEntered="SkiaOnPointerUpdate"
+                PointerExited="SkiaOnPointerUpdate"
+                SkiaRender="SkiaOnRender" 
+                x:Name="GlControl"/>
+        </Border>
     </DockPanel>
 
 </views:MainWindow>

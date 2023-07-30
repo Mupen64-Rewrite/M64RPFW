@@ -59,9 +59,9 @@ public interface IOpenGLContextService
     /// <summary>
     ///     Gets an OpenGL symbol's address.
     /// </summary>
-    /// <param name="strSymbol">A pointer to the desired symbol's name</param>
+    /// <param name="symbol">A pointer to the desired symbol's name</param>
     /// <returns>A pointer to the symbol</returns>
-    nint GetProcAddress(nint strSymbol);
+    nint GetProcAddress(nint symbol);
 
     /// <summary>
     ///     Returns the default OpenGL framebuffer's ID.
