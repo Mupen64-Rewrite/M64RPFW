@@ -9,6 +9,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="Locks\**" />
+      <EmbeddedResource Remove="Locks\**" />
+      <None Remove="Locks\**" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\M64RPFW.Models.Types\M64RPFW.Models.Types.csproj" />
         <ProjectReference Include="..\M64RPFW.Services\M64RPFW.Services.csproj" />
     </ItemGroup>
@@ -21,9 +27,5 @@
         <PackageReference Include="SkiaSharp" Version="2.88.3" />
         <PackageReference Include="Tomlyn" Version="0.16.2" />
         <PackageReference Include="Topten.RichTextKit" Version="0.4.165" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Locks\" />
     </ItemGroup>
 </Project>

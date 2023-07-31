@@ -323,7 +323,11 @@ public static class SDLHelpers
         {
             _sdl = sdl;
             _win = _sdl.GLGetCurrentWindow();
+            if (_win == null)
+                throw new SDLException();
             _gl = _sdl.GLGetCurrentContext();
+            if (_gl == null)
+                throw new SDLException();
         }
 
         public void Dispose()
@@ -335,6 +339,7 @@ public static class SDLHelpers
     public static unsafe IDisposable GLMakeCurrentTemp(this Sdl sdl, Window* win, void* ctx)
     {
         var handle = new RestoreSdlContext(sdl);
+        sdl.GLMakeCurrent(win, null);
         if (sdl.GLMakeCurrent(win, ctx) < 0)
             throw new SDLException();
         return handle;
