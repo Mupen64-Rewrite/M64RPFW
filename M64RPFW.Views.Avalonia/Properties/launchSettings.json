@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "M64RPFW.Views.Avalonia": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

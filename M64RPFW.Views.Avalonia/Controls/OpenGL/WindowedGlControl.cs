@@ -110,7 +110,13 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
 
     public void ResizeViewport(int width, int height)
     {
-        throw new NotSupportedException("Direct resizing is not supported because Lua demands it.");
+        if (_sdlCtx != null)
+            sdl.GLDeleteContext(_sdlWin);
+        _sdlCtx = sdl.GLCreateContext(_sdlWin);
+        if (_sdlCtx == null)
+            throw new SDLException();
+
+        _gl = GL.GetApi(sym => (IntPtr) sdl.GLGetProcAddress(sym));
     }
 
     public void MakeCurrent()
@@ -124,8 +130,6 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
 
     public void SwapBuffers()
     {
-        _gl.Flush();
-        SkiaRenderImpl();
         sdl.GLSwapWindow(_sdlWin);
     }
 
