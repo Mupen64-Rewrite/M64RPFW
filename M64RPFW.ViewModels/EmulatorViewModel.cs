@@ -8,14 +8,15 @@ namespace M64RPFW.ViewModels;
 public partial class EmulatorViewModel : ObservableObject
 {
     [ObservableProperty] private object? _currentSlotMenuItem;
-    
+
     private readonly IOpenGLContextService _openGlContextService;
     private readonly IDispatcherService _dispatcherService;
     private readonly IFilePickerService _filePickerService;
     private readonly IWindowSizingService _windowSizingService;
     private readonly IViewDialogService _viewDialogService;
 
-    public EmulatorViewModel(IOpenGLContextService openGlContextService, IDispatcherService dispatcherService, IFilePickerService filePickerService, IWindowSizingService windowSizingService, IViewDialogService viewDialogService)
+    public EmulatorViewModel(IOpenGLContextService openGlContextService, IDispatcherService dispatcherService,
+        IFilePickerService filePickerService, IWindowSizingService windowSizingService, IViewDialogService viewDialogService)
     {
         _openGlContextService = openGlContextService;
         _dispatcherService = dispatcherService;
@@ -65,14 +66,14 @@ public partial class EmulatorViewModel : ObservableObject
     #region Tracker properties and events
 
     private EmuState MupenEmuState =>
-        (EmuState)Mupen64Plus.CoreStateQuery(CoreParam.EmuState);
+        (EmuState) Mupen64Plus.CoreStateQuery(CoreParam.EmuState);
 
     private void OnEmuStateChanged()
     {
         OnPropertyChanged(nameof(MupenIsStopped));
         OnPropertyChanged(nameof(MupenIsPaused));
         OnPropertyChanged(nameof(MupenIsActive));
-        
+
         OpenRomCommand.NotifyCanExecuteChanged();
         CloseRomCommand.NotifyCanExecuteChanged();
         ResetRomCommand.NotifyCanExecuteChanged();

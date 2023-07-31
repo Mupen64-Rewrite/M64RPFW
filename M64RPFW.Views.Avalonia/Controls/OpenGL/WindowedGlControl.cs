@@ -124,6 +124,7 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
 
     public void SwapBuffers()
     {
+        _gl.Flush();
         SkiaRenderImpl();
         sdl.GLSwapWindow(_sdlWin);
     }
