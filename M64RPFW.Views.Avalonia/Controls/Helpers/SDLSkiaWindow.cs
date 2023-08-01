@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using Avalonia;
 using Silk.NET.OpenGL;
 using Silk.NET.SDL;
@@ -13,8 +14,10 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
     void* _ctx;
     GL _gl;
 
-    GRContext _grContext;
+    uint _blitQuadProgram;
     uint _texture;
+
+    GRContext _grContext;
     SKSurface? _surface;
 
     public SDLSkiaWindow(Window* srcWin, void* srcCtx)
@@ -25,6 +28,9 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
         using (sdl.GLMakeCurrentTemp(srcWin, srcCtx))
         {
             sdl.GLResetAttributes();
+            sdl.GLSetAttribute(GLattr.ContextMajorVersion, 3);
+            sdl.GLSetAttribute(GLattr.ContextMinorVersion, 3);
+            sdl.GLSetAttribute(GLattr.ContextProfileMask, (int) GLprofile.Core);
             sdl.GLSetAttribute(GLattr.Doublebuffer, 1);
             sdl.GLSetAttribute(GLattr.ShareWithCurrentContext, 1);
             sdl.GLSetAttribute(GLattr.StencilSize, 8);
@@ -37,10 +43,42 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
         using (sdl.GLMakeCurrentTemp(_win, _ctx))
         {
             _gl = sdl.GetGLBinding();
+            _blitQuadProgram = LinkBlitQuadShader(_gl);
 
             _grContext = GRContext.CreateGl();
             if (_grContext == null)
                 throw new SystemException("GRContext.CreateGl() failed");
+        }
+    }
+    
+    private static uint LinkBlitQuadShader(GL gl)
+    {
+        uint vertShader = gl.CreateShader(ShaderType.VertexShader);
+        uint fragShader = gl.CreateShader(GLEnum.FragmentShader);
+
+        try
+        {
+            gl.ShaderSourceFromResources(vertShader, "/Assets/Shaders/blit_quad.vert.glsl");
+            gl.CompileShaderChecked(vertShader);
+
+            gl.ShaderSourceFromResources(fragShader, "/Assets/Shaders/blit_quad.frag.glsl");
+            gl.CompileShaderChecked(fragShader);
+
+            uint prog = gl.CreateProgram();
+            gl.AttachShader(prog, vertShader);
+            gl.AttachShader(prog, fragShader);
+        
+            gl.LinkProgramChecked(prog);
+        
+            gl.DetachShader(prog, vertShader);
+            gl.DetachShader(prog, fragShader);
+
+            return prog;
+        }
+        finally
+        {
+            gl.DeleteShader(vertShader);
+            gl.DeleteShader(fragShader);
         }
     }
 
@@ -60,9 +98,10 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
         CheckContext();
     }
 
-    public void BlitTexture()
+    public void BlitTexture(GL gl)
     {
         CheckContext();
+        
     }
 
     private void CheckContext()
