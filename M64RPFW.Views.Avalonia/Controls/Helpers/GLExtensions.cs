@@ -6,7 +6,7 @@ using Silk.NET.OpenGL;
 
 namespace M64RPFW.Views.Avalonia.Controls.Helpers;
 
-public static class GlExtensions
+public static class GLExtensions
 {
     public static void Viewport(this GL gl, PixelRect rect)
     {
@@ -28,7 +28,7 @@ public static class GlExtensions
     /// <exception cref="ArgumentException"></exception>
     public static unsafe void ShaderSourceFromResources(this GL gl, uint shader, string resPath, Assembly? src = null)
     {
-        src ??= typeof(GlExtensions).Assembly;
+        src ??= typeof(GLExtensions).Assembly;
         using var resStream = src.GetManifestResourceStream(resPath) ?? 
                                  throw new ArgumentException($"Resource does not exist ({resPath})");
         using var bufStream = new MemoryStream();
@@ -48,6 +48,7 @@ public static class GlExtensions
     /// </summary>
     /// <param name="gl">The OpenGL API to use</param>
     /// <param name="shader">ID of the shader object to compile</param>
+    /// <exception cref="ShaderCompileException">If compilation fails.</exception>
     public static void CompileShaderChecked(this GL gl, uint shader)
     {
         gl.CompileShader(shader);
@@ -57,6 +58,12 @@ public static class GlExtensions
         }
     }
 
+    /// <summary>
+    /// Links a shader program, throwing a <see cref="ProgramLinkException"/> if linking fails.
+    /// </summary>
+    /// <param name="gl">The OpenGL API to use</param>
+    /// <param name="program">ID of the program object to link</param>
+    /// <exception cref="ProgramLinkException"></exception>
     public static void LinkProgramChecked(this GL gl, uint program)
     {
         gl.LinkProgram(program);
@@ -64,5 +71,13 @@ public static class GlExtensions
         {
             throw new ProgramLinkException(gl.GetProgramInfoLog(program));
         }
+    }
+
+    public static void SetCap(this GL gl, EnableCap cap, bool value)
+    {
+        if (value)
+            gl.Enable(cap);
+        else
+            gl.Disable(cap);
     }
 }

@@ -5,20 +5,44 @@ using Silk.NET.OpenGL;
 using Silk.NET.SDL;
 using SkiaSharp;
 using static M64RPFW.Views.Avalonia.Controls.Helpers.SDLHelpers;
+using PixelFormat = Silk.NET.OpenGL.PixelFormat;
+using PixelType = Silk.NET.OpenGL.PixelType;
 
 namespace M64RPFW.Views.Avalonia.Controls.Helpers;
 
 internal sealed unsafe class SDLSkiaWindow : IDisposable
 {
-    Window* _win;
-    void* _ctx;
-    GL _gl;
+    private static readonly float[] FullscreenQuadVertices = {
+        +1.0f, +1.0f,
+        -1.0f, +1.0f,
+        -1.0f, -1.0f,
+        +1.0f, -1.0f
+    };
+    private static readonly float[] FullscreenQuadTexCoords =
+    {
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f
+    };
+    private static readonly uint[] FullscreenQuadElements =
+    {
+        0, 1, 2,
+        0, 2, 3
+    };
+    
+    private Window* _win;
+    private void* _ctx;
+    private GL _gl;
 
-    uint _blitQuadProgram;
-    uint _texture;
+    private uint _texture;
+    private uint _vertexBuffer;
+    private uint _texCoordBuffer;
+    private uint _elementBuffer;
+    private uint _blitQuadProgram;
 
-    GRContext _grContext;
-    SKSurface? _surface;
+    private GRContext _grContext;
+    private SKSurface? _surface;
 
     public SDLSkiaWindow(Window* srcWin, void* srcCtx)
     {
@@ -43,12 +67,26 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
         using (sdl.GLMakeCurrentTemp(_win, _ctx))
         {
             _gl = sdl.GetGLBinding();
+            _texture = 0;
+
             _blitQuadProgram = LinkBlitQuadShader(_gl);
+
+            _vertexBuffer = LoadBufferObject<float>(_gl, BufferTargetARB.ArrayBuffer, FullscreenQuadVertices);
+            _texCoordBuffer = LoadBufferObject<float>(_gl, BufferTargetARB.ArrayBuffer, FullscreenQuadTexCoords);
+            _elementBuffer = LoadBufferObject<uint>(_gl, BufferTargetARB.ElementArrayBuffer, FullscreenQuadElements);
 
             _grContext = GRContext.CreateGl();
             if (_grContext == null)
                 throw new SystemException("GRContext.CreateGl() failed");
         }
+    }
+
+    private static uint LoadBufferObject<T>(GL gl, BufferTargetARB target, ReadOnlySpan<T> data) where T : unmanaged
+    {
+        uint buffer = gl.GenBuffer();
+        gl.BindBuffer(target, buffer);
+        gl.BufferData(GLEnum.ArrayBuffer, data, BufferUsageARB.StaticDraw);
+        return buffer;
     }
     
     private static uint LinkBlitQuadShader(GL gl)
@@ -96,12 +134,90 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
     public void InitSurface(PixelSize size)
     {
         CheckContext();
+        if (_texture != 0)
+        {
+            _gl.DeleteTexture(_texture);
+        }
+        
+        _texture = _gl.GenTexture();
+        _gl.BindTexture(TextureTarget.Texture2D, _texture);
+        _gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba, (uint) size.Width, (uint) size.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
+        _gl.TexParameterI(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) GLEnum.Nearest);
+        _gl.TexParameterI(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) GLEnum.Nearest);
+
+        _surface = SKSurface.Create(_grContext, 
+            new GRBackendTexture(size.Width, size.Height, false, new GRGlTextureInfo((uint) TextureTarget.Texture2D, _texture)), SKColorType.Rgba8888);
     }
 
     public void BlitTexture(GL gl)
     {
-        CheckContext();
+        uint prevProgram = (uint) gl.GetInteger(GetPName.CurrentProgram);
+        uint prevVAO = (uint) gl.GetInteger(GetPName.VertexArrayBinding);
+        uint prevBuffer = (uint) gl.GetInteger(GetPName.ArrayBufferBinding);
+        uint prevEBO = (uint) gl.GetInteger(GetPName.ElementArrayBufferBinding);
+        var prevActiveTexture = (GLEnum) gl.GetInteger(GetPName.ActiveTexture);
         
+        bool prevDepthTest = gl.IsEnabled(EnableCap.DepthTest);
+        bool prevBlend = gl.IsEnabled(EnableCap.Blend);
+
+        var prevSrcColorBlend = (BlendingFactor) gl.GetInteger(GetPName.BlendSrcRgb);
+        var prevDstColorBlend = (BlendingFactor) gl.GetInteger(GetPName.BlendDstRgb);
+        var prevSrcAlphaBlend = (BlendingFactor) gl.GetInteger(GetPName.BlendSrcAlpha);
+        var prevDstAlphaBlend = (BlendingFactor) gl.GetInteger(GetPName.BlendDstAlpha);
+        var prevColorBlendEqn = (BlendEquationModeEXT) gl.GetInteger(GetPName.BlendEquationRgb);
+        var prevAlphaBlendEqn = (BlendEquationModeEXT) gl.GetInteger(GetPName.BlendEquationAlpha);
+
+        uint vao = 0;
+        try
+        {
+            // We want to render over everything
+            gl.Disable(EnableCap.DepthTest);
+            // If Skia uses partial transparency, it needs to work
+            gl.Enable(EnableCap.Blend);
+            gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+            gl.BlendEquation(BlendEquationModeEXT.FuncAdd);
+            
+            // Switch to our own shader and attach the texture
+            gl.UseProgram(_blitQuadProgram);
+            gl.ActiveTexture(TextureUnit.Texture0);
+            gl.BindTexture(TextureTarget.Texture2D, _texture);
+            gl.Uniform1(0, 0);
+            
+            // Setup the vertex buffers to draw our fullscreen texture
+            vao = gl.GenVertexArray();
+            gl.BindVertexArray(vao);
+            
+            gl.EnableVertexAttribArray(0);
+            gl.BindBuffer(BufferTargetARB.ArrayBuffer, _vertexBuffer);
+            gl.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), null);
+            
+            gl.EnableVertexAttribArray(1);
+            gl.BindBuffer(BufferTargetARB.ArrayBuffer, _texCoordBuffer);
+            gl.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), null);
+            
+            // Draw the quad
+            gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, _elementBuffer);
+            gl.DrawElements(PrimitiveType.Triangles, (uint) FullscreenQuadElements.Length, DrawElementsType.UnsignedInt, null);
+        }
+        finally
+        {
+            // delete temporary stuff
+            if (vao != 0)
+                gl.DeleteVertexArray(vao);
+            
+            // Reset every piece of state we set earlier (this might be slow)
+            gl.UseProgram(prevProgram);
+            gl.BindVertexArray(prevVAO);
+            gl.BindBuffer(BufferTargetARB.ArrayBuffer, prevBuffer);
+            gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, prevEBO);
+            gl.ActiveTexture(prevActiveTexture);
+            
+            gl.SetCap(EnableCap.DepthTest, prevDepthTest);
+            gl.SetCap(EnableCap.Blend, prevBlend);
+
+            gl.BlendFuncSeparate(prevSrcColorBlend, prevDstColorBlend, prevSrcAlphaBlend, prevDstAlphaBlend);
+            gl.BlendEquationSeparate(prevColorBlendEqn, prevAlphaBlendEqn);
+        }
     }
 
     private void CheckContext()
