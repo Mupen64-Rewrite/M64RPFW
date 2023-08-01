@@ -9,7 +9,7 @@ using Silk.NET.OpenGL;
 
 namespace M64RPFW.Views.Avalonia.Controls.Helpers;
 
-public class GlBufferGroup : IDisposable
+internal class GlBufferGroup : IDisposable
 {
     private readonly IGlContext _context;
     private readonly ICompositionImportableOpenGlSharedTexture _texture;

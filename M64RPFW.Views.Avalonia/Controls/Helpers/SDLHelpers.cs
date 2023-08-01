@@ -1,11 +1,13 @@
 using System;
 using Avalonia.Input;
 using M64RPFW.Models.Types;
+using Silk.NET.OpenGL;
 using Silk.NET.SDL;
+// ReSharper disable ParameterHidesMember
 
 namespace M64RPFW.Views.Avalonia.Controls.Helpers;
 
-public static class SDLHelpers
+public static unsafe class SDLHelpers
 {
     private static Sdl? _sdl;
     public static Sdl sdl = _sdl ??= Sdl.GetApi();
@@ -29,7 +31,7 @@ public static class SDLHelpers
         };
     }
 
-    public static unsafe int GetMupenGLAttribute(this Sdl sdl, Mupen64PlusTypes.GLAttribute attr)
+    public static int GetMupenGLAttribute(this Sdl sdl, Mupen64PlusTypes.GLAttribute attr)
     {
         switch (attr)
         {
@@ -336,12 +338,22 @@ public static class SDLHelpers
         }
     }
 
-    public static unsafe IDisposable GLMakeCurrentTemp(this Sdl sdl, Window* win, void* ctx)
+    public static IDisposable GLMakeCurrentTemp(this Sdl sdl, Window* win, void* ctx)
     {
         var handle = new RestoreSdlContext(sdl);
         sdl.GLMakeCurrent(win, null);
         if (sdl.GLMakeCurrent(win, ctx) < 0)
             throw new SDLException();
         return handle;
+    }
+
+    public static Window* CreateWindow(this Sdl sdl, string title, int x, int y, int w, int h, WindowFlags flags)
+    {
+        return sdl.CreateWindow(title, x, y, w, h, (uint) flags);
+    }
+
+    public static GL GetGLBinding(this Sdl sdl)
+    {
+        return GL.GetApi(sym => (IntPtr) sdl.GLGetProcAddress(sym));
     }
 }
