@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using Avalonia;
 using Silk.NET.OpenGL;
 
@@ -79,5 +80,55 @@ public static class GLExtensions
             gl.Enable(cap);
         else
             gl.Disable(cap);
+    }
+
+    public static unsafe void AttachDebugLogger(this GL gl)
+    {
+        if (!gl.IsExtensionPresent("GL_KHR_debug"))
+            return;
+        
+        gl.DebugMessageCallback(GLDebugCallback, null);
+        gl.Enable(EnableCap.DebugOutputSynchronous);
+        gl.Enable(EnableCap.DebugOutput);
+    }
+
+    private static unsafe void GLDebugCallback(GLEnum source, GLEnum type, int id, GLEnum severity, int length, IntPtr message, IntPtr userparam)
+    {
+        string sSeverity = (DebugSeverity) severity switch
+        {
+            DebugSeverity.DebugSeverityHigh => "HIGH",
+            DebugSeverity.DebugSeverityMedium => "MED ",
+            DebugSeverity.DebugSeverityLow => "LOW ",
+            DebugSeverity.DebugSeverityNotification => "NOTE",
+            _ => "    "
+        };
+
+        string sType = (DebugType) type switch
+        {
+            DebugType.DebugTypeError => "ERROR",
+            DebugType.DebugTypeDeprecatedBehavior => "DEPRC",
+            DebugType.DebugTypeUndefinedBehavior => "UNDEF",
+            DebugType.DebugTypePortability => "PORT ",
+            DebugType.DebugTypePerformance => "PERF ",
+            DebugType.DebugTypeOther => "OTHER",
+            DebugType.DebugTypeMarker => "MARK ",
+            DebugType.DebugTypePushGroup => "PUSH ",
+            DebugType.DebugTypePopGroup => "POP  ",
+            _ => "     "
+        };
+
+        string sSource = (DebugSource) source switch
+        {
+            DebugSource.DebugSourceApi => "API ",
+            DebugSource.DebugSourceApplication => "APP ",
+            DebugSource.DebugSourceShaderCompiler => "SHDR",
+            DebugSource.DebugSourceThirdParty => "3PTY",
+            DebugSource.DebugSourceWindowSystem => "WSYS",
+            DebugSource.DebugSourceOther => "MISC"
+        };
+
+        string sMessage = Encoding.UTF8.GetString((byte*) message, length);
+        
+        Console.WriteLine($"GL 0x{(uint) id:X8} | {sSource} {sType} {sSeverity} | {message}");
     }
 }

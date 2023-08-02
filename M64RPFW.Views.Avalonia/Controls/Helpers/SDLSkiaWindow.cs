@@ -55,8 +55,8 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
             try
             {
                 sdl.GLResetAttributes();
-                sdl.GLSetAttribute(GLattr.ContextMajorVersion, 3);
-                sdl.GLSetAttribute(GLattr.ContextMinorVersion, 3);
+                sdl.GLSetAttribute(GLattr.ContextMajorVersion, 4);
+                sdl.GLSetAttribute(GLattr.ContextMinorVersion, 0);
                 sdl.GLSetAttribute(GLattr.ContextProfileMask, (int) GLprofile.Core);
                 sdl.GLSetAttribute(GLattr.Doublebuffer, 1);
                 sdl.GLSetAttribute(GLattr.ShareWithCurrentContext, 1);
@@ -75,6 +75,7 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
         using (sdl.GLMakeCurrentTemp(_win, _ctx))
         {
             _gl = sdl.GetGLBinding();
+            _gl.AttachDebugLogger();
             _texture = 0;
 
             _blitQuadProgram = LinkBlitQuadShader(_gl);
@@ -148,7 +149,7 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
         {
             _gl.DeleteTexture(_texture);
         }
-        
+
         _texture = _gl.GenTexture();
         _gl.BindTexture(TextureTarget.Texture2D, _texture);
         _gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba8, (uint) size.Width, (uint) size.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
