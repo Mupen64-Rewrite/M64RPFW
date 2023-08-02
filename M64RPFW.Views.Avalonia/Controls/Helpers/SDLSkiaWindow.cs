@@ -52,17 +52,24 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
             throw new SDLException();
         using (sdl.GLMakeCurrentTemp(srcWin, srcCtx))
         {
-            sdl.GLResetAttributes();
-            sdl.GLSetAttribute(GLattr.ContextMajorVersion, 3);
-            sdl.GLSetAttribute(GLattr.ContextMinorVersion, 3);
-            sdl.GLSetAttribute(GLattr.ContextProfileMask, (int) GLprofile.Core);
-            sdl.GLSetAttribute(GLattr.Doublebuffer, 1);
-            sdl.GLSetAttribute(GLattr.ShareWithCurrentContext, 1);
-            sdl.GLSetAttribute(GLattr.StencilSize, 8);
+            try
+            {
+                sdl.GLResetAttributes();
+                sdl.GLSetAttribute(GLattr.ContextMajorVersion, 3);
+                sdl.GLSetAttribute(GLattr.ContextMinorVersion, 3);
+                sdl.GLSetAttribute(GLattr.ContextProfileMask, (int) GLprofile.Core);
+                sdl.GLSetAttribute(GLattr.Doublebuffer, 1);
+                sdl.GLSetAttribute(GLattr.ShareWithCurrentContext, 1);
+                sdl.GLSetAttribute(GLattr.StencilSize, 8);
 
-            _ctx = sdl.GLCreateContext(_win);
-            if (_ctx == null)
-                throw new SDLException();
+                _ctx = sdl.GLCreateContext(_win);
+                if (_ctx == null)
+                    throw new SDLException();
+            }
+            finally
+            {
+                sdl.GLResetAttributes();
+            }
         }
 
         using (sdl.GLMakeCurrentTemp(_win, _ctx))
