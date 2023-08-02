@@ -325,11 +325,7 @@ public static unsafe class SDLHelpers
         {
             _sdl = sdl;
             _win = _sdl.GLGetCurrentWindow();
-            if (_win == null)
-                throw new SDLException();
             _gl = _sdl.GLGetCurrentContext();
-            if (_gl == null)
-                throw new SDLException();
         }
 
         public void Dispose()

@@ -33,61 +33,75 @@
 
 
     <ItemGroup>
-      <Compile Update="App.axaml.cs">
-        <DependentUpon>App.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\AdvancedSettingsDialog.axaml.cs">
-        <DependentUpon>AdvancedSettingsDialog.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\ExceptionDialog.axaml.cs">
-        <DependentUpon>ExceptionDialog.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\LuaWindow.axaml.cs">
-        <DependentUpon>LuaWindow.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\MainWindow.axaml.cs">
-        <DependentUpon>MainWindow.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\OpenMovieDialog.axaml.cs">
-        <DependentUpon>OpenMovieDialog.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\SettingsDialog.axaml.cs">
-        <DependentUpon>SettingsDialog.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
+        <Compile Update="App.axaml.cs">
+            <DependentUpon>App.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\AdvancedSettingsDialog.axaml.cs">
+            <DependentUpon>AdvancedSettingsDialog.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\ExceptionDialog.axaml.cs">
+            <DependentUpon>ExceptionDialog.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\LuaWindow.axaml.cs">
+            <DependentUpon>LuaWindow.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\MainWindow.axaml.cs">
+            <DependentUpon>MainWindow.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\OpenMovieDialog.axaml.cs">
+            <DependentUpon>OpenMovieDialog.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\SettingsDialog.axaml.cs">
+            <DependentUpon>SettingsDialog.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
 
     <ItemGroup>
-      <AdditionalFiles Include="Controls\FileBrowser.axaml" />
-      <AdditionalFiles Include="Controls\HotkeyButton.axaml" />
-      <AdditionalFiles Include="Views\Settings\EmulatorSettingsPage.axaml" />
-      <AdditionalFiles Include="Views\Settings\GeneralSettingsPage.axaml" />
-      <AdditionalFiles Include="Views\Settings\HotkeySettingsPage.axaml" />
-      <AdditionalFiles Include="Views\Settings\PluginSettingsPage.axaml" />
-      <AdditionalFiles Include="Views\Settings\VideoSettingsPage.axaml" />
+        <AdditionalFiles Include="Controls\FileBrowser.axaml" />
+        <AdditionalFiles Include="Controls\HotkeyButton.axaml" />
+        <AdditionalFiles Include="Views\Settings\EmulatorSettingsPage.axaml" />
+        <AdditionalFiles Include="Views\Settings\GeneralSettingsPage.axaml" />
+        <AdditionalFiles Include="Views\Settings\HotkeySettingsPage.axaml" />
+        <AdditionalFiles Include="Views\Settings\PluginSettingsPage.axaml" />
+        <AdditionalFiles Include="Views\Settings\VideoSettingsPage.axaml" />
     </ItemGroup>
 
 
     <ItemGroup>
-      <EmbeddedResource Update="Resources\Resources.de-DE.resx">
-        <Generator>ResXFileCodeGenerator</Generator>
-        <LastGenOutput>Resources.de-DE.Designer.cs</LastGenOutput>
-      </EmbeddedResource>
-      <EmbeddedResource Update="Resources\Resources.fr-CA.resx">
-        <Generator>ResXFileCodeGenerator</Generator>
-        <LastGenOutput>Resources.fr-CA.Designer.cs</LastGenOutput>
-      </EmbeddedResource>
-      <EmbeddedResource Update="Resources\Resources.resx">
-        <Generator>ResXFileCodeGenerator</Generator>
-        <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Resources.de-DE.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>Resources.de-DE.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Resources.fr-CA.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>Resources.fr-CA.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Resources.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <None Remove="Resources\Shaders\blit_quad.frag.glsl" />
+        <EmbeddedResource Include="Resources\Shaders\blit_quad.frag.glsl">
+            <LogicalName>/Resources/Shaders/blit_quad.frag.glsl</LogicalName>
+        </EmbeddedResource>
+        <None Remove="Resources\Shaders\blit_quad.vert.glsl" />
+        <EmbeddedResource Include="Resources\Shaders\blit_quad.vert.glsl">
+            <LogicalName>/Resources/Shaders/blit_quad.vert.glsl</LogicalName>
+        </EmbeddedResource>
+    </ItemGroup>
+
+
+    <ItemGroup>
+        <UpToDateCheckInput Remove="Assets\Shaders\blit_quad.frag.glsl" />
+        <UpToDateCheckInput Remove="Assets\Shaders\blit_quad.vert.glsl" />
     </ItemGroup>
 
     <!--======================================

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using Avalonia;
 using Silk.NET.OpenGL;
@@ -96,10 +97,10 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
 
         try
         {
-            gl.ShaderSourceFromResources(vertShader, "/Assets/Shaders/blit_quad.vert.glsl");
+            gl.ShaderSourceFromResources(vertShader, "/Resources/Shaders/blit_quad.vert.glsl");
             gl.CompileShaderChecked(vertShader);
 
-            gl.ShaderSourceFromResources(fragShader, "/Assets/Shaders/blit_quad.frag.glsl");
+            gl.ShaderSourceFromResources(fragShader, "/Resources/Shaders/blit_quad.frag.glsl");
             gl.CompileShaderChecked(fragShader);
 
             uint prog = gl.CreateProgram();
@@ -131,9 +132,11 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
         return sdl.GLMakeCurrentTemp(_win, _ctx);
     }
 
+    public bool HasSurface => _surface != null;
+
     public void InitSurface(PixelSize size)
     {
-        CheckContext();
+        Debug.Assert(sdl.GLGetCurrentContext() == _ctx, "Context not current");
         if (_texture != 0)
         {
             _gl.DeleteTexture(_texture);
@@ -141,15 +144,29 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
         
         _texture = _gl.GenTexture();
         _gl.BindTexture(TextureTarget.Texture2D, _texture);
-        _gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba, (uint) size.Width, (uint) size.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
-        _gl.TexParameterI(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) GLEnum.Nearest);
-        _gl.TexParameterI(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) GLEnum.Nearest);
+        _gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba8, (uint) size.Width, (uint) size.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
+        _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) GLEnum.Nearest);
+        _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) GLEnum.Nearest);
 
-        _surface = SKSurface.Create(_grContext, 
-            new GRBackendTexture(size.Width, size.Height, false, new GRGlTextureInfo((uint) TextureTarget.Texture2D, _texture)), SKColorType.Rgba8888);
+
+        var desc = new GRBackendTexture(size.Width, size.Height, false, new GRGlTextureInfo((uint) TextureTarget.Texture2D, _texture, (uint) InternalFormat.Rgba8));
+        _surface = SKSurface.Create(_grContext, desc, GRSurfaceOrigin.BottomLeft, SKColorType.Rgba8888);
     }
 
-    public void BlitTexture(GL gl)
+    public void DoRender(Action<SKCanvas>? render)
+    {
+        Debug.Assert(sdl.GLGetCurrentContext() == _ctx, "Context not current");
+        Debug.Assert(_surface != null, "_surface not initialized");
+        if (render == null)
+            return;
+
+        _surface.Canvas.Clear();
+        render(_surface.Canvas);
+        
+        _surface.Flush(true);
+    }
+
+    public void BlitQuad(GL gl, PixelSize viewport)
     {
         uint prevProgram = (uint) gl.GetInteger(GetPName.CurrentProgram);
         uint prevVAO = (uint) gl.GetInteger(GetPName.VertexArrayBinding);
@@ -167,6 +184,10 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
         var prevColorBlendEqn = (BlendEquationModeEXT) gl.GetInteger(GetPName.BlendEquationRgb);
         var prevAlphaBlendEqn = (BlendEquationModeEXT) gl.GetInteger(GetPName.BlendEquationAlpha);
 
+        uint[] prevViewport = new uint[4];
+        fixed (uint* pPrevViewport = prevViewport)
+            gl.GetInteger(GetPName.Viewport, (int*) pPrevViewport);
+
         uint vao = 0;
         try
         {
@@ -176,6 +197,8 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
             gl.Enable(EnableCap.Blend);
             gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             gl.BlendEquation(BlendEquationModeEXT.FuncAdd);
+            // Set the fullscreen viewport
+            gl.Viewport(0, 0, (uint) viewport.Width, (uint) viewport.Height);
             
             // Switch to our own shader and attach the texture
             gl.UseProgram(_blitQuadProgram);
@@ -217,19 +240,19 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
 
             gl.BlendFuncSeparate(prevSrcColorBlend, prevDstColorBlend, prevSrcAlphaBlend, prevDstAlphaBlend);
             gl.BlendEquationSeparate(prevColorBlendEqn, prevAlphaBlendEqn);
+            
+            gl.Viewport((int) prevViewport[0], (int) prevViewport[1], prevViewport[2], prevViewport[3]);
         }
-    }
-
-    private void CheckContext()
-    {
-        #if DEBUG
-        if (sdl.GLGetCurrentContext() != _ctx)
-            throw new InvalidOperationException("The context must be current first");
-        #endif
     }
 
     private void ReleaseUnmanagedResources()
     {
+        using (sdl.GLMakeCurrentTemp(_win, _ctx))
+        {
+            _gl.DeleteTexture(_texture);
+            _gl.DeleteBuffers(new[] {_vertexBuffer, _texCoordBuffer, _elementBuffer});
+            _gl.DeleteProgram(_blitQuadProgram);
+        }
         sdl.GLMakeCurrent(_win, null);
         sdl.GLDeleteContext(_ctx);
         sdl.DestroyWindow(_win);

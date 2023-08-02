@@ -1,4 +1,5 @@
 #version 330 core
+#extension GL_ARB_explicit_uniform_location : enable
 
 layout(location = 0) in vec2 vertPos;
 layout(location = 1) in vec2 vertUV;

@@ -1,4 +1,5 @@
 using System;
+using static M64RPFW.Views.Avalonia.Controls.Helpers.SDLHelpers;
 
 namespace M64RPFW.Views.Avalonia.Controls.Helpers;
 
@@ -7,6 +8,6 @@ namespace M64RPFW.Views.Avalonia.Controls.Helpers;
 /// </summary>
 public class SDLException : SystemException
 {
-    public SDLException() : base(SDLHelpers.sdl.GetErrorS()) { }
-    public SDLException(Exception inner) : base(SDLHelpers.sdl.GetErrorS(), inner) { }
+    public SDLException() : base(sdl.GetErrorS()) { }
+    public SDLException(Exception inner) : base(sdl.GetErrorS(), inner) { }
 }

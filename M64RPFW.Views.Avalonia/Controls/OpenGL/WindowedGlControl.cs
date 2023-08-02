@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
@@ -28,10 +29,7 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
     private PixelSize _realSize = default;
     private int _sizeDirty = 0;
 
-    private void* _skCtx;
-    private GL _skGl = null!;
-    private GRContext _grContext = null!;
-    private SKSurface? _skSurface;
+    private SDLSkiaWindow? _skiaWindow;
 
 
     public event EventHandler<SkiaRenderEventArgs>? SkiaRender;
@@ -52,11 +50,17 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
         if (_sdlWin == null)
             throw new SDLException();
 
+        _skiaWindow = new SDLSkiaWindow(_sdlWin, _sdlCtx);
+
         return platHandle;
     }
 
     protected override void DestroyNativeControlCore(IPlatformHandle control)
     {
+        Debug.Assert(_skiaWindow != null);
+
+        _skiaWindow.Dispose();
+
         sdl.DestroyWindow(_sdlWin);
         sdl.QuitSubSystem(Sdl.InitVideo);
 
@@ -126,6 +130,27 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
 
     public void SwapBuffers()
     {
+        Debug.Assert(_skiaWindow != null);
+
+        _gl.Flush();
+        if (SkiaRender != null)
+        {
+            lock (_sizeLock)
+            {
+                using (_skiaWindow.MakeCurrentTemp())
+                {
+                    if (Interlocked.Exchange(ref _sizeDirty, 0) != 0 || !_skiaWindow.HasSurface)
+                    {
+                        _skiaWindow.InitSurface(_realSize);
+                    }
+                    _skiaWindow.DoRender(canvas => SkiaRender(this, new SkiaRenderEventArgs
+                    {
+                        Canvas = canvas
+                    }));
+                }
+                _skiaWindow.BlitQuad(_gl, _realSize);
+            }
+        }
         sdl.GLSwapWindow(_sdlWin);
     }
 
