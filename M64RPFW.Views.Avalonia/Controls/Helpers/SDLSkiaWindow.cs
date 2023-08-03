@@ -14,17 +14,10 @@ namespace M64RPFW.Views.Avalonia.Controls.Helpers;
 internal sealed unsafe class SDLSkiaWindow : IDisposable
 {
     private static readonly float[] FullscreenQuadVertices = {
-        +1.0f, +1.0f,
-        -1.0f, +1.0f,
-        -1.0f, -1.0f,
-        +1.0f, -1.0f
-    };
-    private static readonly float[] FullscreenQuadTexCoords =
-    {
-        1.0f, 1.0f,
-        0.0f, 1.0f,
-        0.0f, 0.0f,
-        1.0f, 0.0f
+        +1.0f, +1.0f, 1.0f, 1.0f,
+        -1.0f, +1.0f, 0.0f, 1.0f,
+        -1.0f, -1.0f, 0.0f, 0.0f,
+        +1.0f, -1.0f, 1.0f, 0.0f
     };
     private static readonly uint[] FullscreenQuadElements =
     {
@@ -38,7 +31,6 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
 
     private uint _texture;
     private uint _vertexBuffer;
-    private uint _texCoordBuffer;
     private uint _elementBuffer;
     
     private uint _blitQuadProgram;
@@ -63,6 +55,7 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
                 sdl.GLSetAttribute(GLattr.Doublebuffer, 1);
                 sdl.GLSetAttribute(GLattr.ShareWithCurrentContext, 1);
                 sdl.GLSetAttribute(GLattr.StencilSize, 8);
+                sdl.GLSetAttribute(GLattr.ContextFlags, (int) GLcontextFlag.DebugFlag);
 
                 _ctx = sdl.GLCreateContext(_win);
                 if (_ctx == null)
@@ -81,7 +74,6 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
             _texture = 0;
 
             _vertexBuffer = LoadBufferObject<float>(_gl, BufferTargetARB.ArrayBuffer, FullscreenQuadVertices);
-            _texCoordBuffer = LoadBufferObject<float>(_gl, BufferTargetARB.ArrayBuffer, FullscreenQuadTexCoords);
             _elementBuffer = LoadBufferObject<uint>(_gl, BufferTargetARB.ElementArrayBuffer, FullscreenQuadElements);
 
             _grContext = GRContext.CreateGl();
@@ -230,13 +222,11 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
             vao = gl.GenVertexArray();
             gl.BindVertexArray(vao);
             
-            gl.EnableVertexAttribArray(0);
             gl.BindBuffer(BufferTargetARB.ArrayBuffer, _vertexBuffer);
-            gl.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), null);
-            
+            gl.EnableVertexAttribArray(0);
+            gl.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 4 * sizeof(float), null);
             gl.EnableVertexAttribArray(1);
-            gl.BindBuffer(BufferTargetARB.ArrayBuffer, _texCoordBuffer);
-            gl.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), null);
+            gl.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 4 * sizeof(float), (void*) (2 * sizeof(float)));
             
             // Draw the quad
             gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, _elementBuffer);
@@ -272,7 +262,7 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
         using (sdl.GLMakeCurrentTemp(_win, _ctx))
         {
             _gl.DeleteTexture(_texture);
-            _gl.DeleteBuffers(new[] {_vertexBuffer, _texCoordBuffer, _elementBuffer});
+            _gl.DeleteBuffers(new[] {_vertexBuffer, _elementBuffer});
             _gl.DeleteProgram(_blitQuadProgram);
         }
         sdl.GLMakeCurrent(_win, null);

@@ -102,6 +102,7 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
 
     public void CreateViewport(int width, int height, int bitsPerPixel)
     {
+        sdl.GLSetAttribute(GLattr.ContextFlags, (int) GLcontextFlag.DebugFlag);
         _sdlCtx = sdl.GLCreateContext(_sdlWin);
         if (_sdlCtx == null)
             throw new SDLException();
