@@ -186,6 +186,7 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
         var prevActiveTexture = (GLEnum) gl.GetInteger(GetPName.ActiveTexture);
         
         bool prevDepthTest = gl.IsEnabled(EnableCap.DepthTest);
+        bool prevScissorTest = gl.IsEnabled(EnableCap.ScissorTest);
         bool prevBlend = gl.IsEnabled(EnableCap.Blend);
 
         var prevSrcColorBlend = (BlendingFactor) gl.GetInteger(GetPName.BlendSrcRgb);
@@ -202,11 +203,16 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
         uint vao = 0;
         try
         {
+            #if false
+            gl.ClearColor(1.0f, 0.5f, 0.0f, 1.0f);
+            gl.Clear(ClearBufferMask.ColorBufferBit);
+            #else
             if (_blitQuadProgram == 0)
                 _blitQuadProgram = LinkBlitQuadShader(_gl, out _texUniformID);
             
             // We want to render over everything
             gl.Disable(EnableCap.DepthTest);
+            gl.Disable(EnableCap.ScissorTest);
             // If Skia uses partial transparency, it needs to work
             gl.Enable(EnableCap.Blend);
             gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
@@ -219,7 +225,7 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
             gl.BindTexture(TextureTarget.Texture2D, _texture);
             gl.UseProgram(_blitQuadProgram);
             gl.Uniform1(_texUniformID, 0);
-            
+
             // Setup the vertex buffers to draw our fullscreen texture
             vao = gl.GenVertexArray();
             gl.BindVertexArray(vao);
@@ -235,6 +241,7 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
             // Draw the quad
             gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, _elementBuffer);
             gl.DrawElements(PrimitiveType.Triangles, (uint) FullscreenQuadElements.Length, DrawElementsType.UnsignedInt, null);
+            #endif
         }
         finally
         {
@@ -250,6 +257,7 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
             gl.ActiveTexture(prevActiveTexture);
             
             gl.SetCap(EnableCap.DepthTest, prevDepthTest);
+            gl.SetCap(EnableCap.ScissorTest, prevScissorTest);
             gl.SetCap(EnableCap.Blend, prevBlend);
 
             gl.BlendFuncSeparate(prevSrcColorBlend, prevDstColorBlend, prevSrcAlphaBlend, prevDstAlphaBlend);
