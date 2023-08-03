@@ -38,13 +38,14 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
     {
         var platHandle = base.CreateNativeControlCore(parent);
         _nativeWin = platHandle.Handle;
+        
+        if (OperatingSystem.IsLinux())
+            sdl.SetHint(Sdl.HintVideodriver, "x11");
 
         if (sdl.InitSubSystem(Sdl.InitVideo) < 0)
             throw new SDLException();
 
         sdl.SetHint(Sdl.HintVideoForeignWindowOpengl, "1");
-        if (OperatingSystem.IsLinux())
-            sdl.SetHint(Sdl.HintVideodriver, "x11");
 
         _sdlWin = sdl.CreateWindowFrom((void*) _nativeWin);
         if (_sdlWin == null)
@@ -106,6 +107,7 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
             throw new SDLException();
 
         _gl = GL.GetApi(sym => (IntPtr) sdl.GLGetProcAddress(sym));
+        _gl.AttachDebugLogger();
     }
 
     public void ResizeViewport(int width, int height)

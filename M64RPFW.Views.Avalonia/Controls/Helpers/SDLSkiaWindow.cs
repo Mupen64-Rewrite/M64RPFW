@@ -40,7 +40,9 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
     private uint _vertexBuffer;
     private uint _texCoordBuffer;
     private uint _elementBuffer;
+    
     private uint _blitQuadProgram;
+    private int _texUniformID;
 
     private GRContext _grContext;
     private SKSurface? _surface;
@@ -78,8 +80,6 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
             _gl.AttachDebugLogger();
             _texture = 0;
 
-            _blitQuadProgram = LinkBlitQuadShader(_gl);
-
             _vertexBuffer = LoadBufferObject<float>(_gl, BufferTargetARB.ArrayBuffer, FullscreenQuadVertices);
             _texCoordBuffer = LoadBufferObject<float>(_gl, BufferTargetARB.ArrayBuffer, FullscreenQuadTexCoords);
             _elementBuffer = LoadBufferObject<uint>(_gl, BufferTargetARB.ElementArrayBuffer, FullscreenQuadElements);
@@ -98,11 +98,12 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
         return buffer;
     }
     
-    private static uint LinkBlitQuadShader(GL gl)
+    private static uint LinkBlitQuadShader(GL gl, out int texLocation)
     {
         uint vertShader = gl.CreateShader(ShaderType.VertexShader);
         uint fragShader = gl.CreateShader(GLEnum.FragmentShader);
-
+        texLocation = -1;
+        
         try
         {
             gl.ShaderSourceFromResources(vertShader, "/Resources/Shaders/blit_quad.vert.glsl");
@@ -119,6 +120,8 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
         
             gl.DetachShader(prog, vertShader);
             gl.DetachShader(prog, fragShader);
+
+            texLocation = gl.GetUniformLocation(prog, "tex");
 
             return prog;
         }
@@ -199,6 +202,9 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
         uint vao = 0;
         try
         {
+            if (_blitQuadProgram == 0)
+                _blitQuadProgram = LinkBlitQuadShader(_gl, out _texUniformID);
+            
             // We want to render over everything
             gl.Disable(EnableCap.DepthTest);
             // If Skia uses partial transparency, it needs to work
@@ -209,10 +215,10 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
             gl.Viewport(0, 0, (uint) viewport.Width, (uint) viewport.Height);
             
             // Switch to our own shader and attach the texture
-            gl.UseProgram(_blitQuadProgram);
             gl.ActiveTexture(TextureUnit.Texture0);
             gl.BindTexture(TextureTarget.Texture2D, _texture);
-            gl.Uniform1(0, 0);
+            gl.UseProgram(_blitQuadProgram);
+            gl.Uniform1(_texUniformID, 0);
             
             // Setup the vertex buffers to draw our fullscreen texture
             vao = gl.GenVertexArray();

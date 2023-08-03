@@ -84,9 +84,6 @@ public static class GLExtensions
 
     public static unsafe void AttachDebugLogger(this GL gl)
     {
-        if (!gl.IsExtensionPresent("GL_KHR_debug"))
-            return;
-        
         gl.DebugMessageCallback(GLDebugCallback, null);
         gl.Enable(EnableCap.DebugOutputSynchronous);
         gl.Enable(EnableCap.DebugOutput);
@@ -129,6 +126,6 @@ public static class GLExtensions
 
         string sMessage = Encoding.UTF8.GetString((byte*) message, length);
         
-        Console.WriteLine($"GL 0x{(uint) id:X8} | {sSource} {sType} {sSeverity} | {message}");
+        Console.WriteLine($"GL 0x{(uint) id:X8} | {sSource} {sType} {sSeverity} | {sMessage}");
     }
 }
