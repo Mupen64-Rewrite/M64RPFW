@@ -1,6 +1,7 @@
 # Socket API
 
-This specification defines an API that may be used to control M64RPFW from another application, like STROOP.
+This specification defines an API that may be used to control M64RPFW from another application, like STROOP. It isn't
+actually implemented yet, but we'll get there at some point.
 
 ## Protocol details
 
@@ -40,6 +41,6 @@ WriteMemory({
 `WriteMemory` takes an address and a size parameter. The size parameter represents the size of the desired read. If the
 size is negated, `value` is interpreted as a signed integer.
 
-The `value` must be supplied as an integer. If the value is out-of-range for the desired type, it will be truncated 
+The `value` must be supplied as an integer. If the value is out-of-range for the desired type, it will be truncated
 to the correct size. If a floating-point value is required, it should be bit-cast to the corresponding integer.
 
