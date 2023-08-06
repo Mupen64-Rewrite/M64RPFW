@@ -11,12 +11,13 @@
         <conv:ConfigEditingDataTemplate x:Key="ConfigKeyDataTemplate"></conv:ConfigEditingDataTemplate>
         <Thickness x:Key="SpaceBelowThickness">0,10,0,20</Thickness>
         <Thickness x:Key="ContentPadding">10,10,10,10</Thickness>
+        <x:Double x:Key="IconSize">28</x:Double>
     </Application.Resources>
     <Application.Styles>
         <FluentTheme/>
         <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
         <materialIcons:MaterialIconStyles />
-
+        
         <Style Selector="TextBlock.h1">
             <Setter Property="FontSize" Value="24" />
             <Setter Property="Margin" Value="0 4 0 4" />

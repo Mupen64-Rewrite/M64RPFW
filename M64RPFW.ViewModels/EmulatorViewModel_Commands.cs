@@ -71,11 +71,17 @@ public partial class EmulatorViewModel
         if (files == null)
             return;
 
-        WeakReferenceMessenger.Default.Send(new RomLoadingMessage(files[0]));
+        await OpenRomFromPath(files[0]);
+    }
+
+    [RelayCommand(CanExecute = nameof(MupenIsStopped))]
+    private async Task OpenRomFromPath(string path)
+    {
+        WeakReferenceMessenger.Default.Send(new RomLoadingMessage(path));
 
         var loadTaskSource = new TaskCompletionSource();
         _emuThread = new Thread(EmulatorThreadRun);
-        _emuThread.Start((files[0], loadTaskSource));
+        _emuThread.Start((path, loadTaskSource));
 
         try
         {

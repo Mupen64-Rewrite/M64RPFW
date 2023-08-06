@@ -55,6 +55,18 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         set => SetRPFWSetting((inst, val) => inst.View.RecentLuaScripts = val, value);
     }
     
+    public ObservableCollection<string> RomBrowserPaths
+    {
+        get => RPFWSettings.Instance.View.RomBrowserPaths;
+        set => SetRPFWSetting((inst, val) => inst.View.RomBrowserPaths = val, value);
+    }
+
+    public bool IsRomBrowserRecursive
+    {
+        get => RPFWSettings.Instance.View.IsRomBrowserRecursive;
+        set => SetRPFWSetting((inst, val) => inst.View.IsRomBrowserRecursive = val, value);
+    }
+    
     public string VideoPluginPath
     {
         get => PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.VideoPath);

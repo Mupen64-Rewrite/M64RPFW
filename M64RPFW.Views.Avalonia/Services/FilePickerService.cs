@@ -16,7 +16,7 @@ namespace M64RPFW.Views.Avalonia.Services;
 /// </summary>
 public sealed class FilePickerService : IFilePickerService
 {
-    private FilePickerService() {}
+    private FilePickerService() { }
 
     public static FilePickerService Instance { get; } = new();
 
@@ -24,7 +24,7 @@ public sealed class FilePickerService : IFilePickerService
     {
         if (!Dispatcher.UIThread.CheckAccess())
             return await Dispatcher.UIThread.InvokeAsync(() => ShowOpenFilePickerAsync(title, options, allowMultiple));
-        
+
         var provider = WindowHelper.GetFirstActiveWindow().StorageProvider;
         var storageFiles = await provider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
@@ -32,14 +32,14 @@ public sealed class FilePickerService : IFilePickerService
             FileTypeFilter = options?.Select(FilePickerTypeExtensions.ToFilePickerFileType).ToArray(),
             AllowMultiple = allowMultiple
         });
-        return storageFiles.Count != 0? storageFiles.Select(sf => sf.Path.LocalPath).ToArray() : null;
+        return storageFiles.Count != 0 ? storageFiles.Select(sf => sf.Path.LocalPath).ToArray() : null;
     }
 
     public async Task<string?> ShowSaveFilePickerAsync(string title = "Open file...", IReadOnlyList<FilePickerOption>? options = null)
     {
         if (!Dispatcher.UIThread.CheckAccess())
             return await Dispatcher.UIThread.InvokeAsync(() => ShowSaveFilePickerAsync(title, options));
-        
+
         var provider = WindowHelper.GetFirstActiveWindow().StorageProvider;
         var storageFile = await provider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
@@ -47,5 +47,18 @@ public sealed class FilePickerService : IFilePickerService
             FileTypeChoices = options?.Select(FilePickerTypeExtensions.ToFilePickerFileType).ToArray()
         });
         return storageFile?.Path.LocalPath;
+    }
+
+    public async Task<string[]?> ShowOpenFolderPickerAsync(string title = "Open folder...", bool allowMultiple = false)
+    {
+        if (!Dispatcher.UIThread.CheckAccess())
+            return await Dispatcher.UIThread.InvokeAsync(() => ShowOpenFolderPickerAsync(title, allowMultiple));
+        var provider = WindowHelper.GetFirstActiveWindow().StorageProvider;
+        var storageFolders = await provider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
+        {
+            Title = title,
+            AllowMultiple = allowMultiple
+        });
+        return storageFolders.Count != 0 ? storageFolders.Select(sf => sf.Path.AbsolutePath).ToArray() : null;
     }
 }

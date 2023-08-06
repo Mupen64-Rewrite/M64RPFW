@@ -18,16 +18,13 @@ namespace M64RPFW.Views.Avalonia.Views;
 
 public partial class MainWindow : Window
 {
-  
-    
     public MainWindow()
     {
         InitializeComponent();
 
         DataContext = new EmulatorViewModel(GlControl, (App) Application.Current!,
             FilePickerService.Instance, this, this);
-
-
+        
         // handling "special-case" settings here or in the SettingsDialog code-behind doesn't make a big difference
         // (except that here we don't have to worry about leaking due to strong refs)
         // we would have to break single-responsibility anyway
@@ -51,11 +48,6 @@ public partial class MainWindow : Window
 
                     break;
                 case nameof(SettingsViewModel.Theme):
-                    
-                    // Application.Current!.RequestedThemeVariant =
-                    //     SettingsViewModel.Instance.Theme.Equals("Dark", StringComparison.InvariantCultureIgnoreCase)
-                    //         ? ThemeVariant.Dark
-                    //         : ThemeVariant.Light;
                     Application.Current!.RequestedThemeVariant = SettingsViewModel.Instance.Theme switch
                     {
                         "Dark" => ThemeVariant.Dark,

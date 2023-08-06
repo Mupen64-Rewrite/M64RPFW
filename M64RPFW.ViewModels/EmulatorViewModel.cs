@@ -7,6 +7,8 @@ namespace M64RPFW.ViewModels;
 
 public partial class EmulatorViewModel : ObservableObject
 {
+    public static EmulatorViewModel? Instance { get; private set; }
+    
     [ObservableProperty] private object? _currentSlotMenuItem;
 
     private readonly IOpenGLContextService _openGlContextService;
@@ -18,6 +20,8 @@ public partial class EmulatorViewModel : ObservableObject
     public EmulatorViewModel(IOpenGLContextService openGlContextService, IDispatcherService dispatcherService,
         IFilePickerService filePickerService, IWindowSizingService windowSizingService, IViewDialogService viewDialogService)
     {
+        Instance = this;
+        
         _openGlContextService = openGlContextService;
         _dispatcherService = dispatcherService;
         _filePickerService = filePickerService;

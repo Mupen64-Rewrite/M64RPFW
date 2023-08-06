@@ -12,9 +12,6 @@
         x:CompileBindings="True"
         x:DataType="viewModels:SettingsViewModel"
         Title="{ext:Localize Settings}" Width="500" Height="500">
-    <Window.Resources>
-        <x:Double x:Key="IconSize">28</x:Double>
-    </Window.Resources>
     <Window.Styles>
         <Style Selector="ScrollViewer > StackPanel">
             <Setter Property="Margin" Value="{StaticResource ContentPadding}" />
@@ -55,6 +52,13 @@
                 <ScrollViewer>
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <settings:VideoSettingsPage />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="{materialIcons:MaterialIconExt Kind=ListBox, Size={StaticResource IconSize}}">
+                <ScrollViewer>
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <settings:RomBrowserPage />
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>

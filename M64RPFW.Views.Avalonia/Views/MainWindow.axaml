@@ -169,14 +169,18 @@
             <!--TODO: Status bar-->
         </StackPanel>
         <Border Background="Black">
-            <gl:WindowedGlControl 
+            <gl:WindowedGlControl
                 PointerPressed="SkiaOnPointerPressed"
                 PointerReleased="SkiaOnPointerReleased"
                 PointerMoved="SkiaOnPointerUpdate"
                 PointerEntered="SkiaOnPointerUpdate"
                 PointerExited="SkiaOnPointerUpdate"
-                SkiaRender="SkiaOnRender" 
-                x:Name="GlControl"/>
+                SkiaRender="SkiaOnRender"
+                x:Name="GlControl" />
+
+        </Border>
+        <Border IsVisible="{Binding MupenIsStopped}">
+            <ctrls:RomBrowserControl />
         </Border>
     </DockPanel>
 
