@@ -177,4 +177,22 @@
     <data name="AppName" xml:space="preserve">
         <value>M64RPFW</value>
     </data>
+    <data name="Error" xml:space="preserve">
+        <value>Fehler</value>
+    </data>
+    <data name="NewLuaInstance" xml:space="preserve">
+        <value>Neue Instanz...</value>
+    </data>
+    <data name="Start" xml:space="preserve">
+        <value>Starten</value>
+    </data>
+    <data name="Refresh" xml:space="preserve">
+        <value>Aktualisieren</value>
+    </data>
+    <data name="RomBrowserRecursive" xml:space="preserve">
+        <value>Rekursive Suche</value>
+    </data>
+    <data name="Style" xml:space="preserve">
+        <value>Stil</value>
+    </data>
 </root>

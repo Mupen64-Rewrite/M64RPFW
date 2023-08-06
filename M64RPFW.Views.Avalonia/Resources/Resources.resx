@@ -191,4 +191,13 @@
     <data name="Error" xml:space="preserve">
         <value>Error</value>
     </data>
+    <data name="Refresh" xml:space="preserve">
+        <value>Refresh</value>
+    </data>
+    <data name="RomBrowserRecursive" xml:space="preserve">
+        <value>Recursive search</value>
+    </data>
+    <data name="Style" xml:space="preserve">
+        <value>Style</value>
+    </data>
 </root>

@@ -20,6 +20,7 @@ public class RPFWSettings : ITomlMetadataProvider
 
         public string Culture { get; set; } = "en-US";
         public string Theme { get; set; } = "Light";
+        public string Style { get; set; } = "Fluent";
         public ObservableCollection<string> RecentRoms { get; set; } = new();
         public ObservableCollection<string> RecentLuaScripts { get; set; } = new();
         public ObservableCollection<string> RomBrowserPaths { get; set; } = new();

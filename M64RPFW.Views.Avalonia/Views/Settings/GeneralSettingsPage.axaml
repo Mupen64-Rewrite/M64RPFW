@@ -30,5 +30,15 @@
                     <x:String>Dark</x:String>
                 </ComboBox.Items>
             </ComboBox>
+            
+            <TextBlock Classes="h3"
+                       Text="{ext:Localize Style}" />
+            <ComboBox
+                SelectedValue="{Binding Style,Mode=TwoWay}">
+                <ComboBox.Items>
+                    <x:String>Fluent</x:String>
+                    <x:String>Simple</x:String>
+                </ComboBox.Items>
+            </ComboBox>
         </StackPanel>
 </UserControl>

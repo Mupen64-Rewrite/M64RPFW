@@ -43,6 +43,12 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         set => SetRPFWSetting((inst, val) => inst.View.Theme = val, value);
     }
     
+    public string Style
+    {
+        get => RPFWSettings.Instance.View.Style;
+        set => SetRPFWSetting((inst, val) => inst.View.Style = val, value);
+    }
+    
     public ObservableCollection<string> RecentRoms
     {
         get => RPFWSettings.Instance.View.RecentRoms;
