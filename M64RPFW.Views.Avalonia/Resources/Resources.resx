@@ -206,4 +206,7 @@
     <data name="RequiresRestartToApply" xml:space="preserve">
         <value>Changes will only apply after restarting</value>
     </data>
+    <data name="FullPath" xml:space="preserve">
+        <value>Full Path</value>
+    </data>
 </root>

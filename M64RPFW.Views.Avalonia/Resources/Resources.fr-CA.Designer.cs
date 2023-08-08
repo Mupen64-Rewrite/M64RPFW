@@ -404,5 +404,11 @@ namespace M64RPFW.Views.Avalonia.Resources {
                 return ResourceManager.GetString("Refresh", resourceCulture);
             }
         }
+        
+        internal static string FullPath {
+            get {
+                return ResourceManager.GetString("FullPath", resourceCulture);
+            }
+        }
     }
 }
