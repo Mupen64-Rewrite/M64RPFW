@@ -13,7 +13,7 @@
         x:DataType="viewModels:SettingsViewModel"
         Title="{ext:Localize Settings}" Width="500" Height="500">
     <Window.Styles>
-        <Style Selector="ScrollViewer > StackPanel">
+        <Style Selector="TabItem > ScrollViewer > :is(Layoutable)">
             <Setter Property="Margin" Value="{StaticResource ContentPadding}" />
         </Style>
         <Style Selector="#ShortcutTab ctrls|HotkeyButton">
@@ -21,10 +21,13 @@
         </Style>
     </Window.Styles>
     <DockPanel LastChildFill="True">
-        <StackPanel Classes="dialog-btns" DockPanel.Dock="Bottom">
-            <Button Content="{ext:Localize Apply}" Click="OnApplyClicked"/>
-            <Button Content="{ext:Localize Cancel}" Click="OnCancelClicked"/>
-            <Button Content="{ext:Localize Ok}" Click="OnOKClicked"/>
+        <StackPanel Orientation="Vertical" DockPanel.Dock="Bottom">
+            <TextBlock IsVisible="{Binding RequiresRestart}" Text="{ext:Localize RequireRestartToApply}"/>
+            <StackPanel Classes="dialog-btns">
+                <Button Content="{ext:Localize Apply}" Click="OnApplyClicked"/>
+                <Button Content="{ext:Localize Cancel}" Click="OnCancelClicked"/>
+                <Button Content="{ext:Localize Ok}" Click="OnOKClicked"/>
+            </StackPanel>
         </StackPanel>
         <TabControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TabStripPlacement="Top">
             <TabItem Header="{materialIcons:MaterialIconExt Kind=HammerWrench, Size={StaticResource IconSize}}">
@@ -43,7 +46,7 @@
                     <settings:HotkeySettingsPage />
                 </ScrollViewer>
             </TabItem>
-            <TabItem Header="{materialIcons:MaterialIconExt Kind=Plugin, Size={StaticResource IconSize}}">
+            <TabItem Header="{materialIcons:MaterialIconExt Kind=Extension, Size={StaticResource IconSize}}">
                 <ScrollViewer>
                     <settings:PluginSettingsPage />
                 </ScrollViewer>

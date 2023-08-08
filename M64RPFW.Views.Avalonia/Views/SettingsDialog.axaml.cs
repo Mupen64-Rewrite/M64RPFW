@@ -11,6 +11,7 @@ public partial class SettingsDialog : Window
     {
         AvaloniaXamlLoader.Load(this);
         DataContext = SettingsViewModel.Instance;
+        SettingsViewModel.Instance.RequiresRestart = false;
     }
 
     public SettingsViewModel ViewModel => (SettingsViewModel) DataContext!;
@@ -23,11 +24,13 @@ public partial class SettingsDialog : Window
     private void OnCancelClicked(object? sender, RoutedEventArgs e)
     {
         Close();
+        ViewModel.RequiresRestart = false;
     }
 
     private void OnOKClicked(object? sender, RoutedEventArgs e)
     {
         ViewModel.SaveCommand.Execute(null);
+        ViewModel.RequiresRestart = false;
         Close();
     }
 }

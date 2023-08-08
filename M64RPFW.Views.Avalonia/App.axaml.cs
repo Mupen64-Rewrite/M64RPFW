@@ -75,6 +75,9 @@ public class App : Application, IDispatcherService
     {
         if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
             throw new ApplicationException();
+
+        if (!_firstSetTheme)
+            return;
         
         if (_themeStylesContainer.Count == 0)
         {
@@ -91,15 +94,6 @@ public class App : Application, IDispatcherService
         {
             _themeStylesContainer[0] = SimpleTheme!;
             _themeStylesContainer[1] = DataGridSimple!;
-        }
-
-        if (!_firstSetTheme)
-        {
-            var oldWindow = desktop.MainWindow;
-            var newWindow = new MainWindow();
-            desktop.MainWindow = newWindow;
-            newWindow.Show();
-            oldWindow?.Close();
         }
         _firstSetTheme = false;
     }
