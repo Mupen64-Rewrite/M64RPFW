@@ -16,7 +16,7 @@
         <CheckBox
             Content="{markup:Localize RomBrowserRecursive}"
             IsChecked="{Binding IsRomBrowserRecursive, Mode=TwoWay}" />
-        <ListBox ItemsSource="{Binding RomBrowserPaths}" x:Name="ListBox" />
+        <ListBox ItemsSource="{Binding RomBrowserPaths}" MinHeight="{StaticResource ListMinHeight}" x:Name="ListBox" />
         <StackPanel Orientation="Horizontal">
             <Button Content="{maticons:MaterialIconExt Kind=Trash}" Click="RemoveSelectedButton_OnClick" />
             <Button Content="{maticons:MaterialIconExt Kind=Add}" Click="AddButton_OnClick" />

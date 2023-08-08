@@ -10,9 +10,9 @@
              x:DataType="viewModels:SettingsViewModel"
              Classes="settings-page">
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <TextBlock Classes="h3"
-                   Text="{ext:Localize Core}" />
+        <Label Content="{ext:Localize Core}" Target="CoreComboBox"/>
         <ComboBox
+            Name="CoreComboBox"
             ItemsSource="{Binding EmulatorTypes,Mode=OneTime}"
             SelectedItem="{Binding CoreType,Mode=TwoWay}" />
         <CheckBox

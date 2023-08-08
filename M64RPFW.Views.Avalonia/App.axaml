@@ -10,8 +10,9 @@
         <conv:StringSelectorConverter x:Key="StringSelectorConverter" />
         <conv:ConfigEditingDataTemplate x:Key="ConfigKeyDataTemplate"></conv:ConfigEditingDataTemplate>
         <Thickness x:Key="SpaceBelowThickness">0,10,0,20</Thickness>
-        <Thickness x:Key="ContentPadding">10,10,10,10</Thickness>
-        <x:Double x:Key="ContentSpacing">10</x:Double>
+        <Thickness x:Key="ContentPadding">5,5,5,5</Thickness>
+        <x:Double x:Key="ContentSpacing">5</x:Double>
+        <x:Double x:Key="ListMinHeight">30</x:Double>
         <x:Double x:Key="IconSize">28</x:Double>
         <FluentTheme x:Key="FluentTheme" />
         <SimpleTheme x:Key="SimpleTheme" />

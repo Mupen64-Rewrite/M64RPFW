@@ -11,20 +11,16 @@
              x:DataType="viewModels:SettingsViewModel"
              Classes="settings-page">
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <TextBlock Classes="h3"
-                   Text="{ext:Localize Video}" />
-        <ctrls:FileBrowser CurrentPath="{Binding VideoPluginPath}"
+        <Label Content="{ext:Localize Video}" Target="VideoFileBrowser"/>
+        <ctrls:FileBrowser Name="VideoFileBrowser" CurrentPath="{Binding VideoPluginPath}"
                            PickerOptions="{Binding DllPickerOptions}" />
-        <TextBlock Classes="h3"
-                   Text="{ext:Localize Audio}" />
-        <ctrls:FileBrowser CurrentPath="{Binding AudioPluginPath}"
+        <Label Content="{ext:Localize Audio}" Target="AudioFileBrowser"/>
+        <ctrls:FileBrowser Name="AudioFileBrowser" CurrentPath="{Binding AudioPluginPath}"
                            PickerOptions="{Binding DllPickerOptions}" />
-        <TextBlock Classes="h3"
-                   Text="{ext:Localize Input}" />
-        <ctrls:FileBrowser CurrentPath="{Binding InputPluginPath}"
+        <Label Content="{ext:Localize Input}" Target="InputFileBrowser"/>
+        <ctrls:FileBrowser Name="InputFileBrowser" CurrentPath="{Binding InputPluginPath}"
                            PickerOptions="{Binding DllPickerOptions}" />
-        <TextBlock Classes="h3"
-                   Text="{ext:Localize Rsp}" />
-        <ctrls:FileBrowser CurrentPath="{Binding RspPluginPath}" PickerOptions="{Binding DllPickerOptions}" />
+        <Label Content="{ext:Localize Rsp}" Target="RspFileBrowser"/>
+        <ctrls:FileBrowser Name="RspFileBrowser" CurrentPath="{Binding RspPluginPath}" PickerOptions="{Binding DllPickerOptions}" />
     </StackPanel>
 </UserControl>

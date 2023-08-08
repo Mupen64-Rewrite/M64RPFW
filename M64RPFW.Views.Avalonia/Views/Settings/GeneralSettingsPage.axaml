@@ -11,9 +11,9 @@
              Classes="settings-page">
         <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <!-- TODO: find a way to polyfill selectedvaluepath, because we need localization support for comboboxitems -->
-            <TextBlock Classes="h3"
-                       Text="{ext:Localize Culture}" />
+            <Label Content="{ext:Localize Culture}" Target="CultureComboBox"/>
             <ComboBox
+                Name="CultureComboBox"
                 SelectedValue="{Binding Culture,Mode=TwoWay}">
                 <ComboBox.Items>
                     <x:String>en-US</x:String>
@@ -21,9 +21,9 @@
                     <x:String>fr-CA</x:String>
                 </ComboBox.Items>
             </ComboBox>
-            <TextBlock Classes="h3"
-                       Text="{ext:Localize Theme}" />
+            <Label Content="{ext:Localize Theme}" Target="ThemeComboBox"/>
             <ComboBox
+                Name="ThemeComboBox"
                 SelectedValue="{Binding Theme,Mode=TwoWay}">
                 <ComboBox.Items>
                     <x:String>Default</x:String>
@@ -31,10 +31,9 @@
                     <x:String>Dark</x:String>
                 </ComboBox.Items>
             </ComboBox>
-            
-            <TextBlock Classes="h3"
-                       Text="{ext:Localize Style}" />
+            <Label Content="{ext:Localize Style}" Target="StyleComboBox"/>
             <ComboBox
+                Name="StyleComboBox"
                 SelectedValue="{Binding Style,Mode=TwoWay}">
                 <ComboBox.Items>
                     <x:String>Fluent</x:String>
