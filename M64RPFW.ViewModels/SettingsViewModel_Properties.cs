@@ -97,23 +97,49 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
 
     #endregion
 
+    #region Emulator
+
     public EmulatorType CoreType
     {
         get => Mupen64Plus.ConfigGet<EmulatorType>(MupenSettings.Core, "R4300Emulator");
         set => SetMupenSetting(MupenSettings.Core, "R4300Emulator", value);
     }
 
-    public int ScreenWidth
+    public bool DisableExpansionPakMemory
+    {
+        get => Mupen64Plus.ConfigGet<bool>(MupenSettings.Core, "DisableExtraMem");
+        set => SetMupenSetting(MupenSettings.Core, "DisableExtraMem", value);
+    }
+
+    public bool RandomizeInterruptTimings
+    {
+        get => Mupen64Plus.ConfigGet<bool>(MupenSettings.Core, "RandomizeInterrupt");
+        set => SetMupenSetting(MupenSettings.Core, "RandomizeInterrupt", value);
+    }
+
+    #endregion
+
+    #region Video
+
+    public int VideoWidth
     {
         get => Mupen64Plus.ConfigGet<int>(MupenSettings.VideoGeneral, "ScreenWidth");
         set => SetMupenSetting(MupenSettings.VideoGeneral, "ScreenWidth", value);
     }
 
-    public int ScreenHeight
+    public int VideoHeight
     {
         get => Mupen64Plus.ConfigGet<int>(MupenSettings.VideoGeneral, "ScreenHeight");
         set => SetMupenSetting(MupenSettings.VideoGeneral, "ScreenHeight", value);
     }
+
+    public bool VSync
+    {
+        get => Mupen64Plus.ConfigGet<bool>(MupenSettings.VideoGeneral, "VerticalSync");
+        set => SetMupenSetting(MupenSettings.VideoGeneral, "VerticalSync", value);
+    }
+
+    #endregion
 
     public bool IsStatusBarVisible
     {

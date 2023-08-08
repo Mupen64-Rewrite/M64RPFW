@@ -16,8 +16,10 @@
             ItemsSource="{Binding EmulatorTypes,Mode=OneTime}"
             SelectedItem="{Binding CoreType,Mode=TwoWay}" />
         <CheckBox
+            IsChecked="{Binding DisableExpansionPakMemory}"
             Content="{ext:Localize DisableExpansionPakMemory}" />
         <CheckBox
+            IsChecked="{Binding RandomizeInterruptTimings}"
             Content="{ext:Localize RandomizeInterruptTimings}" />
     </StackPanel>
 </UserControl>
