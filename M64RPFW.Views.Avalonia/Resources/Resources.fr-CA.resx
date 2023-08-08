@@ -148,10 +148,10 @@
         <value>Démarrer l'encodeur...</value>
     </data>
     <data name="StartFrom" xml:space="preserve">
-        <value>Commencer à</value>
+        <value>Lancer à</value>
     </data>
     <data name="StartPlaying" xml:space="preserve">
-        <value>Commencer repasser</value>
+        <value>Lancer à repasser</value>
     </data>
     <data name="Stop" xml:space="preserve">
         <value>Arrêter</value>
@@ -163,7 +163,7 @@
         <value>Arreter l'enregistrement</value>
     </data>
     <data name="StartRecording" xml:space="preserve">
-        <value>Commencer enregistrer</value>
+        <value>Lancer à enregistrer</value>
     </data>
     <data name="Theme" xml:space="preserve">
         <value>Thème</value>
