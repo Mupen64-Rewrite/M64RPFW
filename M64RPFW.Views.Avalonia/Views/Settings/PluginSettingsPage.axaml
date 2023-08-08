@@ -10,7 +10,7 @@
              x:CompileBindings="True"
              x:DataType="viewModels:SettingsViewModel"
              Classes="settings-page">
-    <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <StackPanel>
         <Label Content="{ext:Localize Video}" Target="VideoFileBrowser"/>
         <ctrls:FileBrowser Name="VideoFileBrowser" CurrentPath="{Binding VideoPluginPath}"
                            PickerOptions="{Binding DllPickerOptions}" />

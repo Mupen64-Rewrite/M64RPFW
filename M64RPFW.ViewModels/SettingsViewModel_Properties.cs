@@ -17,7 +17,8 @@ namespace M64RPFW.ViewModels;
 
 public sealed partial class SettingsViewModel : ObservableObject, IRecipient<RomLoadingMessage>, IRecipient<LuaLoadingMessage>
 {
-    #region Properties
+
+    #region General
 
     public string Culture
     {
@@ -37,7 +38,11 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         get => RPFWSettings.Instance.View.Style;
         set => SetRPFWSetting((inst, val) => inst.View.Style = val, value);
     }
-    
+
+    #endregion
+
+    #region RomBrowser
+
     public ObservableCollection<string> RecentRoms
     {
         get => RPFWSettings.Instance.View.RecentRoms;
@@ -61,7 +66,11 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         get => RPFWSettings.Instance.View.IsRomBrowserRecursive;
         set => SetRPFWSetting((inst, val) => inst.View.IsRomBrowserRecursive = val, value);
     }
-    
+
+    #endregion
+
+    #region Plugins
+
     public string VideoPluginPath
     {
         get => PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.VideoPath);
@@ -86,6 +95,8 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         set => SetRPFWSetting((inst, val) => inst.Plugins.RspPath = val, PathHelper.ResolveAppRelative(value));
     }
 
+    #endregion
+
     public EmulatorType CoreType
     {
         get => Mupen64Plus.ConfigGet<EmulatorType>(MupenSettings.Core, "R4300Emulator");
@@ -109,6 +120,8 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         get => RPFWSettings.Instance.View.IsStatusBarVisible;
         set => SetRPFWSetting((inst, val) => inst.View.IsStatusBarVisible = val, value);
     }
+
+    #region Hotkeys
 
     public string OpenRomHotkey
     {
@@ -200,14 +213,14 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         set => SetRPFWSetting((inst, val) => inst.Hotkeys.DisableWrites = val, value);
     }
 
+    #endregion
+
     [RelayCommand]
     private void Save()
     {
         Mupen64Plus.ConfigSaveFile();
         RPFWSettings.Save();
     }
-
-    #endregion
 
     #region Constants
 

@@ -10,7 +10,7 @@
              x:CompileBindings="True"
              x:DataType="viewModels:SettingsViewModel"
              Classes="settings-page">
-    <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <StackPanel>
         <TextBlock Classes="h3"
                    Text="{ext:Localize Emulator}" />
         <Grid RowDefinitions="*,*,*,*,*,*,*,*,*,*" ColumnDefinitions="*,*">

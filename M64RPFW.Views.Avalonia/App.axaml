@@ -47,6 +47,9 @@
         </Style>
         <Style Selector=".settings-page > StackPanel">
             <Setter Property="Spacing" Value="{StaticResource ContentSpacing}"/>
+            <Setter Property="Orientation" Value="Vertical"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
         </Style>
     </Application.Styles>
 </Application>
