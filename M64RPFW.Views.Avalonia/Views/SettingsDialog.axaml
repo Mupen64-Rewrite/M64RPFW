@@ -22,7 +22,7 @@
     </Window.Styles>
     <DockPanel LastChildFill="True">
         <StackPanel Orientation="Vertical" DockPanel.Dock="Bottom">
-            <TextBlock IsVisible="{Binding RequiresRestart}" Text="{ext:Localize RequireRestartToApply}"/>
+            <TextBlock IsVisible="{Binding RequiresRestart}" Text="{ext:Localize RequiresRestartToApply}"/>
             <StackPanel Classes="dialog-btns">
                 <Button Content="{ext:Localize Apply}" Click="OnApplyClicked"/>
                 <Button Content="{ext:Localize Cancel}" Click="OnCancelClicked"/>

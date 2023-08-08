@@ -186,4 +186,19 @@
     <data name="Error" xml:space="preserve">
         <value>Erreur</value>
     </data>
+    <data name="VSync" xml:space="preserve">
+        <value>VSync</value>
+    </data>
+    <data name="Style" xml:space="preserve">
+        <value>Style</value>
+    </data>
+    <data name="RequiresRestartToApply" xml:space="preserve">
+        <value>Il faut redémarrer pour appliquer les modifications</value>
+    </data>
+    <data name="Rerecording" xml:space="preserve">
+        <value>Rerecording</value>
+    </data>
+    <data name="Refresh" xml:space="preserve">
+        <value>Actualiser</value>
+    </data>
 </root>

@@ -200,4 +200,10 @@
     <data name="Style" xml:space="preserve">
         <value>Style</value>
     </data>
+    <data name="VSync" xml:space="preserve">
+        <value>VSync</value>
+    </data>
+    <data name="RequiresRestartToApply" xml:space="preserve">
+        <value>Changes will only apply after restarting</value>
+    </data>
 </root>

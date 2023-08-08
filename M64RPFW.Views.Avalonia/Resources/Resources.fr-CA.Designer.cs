@@ -374,5 +374,35 @@ namespace M64RPFW.Views.Avalonia.Resources {
                 return ResourceManager.GetString("Error", resourceCulture);
             }
         }
+        
+        internal static string VSync {
+            get {
+                return ResourceManager.GetString("VSync", resourceCulture);
+            }
+        }
+        
+        internal static string Style {
+            get {
+                return ResourceManager.GetString("Style", resourceCulture);
+            }
+        }
+        
+        internal static string RequiresRestartToApply {
+            get {
+                return ResourceManager.GetString("RequiresRestartToApply", resourceCulture);
+            }
+        }
+        
+        internal static string Rerecording {
+            get {
+                return ResourceManager.GetString("Rerecording", resourceCulture);
+            }
+        }
+        
+        internal static string Refresh {
+            get {
+                return ResourceManager.GetString("Refresh", resourceCulture);
+            }
+        }
     }
 }
