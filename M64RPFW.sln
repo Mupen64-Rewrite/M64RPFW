@@ -1,14 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M64RPFW.Services", "M64RPFW.Services\M64RPFW.Services.csproj", "{A9060ED0-1E31-48EA-A7FD-6D43D52C1B1A}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33829.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "M64RPFW.Services", "M64RPFW.Services\M64RPFW.Services.csproj", "{A9060ED0-1E31-48EA-A7FD-6D43D52C1B1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M64RPFW.ViewModels", "M64RPFW.ViewModels\M64RPFW.ViewModels.csproj", "{AB0AF376-E524-49EC-8A21-E809172BB1B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "M64RPFW.ViewModels", "M64RPFW.ViewModels\M64RPFW.ViewModels.csproj", "{AB0AF376-E524-49EC-8A21-E809172BB1B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M64RPFW.Models", "M64RPFW.Models\M64RPFW.Models.csproj", "{4D5B413F-E005-41E3-A316-D2404E9F11BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "M64RPFW.Models", "M64RPFW.Models\M64RPFW.Models.csproj", "{4D5B413F-E005-41E3-A316-D2404E9F11BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M64RPFW.Models.Types", "M64RPFW.Models.Types\M64RPFW.Models.Types.csproj", "{6EDD71B7-6238-4778-8885-998EBDF3349E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "M64RPFW.Models.Types", "M64RPFW.Models.Types\M64RPFW.Models.Types.csproj", "{6EDD71B7-6238-4778-8885-998EBDF3349E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M64RPFW.Views.Avalonia", "M64RPFW.Views.Avalonia\M64RPFW.Views.Avalonia.csproj", "{F8317704-D8DF-4CB6-879B-2168B2E53CA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "M64RPFW.Views.Avalonia", "M64RPFW.Views.Avalonia\M64RPFW.Views.Avalonia.csproj", "{F8317704-D8DF-4CB6-879B-2168B2E53CA1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4D5B413F-E005-41E3-A316-D2404E9F11BB} = {4D5B413F-E005-41E3-A316-D2404E9F11BB}
+		{6EDD71B7-6238-4778-8885-998EBDF3349E} = {6EDD71B7-6238-4778-8885-998EBDF3349E}
+		{A9060ED0-1E31-48EA-A7FD-6D43D52C1B1A} = {A9060ED0-1E31-48EA-A7FD-6D43D52C1B1A}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,5 +44,8 @@ Global
 		{F8317704-D8DF-4CB6-879B-2168B2E53CA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8317704-D8DF-4CB6-879B-2168B2E53CA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8317704-D8DF-4CB6-879B-2168B2E53CA1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
