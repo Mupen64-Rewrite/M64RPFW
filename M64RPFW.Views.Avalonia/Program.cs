@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
 using Avalonia;
 
 namespace M64RPFW.Views.Avalonia;
@@ -11,6 +13,7 @@ class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        SetupConsole();
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }
 
@@ -36,5 +39,24 @@ class Program
             // })
             ;
         return builder;
+    }
+    
+    [DllImport("kernel32.dll", EntryPoint = "AttachConsole", SetLastError = true)]
+    [return : MarshalAs(UnmanagedType.Bool)]
+    private static extern bool Win32_AttachConsole(uint dwProcessId);
+
+    private const uint Win32_AttachParentProcess = uint.MaxValue;
+
+    private static void SetupConsole()
+    {
+        if (!OperatingSystem.IsWindows())
+            return;
+
+        if (Win32_AttachConsole(Win32_AttachParentProcess))
+            return;
+        
+        int err = Marshal.GetLastPInvokeError();
+        if (err != 6)
+            throw new Win32Exception(err);
     }
 }
