@@ -161,11 +161,11 @@
             </MenuItem>
             <MenuItem Header="{ext:Localize Lua}">
                 <MenuItem
-                    Header="{ext:Localize NewLuaInstance}" Click="MenuItem_OnClick" />
+                    Header="{ext:Localize NewLuaInstance}" Click="NewLuaInstance_OnClick" />
             </MenuItem>
             <MenuItem Header="{ext:Localize Help}">
-                <MenuItem Header="{ext:Localize AboutAvalonia}"/>
-                <MenuItem Header="{ext:Localize AboutRPFW}"/>
+                <MenuItem Header="{ext:Localize AboutAvalonia}" Click="AboutAvalonia_OnClick"/>
+                <MenuItem Header="{ext:Localize AboutRPFW}" Click="AboutRPFW_OnClick"/>
             </MenuItem>
         </Menu>
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" x:Name="StatusBar">

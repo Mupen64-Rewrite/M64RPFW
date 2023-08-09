@@ -2,8 +2,10 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Dialogs;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
@@ -84,7 +86,7 @@ public partial class MainWindow : Window
         ViewModel.ForwardSDLKeyUp(scancode, modifiers);
     }
 
-    private void MenuItem_OnClick(object? sender, RoutedEventArgs e)
+    private void NewLuaInstance_OnClick(object? sender, RoutedEventArgs e)
     {
         var win = new LuaWindow();
         win.Show(this);
@@ -114,5 +116,17 @@ public partial class MainWindow : Window
             });
         }
         RomBrowserControl.RomBrowserViewModel.RefreshCommand.ExecuteIfPossible();
+    }
+
+    private async void AboutAvalonia_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var aboutDialog = new AboutAvaloniaDialog();
+        await aboutDialog.ShowDialog(this);
+    }
+
+    private async void AboutRPFW_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var aboutDialog = new AboutRPFWDialog();
+        await aboutDialog.ShowDialog(this);
     }
 }
