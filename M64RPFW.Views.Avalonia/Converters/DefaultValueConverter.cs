@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
 
-namespace M64RPFW.Views.Avalonia.Converter;
+namespace M64RPFW.Views.Avalonia.Converters;
 
 public class DefaultValueConverter : IValueConverter
 {

@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using Avalonia.Data.Converters;
 
-namespace M64RPFW.Views.Avalonia.Converter;
+namespace M64RPFW.Views.Avalonia.Converters;
 
 /// <summary>
 /// Value converter converting a boolean to either one of two strings.

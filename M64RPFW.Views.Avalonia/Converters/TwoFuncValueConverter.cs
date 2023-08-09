@@ -4,7 +4,7 @@ using Avalonia;
 using Avalonia.Data.Converters;
 using Avalonia.Utilities;
 
-namespace M64RPFW.Views.Avalonia.Converter;
+namespace M64RPFW.Views.Avalonia.Converters;
 
 /// <summary>
 /// An extension of <see cref="FuncValueConverter{TIn,TOut}"/> to include a ConvertBack function.

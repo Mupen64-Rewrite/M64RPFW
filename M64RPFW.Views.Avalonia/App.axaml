@@ -1,14 +1,15 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:conv="clr-namespace:M64RPFW.Views.Avalonia.Converter"
              x:Class="M64RPFW.Views.Avalonia.App"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             xmlns:settings="clr-namespace:M64RPFW.Views.Avalonia.Views.Settings">
+             xmlns:settings="clr-namespace:M64RPFW.Views.Avalonia.Views.Settings"
+             xmlns:templates="clr-namespace:M64RPFW.Views.Avalonia.Templates"
+             xmlns:converters="clr-namespace:M64RPFW.Views.Avalonia.Converters">
     <Application.Resources>
-        <conv:StringToKeyGestureConverter x:Key="StringToKeyGestureConverter" />
-        <conv:DefaultValueConverter x:Key="DefaultValueConverter" />
-        <conv:StringSelectorConverter x:Key="StringSelectorConverter" />
-        <conv:ConfigEditingDataTemplate x:Key="ConfigKeyDataTemplate"></conv:ConfigEditingDataTemplate>
+        <converters:StringToKeyGestureConverter x:Key="StringToKeyGestureConverter" />
+        <converters:DefaultValueConverter x:Key="DefaultValueConverter" />
+        <converters:StringSelectorConverter x:Key="StringSelectorConverter" />
+        <templates:ConfigEditingDataTemplate x:Key="ConfigKeyDataTemplate"></templates:ConfigEditingDataTemplate>
         <Thickness x:Key="SpaceBelowThickness">0,10,0,20</Thickness>
         <Thickness x:Key="ContentPadding">5,5,5,5</Thickness>
         <x:Double x:Key="ContentSpacing">5</x:Double>

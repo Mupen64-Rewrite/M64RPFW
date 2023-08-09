@@ -3,7 +3,7 @@ using System.Globalization;
 using Avalonia.Data.Converters;
 using Avalonia.Input;
 
-namespace M64RPFW.Views.Avalonia.Converter;
+namespace M64RPFW.Views.Avalonia.Converters;
 
 public class StringToKeyGestureConverter : IValueConverter
 {
