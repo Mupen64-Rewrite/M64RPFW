@@ -11,11 +11,13 @@ namespace M64RPFW.ViewModels;
 public partial class RomBrowserItemViewModel : ObservableObject
 {
     private byte[] _headerData;
+    private Mupen64PlusTypes.RomSettings _settings;
 
-    public RomBrowserItemViewModel(byte[] headerData, string path)
+    public RomBrowserItemViewModel(byte[] headerData, string path, Mupen64PlusTypes.RomSettings settings)
     {
         _headerData = headerData;
         Path = path;
+        _settings = settings;
     }
 
     public string Path { get; private set; }
@@ -26,32 +28,6 @@ public partial class RomBrowserItemViewModel : ObservableObject
     private byte? _countryCode;
     public byte CountryCode => _countryCode ??= _headerData[0x3E];
 
-    private Mupen64PlusTypes.RomSettings _settings;
-    private bool _settingsSet;
-    public ref Mupen64PlusTypes.RomSettings Settings
-    {
-        get
-        {
-            if (_settingsSet)
-                return ref _settings;
-            try
-            {
-                Mupen64Plus.OpenRom(Path);
-                Mupen64Plus.GetRomSettings(out _settings);
-            }
-            catch (ArgumentException e)
-            {
-                Console.WriteLine(e);
-            }
-            finally
-            {
-                Mupen64Plus.CloseRom();
-            }
-            _settingsSet = true;
-            return ref _settings;
-        }
-    }
-
     private string? _goodName;
     public unsafe string GoodName
     {
@@ -59,7 +35,7 @@ public partial class RomBrowserItemViewModel : ObservableObject
         {
             if (_goodName != null)
                 return _goodName;
-            fixed (byte* pGoodName = Settings.goodname)
+            fixed (byte* pGoodName = _settings.goodname)
             {
                 _goodName = CHelpers.DecodeString(pGoodName);
             }

@@ -249,8 +249,7 @@ public static partial class Mupen64Plus
     }
 
     /// <summary>
-    /// Get the ROM "settings" (internal M64+ data) for the currently
-    /// open ROM.
+    /// Get the ROM metadata for the currently open ROM.
     /// </summary>
     /// <returns>The ROM settings for the currently open ROM</returns>
     public static unsafe void GetRomSettings(out Mupen64PlusTypes.RomSettings settings)
@@ -439,6 +438,12 @@ public static partial class Mupen64Plus
 
     #region Miscellaneous core functions
 
+    /// <summary>
+    /// Get the ROM metadata for a given CRC pair.
+    /// </summary>
+    /// <param name="settings">The output object.</param>
+    /// <param name="crc1">The first CRC.</param>
+    /// <param name="crc2">The second CRC.</param>
     public static unsafe void GetRomSettings(out Mupen64PlusTypes.RomSettings settings, uint crc1, uint crc2)
     {
         fixed (Mupen64PlusTypes.RomSettings* pSettings = &settings)

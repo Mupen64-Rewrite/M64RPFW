@@ -40,11 +40,24 @@ public partial class RomBrowserViewModel : ObservableObject
         if (Mupen64Plus.CoreStateQuery(Mupen64PlusTypes.CoreParam.EmuState) != (int) Mupen64PlusTypes.EmuState.Stopped)
             return;
         RomBrowserItemViewModels.Clear();
-        
-        // This might not be optimal with bad disk speeds.
+
+        using var memBuffer = new MemoryStream();
         foreach (string path in CollectPaths())
         {
-            RomBrowserItemViewModels.Add(new RomBrowserItemViewModel(await FileHelpers.ReadSectionAsync(path, 0, 64), path));
+            using (var inStream = File.OpenRead(path))
+            {
+                memBuffer.SetLength(0);
+                memBuffer.Seek(0, SeekOrigin.Begin);
+                await inStream.CopyToAsync(memBuffer);
+            }
+            var settings = await Task.Run(() =>
+            {
+                Mupen64Plus.OpenRomBinary(new ReadOnlySpan<byte>(memBuffer.GetBuffer(), 0, (int) memBuffer.Length));
+                Mupen64Plus.GetRomSettings(out var settings);
+                Mupen64Plus.CloseRom();
+                return settings;
+            });
+            RomBrowserItemViewModels.Add(new RomBrowserItemViewModel(memBuffer.GetBuffer()[..64], path, settings));
         }
     }
 }
