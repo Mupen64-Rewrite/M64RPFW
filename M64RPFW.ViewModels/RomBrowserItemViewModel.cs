@@ -12,5 +12,8 @@ public partial class RomBrowserItemViewModel : ObservableObject
         Path = path;
     }
 
-    public string Path { get; set; }
+    public string Path { get; private set; }
+
+    private string? _fileName;
+    public string FileName => _fileName ??= System.IO.Path.GetFileName(Path);
 }

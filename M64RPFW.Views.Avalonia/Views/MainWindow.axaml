@@ -170,6 +170,7 @@
         </StackPanel>
         <Border Background="Black">
             <gl:WindowedGlControl
+                IsVisible="{Binding MupenIsActive}"
                 PointerPressed="SkiaOnPointerPressed"
                 PointerReleased="SkiaOnPointerReleased"
                 PointerMoved="SkiaOnPointerUpdate"
