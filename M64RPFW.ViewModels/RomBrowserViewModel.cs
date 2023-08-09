@@ -21,24 +21,23 @@ public partial class RomBrowserViewModel : ObservableObject
     private IEnumerable<string> CollectPaths()
     {
         var searchOption = SettingsViewModel.Instance.IsRomBrowserRecursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-        
-        List<string> filePaths = new();
+
         foreach (string directory in SettingsViewModel.Instance.RomBrowserPaths)
         {
-            filePaths.AddRange(Directory.GetFiles(directory, "*.*", searchOption)
-                .Where(path => _romExtensions.Any(extension => Path.GetExtension(path).Equals(extension, StringComparison.OrdinalIgnoreCase))));
+            foreach (string file in Directory.EnumerateFiles(directory, "*.*", searchOption))
+            {
+                if (_romExtensions.Any(extension => Path.GetExtension(file).Equals(extension, StringComparison.OrdinalIgnoreCase)))
+                    yield return file;
+            }
         }
-
-        return filePaths;
     }
 
     [RelayCommand]
     private async Task Refresh()
     {
         RomBrowserItemViewModels.Clear();
-
-        var paths = await Task.Run(CollectPaths);
-
+        
+        // This might not be optimal with bad disk speeds.
         foreach (string path in CollectPaths())
         {
             RomBrowserItemViewModels.Add(new RomBrowserItemViewModel(await FileHelpers.ReadSectionAsync(path, 0, 64), path));
