@@ -247,20 +247,12 @@ public static partial class Mupen64Plus
     /// open ROM.
     /// </summary>
     /// <returns>The ROM settings for the currently open ROM</returns>
-    public static unsafe Mupen64PlusTypes.RomSettings GetRomSettings()
+    public static unsafe void GetRomSettings(out Mupen64PlusTypes.RomSettings settings)
     {
-        int size = Marshal.SizeOf<Mupen64PlusTypes.RomSettings>();
-        IntPtr alloc = Marshal.AllocHGlobal(size);
-        try
+        fixed (Mupen64PlusTypes.RomSettings* pSettings = &settings)
         {
-            Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.RomGetSettings, size, alloc.ToPointer());
+            Mupen64PlusTypes.Error err = _fnCoreDoCommand(Mupen64PlusTypes.Command.RomGetSettings, sizeof(Mupen64PlusTypes.RomSettings), pSettings);
             ThrowForError(err);
-            var res = Marshal.PtrToStructure<Mupen64PlusTypes.RomSettings>(alloc);
-            return res;
-        }
-        finally
-        {
-            Marshal.FreeHGlobal(alloc);
         }
     }
 
@@ -440,6 +432,15 @@ public static partial class Mupen64Plus
     #endregion
 
     #region Miscellaneous core functions
+
+    public static unsafe void GetRomSettings(out Mupen64PlusTypes.RomSettings settings, uint crc1, uint crc2)
+    {
+        fixed (Mupen64PlusTypes.RomSettings* pSettings = &settings)
+        {
+            var err = _fnCoreGetRomSettings(out settings, sizeof(Mupen64PlusTypes.RomSettings), (int) crc1, (int) crc2);
+            ThrowForError(err);
+        }
+    }
     
     /// <summary>
     /// Overrides the core "video extension" functions. These handle window

@@ -77,6 +77,10 @@ public static partial class Mupen64Plus
     private unsafe delegate Mupen64PlusTypes.Error DPluginGetVersion(out Mupen64PlusTypes.PluginType type, out int version, out int apiVersion, out byte* name,
         out int caps);
 
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    [RuntimeDllImport]
+    private unsafe delegate Mupen64PlusTypes.Error DCoreGetRomSettings(out Mupen64PlusTypes.RomSettings settings, int len, int crc1, int crc2);
+
     #endregion
 
     // Plugin delegates
@@ -102,6 +106,7 @@ public static partial class Mupen64Plus
         ResolveDelegate(_libHandle, out _fnCoreAttachPlugin);
         ResolveDelegate(_libHandle, out _fnCoreDetachPlugin);
         ResolveDelegate(_libHandle, out _fnCoreOverrideVidExt);
+        ResolveDelegate(_libHandle, out _fnCoreGetRomSettings);
         ResolveDelegate(_libHandle, out _fnCoreDoCommand);
     }
 
@@ -116,5 +121,6 @@ public static partial class Mupen64Plus
     private static DCoreDetachPlugin _fnCoreDetachPlugin;
     private static DCoreDoCommand _fnCoreDoCommand;
     private static DCoreOverrideVidExt _fnCoreOverrideVidExt;
+    private static DCoreGetRomSettings _fnCoreGetRomSettings;
 #pragma warning restore CS8618
 }

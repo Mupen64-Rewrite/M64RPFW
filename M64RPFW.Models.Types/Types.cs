@@ -154,7 +154,7 @@ public static partial class Mupen64PlusTypes
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public struct RomHeader
+    public unsafe struct RomHeader
     {
         public byte init_PI_BSB_DOM1_LAT_REG; /* 0x00 */
         public byte init_PI_BSB_DOM1_PGS_REG; /* 0x01 */
@@ -166,11 +166,9 @@ public static partial class Mupen64PlusTypes
         public uint CRC1; /* 0x10 */
         public uint CRC2; /* 0x14 */
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-        public uint[] Unknown; /* 0x18 */
+        public fixed uint Unknown[2]; /* 0x18 */
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-        public byte[] Name; /* 0x20 */
+        public fixed byte Name[20]; /* 0x20 */
 
         public uint unknown; /* 0x34 */
         public uint Manufacturer_ID; /* 0x38 */
@@ -180,14 +178,10 @@ public static partial class Mupen64PlusTypes
 
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public struct RomSettings
+    public unsafe struct RomSettings
     {
-        [MarshalAs(UnmanagedType.LPStr, SizeConst = 256)]
-        public string goodname;
-
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 33)]
-        public byte[] MD5;
-
+        public fixed byte goodname[256];
+        public fixed byte MD5[33];
         public byte savetype;
         public byte status; // Rom status on a scale from 0-5. 
         public byte players; // Local players 0-4, 2/3/4 way Netplay indicated by 5/6/7. 
