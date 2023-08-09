@@ -20,22 +20,14 @@ public partial class RomBrowserViewModel : ObservableObject
 
     private IEnumerable<string> CollectPaths()
     {
+        var searchOption = SettingsViewModel.Instance.IsRomBrowserRecursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+        
         List<string> filePaths = new();
-        if (SettingsViewModel.Instance.IsRomBrowserRecursive)
+        foreach (string directory in SettingsViewModel.Instance.RomBrowserPaths)
         {
-            foreach (string directory in SettingsViewModel.Instance.RomBrowserPaths)
-            {
-                filePaths.AddRange(DirectoryHelper.GetFilesRecursively(directory));
-            }
+            filePaths.AddRange(Directory.GetFiles(directory, "*.*", searchOption)
+                .Where(path => _romExtensions.Any(extension => Path.GetExtension(path).Equals(extension, StringComparison.OrdinalIgnoreCase))));
         }
-        else
-        {
-            foreach (string directory in SettingsViewModel.Instance.RomBrowserPaths)
-            {
-                filePaths.AddRange(Directory.GetFiles(directory));
-            }
-        }
-        filePaths = filePaths.Where(path => _romExtensions.Any(extension => Path.GetExtension(path).Equals(extension, StringComparison.OrdinalIgnoreCase))).ToList();
 
         return filePaths;
     }
@@ -44,6 +36,8 @@ public partial class RomBrowserViewModel : ObservableObject
     private async Task Refresh()
     {
         RomBrowserItemViewModels.Clear();
+
+        var paths = await Task.Run(CollectPaths);
 
         foreach (string path in CollectPaths())
         {
