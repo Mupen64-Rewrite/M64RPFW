@@ -47,7 +47,7 @@ public partial class RomBrowserViewModel : ObservableObject
 
         foreach (string path in CollectPaths())
         {
-            RomBrowserItemViewModels.Add(new RomBrowserItemViewModel(await File.ReadAllBytesAsync(path), path));
+            RomBrowserItemViewModels.Add(new RomBrowserItemViewModel(await FileHelpers.ReadSectionAsync(path, 0, 64), path));
         }
     }
 }
