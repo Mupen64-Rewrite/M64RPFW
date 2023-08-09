@@ -5,6 +5,7 @@
              xmlns:viewModels="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels"
              xmlns:ext="clr-namespace:M64RPFW.Views.Avalonia.Markup"
              xmlns:controls="clr-namespace:M64RPFW.Views.Avalonia.Controls"
+             xmlns:templates="clr-namespace:M64RPFW.Views.Avalonia.Controls.Templates"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="M64RPFW.Views.Avalonia.Controls.RomBrowserControl"
              x:CompileBindings="True"
@@ -23,7 +24,13 @@
               DoubleTapped="DataGrid_OnDoubleTapped"
               KeyDown="DataGrid_OnKeyDown">
         <DataGrid.Columns>
-            <DataGridTextColumn Header="{ext:Localize FullPath}" Binding="{Binding Path}" />
+            <DataGridTemplateColumn Header="CC">
+                <DataGridTemplateColumn.CellTemplate>
+                    <templates:CountryCodeIconTemplate/>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTextColumn Header="{ext:Localize RomGoodName}" Binding="{Binding GoodName}"/>
+            <DataGridTextColumn Header="{ext:Localize FileName}" Binding="{Binding FileName}" />
         </DataGrid.Columns>
     </DataGrid>
 

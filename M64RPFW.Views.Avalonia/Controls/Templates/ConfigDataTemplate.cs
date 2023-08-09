@@ -4,7 +4,7 @@ using Avalonia.Data;
 using Avalonia.Layout;
 using M64RPFW.ViewModels;
 
-namespace M64RPFW.Views.Avalonia.Templates;
+namespace M64RPFW.Views.Avalonia.Controls.Templates;
 
 public class ConfigDataTemplate : IRecyclingDataTemplate
 {

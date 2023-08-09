@@ -3,6 +3,7 @@ using System.Globalization;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform;
 using Avalonia.Styling;
 using Avalonia.Themes.Fluent;
 using Avalonia.Themes.Simple;
@@ -108,6 +109,8 @@ public class App : Application, IDispatcherService
 
         base.OnFrameworkInitializationCompleted();
     }
+    
+    
 
 
 

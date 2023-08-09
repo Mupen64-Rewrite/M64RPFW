@@ -3,8 +3,8 @@
              x:Class="M64RPFW.Views.Avalonia.App"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:settings="clr-namespace:M64RPFW.Views.Avalonia.Views.Settings"
-             xmlns:templates="clr-namespace:M64RPFW.Views.Avalonia.Templates"
-             xmlns:converters="clr-namespace:M64RPFW.Views.Avalonia.Converters">
+             xmlns:converters="clr-namespace:M64RPFW.Views.Avalonia.Converters"
+             xmlns:templates="clr-namespace:M64RPFW.Views.Avalonia.Controls.Templates">
     <Application.Resources>
         <converters:StringToKeyGestureConverter x:Key="StringToKeyGestureConverter" />
         <converters:DefaultValueConverter x:Key="DefaultValueConverter" />

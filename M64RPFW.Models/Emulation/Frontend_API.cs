@@ -83,6 +83,12 @@ public static partial class Mupen64Plus
         };
     }
 
+    private static unsafe string GetErrorMessage(Mupen64PlusTypes.Error err)
+    {
+        byte* str = _fnCoreErrorMessage(err);
+        return CHelpers.DecodeString(str);
+    }
+
     private static void ThrowForError(Mupen64PlusTypes.Error err)
     {
         if (err == Mupen64PlusTypes.Error.Success)
@@ -105,7 +111,7 @@ public static partial class Mupen64Plus
             Mupen64PlusTypes.Error.NoMemory => typeof(OutOfMemoryException),
             _ => typeof(ApplicationException)
         };
-        throw (Exception) Activator.CreateInstance(errType, $"M64+ {_fnCoreErrorMessage(err)}")!;
+        throw (Exception) Activator.CreateInstance(errType, $"M64+ {GetErrorMessage(err)}")!;
     }
 
     private static void OnLogMessage(IntPtr context, Mupen64PlusTypes.MessageLevel level, string message)
@@ -437,7 +443,7 @@ public static partial class Mupen64Plus
     {
         fixed (Mupen64PlusTypes.RomSettings* pSettings = &settings)
         {
-            var err = _fnCoreGetRomSettings(out settings, sizeof(Mupen64PlusTypes.RomSettings), (int) crc1, (int) crc2);
+            var err = _fnCoreGetRomSettings(pSettings, sizeof(Mupen64PlusTypes.RomSettings), (int) crc1, (int) crc2);
             ThrowForError(err);
         }
     }

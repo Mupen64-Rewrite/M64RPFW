@@ -5,7 +5,7 @@ using Avalonia.Layout;
 using M64RPFW.ViewModels;
 using M64RPFW.Views.Avalonia.Converters;
 
-namespace M64RPFW.Views.Avalonia.Templates;
+namespace M64RPFW.Views.Avalonia.Controls.Templates;
 
 public class ConfigEditingDataTemplate : IRecyclingDataTemplate
 {

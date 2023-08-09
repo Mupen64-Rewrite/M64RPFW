@@ -10,11 +10,11 @@ namespace M64RPFW.ViewModels;
 
 public partial class RomBrowserItemViewModel : ObservableObject
 {
-    private byte[] _rawData;
+    private byte[] _headerData;
 
-    public RomBrowserItemViewModel(byte[] rawData, string path)
+    public RomBrowserItemViewModel(byte[] headerData, string path)
     {
-        _rawData = rawData;
+        _headerData = headerData;
         Path = path;
     }
 
@@ -23,11 +23,8 @@ public partial class RomBrowserItemViewModel : ObservableObject
     private string? _fileName;
     public string FileName => _fileName ??= System.IO.Path.GetFileName(Path);
 
-    private uint? _crc1;
-    public uint CRC1 => _crc1 ??= BinaryPrimitives.ReadUInt32BigEndian(new ReadOnlySpan<byte>(_rawData, 0x10, 0x04));
-
-    private uint? _crc2;
-    public uint CRC2 => _crc2 ??= BinaryPrimitives.ReadUInt32BigEndian(new ReadOnlySpan<byte>(_rawData, 0x14, 0x04));
+    private byte? _countryCode;
+    public byte CountryCode => _countryCode ??= _headerData[0x3E];
 
     private Mupen64PlusTypes.RomSettings _settings;
     private bool _settingsSet;
@@ -37,7 +34,19 @@ public partial class RomBrowserItemViewModel : ObservableObject
         {
             if (_settingsSet)
                 return ref _settings;
-            Mupen64Plus.GetRomSettings(out _settings, CRC1, CRC2);
+            try
+            {
+                Mupen64Plus.OpenRom(Path);
+                Mupen64Plus.GetRomSettings(out _settings);
+            }
+            catch (ArgumentException e)
+            {
+                Console.WriteLine(e);
+            }
+            finally
+            {
+                Mupen64Plus.CloseRom();
+            }
             _settingsSet = true;
             return ref _settings;
         }

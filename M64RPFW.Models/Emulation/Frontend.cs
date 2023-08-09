@@ -43,9 +43,8 @@ public static partial class Mupen64Plus
     // ========================================================
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    [return : MarshalAs(UnmanagedType.LPStr)]
     [RuntimeDllImport]
-    private delegate string DCoreErrorMessage(Mupen64PlusTypes.Error code);
+    private unsafe delegate byte* DCoreErrorMessage(Mupen64PlusTypes.Error code);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [RuntimeDllImport]
@@ -79,7 +78,7 @@ public static partial class Mupen64Plus
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     [RuntimeDllImport]
-    private unsafe delegate Mupen64PlusTypes.Error DCoreGetRomSettings(out Mupen64PlusTypes.RomSettings settings, int len, int crc1, int crc2);
+    private unsafe delegate Mupen64PlusTypes.Error DCoreGetRomSettings(Mupen64PlusTypes.RomSettings* settings, int len, int crc1, int crc2);
 
     #endregion
 
