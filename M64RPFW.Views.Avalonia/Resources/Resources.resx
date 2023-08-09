@@ -209,4 +209,13 @@
     <data name="FullPath" xml:space="preserve">
         <value>Full Path</value>
     </data>
+    <data name="Help" xml:space="preserve">
+        <value>Help</value>
+    </data>
+    <data name="AboutAvalonia" xml:space="preserve">
+        <value>About Avalonia...</value>
+    </data>
+    <data name="AboutRPFW" xml:space="preserve">
+        <value>About M64RPFW...</value>
+    </data>
 </root>

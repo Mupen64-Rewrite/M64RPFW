@@ -32,7 +32,6 @@
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="{ext:Localize File}">
                 <!-- Opening a ROM depends on the window, thus it's part of view -->
-                <!-- TODO: implement attached property or behaviour for applying both HotKey and InputGesture from a single binding value -->
                 <MenuItem
                     Header="{ext:Localize OpenRom}"
                     Command="{Binding OpenRomCommand}"
@@ -163,6 +162,10 @@
             <MenuItem Header="{ext:Localize Lua}">
                 <MenuItem
                     Header="{ext:Localize NewLuaInstance}" Click="MenuItem_OnClick" />
+            </MenuItem>
+            <MenuItem Header="{ext:Localize Help}">
+                <MenuItem Header="{ext:Localize AboutAvalonia}"/>
+                <MenuItem Header="{ext:Localize AboutRPFW}"/>
             </MenuItem>
         </Menu>
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" x:Name="StatusBar">

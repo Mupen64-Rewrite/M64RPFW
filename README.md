@@ -33,3 +33,6 @@ Any remaining dependencies _should_ be handled by NuGet. If it doesn't, please r
     dotnet restore
     cd M64RPFW.Views.Avalonia && dotnet run
     ```
+
+## Legal notice
+Country flags and symbols are sourced from [Twemoji](https://twemoji.twitter.com). They were not modified in any way.

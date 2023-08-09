@@ -130,7 +130,7 @@
         <value>RSP</value>
     </data>
     <data name="SaveCurrentSlot" xml:space="preserve">
-        <value>Enregistrer position actuelle</value>
+        <value>Enregistrer à position actuelle</value>
     </data>
     <data name="SaveState" xml:space="preserve">
         <value>Enregistrer statut</value>
@@ -148,10 +148,10 @@
         <value>Démarrer l'encodeur...</value>
     </data>
     <data name="StartFrom" xml:space="preserve">
-        <value>Lancer à</value>
+        <value>Commencer à partir de</value>
     </data>
     <data name="StartPlaying" xml:space="preserve">
-        <value>Lancer à repasser</value>
+        <value>Commencer à repasser</value>
     </data>
     <data name="Stop" xml:space="preserve">
         <value>Arrêter</value>
@@ -163,7 +163,7 @@
         <value>Arreter l'enregistrement</value>
     </data>
     <data name="StartRecording" xml:space="preserve">
-        <value>Lancer à enregistrer</value>
+        <value>Commencer à enregistrer</value>
     </data>
     <data name="Theme" xml:space="preserve">
         <value>Thème</value>
@@ -203,5 +203,17 @@
     </data>
     <data name="FullPath" xml:space="preserve">
         <value>Chemin complet</value>
+    </data>
+    <data name="Help" xml:space="preserve">
+        <value>Aide</value>
+    </data>
+    <data name="AboutRPFW" xml:space="preserve">
+        <value>À propos de M64RPFW...</value>
+    </data>
+    <data name="AboutAvalonia" xml:space="preserve">
+        <value>À propos d'Avalonia...</value>
+    </data>
+    <data name="RomBrowserRecursive" xml:space="preserve">
+        <value>Recherche récursive</value>
     </data>
 </root>

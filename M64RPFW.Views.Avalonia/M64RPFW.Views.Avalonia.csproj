@@ -107,9 +107,6 @@
     </ItemGroup>
 
 
-    <ItemGroup>
-      <Folder Include="Assets\Flags\" />
-    </ItemGroup>
 
     <!--======================================
     TARGETS USED FOR COPYING OS-SPECIFIC FILES

@@ -410,5 +410,29 @@ namespace M64RPFW.Views.Avalonia.Resources {
                 return ResourceManager.GetString("FullPath", resourceCulture);
             }
         }
+        
+        internal static string Help {
+            get {
+                return ResourceManager.GetString("Help", resourceCulture);
+            }
+        }
+        
+        internal static string AboutRPFW {
+            get {
+                return ResourceManager.GetString("AboutRPFW", resourceCulture);
+            }
+        }
+        
+        internal static string AboutAvalonia {
+            get {
+                return ResourceManager.GetString("AboutAvalonia", resourceCulture);
+            }
+        }
+        
+        internal static string RomBrowserRecursive {
+            get {
+                return ResourceManager.GetString("RomBrowserRecursive", resourceCulture);
+            }
+        }
     }
 }
