@@ -195,7 +195,7 @@ public static partial class Mupen64Plus
         ArgumentNullException.ThrowIfNull(path);
 
         byte[] bytes = File.ReadAllBytes(path);
-        RomHelper.AdaptiveByteSwap(ref bytes);
+        RomHelper.AdaptiveByteSwap(bytes);
 
         fixed (byte* bytesPtr = bytes)
         {

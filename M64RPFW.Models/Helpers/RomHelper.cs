@@ -1,11 +1,13 @@
+using System.Buffers.Binary;
+
 namespace M64RPFW.Models.Helpers;
 
 public static class RomHelper
 {
-    public static void AdaptiveByteSwap(ref byte[] data)
+    public static void AdaptiveByteSwap(byte[] data)
     {
         // read signature (0x00, 4 bytes) in big-endian order
-        uint signature = data[3] | ((uint) data[2] << 8) | ((uint) data[1] << 16) | ((uint) data[0] << 24);
+        uint signature = BinaryPrimitives.ReadUInt32BigEndian(new ReadOnlySpan<byte>(data, 0, 4));
             
         switch (signature)
         {

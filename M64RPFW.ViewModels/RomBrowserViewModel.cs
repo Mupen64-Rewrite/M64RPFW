@@ -3,6 +3,7 @@ using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using M64RPFW.Models.Emulation;
+using M64RPFW.Models.Helpers;
 using M64RPFW.Models.Types;
 using M64RPFW.ViewModels.Helpers;
 
@@ -52,6 +53,10 @@ public partial class RomBrowserViewModel : ObservableObject
             }
             var settings = await Task.Run(() =>
             {
+                RomHelper.AdaptiveByteSwap(memBuffer.GetBuffer());
+                // We need to open the ROM, as M64+ does not allow us to independently calculate MD5 hashes
+                // and look them up in the ROM database. This does mean that the hashes have to be recomputed
+                // every single time.
                 Mupen64Plus.OpenRomBinary(new ReadOnlySpan<byte>(memBuffer.GetBuffer(), 0, (int) memBuffer.Length));
                 Mupen64Plus.GetRomSettings(out var settings);
                 Mupen64Plus.CloseRom();
