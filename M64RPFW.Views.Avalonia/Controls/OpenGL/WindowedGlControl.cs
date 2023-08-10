@@ -136,7 +136,8 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
         Debug.Assert(_skiaWindow != null);
 
         _gl.Flush();
-       /* if (SkiaRender != null)
+        #if true
+        if (SkiaRender != null)
         {
             lock (_sizeLock)
             {
@@ -153,7 +154,8 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
                 }
                 _skiaWindow.BlitQuad(_gl, _realSize);
             }
-        }*/
+        }
+        #endif
         sdl.GLSwapWindow(_sdlWin);
     }
 

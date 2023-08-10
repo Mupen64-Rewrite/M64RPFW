@@ -6,5 +6,5 @@ out vec4 color;
 uniform sampler2D tex;
 
 void main() {
-    color = texture(tex, uv);
+    color = vec4(texture(tex, uv).aaa, 1.0f);
 }

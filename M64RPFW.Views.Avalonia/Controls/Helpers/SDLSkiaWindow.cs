@@ -14,15 +14,10 @@ namespace M64RPFW.Views.Avalonia.Controls.Helpers;
 internal sealed unsafe class SDLSkiaWindow : IDisposable
 {
     private static readonly float[] FullscreenQuadVertices = {
-        +1.0f, +1.0f, 1.0f, 1.0f,
-        -1.0f, +1.0f, 0.0f, 1.0f,
-        -1.0f, -1.0f, 0.0f, 0.0f,
-        +1.0f, -1.0f, 1.0f, 0.0f
-    };
-    private static readonly uint[] FullscreenQuadElements =
-    {
-        0, 1, 2,
-        0, 2, 3
+        -1.0f, +1.0f,
+        +1.0f, +1.0f,
+        -1.0f, -1.0f,
+        +1.0f, -1.0f,
     };
     
     private Window* _win;
@@ -30,9 +25,10 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
     private GL _gl;
 
     private uint _texture;
-    private uint _vertexBuffer;
-    private uint _elementBuffer;
+    private uint _fbo;
+    private uint _dsRbo;
     
+    private uint _vertexBuffer;
     private uint _blitQuadProgram;
     private int _texUniformID;
 
@@ -51,7 +47,7 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
                 sdl.GLResetAttributes();
                 sdl.GLSetAttribute(GLattr.ContextMajorVersion, 4);
                 sdl.GLSetAttribute(GLattr.ContextMinorVersion, 0);
-                sdl.GLSetAttribute(GLattr.ContextProfileMask, (int) GLprofile.Core);
+                sdl.GLSetAttribute(GLattr.ContextProfileMask, (int) GLprofile.Compatibility);
                 sdl.GLSetAttribute(GLattr.Doublebuffer, 1);
                 sdl.GLSetAttribute(GLattr.ShareWithCurrentContext, 1);
                 sdl.GLSetAttribute(GLattr.StencilSize, 8);
@@ -72,9 +68,11 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
             _gl = sdl.GetGLBinding();
             _gl.AttachDebugLogger();
             _texture = 0;
+            _fbo = 0;
+            _dsRbo = 0;
 
-            _vertexBuffer = LoadBufferObject<float>(_gl, BufferTargetARB.ArrayBuffer, FullscreenQuadVertices);
-            _elementBuffer = LoadBufferObject<uint>(_gl, BufferTargetARB.ElementArrayBuffer, FullscreenQuadElements);
+            _vertexBuffer = 0;
+            _blitQuadProgram = 0;
 
             _grContext = GRContext.CreateGl();
             if (_grContext == null)
@@ -86,7 +84,7 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
     {
         uint buffer = gl.GenBuffer();
         gl.BindBuffer(target, buffer);
-        gl.BufferData(GLEnum.ArrayBuffer, data, BufferUsageARB.StaticDraw);
+        gl.BufferData(target, data, BufferUsageARB.StaticDraw);
         return buffer;
     }
     
@@ -140,30 +138,61 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
     public void InitSurface(PixelSize size)
     {
         Debug.Assert(sdl.GLGetCurrentContext() == _ctx, "Context not current");
+
+        if (_fbo == 0)
+        {
+            _fbo = _gl.GenFramebuffer();
+        }
+        if (_dsRbo != 0)
+        {
+            _gl.DeleteRenderbuffer(_dsRbo);
+        }
         if (_texture != 0)
         {
             _gl.DeleteTexture(_texture);
         }
+        
 
         _texture = _gl.GenTexture();
         _gl.BindTexture(TextureTarget.Texture2D, _texture);
         _gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba8, (uint) size.Width, (uint) size.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
         _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) GLEnum.Nearest);
-        _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) GLEnum.Nearest);
+        _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) GLEnum.Nearest);
+        Debug.Assert(_gl.IsTexture(_texture), "_gl.IsTexture(_texture)");
 
+        _dsRbo = _gl.GenRenderbuffer();
+        _gl.BindRenderbuffer(RenderbufferTarget.Renderbuffer, _dsRbo);
+        _gl.RenderbufferStorage(RenderbufferTarget.Renderbuffer, InternalFormat.Depth24Stencil8, (uint) size.Width, (uint) size.Height);
+        Debug.Assert(_gl.IsRenderbuffer(_dsRbo), "_gl.IsRenderbuffer(_dsRbo)");
+        
+        _gl.BindFramebuffer(FramebufferTarget.Framebuffer, _fbo);
+        _gl.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthStencilAttachment, RenderbufferTarget.Renderbuffer, _dsRbo);
+        _gl.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, _texture, 0);
+        
+        #if DEBUG
+        {
+            var status = _gl.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
+            Debug.Assert(status == GLEnum.FramebufferComplete, "status == GLEnum.FramebufferComplete", "status code: GLEnum.{0} (0x{1:X4})", status, (uint) status);
+        }
+        #endif
 
-        var desc = new GRBackendTexture(size.Width, size.Height, false, new GRGlTextureInfo((uint) TextureTarget.Texture2D, _texture, (uint) InternalFormat.Rgba8));
+        
+        var desc = new GRBackendRenderTarget(size.Width, size.Height, 0, 8, new GRGlFramebufferInfo(_fbo, (uint) InternalFormat.Rgba8));
         _surface = SKSurface.Create(_grContext, desc, GRSurfaceOrigin.BottomLeft, SKColorType.Rgba8888);
+        
+        _grContext.ResetContext();
     }
 
     public void DoRender(Action<SKCanvas>? render)
     {
         Debug.Assert(sdl.GLGetCurrentContext() == _ctx, "Context not current");
         Debug.Assert(_surface != null, "_surface not initialized");
+        
+        
+        _surface.Canvas.Clear();
         if (render == null)
             return;
 
-        _surface.Canvas.Clear();
         render(_surface.Canvas);
         
         _surface.Flush(true);
@@ -201,10 +230,13 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
             #else
             if (_blitQuadProgram == 0)
                 _blitQuadProgram = LinkBlitQuadShader(_gl, out _texUniformID);
+            if (_vertexBuffer == 0)
+                _vertexBuffer = LoadBufferObject<float>(_gl, BufferTargetARB.ArrayBuffer, FullscreenQuadVertices);
             
             // We want to render over everything
             gl.Disable(EnableCap.DepthTest);
             gl.Disable(EnableCap.ScissorTest);
+            gl.Disable(EnableCap.CullFace);
             // If Skia uses partial transparency, it needs to work
             gl.Enable(EnableCap.Blend);
             gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
@@ -224,13 +256,10 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
             
             gl.BindBuffer(BufferTargetARB.ArrayBuffer, _vertexBuffer);
             gl.EnableVertexAttribArray(0);
-            gl.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 4 * sizeof(float), null);
-            gl.EnableVertexAttribArray(1);
-            gl.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 4 * sizeof(float), (void*) (2 * sizeof(float)));
+            gl.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), null);
             
             // Draw the quad
-            gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, _elementBuffer);
-            gl.DrawElements(PrimitiveType.Triangles, (uint) FullscreenQuadElements.Length, DrawElementsType.UnsignedInt, null);
+            gl.DrawArrays(PrimitiveType.TriangleStrip, 0, (uint) (FullscreenQuadVertices.Length / 2));
             #endif
         }
         finally
@@ -262,7 +291,7 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
         using (sdl.GLMakeCurrentTemp(_win, _ctx))
         {
             _gl.DeleteTexture(_texture);
-            _gl.DeleteBuffers(new[] {_vertexBuffer, _elementBuffer});
+            _gl.DeleteBuffers(new[] {_vertexBuffer});
             _gl.DeleteProgram(_blitQuadProgram);
         }
         sdl.GLMakeCurrent(_win, null);
