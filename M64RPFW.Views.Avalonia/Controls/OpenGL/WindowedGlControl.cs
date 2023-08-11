@@ -147,10 +147,13 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
                     {
                         _skiaWindow.InitSurface(_realSize);
                     }
-                    _skiaWindow.DoRender(canvas => SkiaRender(this, new SkiaRenderEventArgs
+                    if (_skiaWindow.HasSurface)
                     {
-                        Canvas = canvas
-                    }));
+                        _skiaWindow.DoRender(canvas => SkiaRender(this, new SkiaRenderEventArgs
+                        {
+                            Canvas = canvas
+                        }));
+                    }
                 }
                 _skiaWindow.BlitQuad(_gl, _realSize);
             }

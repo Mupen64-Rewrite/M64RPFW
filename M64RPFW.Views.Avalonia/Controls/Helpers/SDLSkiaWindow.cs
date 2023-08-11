@@ -138,6 +138,8 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
     public void InitSurface(PixelSize size)
     {
         Debug.Assert(sdl.GLGetCurrentContext() == _ctx, "Context not current");
+        if (size.Width == 0 || size.Height == 0)
+            return;
 
         if (_fbo == 0)
         {
@@ -155,15 +157,13 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
 
         _texture = _gl.GenTexture();
         _gl.BindTexture(TextureTarget.Texture2D, _texture);
-        _gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba8, (uint) size.Width, (uint) size.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
+        _gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba, (uint) size.Width, (uint) size.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
         _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) GLEnum.Nearest);
         _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) GLEnum.Nearest);
-        Debug.Assert(_gl.IsTexture(_texture), "_gl.IsTexture(_texture)");
 
         _dsRbo = _gl.GenRenderbuffer();
         _gl.BindRenderbuffer(RenderbufferTarget.Renderbuffer, _dsRbo);
         _gl.RenderbufferStorage(RenderbufferTarget.Renderbuffer, InternalFormat.Depth24Stencil8, (uint) size.Width, (uint) size.Height);
-        Debug.Assert(_gl.IsRenderbuffer(_dsRbo), "_gl.IsRenderbuffer(_dsRbo)");
         
         _gl.BindFramebuffer(FramebufferTarget.Framebuffer, _fbo);
         _gl.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthStencilAttachment, RenderbufferTarget.Renderbuffer, _dsRbo);
@@ -175,10 +175,11 @@ internal sealed unsafe class SDLSkiaWindow : IDisposable
             Debug.Assert(status == GLEnum.FramebufferComplete, "status == GLEnum.FramebufferComplete", "status code: GLEnum.{0} (0x{1:X4})", status, (uint) status);
         }
         #endif
-
         
-        var desc = new GRBackendRenderTarget(size.Width, size.Height, 0, 8, new GRGlFramebufferInfo(_fbo, (uint) InternalFormat.Rgba8));
-        _surface = SKSurface.Create(_grContext, desc, GRSurfaceOrigin.BottomLeft, SKColorType.Rgba8888);
+        _gl.DrawBuffer(DrawBufferMode.ColorAttachment0);
+        
+        var desc = new GRBackendRenderTarget(size.Width, size.Height, 0, 8, new GRGlFramebufferInfo(_fbo, (uint) InternalFormat.Rgba));
+        _surface = SKSurface.Create(_grContext, desc, GRSurfaceOrigin.BottomLeft, SKColorType.RgbaF32);
         
         _grContext.ResetContext();
     }
