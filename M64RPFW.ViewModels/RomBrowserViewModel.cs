@@ -23,7 +23,11 @@ public partial class RomBrowserViewModel : ObservableObject
 
     private IEnumerable<string> CollectPaths()
     {
-        var searchOption = SettingsViewModel.Instance.IsRomBrowserRecursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+        var searchOption = new EnumerationOptions
+        {
+            RecurseSubdirectories = SettingsViewModel.Instance.IsRomBrowserRecursive,
+            IgnoreInaccessible = true,
+        };
 
         foreach (string directory in SettingsViewModel.Instance.RomBrowserPaths)
         {
