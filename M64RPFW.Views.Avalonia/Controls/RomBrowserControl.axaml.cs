@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
@@ -14,10 +15,26 @@ public partial class RomBrowserControl : UserControl
         get => EmulatorViewModel.Instance;
     }
 
+    private bool _isRefreshing;
+
+    public static readonly DirectProperty<RomBrowserControl, bool> IsRefreshingProperty = AvaloniaProperty.RegisterDirect<RomBrowserControl, bool>(
+        "IsRefreshing", o => o.IsRefreshing, (o, v) => o.IsRefreshing = v);
+
+    public bool IsRefreshing
+    {
+        get => _isRefreshing;
+        private set => SetAndRaise(IsRefreshingProperty, ref _isRefreshing, value);
+    }
+
     public RomBrowserControl()
     {
         InitializeComponent();
         DataContext = this;
+
+        RomBrowserViewModel.PropertyChanged += (_, _) =>
+        {
+            IsRefreshing = RomBrowserViewModel.IsRefreshing;
+        };
     }
 
     private void InitializeComponent()
@@ -28,7 +45,7 @@ public partial class RomBrowserControl : UserControl
 
     private void OpenSelectedRom(RomBrowserItemViewModel romBrowserItemViewModel)
     {
-        EmulatorViewModel.Instance.OpenRomFromPathCommand.ExecuteIfPossible(executeParameter: romBrowserItemViewModel.Path);
+        EmulatorViewModel!.OpenRomFromPathCommand.ExecuteIfPossible(executeParameter: romBrowserItemViewModel.Path);
     }
 
     private void DataGrid_OnDoubleTapped(object? sender, TappedEventArgs e)
