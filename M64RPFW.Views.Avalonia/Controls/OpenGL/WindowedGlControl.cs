@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
@@ -29,7 +28,10 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
     private PixelSize _realSize = default;
     private int _sizeDirty = 0;
 
-    private SDLSkiaWindow? _skiaWindow;
+    private void* _skCtx;
+    private GL _skGl = null!;
+    private GRContext _grContext = null!;
+    private SKSurface? _skSurface;
 
 
     public event EventHandler<SkiaRenderEventArgs>? SkiaRender;
@@ -38,30 +40,23 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
     {
         var platHandle = base.CreateNativeControlCore(parent);
         _nativeWin = platHandle.Handle;
-        
-        if (OperatingSystem.IsLinux())
-            sdl.SetHint(Sdl.HintVideodriver, "x11");
 
         if (sdl.InitSubSystem(Sdl.InitVideo) < 0)
             throw new SDLException();
 
         sdl.SetHint(Sdl.HintVideoForeignWindowOpengl, "1");
+        if (OperatingSystem.IsLinux())
+            sdl.SetHint(Sdl.HintVideodriver, "x11");
 
         _sdlWin = sdl.CreateWindowFrom((void*) _nativeWin);
         if (_sdlWin == null)
             throw new SDLException();
-
-        _skiaWindow = new SDLSkiaWindow(_sdlWin, _sdlCtx);
 
         return platHandle;
     }
 
     protected override void DestroyNativeControlCore(IPlatformHandle control)
     {
-        Debug.Assert(_skiaWindow != null);
-
-        _skiaWindow.Dispose();
-
         sdl.DestroyWindow(_sdlWin);
         sdl.QuitSubSystem(Sdl.InitVideo);
 
@@ -88,6 +83,8 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
             sdl.GLMakeCurrent(_sdlWin, null);
             sdl.GLDeleteContext(_sdlCtx);
         }
+
+        SkiaQuit();
     }
 
     public void SetGLAttribute(Mupen64PlusTypes.GLAttribute attr, int value)
@@ -102,24 +99,18 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
 
     public void CreateViewport(int width, int height, int bitsPerPixel)
     {
-        sdl.GLSetAttribute(GLattr.ContextFlags, (int) GLcontextFlag.DebugFlag);
         _sdlCtx = sdl.GLCreateContext(_sdlWin);
         if (_sdlCtx == null)
             throw new SDLException();
 
         _gl = GL.GetApi(sym => (IntPtr) sdl.GLGetProcAddress(sym));
-        _gl.AttachDebugLogger();
+
+        SkiaInit();
     }
 
     public void ResizeViewport(int width, int height)
     {
-        if (_sdlCtx != null)
-            sdl.GLDeleteContext(_sdlWin);
-        _sdlCtx = sdl.GLCreateContext(_sdlWin);
-        if (_sdlCtx == null)
-            throw new SDLException();
-
-        _gl = GL.GetApi(sym => (IntPtr) sdl.GLGetProcAddress(sym));
+        throw new NotSupportedException("Direct resizing is not supported because Lua demands it.");
     }
 
     public void MakeCurrent()
@@ -133,32 +124,7 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
 
     public void SwapBuffers()
     {
-        Debug.Assert(_skiaWindow != null);
-
-        _gl.Flush();
-        #if true
-        if (SkiaRender != null)
-        {
-            lock (_sizeLock)
-            {
-                using (_skiaWindow.MakeCurrentTemp())
-                {
-                    if (Interlocked.Exchange(ref _sizeDirty, 0) != 0 || !_skiaWindow.HasSurface)
-                    {
-                        _skiaWindow.InitSurface(_realSize);
-                    }
-                    if (_skiaWindow.HasSurface)
-                    {
-                        _skiaWindow.DoRender(canvas => SkiaRender(this, new SkiaRenderEventArgs
-                        {
-                            Canvas = canvas
-                        }));
-                    }
-                }
-                _skiaWindow.BlitQuad(_gl, _realSize);
-            }
-        }
-        #endif
+        SkiaRenderImpl();
         sdl.GLSwapWindow(_sdlWin);
     }
 
@@ -187,6 +153,76 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
             _realSize = new PixelSize((int) (baseSize.Width * scaling), (int) (baseSize.Height * scaling));
 
         _sizeDirty = 1;
+    }
+
+    private SKSurface SkiaInitSurface()
+    {
+        int msaaSamples = 0, stencilBits = 0;
+        sdl.GLGetAttribute(GLattr.Multisamplesamples, ref msaaSamples);
+        sdl.GLGetAttribute(GLattr.StencilSize, ref stencilBits);
+
+        SKSurface surface;
+        lock (_sizeLock)
+        {
+            surface = SKSurface.Create(_grContext,
+                new GRBackendRenderTarget(
+                    _realSize.Width,
+                    _realSize.Height,
+                    msaaSamples,
+                    stencilBits,
+                    new GRGlFramebufferInfo(0, (uint) GLEnum.Rgba8)),
+                SKColorType.Rgba8888);
+        }
+
+        return surface;
+    }
+
+    private void SkiaInit()
+    {
+        _skCtx = sdl.GLCreateContext(_sdlWin);
+        if (_skCtx == null)
+            throw new SDLException();
+
+        // This ensures that even if either SDL or Silk.NET caches pointers
+        // under the hood, they won't be somehow mixed up between contexts.
+        _skGl = GL.GetApi(sym => (IntPtr) sdl.GLGetProcAddress(sym));
+        using (sdl.GLMakeCurrentTemp(_sdlWin, _skCtx))
+        {
+            if ((_grContext = GRContext.CreateGl()) == null)
+                throw new SystemException("INTERNAL: Skia GRContext.CreateGL failed");
+            _skSurface = SkiaInitSurface();
+        }
+    }
+
+    private void SkiaRenderImpl()
+    {
+        // If no one wants to render we don't need to do anything
+        if (SkiaRender == null)
+            return;
+
+        using (sdl.GLMakeCurrentTemp(_sdlWin, _skCtx))
+        {
+            // you need to reinit SKSurface every time the size changes
+            if (Interlocked.Exchange(ref _sizeDirty, 0) != 0)
+            {
+                _skSurface?.Dispose();
+                _skSurface = SkiaInitSurface();
+            }
+            SkiaRender(this, new SkiaRenderEventArgs
+            {
+                Canvas = _skSurface!.Canvas
+            });
+            
+            _skSurface.Flush();
+        }
+    }
+
+    private void SkiaQuit()
+    {
+        _skSurface?.Dispose();
+        _grContext.Dispose();
+
+        sdl.GLDeleteContext(_skCtx);
     }
 
     #endregion
