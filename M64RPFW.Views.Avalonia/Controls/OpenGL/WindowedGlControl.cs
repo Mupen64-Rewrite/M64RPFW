@@ -45,6 +45,7 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
             throw new SDLException();
 
         sdl.SetHint(Sdl.HintVideoForeignWindowOpengl, "1");
+        sdl.SetHint(Sdl.HintWindowsEnableMessageloop, "0");
         if (OperatingSystem.IsLinux())
             sdl.SetHint(Sdl.HintVideodriver, "x11");
 
@@ -52,11 +53,15 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
         if (_sdlWin == null)
             throw new SDLException();
 
+        SkiaInit();
+
         return platHandle;
     }
 
     protected override void DestroyNativeControlCore(IPlatformHandle control)
     {
+        SkiaQuit();
+
         sdl.DestroyWindow(_sdlWin);
         sdl.QuitSubSystem(Sdl.InitVideo);
 
@@ -67,6 +72,7 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
 
     public void InitWindow()
     {
+        SkiaSetupGL();
     }
 
     public void QuitWindow()
@@ -83,12 +89,12 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
             sdl.GLMakeCurrent(_sdlWin, null);
             sdl.GLDeleteContext(_sdlCtx);
         }
-
-        SkiaQuit();
     }
 
     public void SetGLAttribute(Mupen64PlusTypes.GLAttribute attr, int value)
     {
+        if (attr is Mupen64PlusTypes.GLAttribute.ContextMajorVersion or Mupen64PlusTypes.GLAttribute.ContextMinorVersion or Mupen64PlusTypes.GLAttribute.ContextProfileMask)
+            return;
         sdl.SetMupenGLAttribute(attr, value);
     }
 
@@ -104,8 +110,7 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
             throw new SDLException();
 
         _gl = GL.GetApi(sym => (IntPtr) sdl.GLGetProcAddress(sym));
-
-        SkiaInit();
+        _gl.AttachDebugLogger();
     }
 
     public void ResizeViewport(int width, int height)
@@ -177,20 +182,37 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
         return surface;
     }
 
+    private void SkiaSetupGL()
+    {
+        sdl.GLSetAttribute(GLattr.ContextMajorVersion, 4);
+        sdl.GLSetAttribute(GLattr.ContextMinorVersion, 1);
+        sdl.GLSetAttribute(GLattr.ContextProfileMask, (int) GLprofile.Compatibility);
+        sdl.GLSetAttribute(GLattr.StencilSize, 8);
+    }
+
     private void SkiaInit()
     {
+        SkiaSetupGL();
         _skCtx = sdl.GLCreateContext(_sdlWin);
         if (_skCtx == null)
             throw new SDLException();
 
         // This ensures that even if either SDL or Silk.NET caches pointers
         // under the hood, they won't be somehow mixed up between contexts.
-        _skGl = GL.GetApi(sym => (IntPtr) sdl.GLGetProcAddress(sym));
-        using (sdl.GLMakeCurrentTemp(_sdlWin, _skCtx))
+        try
         {
-            if ((_grContext = GRContext.CreateGl()) == null)
-                throw new SystemException("INTERNAL: Skia GRContext.CreateGL failed");
-            _skSurface = SkiaInitSurface();
+            _skGl = GL.GetApi(sym => (IntPtr) sdl.GLGetProcAddress(sym));
+            using (sdl.GLMakeCurrentTemp(_sdlWin, _skCtx))
+            {
+                if ((_grContext = GRContext.CreateGl()) == null)
+                    throw new SystemException("INTERNAL: Skia GRContext.CreateGL failed");
+                _skSurface = SkiaInitSurface();
+            }
+        }
+        finally
+        {
+            SkiaSetupGL();
+            sdl.GLMakeCurrent(_sdlWin, null);
         }
     }
 
