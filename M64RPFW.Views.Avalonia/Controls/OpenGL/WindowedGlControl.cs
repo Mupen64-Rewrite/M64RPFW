@@ -1,4 +1,6 @@
 using System;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
@@ -160,26 +162,25 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
         _sizeDirty = 1;
     }
 
-    private SKSurface SkiaInitSurface()
+    [MemberNotNull(nameof(_skSurface))]
+    private void SkiaInitSurface()
     {
-        int msaaSamples = 0, stencilBits = 0;
-        sdl.GLGetAttribute(GLattr.Multisamplesamples, ref msaaSamples);
-        sdl.GLGetAttribute(GLattr.StencilSize, ref stencilBits);
-
-        SKSurface surface;
         lock (_sizeLock)
         {
-            surface = SKSurface.Create(_grContext,
+            int sampleCount = 0, stencilBits = 0;
+            sdl.GLGetAttribute(GLattr.Multisamplesamples, ref sampleCount);
+            sdl.GLGetAttribute(GLattr.StencilSize, ref stencilBits);
+            
+            _skSurface?.Dispose();
+            _skSurface = SKSurface.Create(_grContext,
                 new GRBackendRenderTarget(
                     _realSize.Width,
                     _realSize.Height,
-                    msaaSamples,
+                    sampleCount,
                     stencilBits,
                     new GRGlFramebufferInfo(0, (uint) GLEnum.Rgba8)),
                 SKColorType.Rgba8888);
         }
-
-        return surface;
     }
 
     private void SkiaSetupGL()
@@ -203,10 +204,11 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
         {
             _skGl = GL.GetApi(sym => (IntPtr) sdl.GLGetProcAddress(sym));
             using (sdl.GLMakeCurrentTemp(_sdlWin, _skCtx))
+            using (var grGlInterface = GRGlInterface.Create(x => (IntPtr) sdl.GLGetProcAddress(x)))
             {
-                if ((_grContext = GRContext.CreateGl()) == null)
+                if ((_grContext = GRContext.CreateGl(grGlInterface)) == null)
                     throw new SystemException("INTERNAL: Skia GRContext.CreateGL failed");
-                _skSurface = SkiaInitSurface();
+                SkiaInitSurface();
             }
         }
         finally
@@ -218,6 +220,7 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
 
     private void SkiaRenderImpl()
     {
+        Debug.Assert(_skSurface != null, "_skSurface != null");
         // If no one wants to render we don't need to do anything
         if (SkiaRender == null)
             return;
@@ -227,15 +230,21 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
             // you need to reinit SKSurface every time the size changes
             if (Interlocked.Exchange(ref _sizeDirty, 0) != 0)
             {
-                _skSurface?.Dispose();
-                _skSurface = SkiaInitSurface();
+                SkiaInitSurface();
             }
-            SkiaRender(this, new SkiaRenderEventArgs
+            // SkiaRender(this, new SkiaRenderEventArgs
+            // {
+            //     Canvas = _skSurface!.Canvas
+            // });
+            _grContext.ResetContext();
+            var canvas = _skSurface.Canvas;
+            canvas.DrawCircle(100, 100, 100, new SKPaint
             {
-                Canvas = _skSurface!.Canvas
+                Color = SKColors.Blue
             });
             
-            _skSurface.Flush();
+            
+            _skSurface!.Flush();
         }
     }
 
