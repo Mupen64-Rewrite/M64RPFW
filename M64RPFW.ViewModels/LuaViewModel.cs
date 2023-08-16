@@ -20,11 +20,12 @@ public partial class LuaViewModel : ObservableObject
 
     public bool IsRunning { get; private set; }
 
-    public bool IsNotRunning => !IsRunning;
-
     public FilePickerOption[] PickerOptions => new FilePickerOption[]
     {
-        new("Lua script (.lua)", new[] { "*.lua" })
+        new("Lua script (.lua)", new[]
+        {
+            "*.lua"
+        })
     };
 
     public LuaViewModel(ILuaWindowService luaWindowService, ILuaInterfaceService windowSizingService, IFilePickerService filePickerService)
@@ -40,10 +41,13 @@ public partial class LuaViewModel : ObservableObject
         _luaEnvironment?.Dispose();
     }
 
-    [RelayCommand(CanExecute = nameof(IsNotRunning))]
+    [RelayCommand]
     private void Run()
     {
-        if (IsRunning) StopCommand.Execute(null);
+        // TODO: investigate window sizing service reporting wrong dimensions when resized in quick succession
+        // https://discord.com/channels/723573549607944272/883784450108960769/1141361872373821550
+        if (IsRunning)
+            Stop();
 
         _luaEnvironment = new LuaEnvironment(Path, _luaWindowService, _windowSizingService, _filePickerService);
         _luaEnvironment.StateChanged += LuaEnvironmentStateChanged;
