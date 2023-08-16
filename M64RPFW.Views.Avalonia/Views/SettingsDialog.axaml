@@ -24,9 +24,9 @@
         <StackPanel Orientation="Vertical" DockPanel.Dock="Bottom">
             <TextBlock IsVisible="{Binding RequiresRestart}" Text="{ext:Localize RequiresRestartToApply}"/>
             <StackPanel Classes="dialog-btns">
-                <Button Content="{ext:Localize Apply}" Click="OnApplyClicked"/>
-                <Button Content="{ext:Localize Cancel}" Click="OnCancelClicked"/>
                 <Button Content="{ext:Localize Ok}" Click="OnOKClicked"/>
+                <Button Content="{ext:Localize Cancel}" Click="OnCancelClicked"/>
+                <Button Content="{ext:Localize Apply}" Click="OnApplyClicked"/>
             </StackPanel>
         </StackPanel>
         <TabControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TabStripPlacement="Top">
