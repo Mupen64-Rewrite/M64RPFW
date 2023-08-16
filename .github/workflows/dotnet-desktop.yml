@@ -4,9 +4,9 @@ name: .NET
 
 on:
   push:
-    branches: [ main ]
+    branches: [ avalonia ]
   pull_request:
-    branches: [ main ]
+    branches: [ avalonia ]
 
 jobs:
   build:
@@ -22,10 +22,7 @@ jobs:
     
     - name: Restore dependencies
       run: dotnet restore
-
-    #- name: Setup MSBuild
-    #  uses: microsoft/setup-msbuild@v1
-
+  
     - name: Setup NuGet
       uses: NuGet/setup-nuget@v1.0.5
         
@@ -39,5 +36,5 @@ jobs:
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v2
       with:
-          name: M64RPFW.Views.Avalonia .NET 7 Release
-          path: 'M64RPFW.Views.Avalonia/bin/Release/net7.0'
+          name: Artifact
+          path: 'M64RPFW.Views.Avalonia/bin/Release/net7.0/'
