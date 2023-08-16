@@ -31,8 +31,8 @@ jobs:
         
     - name: Dotnet Build
       run: |
-          dotnet build "M64RPFW.Views.Avalonia\M64RPFW.Views.Avalonia.csproj" /p:platform="AnyCPU" /p:configuration="Release"
-          
+          dotnet build "M64RPFW.Views.Avalonia\M64RPFW.Views.Avalonia.csproj" /p:configuration="Release"
+
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v2
       with:
