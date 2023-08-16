@@ -15,8 +15,6 @@
                   Height="480"
                   Closed="Window_OnClosed"
                   SizeChanged="Window_OnSizeChanged"
-                  KeyDown="Window_OnKeyDown"
-                  KeyUp="Window_OnKeyUp"
                   Loaded="Window_OnLoaded"
                   x:CompileBindings="True"
                   x:DataType="vm:EmulatorViewModel">

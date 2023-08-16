@@ -39,6 +39,9 @@ public partial class MainWindow : Window
             DataContext = EmulatorViewModel.Instance;
         }
 
+        // built-in key events won't work, since those get swallowed when the pressed key is a navigation key
+        AddHandler(KeyDownEvent, OnPreviewKeyDown, RoutingStrategies.Tunnel);
+        AddHandler(KeyUpEvent, OnPreviewKeyUp, RoutingStrategies.Tunnel);
     }
 
     // avalonia compiled binding resolver lives in another assembly, so these have to be public :(
@@ -55,7 +58,7 @@ public partial class MainWindow : Window
 
     private KeyGesture FastForwardKeyGesture => KeyGesture.Parse(SettingsViewModel.Instance.FastForwardHotkey);
 
-    private void Window_OnKeyDown(object? sender, KeyEventArgs e)
+    private void OnPreviewKeyDown(object? sender, KeyEventArgs e)
     {
         if (FastForwardKeyGesture.Matches(e))
         {
@@ -70,8 +73,7 @@ public partial class MainWindow : Window
         var modifiers = SDLHelpers.ToSDLKeymod(e.KeyModifiers);
         ViewModel.ForwardSDLKeyDown(scancode, modifiers);
     }
-
-    private void Window_OnKeyUp(object? sender, KeyEventArgs e)
+    private void OnPreviewKeyUp(object? sender, KeyEventArgs e)
     {
         if (FastForwardKeyGesture.Matches(e))
         {
