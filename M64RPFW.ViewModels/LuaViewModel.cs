@@ -33,6 +33,12 @@ public partial class LuaViewModel : ObservableObject
         _luaWindowService = luaWindowService;
         _windowSizingService = windowSizingService;
         _filePickerService = filePickerService;
+        
+        // restore most recent path, like old mupen
+        if (SettingsViewModel.Instance.RecentLuaScripts.Count > 0)
+        {
+            Path = SettingsViewModel.Instance.RecentLuaScripts[0];
+        }
     }
 
     [RelayCommand(CanExecute = nameof(IsRunning))]
