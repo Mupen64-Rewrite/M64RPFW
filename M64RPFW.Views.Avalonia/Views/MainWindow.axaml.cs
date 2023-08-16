@@ -18,6 +18,7 @@ using M64RPFW.Views.Avalonia.Controls.Helpers;
 using M64RPFW.Views.Avalonia.Markup;
 using M64RPFW.Views.Avalonia.Services;
 using M64RPFW.Views.Avalonia.Extensions;
+using M64RPFW.Views.Avalonia.Helpers;
 
 namespace M64RPFW.Views.Avalonia.Views;
 
@@ -91,6 +92,15 @@ public partial class MainWindow : Window
         var win = new LuaWindow();
         win.Show(this);
     }
+
+    private void CloseAllLuaInstances_OnClick(object? sender, RoutedEventArgs e)
+    {
+        foreach (Window window in WindowHelper.IterateWindows().Where(window => window is LuaWindow).ToArray())
+        {
+            window.Close();
+        }
+    }
+
 
     private void Window_OnLoaded(object? sender, RoutedEventArgs e)
     {

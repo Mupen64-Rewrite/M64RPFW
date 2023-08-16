@@ -162,10 +162,11 @@
             <MenuItem Header="{ext:Localize Lua}">
                 <MenuItem
                     Header="{ext:Localize NewLuaInstance}" Click="NewLuaInstance_OnClick" />
+                <MenuItem Header="{ext:Localize CloseAllLuaInstances}" Click="CloseAllLuaInstances_OnClick" />
             </MenuItem>
             <MenuItem Header="{ext:Localize Help}">
-                <MenuItem Header="{ext:Localize AboutAvalonia}" Click="AboutAvalonia_OnClick"/>
-                <MenuItem Header="{ext:Localize AboutRPFW}" Click="AboutRPFW_OnClick"/>
+                <MenuItem Header="{ext:Localize AboutAvalonia}" Click="AboutAvalonia_OnClick" />
+                <MenuItem Header="{ext:Localize AboutRPFW}" Click="AboutRPFW_OnClick" />
             </MenuItem>
         </Menu>
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" x:Name="StatusBar">
@@ -184,7 +185,7 @@
 
         </Border>
         <Border IsVisible="{Binding MupenIsStopped}">
-            <ctrls:RomBrowserControl Name="RomBrowserControl"/>
+            <ctrls:RomBrowserControl Name="RomBrowserControl" />
         </Border>
     </DockPanel>
 
