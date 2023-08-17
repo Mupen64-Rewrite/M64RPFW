@@ -1,5 +1,7 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
@@ -13,13 +15,14 @@ public partial class MainWindow : IViewDialogService, ILuaInterfaceService
 
     #region IWindowSizingService
 
+    private bool _isSizedToFit = false;
+    private double _glPrevMinWidth, _glPrevMinHeight, _glPrevMaxWidth, _glPrevMaxHeight;
+
     public WindowSize GetWindowSize()
     {
-        return new WindowSize(GlControl.Bounds.Width, GlControl.Bounds.Height);
+        return Dispatcher.UIThread.Invoke(() => new WindowSize(GlControl.Bounds.Width, GlControl.Bounds.Height));
     }
 
-    bool _isSizedToFit = false;
-    private double _glPrevMinWidth, _glPrevMinHeight, _glPrevMaxWidth, _glPrevMaxHeight;
 
     public void SizeToFit(WindowSize size)
     {
@@ -36,22 +39,25 @@ public partial class MainWindow : IViewDialogService, ILuaInterfaceService
                 _glPrevMinHeight = GlControl.MinHeight;
                 _glPrevMaxHeight = GlControl.MaxHeight;
             }
+
+            // TODO synchronize this somehow
             GlControl.MinWidth = GlControl.MaxWidth = size.Width;
             GlControl.MinHeight = GlControl.MaxHeight = size.Height;
-
             InvalidateMeasure();
         });
     }
 
     public void UnlockWindowSize()
     {
+        if (!_isSizedToFit)
+            return;
         Dispatcher.UIThread.Invoke(() =>
         {
-             GlControl.MinWidth = _glPrevMinWidth;
-             GlControl.MaxWidth = _glPrevMaxWidth;
-             GlControl.MinHeight = _glPrevMinHeight;
-             GlControl.MaxHeight = _glPrevMaxHeight;
-            
+            GlControl.MinWidth = _glPrevMinWidth;
+            GlControl.MaxWidth = _glPrevMaxWidth;
+            GlControl.MinHeight = _glPrevMinHeight;
+            GlControl.MaxHeight = _glPrevMaxHeight;
+
             SizeToContent = SizeToContent.Manual;
             _isSizedToFit = false;
             CanResize = true;
@@ -72,7 +78,7 @@ public partial class MainWindow : IViewDialogService, ILuaInterfaceService
             };
         }
     }
-    
+
     #endregion
 
     #region IViewDialogService
@@ -113,29 +119,29 @@ public partial class MainWindow : IViewDialogService, ILuaInterfaceService
     public WindowPoint PointerPosition { get; private set; } = new(0, 0);
     public MouseButtonMask PointerButtons { get; private set; } = 0;
     public event EventHandler<SkiaRenderEventArgs>? OnSkiaRender;
-    
+
     private void SkiaOnRender(object? s, SkiaRenderEventArgs e)
     {
         var canvas = e.Canvas;
         OnSkiaRender?.Invoke(s, e);
     }
-    
+
     private void SkiaOnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
         SkiaOnPointerUpdate(sender, e);
     }
-    
+
     private void SkiaOnPointerReleased(object? sender, PointerReleasedEventArgs e)
     {
         SkiaOnPointerUpdate(sender, e);
     }
-    
+
     private void SkiaOnPointerUpdate(object? sender, PointerEventArgs e)
     {
         var pointerPoint = e.GetCurrentPoint(GlControl);
         var pointerPos = pointerPoint.Position;
         var pointerProps = pointerPoint.Properties;
-    
+
         PointerPosition = new WindowPoint(pointerPos.X, pointerPos.Y);
         PointerButtons =
             (pointerProps.IsLeftButtonPressed ? MouseButtonMask.Primary : 0) |
