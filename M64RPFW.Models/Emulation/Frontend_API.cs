@@ -16,7 +16,7 @@ public static partial class Mupen64Plus
     private static readonly VCRStateCallback _vcrStateCallback;
 
     private static GCHandle[] _callbackGCHandles;
-    
+
     // Public API
     // ========================================================
 #pragma warning disable CS8618, CS8602
@@ -44,7 +44,7 @@ public static partial class Mupen64Plus
             return true;
         };
         _vcrStateCallback = OnVCRStateChange;
-    
+
         Mupen64PlusTypes.Error err = _fnCoreStartup(
             0x020000, null, expectedPath, (nint) (int) Mupen64PlusTypes.PluginType.Core,
             _debugCallback, IntPtr.Zero, _stateCallback);
@@ -63,7 +63,7 @@ public static partial class Mupen64Plus
             GCHandle.Alloc(_debugCallback, GCHandleType.Normal),
             GCHandle.Alloc(_stateCallback, GCHandleType.Normal),
             GCHandle.Alloc(_frameCallback, GCHandleType.Normal),
-            GCHandle.Alloc(_vcrMsgFunc, GCHandleType.Normal), 
+            GCHandle.Alloc(_vcrMsgFunc, GCHandleType.Normal),
         };
 
         _pluginDict = new Dictionary<Mupen64PlusTypes.PluginType, IntPtr>();
@@ -72,7 +72,7 @@ public static partial class Mupen64Plus
         {
             foreach (var handle in _callbackGCHandles)
                 handle.Free();
-            
+
             ConfigSaveFile();
 
             // ReSharper disable once VariableHidesOuterVariable
@@ -152,14 +152,22 @@ public static partial class Mupen64Plus
 
     private static void OnStateChange(IntPtr context, Mupen64PlusTypes.CoreParam param, int newValue)
     {
-        StateChanged?.Invoke(null, new StateChangeEventArgs { Param = param, NewValue = newValue });
+        StateChanged?.Invoke(null, new StateChangeEventArgs
+        {
+            Param = param,
+            NewValue = newValue
+        });
     }
 
     private static void OnVCRStateChange(Mupen64PlusTypes.VCRParam param, int newValue)
     {
-        VCRStateChanged?.Invoke(null, new VCRStateChangeEventArgs {Param = param, NewValue = newValue});
+        VCRStateChanged?.Invoke(null, new VCRStateChangeEventArgs
+        {
+            Param = param,
+            NewValue = newValue
+        });
     }
-    
+
     private static void OnFrameComplete(int frameIndex)
     {
         FrameComplete?.Invoke(null, frameIndex);
@@ -181,7 +189,7 @@ public static partial class Mupen64Plus
 
     public static event EventHandler<StateChangeEventArgs>? StateChanged;
 
-    public static event EventHandler<VCRStateChangeEventArgs>? VCRStateChanged; 
+    public static event EventHandler<VCRStateChangeEventArgs>? VCRStateChanged;
     public static event EventHandler<int>? FrameComplete;
 
     #region Core Commands
@@ -452,7 +460,7 @@ public static partial class Mupen64Plus
             ThrowForError(err);
         }
     }
-    
+
     /// <summary>
     /// Overrides the core "video extension" functions. These handle window
     /// management for the video plugin.
@@ -479,9 +487,10 @@ public static partial class Mupen64Plus
     /// </summary>
     /// <param name="path">Path to the plugin's .so file</param>
     /// <param name="intendedType">The intended plugin type. If Null, it will be inferred from the plugin's type.</param>
+    /// <param name="preStartup">A function to execute before calling PluginStartup().</param>
     /// <exception cref="InvalidOperationException">If the located plugin's type already has an attached plugin</exception>
     /// <exception cref="FileNotFoundException">If the located plugin doesn't exist, can't be loaded, or is the wrong type.</exception>
-    public static unsafe void AttachPlugin(string path, Mupen64PlusTypes.PluginType intendedType = Mupen64PlusTypes.PluginType.Null)
+    public static unsafe void AttachPlugin(string path, Mupen64PlusTypes.PluginType intendedType = Mupen64PlusTypes.PluginType.Null, Action<IntPtr>? preStartup = null)
     {
         IntPtr pluginLib = IntPtr.Zero;
         DPluginGetVersion? getVersion;
@@ -499,13 +508,13 @@ public static partial class Mupen64Plus
             {
                 throw new FileNotFoundException($"{path} does not specify a shared library", e);
             }
-            catch (Exception e) when (e is EntryPointNotFoundException or 
-                                          ArgumentNullException or 
+            catch (Exception e) when (e is EntryPointNotFoundException or
+                                          ArgumentNullException or
                                           BadImageFormatException)
             {
                 throw new FileNotFoundException($"{path} is not a valid plugin", e);
             }
-            
+
             // Check its type and ensure it's what we need
             Mupen64PlusTypes.Error err = getVersion(out var type, out _, out _, out _, out _);
             ThrowForError(err);
@@ -514,24 +523,22 @@ public static partial class Mupen64Plus
             {
                 throw new FileNotFoundException($"Expected a plugin of type {intendedType}, instead got {type}");
             }
-        
+
             if (!_pluginDict.TryAdd(type, pluginLib))
             {
                 IntPtr oldLib = _pluginDict[type];
                 var oldLibGetVersion = NativeLibHelper.GetFunction<DPluginGetVersion>(pluginLib, "PluginGetVersion");
 
-                err = oldLibGetVersion(out _, out _, out _, out var oldNameBytes, out _);
+                err = oldLibGetVersion(out _, out _, out _, out byte* oldNameBytes, out _);
                 ThrowForError(err);
 
-                // Manually strlen() oldNameBytes, then convert to string
-                int oldNameLen = 0;
-                while (oldNameBytes[oldNameLen] != 0) oldNameLen++;
-                string oldName = Encoding.UTF8.GetString(oldNameBytes, oldNameLen);
+                string oldName = CHelpers.DecodeString(oldNameBytes);
 
                 throw new InvalidOperationException(
                     $"Plugin type {type} already has a plugin registered ({oldName})");
             }
             // Start up the plugin and attach it
+            preStartup?.Invoke(pluginLib);
             var startup = NativeLibHelper.GetFunction<DPluginStartup>(pluginLib, "PluginStartup");
             err = startup(_libHandle, (IntPtr) (int) type, _debugCallback);
             ThrowForError(err);
@@ -617,7 +624,11 @@ public static partial class Mupen64Plus
         string path = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location) ??
                       throw new ApplicationException("Could not retrieve .exe path");
 
-        return Path.Join(new[] { path, "Libraries" });
+        return Path.Join(new[]
+        {
+            path,
+            "Libraries"
+        });
     }
 
     private static IntPtr _libHandle;
