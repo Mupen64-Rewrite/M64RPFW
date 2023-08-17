@@ -2,7 +2,10 @@
   "profiles": {
     "M64RPFW.Views.Avalonia": {
       "commandName": "Project",
-      "nativeDebugging": true
+      "nativeDebugging": true,
+      "environmentVariables": {
+        "GALLIUM_DRIVER": "llvmpipe"
+      }
     }
   }
 }

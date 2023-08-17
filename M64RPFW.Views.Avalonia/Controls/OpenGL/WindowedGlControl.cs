@@ -232,15 +232,10 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
             {
                 SkiaInitSurface();
             }
-            // SkiaRender(this, new SkiaRenderEventArgs
-            // {
-            //     Canvas = _skSurface!.Canvas
-            // });
             _grContext.ResetContext();
-            var canvas = _skSurface.Canvas;
-            canvas.DrawCircle(100, 100, 100, new SKPaint
+            SkiaRender(this, new SkiaRenderEventArgs
             {
-                Color = SKColors.Blue
+                Canvas = _skSurface!.Canvas
             });
             
             
