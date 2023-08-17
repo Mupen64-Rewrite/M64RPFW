@@ -103,6 +103,8 @@
     <ItemGroup>
         <UpToDateCheckInput Remove="Assets\Shaders\blit_quad.frag.glsl" />
         <UpToDateCheckInput Remove="Assets\Shaders\blit_quad.vert.glsl" />
+
+
     </ItemGroup>
 
 

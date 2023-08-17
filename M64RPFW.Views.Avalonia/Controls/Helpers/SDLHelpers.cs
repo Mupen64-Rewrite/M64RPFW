@@ -3,6 +3,7 @@ using Windows.Win32.Foundation;
 using Avalonia.Input;
 using M64RPFW.Models.Types;
 using M64RPFW.Views.Avalonia.Controls.Helpers.Platform;
+using M64RPFW.Views.Avalonia.Helpers.Platform;
 using Silk.NET.OpenGL;
 using Silk.NET.SDL;
 // ReSharper disable ParameterHidesMember
@@ -365,6 +366,12 @@ public static unsafe class SDLHelpers
             {
                 var winInfo = wmInfo.Info.Win;
                 Win32Helpers.EnableMousePassthrough((HWND) winInfo.Hwnd);
+                return true;
+            }
+            case SysWMType.X11:
+            {
+                var winInfo = wmInfo.Info.X11;
+                X11Helpers.EnableMousePassthrough(winInfo.Display, (uint) winInfo.Window);
                 return true;
             }
             default:
