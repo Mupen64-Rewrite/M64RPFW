@@ -25,6 +25,12 @@ public partial class LuaEnvironment
     {
         _stopCallback = luaFunction;
     }
+    
+    [LuaFunction("emu.atinput")]
+    private void RegisterAtInput(LuaFunction luaFunction)
+    {
+        _inputCallback = luaFunction;
+    }
 
     [LuaFunction("emu.atupdatescreen")]
     private void RegisterAtUpdateScreen(LuaFunction luaFunction)
