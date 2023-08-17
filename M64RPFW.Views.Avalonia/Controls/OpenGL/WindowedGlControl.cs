@@ -59,7 +59,7 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
         _sdlWin = sdl.CreateWindowFrom((void*) _nativeWin);
         if (_sdlWin == null)
             throw new SDLException();
-        if (!sdl.EnableMousePassthrough(_sdlWin))
+        if (!sdl.EnableMousePassthrough(_sdlWin, parent))
             Mupen64Plus.Log(Mupen64Plus.LogSources.Vidext, Mupen64PlusTypes.MessageLevel.Warning, "Mouse passthrough could not be enabled. Some things may not work properly");
 
         SkiaInit();
