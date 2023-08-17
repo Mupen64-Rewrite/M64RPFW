@@ -50,8 +50,6 @@ public partial class LuaViewModel : ObservableObject
     [RelayCommand]
     private void Run()
     {
-        // TODO: investigate window sizing service reporting wrong dimensions when resized in quick succession
-        // https://discord.com/channels/723573549607944272/883784450108960769/1141361872373821550
         if (IsRunning)
             Stop();
 

@@ -20,7 +20,10 @@ public partial class MainWindow : IViewDialogService, ILuaInterfaceService
 
     public WindowSize GetWindowSize()
     {
-        return Dispatcher.UIThread.Invoke(() => new WindowSize(GlControl.Bounds.Width, GlControl.Bounds.Height));
+        return Dispatcher.UIThread.Invoke(() =>
+        {
+            return new WindowSize(GlControl.Bounds.Width, GlControl.Bounds.Height);
+        });
     }
 
 
@@ -43,7 +46,7 @@ public partial class MainWindow : IViewDialogService, ILuaInterfaceService
             // TODO synchronize this somehow
             GlControl.MinWidth = GlControl.MaxWidth = size.Width;
             GlControl.MinHeight = GlControl.MaxHeight = size.Height;
-            InvalidateMeasure();
+            UpdateLayout();
         });
     }
 
