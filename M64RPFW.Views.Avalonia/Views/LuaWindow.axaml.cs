@@ -35,7 +35,7 @@ public partial class LuaWindow : Window
         Dispatcher.UIThread.Post(() => {
             LogTextBox.Text += $"{value}\r\n";
             LogScrollViewer.ScrollToEnd();
-        });
+        }, DispatcherPriority.Background);
     }
 
     private void OnClearClicked(object? sender, RoutedEventArgs e)

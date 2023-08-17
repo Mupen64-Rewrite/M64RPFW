@@ -34,7 +34,11 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
     private GL _skGl = null!;
     private GRContext _grContext = null!;
     private SKSurface? _skSurface;
-
+    
+    protected override Size MeasureOverride(Size availableSize)
+    {
+        return _realSize.ToSize(1);
+    }
 
     public event EventHandler<SkiaRenderEventArgs>? SkiaRender;
 
@@ -158,7 +162,7 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
 
         lock (_sizeLock)
             _realSize = new PixelSize((int) (baseSize.Width * scaling), (int) (baseSize.Height * scaling));
-
+        
         _sizeDirty = 1;
     }
 
