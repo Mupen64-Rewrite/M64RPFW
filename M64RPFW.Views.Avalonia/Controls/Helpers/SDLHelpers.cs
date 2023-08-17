@@ -1,6 +1,8 @@
 using System;
+using Windows.Win32.Foundation;
 using Avalonia.Input;
 using M64RPFW.Models.Types;
+using M64RPFW.Views.Avalonia.Controls.Helpers.Platform;
 using Silk.NET.OpenGL;
 using Silk.NET.SDL;
 // ReSharper disable ParameterHidesMember
@@ -351,5 +353,22 @@ public static unsafe class SDLHelpers
     public static GL GetGLBinding(this Sdl sdl)
     {
         return GL.GetApi(sym => (IntPtr) sdl.GLGetProcAddress(sym));
+    }
+
+    public static bool EnableMousePassthrough(this Sdl sdl, Window* window)
+    {
+        SysWMInfo wmInfo = default;
+        sdl.GetWindowWMInfo(window, &wmInfo);
+        switch (wmInfo.Subsystem)
+        {
+            case SysWMType.Windows:
+            {
+                var winInfo = wmInfo.Info.Win;
+                Win32Helpers.EnableMousePassthrough((HWND) winInfo.Hwnd);
+                return true;
+            }
+            default:
+                return false;
+        }
     }
 }

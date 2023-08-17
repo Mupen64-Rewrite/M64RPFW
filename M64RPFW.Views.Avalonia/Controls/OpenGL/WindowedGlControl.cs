@@ -5,6 +5,7 @@ using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform;
+using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Types;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
@@ -58,6 +59,8 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
         _sdlWin = sdl.CreateWindowFrom((void*) _nativeWin);
         if (_sdlWin == null)
             throw new SDLException();
+        if (!sdl.EnableMousePassthrough(_sdlWin))
+            Mupen64Plus.Log(Mupen64Plus.LogSources.Vidext, Mupen64PlusTypes.MessageLevel.Warning, "Mouse passthrough could not be enabled. Some things may not work properly");
 
         SkiaInit();
 
