@@ -59,8 +59,6 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
         _sdlWin = sdl.CreateWindowFrom((void*) _nativeWin);
         if (_sdlWin == null)
             throw new SDLException();
-        if (!sdl.EnableMousePassthrough(_sdlWin, parent))
-            Mupen64Plus.Log(Mupen64Plus.LogSources.Vidext, Mupen64PlusTypes.MessageLevel.Warning, "Mouse passthrough could not be enabled. Some things may not work properly");
 
         SkiaInit();
 
@@ -211,9 +209,8 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
         {
             _skGl = GL.GetApi(sym => (IntPtr) sdl.GLGetProcAddress(sym));
             using (sdl.GLMakeCurrentTemp(_sdlWin, _skCtx))
-            using (var grGlInterface = GRGlInterface.Create(x => (IntPtr) sdl.GLGetProcAddress(x)))
             {
-                if ((_grContext = GRContext.CreateGl(grGlInterface)) == null)
+                if ((_grContext = GRContext.CreateGl()) == null)
                     throw new SystemException("INTERNAL: Skia GRContext.CreateGL failed");
                 SkiaInitSurface();
             }

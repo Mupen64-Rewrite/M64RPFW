@@ -19,17 +19,26 @@ public partial class MainWindow : IViewDialogService, ILuaInterfaceService
     }
 
     bool _isSizedToFit = false;
-    double? _oldMaxWidth, _oldMaxHeight;
+    private double _glPrevMinWidth, _glPrevMinHeight, _glPrevMaxWidth, _glPrevMaxHeight;
 
     public void SizeToFit(WindowSize size)
     {
         Dispatcher.UIThread.Invoke(() =>
         {
-            GlControl.MinWidth = size.Width;
-            GlControl.MinHeight = size.Height;
+            if (!_isSizedToFit)
+            {
+                _isSizedToFit = true;
+                SizeToContent = SizeToContent.WidthAndHeight;
+                CanResize = false;
 
-            SizeToContent = SizeToContent.WidthAndHeight;
-            CanResize = false;
+                _glPrevMinWidth = GlControl.MinWidth;
+                _glPrevMaxWidth = GlControl.MaxWidth;
+                _glPrevMinHeight = GlControl.MinHeight;
+                _glPrevMaxHeight = GlControl.MaxHeight;
+            }
+            GlControl.MinWidth = GlControl.MaxWidth = size.Width;
+            GlControl.MinHeight = GlControl.MaxHeight = size.Height;
+
             InvalidateMeasure();
         });
     }
@@ -38,11 +47,11 @@ public partial class MainWindow : IViewDialogService, ILuaInterfaceService
     {
         Dispatcher.UIThread.Invoke(() =>
         {
-            if (_oldMaxWidth != null)
-                GlControl.MinWidth = _oldMaxWidth.Value;
-            if (_oldMaxHeight != null)
-                GlControl.MinHeight = _oldMaxHeight.Value;
-
+             GlControl.MinWidth = _glPrevMinWidth;
+             GlControl.MaxWidth = _glPrevMaxWidth;
+             GlControl.MinHeight = _glPrevMinHeight;
+             GlControl.MaxHeight = _glPrevMaxHeight;
+            
             SizeToContent = SizeToContent.Manual;
             _isSizedToFit = false;
             CanResize = true;
