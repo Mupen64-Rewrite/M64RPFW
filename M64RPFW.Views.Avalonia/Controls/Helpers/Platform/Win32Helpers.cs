@@ -47,7 +47,7 @@ internal static class Win32Helpers
 
         if (msg is >= WM_MOUSEFIRST and <= WM_MOUSELAST)
         {
-            return CallWindowProc(entry.OriginalWndProc, entry.ParentHwnd, msg, wParam, lParam);
+            WinAPI.PostMessage(entry.ParentHwnd, (uint)msg, new WPARAM((UIntPtr)wParam), new LPARAM(lParam));
         }
 
         return CallWindowProc(entry.OriginalWndProc, hwnd, msg, wParam, lParam);
