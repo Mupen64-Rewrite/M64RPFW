@@ -24,7 +24,7 @@
               DoubleTapped="DataGrid_OnDoubleTapped"
               KeyDown="DataGrid_OnKeyDown">
         <DataGrid.Columns>
-            <DataGridTemplateColumn Header="CC">
+            <DataGridTemplateColumn Header="CC" CanUserResize="False" Width="24">
                 <DataGridTemplateColumn.CellTemplate>
                     <templates:CountryCodeIconTemplate/>
                 </DataGridTemplateColumn.CellTemplate>

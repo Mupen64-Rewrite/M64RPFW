@@ -195,4 +195,34 @@
     <data name="Style" xml:space="preserve">
         <value>Stil</value>
     </data>
+    <data name="CloseAllLuaInstances" xml:space="preserve">
+        <value>Alle schließen</value>
+    </data>
+    <data name="Apply" xml:space="preserve">
+        <value>Anwenden</value>
+    </data>
+    <data name="AboutAvalonia" xml:space="preserve">
+        <value>Über Avalonia...</value>
+    </data>
+    <data name="AboutRPFW" xml:space="preserve">
+        <value>Über M64RPFW...</value>
+    </data>
+    <data name="FullPath" xml:space="preserve">
+        <value>Ganzer Dateipfad</value>
+    </data>
+    <data name="Help" xml:space="preserve">
+        <value>Hilfe</value>
+    </data>
+    <data name="RequiresRestartToApply" xml:space="preserve">
+        <value>Änderungen werden erst nach einem Neustart wirksam</value>
+    </data>
+    <data name="VSync" xml:space="preserve">
+        <value>VSync</value>
+    </data>
+    <data name="RomGoodName" xml:space="preserve">
+        <value>Name</value>
+    </data>
+    <data name="FileName" xml:space="preserve">
+        <value>Dateiname</value>
+    </data>
 </root>

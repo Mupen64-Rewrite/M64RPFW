@@ -17,16 +17,29 @@ public partial class EmulatorViewModel
 {
     #region Emulator thread
 
+    private delegate void DTinCan_SetFrontendHandles(nint mainWinHandle, WindowSystemID mainWinSys);
+
     private void EmulatorThreadRun(object? romPathObj)
     {
-        var (romPath, tcs) = ((string, TaskCompletionSource)) romPathObj!;
+        var (romPath, tcs, winHandle, winSystem) = ((string, TaskCompletionSource, nint, WindowSystemID)) romPathObj!;
         Mupen64Plus.OpenRom(romPath);
         
         try
         {
             Mupen64Plus.AttachPlugin(PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.VideoPath), PluginType.Graphics);
             Mupen64Plus.AttachPlugin(PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.AudioPath), PluginType.Audio);
-            Mupen64Plus.AttachPlugin(PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.InputPath), PluginType.Input);
+            Mupen64Plus.AttachPlugin(PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.InputPath), PluginType.Input, handle =>
+            {
+                try
+                {
+                    var tinCanSetFrontendHandles = NativeLibHelper.GetFunction<DTinCan_SetFrontendHandles>(handle, "TinCan_SetFrontendHandles");
+                    tinCanSetFrontendHandles?.Invoke(winHandle, winSystem);
+                }
+                catch (EntryPointNotFoundException)
+                {
+                    // ignored
+                }
+            });
             Mupen64Plus.AttachPlugin(PathHelper.DerefAppRelative(RPFWSettings.Instance.Plugins.RspPath), PluginType.RSP);
             tcs.SetResult();
         }
@@ -81,7 +94,7 @@ public partial class EmulatorViewModel
 
         var loadTaskSource = new TaskCompletionSource();
         _emuThread = new Thread(EmulatorThreadRun);
-        _emuThread.Start((path, loadTaskSource));
+        _emuThread.Start((path, loadTaskSource, _windowAccessService.WindowHandle, _windowAccessService.WindowSystemID));
 
         try
         {

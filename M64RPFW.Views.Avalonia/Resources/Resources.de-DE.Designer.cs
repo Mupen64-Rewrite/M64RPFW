@@ -60,11 +60,38 @@ namespace M64RPFW.Views.Avalonia.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Über Avalonia....
+        /// </summary>
+        internal static string AboutAvalonia {
+            get {
+                return ResourceManager.GetString("AboutAvalonia", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Über M64RPFW....
+        /// </summary>
+        internal static string AboutRPFW {
+            get {
+                return ResourceManager.GetString("AboutRPFW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Erweiterte Einstellungen.
         /// </summary>
         internal static string AdvancedSettings {
             get {
                 return ResourceManager.GetString("AdvancedSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Anwenden.
+        /// </summary>
+        internal static string Apply {
+            get {
+                return ResourceManager.GetString("Apply", resourceCulture);
             }
         }
         
@@ -119,6 +146,15 @@ namespace M64RPFW.Views.Avalonia.Resources {
         internal static string Clear {
             get {
                 return ResourceManager.GetString("Clear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alle schließen.
+        /// </summary>
+        internal static string CloseAllLuaInstances {
+            get {
+                return ResourceManager.GetString("CloseAllLuaInstances", resourceCulture);
             }
         }
         
@@ -240,11 +276,38 @@ namespace M64RPFW.Views.Avalonia.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dateiname.
+        /// </summary>
+        internal static string FileName {
+            get {
+                return ResourceManager.GetString("FileName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bild fortschreiten.
         /// </summary>
         internal static string FrameAdvance {
             get {
                 return ResourceManager.GetString("FrameAdvance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ganzer Dateipfad.
+        /// </summary>
+        internal static string FullPath {
+            get {
+                return ResourceManager.GetString("FullPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hilfe.
+        /// </summary>
+        internal static string Help {
+            get {
+                return ResourceManager.GetString("Help", resourceCulture);
             }
         }
         
@@ -366,6 +429,15 @@ namespace M64RPFW.Views.Avalonia.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Änderungen werden erst nach einem Neustart wirksam.
+        /// </summary>
+        internal static string RequiresRestartToApply {
+            get {
+                return ResourceManager.GetString("RequiresRestartToApply", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Rerecording.
         /// </summary>
         internal static string Rerecording {
@@ -407,6 +479,15 @@ namespace M64RPFW.Views.Avalonia.Resources {
         internal static string RomBrowserRecursive {
             get {
                 return ResourceManager.GetString("RomBrowserRecursive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        internal static string RomGoodName {
+            get {
+                return ResourceManager.GetString("RomGoodName", resourceCulture);
             }
         }
         
@@ -578,6 +659,15 @@ namespace M64RPFW.Views.Avalonia.Resources {
         internal static string VideoWidth {
             get {
                 return ResourceManager.GetString("VideoWidth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to VSync.
+        /// </summary>
+        internal static string VSync {
+            get {
+                return ResourceManager.GetString("VSync", resourceCulture);
             }
         }
     }

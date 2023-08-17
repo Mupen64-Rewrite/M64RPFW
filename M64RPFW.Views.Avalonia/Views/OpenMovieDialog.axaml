@@ -5,10 +5,13 @@
         xmlns:controls="clr-namespace:M64RPFW.Views.Avalonia.Controls"
         xmlns:vm="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels"
         xmlns:ext="clr-namespace:M64RPFW.Views.Avalonia.Markup"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="350" d:DesignHeight="250"
         x:Class="M64RPFW.Views.Avalonia.Views.OpenMovieDialog"
         x:CompileBindings="True"
         x:DataType="vm:OpenMovieViewModel"
+        Width="350"
+        Height="350"
+        CanResize="False"
         Classes.IsEditable="{Binding IsEditable}"
         Classes.IsNotEditable="{Binding !IsEditable}">
     <Window.Styles>
@@ -26,10 +29,10 @@
             </Style.Setters>
         </Style>
     </Window.Styles>
-    <DockPanel LastChildFill="True">
-        <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right" Orientation="Horizontal">
-            <Button Content="{ext:Localize Ok}" IsDefault="True" Command="{Binding ReturnSuccessCommand}" />
-            <Button Content="{ext:Localize Cancel}" Command="{Binding ReturnFailureCommand}" />
+    <DockPanel LastChildFill="True" Margin="{StaticResource ContentPadding}">
+        <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right" Orientation="Horizontal" Classes="dialog-btns">
+            <Button Content="{ext:Localize Ok}" IsDefault="True" Command="{Binding ReturnSuccessCommand}"/>
+            <Button Content="{ext:Localize Cancel}" Command="{Binding ReturnFailureCommand}"/>
         </StackPanel>
         <ScrollViewer>
             <StackPanel>

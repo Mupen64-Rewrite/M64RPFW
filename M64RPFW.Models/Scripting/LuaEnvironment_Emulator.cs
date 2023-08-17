@@ -8,6 +8,12 @@ namespace M64RPFW.Models.Scripting;
 
 public partial class LuaEnvironment
 {
+    [LuaFunction("emu.set_renderer")]
+    private void SetRenderer(int renderer)
+    {
+        // We won't support the legacy WGui APIs.
+    }
+    
     [LuaFunction("emu.atvi")]
     private void RegisterAtVi(LuaFunction luaFunction)
     {

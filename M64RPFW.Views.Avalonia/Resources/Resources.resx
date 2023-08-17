@@ -218,4 +218,13 @@
     <data name="AboutRPFW" xml:space="preserve">
         <value>About M64RPFW...</value>
     </data>
+    <data name="CloseAllLuaInstances" xml:space="preserve">
+        <value>Close All</value>
+    </data>
+    <data name="RomGoodName" xml:space="preserve">
+        <value>Name</value>
+    </data>
+    <data name="FileName" xml:space="preserve">
+        <value>Filename</value>
+    </data>
 </root>

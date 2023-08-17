@@ -23,12 +23,13 @@ public partial class HotkeyButton : UserControl
         get => GetValue(CurrentHotkeyProperty);
         set => SetValue(CurrentHotkeyProperty, value);
     }
-
+    
     protected override void OnKeyDown(KeyEventArgs e)
     {
         // Button has to have been activated for this to work
         if (Button?.IsChecked is null or false)
             return;
+        
         // modifiers don't count
         if (e.Key is Key.LeftCtrl or Key.RightCtrl or Key.LeftShift or Key.RightShift or Key.LeftAlt or Key.RightAlt
             or Key.LWin or Key.RWin)

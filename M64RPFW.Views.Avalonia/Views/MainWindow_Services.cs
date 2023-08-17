@@ -49,6 +49,21 @@ public partial class MainWindow : IViewDialogService, ILuaInterfaceService
         });
     }
 
+    public IntPtr WindowHandle => TryGetPlatformHandle()?.Handle ?? IntPtr.Zero;
+    public WindowSystemID WindowSystemID
+    {
+        get
+        {
+            return TryGetPlatformHandle()?.HandleDescriptor switch
+            {
+                "HWND" => WindowSystemID.Windows,
+                // "NSWindow" => WindowSystemID.Cocoa,
+                "XID" => WindowSystemID.X11,
+                _ => throw new NotSupportedException("Avalonia does not support platform handles here")
+            };
+        }
+    }
+    
     #endregion
 
     #region IViewDialogService

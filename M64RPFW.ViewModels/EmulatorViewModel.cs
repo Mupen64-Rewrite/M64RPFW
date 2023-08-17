@@ -14,18 +14,18 @@ public partial class EmulatorViewModel : ObservableObject
     private readonly IOpenGLContextService _openGlContextService;
     private readonly IDispatcherService _dispatcherService;
     private readonly IFilePickerService _filePickerService;
-    private readonly IWindowSizingService _windowSizingService;
+    private readonly IWindowAccessService _windowAccessService;
     private readonly IViewDialogService _viewDialogService;
 
     public EmulatorViewModel(IOpenGLContextService openGlContextService, IDispatcherService dispatcherService,
-        IFilePickerService filePickerService, IWindowSizingService windowSizingService, IViewDialogService viewDialogService)
+        IFilePickerService filePickerService, IWindowAccessService windowAccessService, IViewDialogService viewDialogService)
     {
         Instance = this;
         
         _openGlContextService = openGlContextService;
         _dispatcherService = dispatcherService;
         _filePickerService = filePickerService;
-        _windowSizingService = windowSizingService;
+        _windowAccessService = windowAccessService;
         _viewDialogService = viewDialogService;
 
         var version = Mupen64Plus.GetVersionInfo();
