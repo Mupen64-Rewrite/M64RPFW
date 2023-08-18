@@ -34,6 +34,19 @@ internal static unsafe partial class XCB
         public ushort Height;
     }
 
+    internal enum ConnectionError
+    {
+        None = 0,
+        IOError = 1,
+        ExtNotSupported = 2,
+        MemInsufficient = 3,
+        ReqLenExceed = 4,
+        ParseError = 5,
+        InvalidScreen = 6
+    }
+
+    
+
     internal enum ShapeSK
     {
         Bounding = 0,

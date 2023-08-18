@@ -110,10 +110,6 @@ public class App : Application, IDispatcherService
         base.OnFrameworkInitializationCompleted();
     }
     
-    
-
-
-
     public void Execute(Action action)
     {
         Dispatcher.UIThread.Post(action);

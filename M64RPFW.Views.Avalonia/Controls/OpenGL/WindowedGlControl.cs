@@ -21,7 +21,6 @@ namespace M64RPFW.Views.Avalonia.Controls.OpenGL;
 
 public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
 {
-    private IntPtr _nativeWin;
 
     private SDL.Window* _sdlWin;
     private void* _sdlCtx;
@@ -46,7 +45,7 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
     protected override IPlatformHandle CreateNativeControlCore(IPlatformHandle parent)
     {
         var platHandle = base.CreateNativeControlCore(parent);
-        _nativeWin = platHandle.Handle;
+        platHandle.PlatformWindowSetup();
 
         if (sdl.InitSubSystem(Sdl.InitVideo) < 0)
             throw new SDLException();
@@ -56,7 +55,7 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
         if (OperatingSystem.IsLinux())
             sdl.SetHint(Sdl.HintVideodriver, "x11");
 
-        _sdlWin = sdl.CreateWindowFrom((void*) _nativeWin);
+        _sdlWin = sdl.CreateWindowFrom((void*) platHandle.Handle);
         if (_sdlWin == null)
             throw new SDLException();
 
@@ -68,7 +67,6 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
     protected override void DestroyNativeControlCore(IPlatformHandle control)
     {
         SkiaQuit();
-
         sdl.DestroyWindow(_sdlWin);
         sdl.QuitSubSystem(Sdl.InitVideo);
 
@@ -133,6 +131,8 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
         if (sdl.GLMakeCurrent(_sdlWin, _sdlCtx) < 0)
             throw new SDLException();
     }
+
+    private DateTime _lastpoll = DateTime.Now;
 
     public void SwapBuffers()
     {

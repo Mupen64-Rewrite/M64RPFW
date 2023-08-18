@@ -356,27 +356,4 @@ public static unsafe class SDLHelpers
     {
         return GL.GetApi(sym => (IntPtr) sdl.GLGetProcAddress(sym));
     }
-
-    public static bool EnableMousePassthrough(this Sdl sdl, Window* window, IPlatformHandle parent)
-    {
-        SysWMInfo wmInfo = default;
-        sdl.GetWindowWMInfo(window, &wmInfo);
-        switch (wmInfo.Subsystem)
-        {
-            case SysWMType.Windows:
-            {
-                var winInfo = wmInfo.Info.Win;
-                Win32Helpers.EnableMousePassthrough((HWND) winInfo.Hwnd, new HWND(parent.Handle));
-                return true;
-            }
-            case SysWMType.X11:
-            {
-                var winInfo = wmInfo.Info.X11;
-                X11Helpers.EnableMousePassthrough(winInfo.Display, (uint) winInfo.Window);
-                return true;
-            }
-            default:
-                return false;
-        }
-    }
 }

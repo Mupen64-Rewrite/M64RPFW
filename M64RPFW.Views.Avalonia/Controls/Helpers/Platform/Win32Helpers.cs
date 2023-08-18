@@ -1,56 +1,42 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using Windows.Win32;
 using Windows.Win32.Foundation;
 using Windows.Win32.UI.WindowsAndMessaging;
+using M64RPFW.Views.Avalonia.Helpers.Platform;
+using static Windows.Win32.UI.WindowsAndMessaging.WINDOW_LONG_PTR_INDEX;
 
 namespace M64RPFW.Views.Avalonia.Controls.Helpers.Platform;
 
 internal static class Win32Helpers
 {
-    private static readonly Dictionary<HWND, (HWND ParentHwnd, IntPtr OriginalWndProc)> _windowDictionary = new();
-
-    private const int WM_MOUSEFIRST = 0x0200;
-    private const int WM_MOUSELAST = 0x020D;
-    private const int GWLP_WNDPROC = -4;
-
-
-    // NOTE: this will crash on 32 bit
-    // get/setwindowlongptr dont exist there
-
-    private delegate IntPtr WindowProcDelegate(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
-
-    [DllImport("user32.dll")]
-    private static extern IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex);
-
-    [DllImport("user32.dll")]
-    private static extern IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr newWndProc);
-
-    [DllImport("user32.dll")]
-    private static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
-
-    public static void EnableMousePassthrough(HWND childHwnd, HWND parentHwnd)
+    [SupportedOSPlatform("windows5.0")]
+    private static LRESULT CustomWndProc(HWND hWnd, uint msg, WPARAM wParam, LPARAM lParam)
     {
-        // get current wndproc and store it
-        IntPtr currentWndProc = GetWindowLongPtr(childHwnd, GWLP_WNDPROC);
-        _windowDictionary[childHwnd] = (parentHwnd, currentWndProc);
-
-        // swap out original wndproc for ours
-        WindowProcDelegate windowProcDelegate = ForwardWindowProc;
-        SetWindowLongPtr(childHwnd, GWLP_WNDPROC, Marshal.GetFunctionPointerForDelegate(windowProcDelegate));
+        switch (msg)
+        {
+            case WinAPI.WM_NCHITTEST:
+                return (LRESULT) WinAPI.HTTRANSPARENT;
+            default:
+                return WinAPI.DefWindowProc(hWnd, msg, wParam, lParam);
+        }
     }
 
-    private static IntPtr ForwardWindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam)
-    {
-        var entry = _windowDictionary[new HWND(hwnd)];
+    [SupportedOSPlatform("windows5.0")]
+    private static WNDPROC? _customWndProcInstance;
+    private static IntPtr _customWndProcPointer;
 
-        if (msg is >= WM_MOUSEFIRST and <= WM_MOUSELAST)
+    [SupportedOSPlatform("windows5.0")]
+    public static void PlatformWindowSetup(HWND hWnd)
+    {
+        if (_customWndProcInstance == null)
         {
-            WinAPI.PostMessage(entry.ParentHwnd, (uint)msg, new WPARAM((UIntPtr)wParam), new LPARAM(lParam));
+            _customWndProcInstance = CustomWndProc;
+            _customWndProcPointer = Marshal.GetFunctionPointerForDelegate(_customWndProcInstance);
         }
 
-        return CallWindowProc(entry.OriginalWndProc, hwnd, msg, wParam, lParam);
+        WinAPIExt.SetWindowLongPtr(hWnd, GWLP_WNDPROC, _customWndProcPointer);
     }
-
 }

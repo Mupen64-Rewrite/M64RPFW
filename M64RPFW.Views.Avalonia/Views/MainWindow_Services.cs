@@ -131,6 +131,7 @@ public partial class MainWindow : IViewDialogService, ILuaInterfaceService
 
     private void SkiaOnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
+        Console.WriteLine("mousedown");
         SkiaOnPointerUpdate(sender, e);
     }
 

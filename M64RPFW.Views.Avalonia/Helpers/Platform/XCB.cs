@@ -8,6 +8,15 @@ internal static unsafe partial class XCB
     [DllImport(LibX11_XCB, EntryPoint = "XGetXCBConnection")]
     public static extern Connection* Xlib_XGetXCBConnection(void* dpy);
 
+    [DllImport(LibXCB, EntryPoint = "xcb_connect")]
+    public static extern Connection* Connect(byte* displayName, int* screenP);
+
+    [DllImport(LibXCB, EntryPoint = "xcb_connection_has_error")]
+    public static extern ConnectionError ConnectionHasError(Connection* c);
+    
+    [DllImport(LibXCB, EntryPoint = "xcb_generate_id")]
+    public static extern void Disconnect(Connection* c);
+
     /// <summary>
     /// Allocates an XID for a new object. Typically used just prior to various object creation functions, such as xcb_create_window.
     /// </summary>
@@ -22,7 +31,7 @@ internal static unsafe partial class XCB
     [DllImport(LibXCB_XFixes, EntryPoint = "xcb_xfixes_destroy_region")]
     public static extern VoidCookie XFixesDestroyRegion(Connection* c, uint region);
 
-    [DllImport(LibXCB_XFixes, EntryPoint = "xcb_xfixes_set_window_shape_region_checked")]
+    [DllImport(LibXCB_XFixes, EntryPoint = "xcb_xfixes_set_window_shape_region")]
     public static extern VoidCookie XFixesSetWindowShapeRegionChecked(Connection* c, uint dest, byte destKind, short xOffset, short yOffset, uint region);
 
     public static VoidCookie XFixesCreateRegion(Connection* c, uint region, Span<Rectangle> rectangles)
