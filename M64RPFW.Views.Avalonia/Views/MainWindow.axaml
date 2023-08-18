@@ -16,8 +16,6 @@
                   Closed="Window_OnClosed"
                   SizeChanged="Window_OnSizeChanged"
                   Loaded="Window_OnLoaded"
-                  PointerPressed="Window_OnPointerPressed"
-                  PointerReleased="Window_OnPointerReleased"
                   PointerMoved="Window_OnPointerUpdate"
                   PointerEntered="Window_OnPointerUpdate"
                   PointerExited="Window_OnPointerUpdate"

@@ -45,6 +45,7 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
     protected override IPlatformHandle CreateNativeControlCore(IPlatformHandle parent)
     {
         var platHandle = base.CreateNativeControlCore(parent);
+        platHandle.PlatformWindowSetup();
 
         if (sdl.InitSubSystem(Sdl.InitVideo) < 0)
             throw new SDLException();

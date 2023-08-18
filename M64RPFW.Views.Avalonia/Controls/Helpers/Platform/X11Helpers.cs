@@ -6,7 +6,7 @@ namespace M64RPFW.Views.Avalonia.Controls.Helpers.Platform;
 internal static unsafe class X11Helpers
 {
     private static XCB.Connection* _xcb;
-    
+
     static X11Helpers()
     {
         if (!(OperatingSystem.IsLinux() || OperatingSystem.IsMacOS()))
@@ -26,8 +26,8 @@ internal static unsafe class X11Helpers
             return;
         XCB.Disconnect(_xcb);
     }
-    
-    
+
+
     /// <summary>
     /// Enables mouse passthrough for a window.
     /// </summary>
@@ -41,11 +41,14 @@ internal static unsafe class X11Helpers
     {
         if (_xcb == null)
             throw new InvalidOperationException("XCB is not initialized. Check that your platform supports XCB.");
-        
+
+#if false
+        // use XFixes protocol to make the window hit-test transparent
         var region = XCB.GenerateID(_xcb);
         XCB.XFixesCreateRegion(_xcb, region, 0, null);
         XCB.XFixesSetWindowShapeRegionChecked(_xcb, win, XCB.ShapeSK.Input, 0, 0, region);
         XCB.XFixesDestroyRegion(_xcb, region);
-        
+#endif
+
     }
 }

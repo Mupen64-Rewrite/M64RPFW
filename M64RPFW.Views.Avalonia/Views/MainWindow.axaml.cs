@@ -43,6 +43,8 @@ public partial class MainWindow : Window
         // built-in key events won't work, since those get swallowed when the pressed key is a navigation key
         AddHandler(KeyDownEvent, OnPreviewKeyDown, RoutingStrategies.Tunnel);
         AddHandler(KeyUpEvent, OnPreviewKeyUp, RoutingStrategies.Tunnel);
+        
+        AddHandler(PointerPressedEvent, Window_OnPointerPressed, RoutingStrategies.Tunnel);
     }
 
     // avalonia compiled binding resolver lives in another assembly, so these have to be public :(
@@ -133,6 +135,7 @@ public partial class MainWindow : Window
 
     private void Window_OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
+        Console.WriteLine("clicc");
         Window_OnPointerUpdate(sender, e);
     }
 
