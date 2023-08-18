@@ -123,34 +123,10 @@ public partial class MainWindow : IViewDialogService, ILuaInterfaceService
     public MouseButtonMask PointerButtons { get; private set; } = 0;
     public event EventHandler<SkiaRenderEventArgs>? OnSkiaRender;
 
-    private void SkiaOnRender(object? s, SkiaRenderEventArgs e)
+    private void GlControl_OnSkiaRender(object? s, SkiaRenderEventArgs e)
     {
         var canvas = e.Canvas;
         OnSkiaRender?.Invoke(s, e);
-    }
-
-    private void SkiaOnPointerPressed(object? sender, PointerPressedEventArgs e)
-    {
-        Console.WriteLine("mousedown");
-        SkiaOnPointerUpdate(sender, e);
-    }
-
-    private void SkiaOnPointerReleased(object? sender, PointerReleasedEventArgs e)
-    {
-        SkiaOnPointerUpdate(sender, e);
-    }
-
-    private void SkiaOnPointerUpdate(object? sender, PointerEventArgs e)
-    {
-        var pointerPoint = e.GetCurrentPoint(GlControl);
-        var pointerPos = pointerPoint.Position;
-        var pointerProps = pointerPoint.Properties;
-
-        PointerPosition = new WindowPoint(pointerPos.X, pointerPos.Y);
-        PointerButtons =
-            (pointerProps.IsLeftButtonPressed ? MouseButtonMask.Primary : 0) |
-            (pointerProps.IsMiddleButtonPressed ? MouseButtonMask.Middle : 0) |
-            (pointerProps.IsRightButtonPressed ? MouseButtonMask.Secondary : 0);
     }
 
     #endregion

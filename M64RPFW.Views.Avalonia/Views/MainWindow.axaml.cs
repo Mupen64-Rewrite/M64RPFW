@@ -13,6 +13,7 @@ using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Styling;
 using Avalonia.Themes.Fluent;
 using Avalonia.Themes.Simple;
+using M64RPFW.Services.Abstractions;
 using M64RPFW.ViewModels;
 using M64RPFW.Views.Avalonia.Controls.Helpers;
 using M64RPFW.Views.Avalonia.Markup;
@@ -128,6 +129,31 @@ public partial class MainWindow : Window
             });
         }
         RomBrowserControl.RomBrowserViewModel.RefreshCommand.ExecuteIfPossible();
+    }
+
+    private void Window_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        Window_OnPointerUpdate(sender, e);
+    }
+
+    private void Window_OnPointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        Window_OnPointerUpdate(sender, e);
+    }
+
+    private void Window_OnPointerUpdate(object? sender, PointerEventArgs e)
+    {
+        var pointerPoint = e.GetCurrentPoint(GlControl);
+        var pointerPos = pointerPoint.Position;
+        var pointerProps = pointerPoint.Properties;
+        if (!GlControl.Bounds.WithX(0).WithY(0).Contains(pointerPos))
+            return;
+
+        PointerPosition = new WindowPoint(pointerPos.X, pointerPos.Y);
+        PointerButtons =
+            (pointerProps.IsLeftButtonPressed ? MouseButtonMask.Primary : 0) |
+            (pointerProps.IsMiddleButtonPressed ? MouseButtonMask.Middle : 0) |
+            (pointerProps.IsRightButtonPressed ? MouseButtonMask.Secondary : 0);
     }
 
     private async void AboutAvalonia_OnClick(object? sender, RoutedEventArgs e)

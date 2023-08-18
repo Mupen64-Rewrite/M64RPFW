@@ -140,13 +140,13 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
         
         DateTime now = DateTime.Now;
 
-        if (now - _lastpoll > TimeSpan.FromMilliseconds(500))
-        {
-            _lastpoll = now;
-            int x = 0, y = 0;
-            sdl.GetMouseState(ref x, ref y);
-            Console.WriteLine($"sdl: {x}, {y}");
-        }
+        // if (now - _lastpoll > TimeSpan.FromMilliseconds(500))
+        // {
+        //     _lastpoll = now;
+        //     int x = 0, y = 0;
+        //     sdl.GetMouseState(ref x, ref y);
+        //     Console.WriteLine($"sdl: {x}, {y}");
+        // }
     }
 
     public IntPtr GetProcAddress(IntPtr symbol)
