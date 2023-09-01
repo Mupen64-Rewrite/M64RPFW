@@ -105,6 +105,11 @@
         <UpToDateCheckInput Remove="Assets\Shaders\blit_quad.vert.glsl" />
 
 
+    <ItemGroup>
+      <Folder Include="Controls\Helpers\Platform\" />
+    </ItemGroup>
+
+
     </ItemGroup>
 
 

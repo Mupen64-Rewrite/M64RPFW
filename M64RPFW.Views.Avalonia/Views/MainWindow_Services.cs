@@ -7,6 +7,7 @@ using Avalonia.Input;
 using Avalonia.Threading;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
+using M64RPFW.Views.Avalonia.Helpers;
 
 namespace M64RPFW.Views.Avalonia.Views;
 
@@ -119,8 +120,10 @@ public partial class MainWindow : IViewDialogService, ILuaInterfaceService
 
     #region ILuaInterfaceService
 
-    public WindowPoint PointerPosition { get; private set; } = new(0, 0);
-    public MouseButtonMask PointerButtons { get; private set; } = 0;
+    private INativeWindowMouseHandler _mouseHandler;
+
+    public WindowPoint PointerPosition => _mouseHandler.Position.ToWindowPoint();
+    public MouseButtonMask PointerButtons => _mouseHandler.ButtonMask;
     public event EventHandler<SkiaRenderEventArgs>? OnSkiaRender;
 
     private void GlControl_OnSkiaRender(object? s, SkiaRenderEventArgs e)
