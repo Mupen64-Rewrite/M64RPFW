@@ -20,7 +20,7 @@ public static class LuaExtensions
 
         for (int i = 0; i < keys.Length; i++)
         {
-            value += $"{keys[i]} | {values[i]}";
+            value += $"{keys[i]} | {values[i]}\n";
         }
 
         return value;
