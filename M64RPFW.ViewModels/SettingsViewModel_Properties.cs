@@ -239,6 +239,18 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         set => SetRPFWSetting((inst, val) => inst.Hotkeys.DisableWrites = val, value);
     }
 
+    public string StartEncoderHotkey
+    {
+        get => RPFWSettings.Instance.Hotkeys.StartEncoder;
+        set => SetRPFWSetting((inst, val) => inst.Hotkeys.StartEncoder = val, value);
+    }
+    
+    public string StopEncoderHotkey
+    {
+        get => RPFWSettings.Instance.Hotkeys.StopEncoder;
+        set => SetRPFWSetting((inst, val) => inst.Hotkeys.StopEncoder = val, value);
+    }
+
     #endregion
 
     [RelayCommand]

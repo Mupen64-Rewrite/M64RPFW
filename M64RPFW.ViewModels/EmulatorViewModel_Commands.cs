@@ -213,6 +213,16 @@ public partial class EmulatorViewModel
     }
     
     [RelayCommand(CanExecute = nameof(MupenIsActive))]
+    private void SetSpeedLimiter(bool value)
+    {
+        Mupen64Plus.CoreStateSet(CoreParam.SpeedLimiter, value ? 1 : 0);
+    }
+
+    #endregion
+
+    #region VCR/Encoder commands
+    
+    [RelayCommand(CanExecute = nameof(MupenIsActive))]
     private async void StartRecording()
     {
         var result = await _viewDialogService.ShowOpenMovieDialog(true);
@@ -251,11 +261,16 @@ public partial class EmulatorViewModel
         // toggle the current readonly state
         Mupen64Plus.VCR_DisableWrites = !Mupen64Plus.VCR_DisableWrites;
     }
-    
+
     [RelayCommand(CanExecute = nameof(MupenIsActive))]
-    private void SetSpeedLimiter(bool value)
+    private async void StartEncoder()
     {
-        Mupen64Plus.CoreStateSet(CoreParam.SpeedLimiter, value ? 1 : 0);
+        var result = await _viewDialogService.ShowStartEncoderDialog();
+        
+        if (result == null)
+            return;
+        
+        // TODO: actually start the encoder
     }
 
     #endregion

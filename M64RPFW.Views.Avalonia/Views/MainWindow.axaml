@@ -152,10 +152,11 @@
                 <Separator />
                 <MenuItem
                     Header="{ext:Localize StartEncoder}"
-                    IsEnabled="False" />
+                    Command="{Binding StartEncoderCommand}"
+                    InputGesture="{Binding StartEncoderHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"/>
                 <MenuItem
                     Header="{ext:Localize StopEncoder}"
-                    IsEnabled="False" />
+                    InputGesture="{Binding StopEncoderHotkey, Source={x:Static vm:SettingsViewModel.Instance}, Converter={StaticResource StringToKeyGestureConverter}}"/>
             </MenuItem>
             <MenuItem Header="{ext:Localize Lua}">
                 <MenuItem

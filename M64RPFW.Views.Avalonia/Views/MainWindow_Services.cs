@@ -101,9 +101,16 @@ public partial class MainWindow : IViewDialogService, ILuaInterfaceService
 
     public Task<OpenMovieDialogResult?> ShowOpenMovieDialog(bool paramsEditable)
     {
-        OpenMovieDialog d = new();
+        var d = new OpenMovieDialog();
         d.ViewModel.IsEditable = paramsEditable;
         return d.ShowDialog<OpenMovieDialogResult?>(this);
+    }
+
+    public Task<StartEncoderDialogResult?> ShowStartEncoderDialog()
+    {
+        var d = new StartEncoderDialog();
+        return d.ShowDialog<StartEncoderDialogResult?>(this);
+
     }
 
     public Task ShowExceptionDialog(Exception e, string? msg = null)

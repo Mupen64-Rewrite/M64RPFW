@@ -39,13 +39,13 @@
                 <controls:FileBrowser CurrentPath="{Binding Path}"
                                       PickerOptions="{Binding PickerOptions, Mode=OneTime}"
                                       IsOpenDialog="{Binding !IsEditable}" />
-                <TextBlock Classes="h3" Text="{ext:Localize StartFrom}" />
+                <Label Classes="h3" Content="{ext:Localize StartFrom}" />
 
                 <ComboBox ItemsSource="{Binding StartTypes, Mode=OneTime}"
                           SelectedItem="{Binding StartType}" IsEnabled="{Binding IsEditable}" />
-                <TextBlock Classes="h3" Text="{ext:Localize Author}" />
+                <Label Classes="h3" Content="{ext:Localize Author}" />
                 <TextBox Text="{Binding Authors}" TextWrapping="Wrap" IsEnabled="{Binding IsEditable}" />
-                <TextBlock Classes="h3" Text="{ext:Localize Description}" />
+                <Label Classes="h3" Content="{ext:Localize Description}" />
                 <TextBox AcceptsReturn="True" Text="{Binding Description}" IsEnabled="{Binding IsEditable}" />
 
 
