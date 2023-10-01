@@ -16,9 +16,6 @@
                   Closed="Window_OnClosed"
                   SizeChanged="Window_OnSizeChanged"
                   Loaded="Window_OnLoaded"
-                  PointerMoved="Window_OnPointerUpdate"
-                  PointerEntered="Window_OnPointerUpdate"
-                  PointerExited="Window_OnPointerUpdate"
                   x:CompileBindings="True"
                   x:DataType="vm:EmulatorViewModel">
     <Window.Styles>

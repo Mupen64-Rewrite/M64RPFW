@@ -43,8 +43,6 @@ public partial class MainWindow : Window
         // built-in key events won't work, since those get swallowed when the pressed key is a navigation key
         AddHandler(KeyDownEvent, OnPreviewKeyDown, RoutingStrategies.Tunnel);
         AddHandler(KeyUpEvent, OnPreviewKeyUp, RoutingStrategies.Tunnel);
-        
-        AddHandler(PointerPressedEvent, Window_OnPointerPressed, RoutingStrategies.Tunnel);
     }
 
     // avalonia compiled binding resolver lives in another assembly, so these have to be public :(
@@ -131,32 +129,11 @@ public partial class MainWindow : Window
             });
         }
         RomBrowserControl.RomBrowserViewModel.RefreshCommand.ExecuteIfPossible();
-    }
-
-    private void Window_OnPointerPressed(object? sender, PointerPressedEventArgs e)
-    {
-        Console.WriteLine("clicc");
-        Window_OnPointerUpdate(sender, e);
-    }
-
-    private void Window_OnPointerReleased(object? sender, PointerReleasedEventArgs e)
-    {
-        Window_OnPointerUpdate(sender, e);
-    }
-
-    private void Window_OnPointerUpdate(object? sender, PointerEventArgs e)
-    {
-        var pointerPoint = e.GetCurrentPoint(GlControl);
-        var pointerPos = pointerPoint.Position;
-        var pointerProps = pointerPoint.Properties;
-        if (!GlControl.Bounds.WithX(0).WithY(0).Contains(pointerPos))
-            return;
-
-        PointerPosition = new WindowPoint(pointerPos.X, pointerPos.Y);
-        PointerButtons =
-            (pointerProps.IsLeftButtonPressed ? MouseButtonMask.Primary : 0) |
-            (pointerProps.IsMiddleButtonPressed ? MouseButtonMask.Middle : 0) |
-            (pointerProps.IsRightButtonPressed ? MouseButtonMask.Secondary : 0);
+       
+        // TODO wait for https://github.com/AvaloniaUI/Avalonia/issues/5256 to be fixed
+        // this is a platform specific hack taking advantage of the behaviour of each window system.
+        _mouseHandler = INativeWindowMouseHandler.GetMouseLocator(this) ?? 
+                        throw new NotSupportedException("Interface INativeWindowMouseHandler not supported on this platform!");
     }
 
     private async void AboutAvalonia_OnClick(object? sender, RoutedEventArgs e)

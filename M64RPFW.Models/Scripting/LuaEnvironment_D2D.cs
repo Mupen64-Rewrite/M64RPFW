@@ -299,8 +299,8 @@ public partial class LuaEnvironment
     }
 
     [LuaFunction("d2d.draw_image")]
-    private void DrawImage(float sourceX, float sourceY, float sourceRight, float sourceBottom, float destinationX,
-        float destinationY, float destinationRight, float destinationBottom,
+    private void DrawImage(float destinationX, float destinationY, float destinationRight, float destinationBottom, float sourceX,
+        float sourceY, float sourceRight, float sourceBottom,
         string identifier, float opacity, int interpolation)
     {
         if (!_imageDict.TryGetValue(identifier, out var image))

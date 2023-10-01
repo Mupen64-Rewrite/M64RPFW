@@ -22,7 +22,7 @@ namespace M64RPFW.Views.Avalonia.Controls.OpenGL;
 public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
 {
 
-    private SDL.Window* _sdlWin;
+    internal SDL.Window* _sdlWin;
     private void* _sdlCtx;
     private GL _gl = null!;
 
@@ -45,7 +45,6 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
     protected override IPlatformHandle CreateNativeControlCore(IPlatformHandle parent)
     {
         var platHandle = base.CreateNativeControlCore(parent);
-        platHandle.PlatformWindowSetup();
 
         if (sdl.InitSubSystem(Sdl.InitVideo) < 0)
             throw new SDLException();
@@ -140,14 +139,6 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
         sdl.GLSwapWindow(_sdlWin);
         
         DateTime now = DateTime.Now;
-
-        // if (now - _lastpoll > TimeSpan.FromMilliseconds(500))
-        // {
-        //     _lastpoll = now;
-        //     int x = 0, y = 0;
-        //     sdl.GetMouseState(ref x, ref y);
-        //     Console.WriteLine($"sdl: {x}, {y}");
-        // }
     }
 
     public IntPtr GetProcAddress(IntPtr symbol)

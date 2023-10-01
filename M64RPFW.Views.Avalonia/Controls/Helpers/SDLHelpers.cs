@@ -1,10 +1,6 @@
 using System;
-using Windows.Win32.Foundation;
 using Avalonia.Input;
-using Avalonia.Platform;
 using M64RPFW.Models.Types;
-using M64RPFW.Views.Avalonia.Controls.Helpers.Platform;
-using M64RPFW.Views.Avalonia.Helpers.Platform;
 using Silk.NET.OpenGL;
 using Silk.NET.SDL;
 // ReSharper disable ParameterHidesMember

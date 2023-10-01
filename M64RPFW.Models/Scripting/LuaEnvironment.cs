@@ -252,7 +252,7 @@ public partial class LuaEnvironment : IDisposable
         var formatted = value switch
         {
             null => "nil",
-            LuaTable luaTable => luaTable.ToString(),
+            LuaTable luaTable => LuaExtensions.ToString(luaTable),
             _ => value.ToString()!
         };
 
