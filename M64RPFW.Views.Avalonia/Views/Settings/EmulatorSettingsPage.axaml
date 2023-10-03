@@ -21,5 +21,8 @@
         <CheckBox
             IsChecked="{Binding RandomizeInterruptTimings}"
             Content="{ext:Localize RandomizeInterruptTimings}" />
+        <CheckBox
+            IsChecked="{Binding EnableOnScreenDisplay}"
+            Content="{ext:Localize EnableOnScreenDisplay}" />
     </StackPanel>
 </UserControl>
