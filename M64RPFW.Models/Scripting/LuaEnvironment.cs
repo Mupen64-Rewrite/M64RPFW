@@ -51,7 +51,7 @@ public partial class LuaEnvironment : IDisposable
     static LuaEnvironment()
     {
         Debug.Print("Hooking Lua functionality to core...");
-        Mupen64Plus.FrameComplete += (_, i) =>
+        Mupen64Plus.FrameComplete += frameCount =>
         {
             ForEachEnvironment(env =>
             {
@@ -65,7 +65,7 @@ public partial class LuaEnvironment : IDisposable
                 if (!env._isActive)
                     env.TryDisposeLock();
             });
-            _frameIndex = i;
+            _frameIndex = frameCount;
         };
     }
 

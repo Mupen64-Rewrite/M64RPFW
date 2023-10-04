@@ -14,6 +14,7 @@ public partial class StartEncoderViewModel  : ObservableObject
     {
         new("MP4 (.mp4)", new[] {"*.mp4"}),
         new("WebM (.webm)", new[] {"*.webm"}),
+        new("MP3, audio-only (.mp3)", new[] {"*.mp3"}),
     };
     
     [RelayCommand]

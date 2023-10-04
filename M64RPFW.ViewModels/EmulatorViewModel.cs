@@ -38,7 +38,7 @@ public partial class EmulatorViewModel : ObservableObject
         Mupen64Plus.OverrideVidExt(this.ToVidextStruct());
     }
 
-    private void OnMupenStateChange(object? sender, Mupen64Plus.StateChangeEventArgs args)
+    private void OnMupenStateChange(Mupen64Plus.StateChangeEventArgs args)
     {
         switch (args.Param)
         {
@@ -48,7 +48,7 @@ public partial class EmulatorViewModel : ObservableObject
         }
     }
 
-    private void OnVCRStateChange(object? sender, Mupen64Plus.VCRStateChangeEventArgs args)
+    private void OnVCRStateChange(Mupen64Plus.VCRStateChangeEventArgs args)
     {
         switch (args.Param)
         {

@@ -19,7 +19,7 @@ public unsafe partial class FFmpegEncoder
 
         public AudioStream(AVFormatContext* fmtCtx, AVCodec* codec, IDictionary<string, string>? config = null) : base(fmtCtx, codec, StreamConfig, config)
         {
-            _sem = new SemaphoreSlim(0, 1);
+            _sem = new SemaphoreSlim(1, 1);
             
             _frame1 = av_frame_alloc();
             _frame2 = av_frame_alloc();
@@ -84,7 +84,14 @@ public unsafe partial class FFmpegEncoder
             }
             finally
             {
-                _sem.Release();
+                try
+                {
+                    _sem.Release();
+                }
+                catch (SemaphoreFullException)
+                {
+                    // ignored
+                }
             }
         }
 
@@ -101,7 +108,14 @@ public unsafe partial class FFmpegEncoder
             }
             catch
             {
-                _sem.Release();
+                try
+                {
+                    _sem.Release();
+                }
+                catch (SemaphoreFullException)
+                {
+                    // ignored
+                }
                 throw;
             }
 
@@ -130,11 +144,19 @@ public unsafe partial class FFmpegEncoder
             }
             finally
             {
-                _sem.Release();
+                try
+                {
+                    _sem.Release();
+                }
+                catch (SemaphoreFullException)
+                {
+                    // ignored
+                }
             }
         }
         public void Flush()
         {
+            _sem.Wait();
             try
             {
                 int err;

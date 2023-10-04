@@ -1,7 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.InteropServices;
 using Avalonia;
+using FFmpeg.AutoGen;
 
 namespace M64RPFW.Views.Avalonia;
 
@@ -14,6 +16,7 @@ class Program
     public static void Main(string[] args)
     {
         SetupConsole();
+        InitFFmpeg();
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }
 
@@ -58,5 +61,22 @@ class Program
         int err = Marshal.GetLastPInvokeError();
         if (err != 6)
             throw new Win32Exception(err);
+    }
+
+    private static void InitFFmpeg()
+    {
+        if (OperatingSystem.IsWindows())
+            return;
+        if (OperatingSystem.IsLinux())
+        {
+            if (File.Exists("/lib/libavcodec.so"))
+                ffmpeg.RootPath = "/lib";
+            else if (File.Exists("/usr/lib/libavcodec.so"))
+                ffmpeg.RootPath = "/usr/lib";
+            else if (File.Exists("/lib64/libavcodec.so"))
+                ffmpeg.RootPath = "/lib64";
+            else if (File.Exists("/usr/lib64/libavcodec.so"))
+                ffmpeg.RootPath = "/usr/lib64";
+        }
     }
 }
