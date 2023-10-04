@@ -1,5 +1,7 @@
 using FFmpeg.AutoGen;
+using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Media.Helpers;
+using M64RPFW.Models.Types;
 using static FFmpeg.AutoGen.ffmpeg;
 
 namespace M64RPFW.Models.Media.Encoder;
@@ -164,15 +166,24 @@ public unsafe partial class FFmpegEncoder
                 int nbSamples = swr_get_out_samples(_swr, 0);
 
                 AVHelpers.AllocAudioFrame(_frame2, nbSamples, in _codecCtx->ch_layout, _codecCtx->sample_fmt);
+
                 
                 if ((err = swr_convert(_swr, (byte**) &_frame2->data, _frame2->nb_samples, null, 0)) < 0)
                     throw new AVException(err);
                 
                 _frame2->pts = _pts;
                 _pts += _frame2->nb_samples;
-                
-                EncodeFrame(_frame2);
-                EncodeFrame(null);
+
+                try
+                {
+                    EncodeFrame(_frame2);
+                    EncodeFrame(null);
+                }
+                catch (AVException e)
+                {
+                    // HACK: FFmpeg's own AAC encoder kinda sucks, so we ignore it
+                    Mupen64Plus.Log(Mupen64Plus.LogSources.App, Mupen64PlusTypes.MessageLevel.Warning, "Encoding failed ({})", e.Message);
+                }
             }
             finally
             {

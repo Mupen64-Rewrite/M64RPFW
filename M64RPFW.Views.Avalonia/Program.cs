@@ -77,6 +77,11 @@ class Program
                 ffmpeg.RootPath = "/lib64";
             else if (File.Exists("/usr/lib64/libavcodec.so"))
                 ffmpeg.RootPath = "/usr/lib64";
+            return;
+        }
+        if (OperatingSystem.IsMacOS())
+        {
+            throw new PlatformNotSupportedException("Can't autodetect FFmpeg install!");
         }
     }
 }

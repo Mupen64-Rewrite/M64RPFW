@@ -16,9 +16,11 @@ public partial class EmulatorViewModel : ObservableObject
     private readonly IFilePickerService _filePickerService;
     private readonly IWindowAccessService _windowAccessService;
     private readonly IViewDialogService _viewDialogService;
+    private readonly IFrameCaptureService _frameCaptureService;
 
     public EmulatorViewModel(IOpenGLContextService openGlContextService, IDispatcherService dispatcherService,
-        IFilePickerService filePickerService, IWindowAccessService windowAccessService, IViewDialogService viewDialogService)
+        IFilePickerService filePickerService, IWindowAccessService windowAccessService, IViewDialogService viewDialogService,
+        IFrameCaptureService frameCaptureService)
     {
         Instance = this;
         
@@ -27,6 +29,7 @@ public partial class EmulatorViewModel : ObservableObject
         _filePickerService = filePickerService;
         _windowAccessService = windowAccessService;
         _viewDialogService = viewDialogService;
+        _frameCaptureService = frameCaptureService;
 
         var version = Mupen64Plus.GetVersionInfo();
         Mupen64Plus.Log(Mupen64Plus.LogSources.App, MessageLevel.Info,

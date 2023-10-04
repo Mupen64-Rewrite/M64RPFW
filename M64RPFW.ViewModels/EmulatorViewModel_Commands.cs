@@ -4,6 +4,7 @@ using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Helpers;
 using M64RPFW.Models.Media.Encoder;
 using M64RPFW.Models.Settings;
+using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
 using M64RPFW.ViewModels.Messages;
 using static M64RPFW.Models.Types.Mupen64PlusTypes;
@@ -287,10 +288,17 @@ public partial class EmulatorViewModel
         {
             Mupen64Plus.AudioReceived += EncoderAudioReceived;
             Mupen64Plus.SampleRateChanged += EncoderSampleRateChanged;
+            _frameCaptureService.OnRender += EncoderVideoReceived;
         }
         Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Starting encoder...");
         Mupen64Plus.Encoder_Start(result.Path, null);
         Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Encoder initialized");
+    }
+
+    private void EncoderVideoReceived()
+    {
+        
+        _encoder?.ConsumeVideo(_frameCaptureService);
     }
 
     private unsafe void EncoderAudioReceived(void* data, ulong len)
@@ -317,6 +325,7 @@ public partial class EmulatorViewModel
         {
             Mupen64Plus.AudioReceived -= EncoderAudioReceived;
             Mupen64Plus.SampleRateChanged -= EncoderSampleRateChanged;
+            _frameCaptureService.OnRender -= EncoderVideoReceived;
         }
         
         Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Closing file...");
