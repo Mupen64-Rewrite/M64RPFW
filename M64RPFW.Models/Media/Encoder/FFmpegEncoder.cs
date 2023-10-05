@@ -84,9 +84,9 @@ public unsafe partial class FFmpegEncoder : IVideoEncoder
         _videoStream = vCodec != null ? new VideoStream(_fmtCtx, vCodec, _audioStream, config?.VideoOptions) : null;
     }
     
-    public void ConsumeVideo(int width, int height, ICaptureService readScreen)
+    public void ConsumeVideo(IFrameCaptureService readScreen)
     {
-        _videoStream?.ConsumeFrame(width, height, readScreen);
+        _videoStream?.ConsumeFrame(readScreen);
     }
 
     public void SetAudioSampleRate(int sampleRate)

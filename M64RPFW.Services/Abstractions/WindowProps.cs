@@ -1,8 +1,20 @@
 namespace M64RPFW.Services.Abstractions;
 
-public record struct WindowSize(double Width, double Height);
+public readonly record struct WindowSize(int Width, int Height)
+{
+    public override string ToString()
+    {
+        return $"{Width}x{Height}";
+    }
+}
 
-public record struct WindowPoint(double X, double Y);
+public readonly record struct WindowPoint(int X, int Y)
+{
+    public override string ToString()
+    {
+        return $"({X}, {Y})";
+    }
+}
 
 [Flags]
 public enum MouseButtonMask

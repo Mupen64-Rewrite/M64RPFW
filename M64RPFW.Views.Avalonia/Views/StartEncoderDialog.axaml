@@ -1,0 +1,33 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:M64RPFW.Views.Avalonia.Controls"
+        xmlns:ext="clr-namespace:M64RPFW.Views.Avalonia.Markup"
+        xmlns:vm="clr-namespace:M64RPFW.ViewModels;assembly=M64RPFW.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="M64RPFW.Views.Avalonia.Views.StartEncoderDialog"
+        x:DataType="vm:StartEncoderViewModel"
+        x:CompileBindings="True"
+        Title="StartEncoderDialog">
+    <DockPanel LastChildFill="True" Margin="{StaticResource ContentPadding}">
+        <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right" Orientation="Horizontal" Classes="dialog-btns">
+            <Button Content="{ext:Localize Ok}" IsDefault="True" Command="{Binding ReturnSuccessCommand}"/>
+            <Button Content="{ext:Localize Cancel}" Command="{Binding ReturnFailureCommand}"/>
+        </StackPanel>
+        <ScrollViewer>
+            <StackPanel Orientation="Vertical" Spacing="10">
+                <controls:FileBrowser CurrentPath="{Binding Path}"
+                                      PickerOptions="{Binding PickerOptions, Mode=OneTime}"
+                                      IsOpenDialog="False"/>
+                <Label Content="{ext:Localize VideoSize}"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <NumericUpDown Value="{Binding EncodeWidth}" Minimum="1" Increment="1" MinWidth="120" IsEnabled="{Binding !UseWindowSize}"/>
+                    <TextBlock Text="&#215;" VerticalAlignment="Center"/>
+                    <NumericUpDown Value="{Binding EncodeHeight}" Minimum="1" Increment="1" MinWidth="120" IsEnabled="{Binding !UseWindowSize}"/>
+                </StackPanel>
+                <CheckBox IsChecked="{Binding UseWindowSize}" Content="{ext:Localize UseCurrentWindowSize}"/>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

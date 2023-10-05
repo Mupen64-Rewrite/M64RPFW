@@ -2,7 +2,9 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Helpers;
+using M64RPFW.Models.Media.Encoder;
 using M64RPFW.Models.Settings;
+using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
 using M64RPFW.ViewModels.Messages;
 using static M64RPFW.Models.Types.Mupen64PlusTypes;
@@ -213,6 +215,22 @@ public partial class EmulatorViewModel
     }
     
     [RelayCommand(CanExecute = nameof(MupenIsActive))]
+    private void SetSpeedLimiter(bool value)
+    {
+        Mupen64Plus.CoreStateSet(CoreParam.SpeedLimiter, value ? 1 : 0);
+    }
+
+    #endregion
+
+    #region Encoder objects
+
+    private FFmpegEncoder? _encoder;
+
+    #endregion
+    
+    #region VCR/Encoder commands
+    
+    [RelayCommand(CanExecute = nameof(MupenIsActive))]
     private async void StartRecording()
     {
         var result = await _viewDialogService.ShowOpenMovieDialog(true);
@@ -251,11 +269,80 @@ public partial class EmulatorViewModel
         // toggle the current readonly state
         Mupen64Plus.VCR_DisableWrites = !Mupen64Plus.VCR_DisableWrites;
     }
-    
+
     [RelayCommand(CanExecute = nameof(MupenIsActive))]
-    private void SetSpeedLimiter(bool value)
+    private async void StartEncoder()
     {
-        Mupen64Plus.CoreStateSet(CoreParam.SpeedLimiter, value ? 1 : 0);
+        if (_encoder != null)
+            return;
+        
+        var result = await _viewDialogService.ShowStartEncoderDialog();
+        if (result == null)
+            return;
+
+        FFmpegConfig config = new FFmpegConfig();
+        config.VideoOptions.Add("video_size", $"{result.EncodeSize ?? _frameCaptureService.GetWindowSize()}");
+        
+
+        Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Creating encoder...");
+        try
+        {
+            _encoder = new FFmpegEncoder(result.Path, null);
+        }
+        catch (ArgumentException e)
+        {
+            await _viewDialogService.ShowExceptionDialog(e);
+            return;
+        }
+        Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Initializing audio hooks...");
+        _encoder.SetAudioSampleRate((int) Mupen64Plus.GetSampleRate());
+        unsafe
+        {
+            Mupen64Plus.AudioReceived += EncoderAudioReceived;
+            Mupen64Plus.SampleRateChanged += EncoderSampleRateChanged;
+            _frameCaptureService.OnRender += EncoderVideoReceived;
+        }
+        Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Starting encoder...");
+        Mupen64Plus.Encoder_Start(result.Path, null);
+        Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Encoder initialized");
+    }
+
+    private void EncoderVideoReceived()
+    {
+        _encoder?.ConsumeVideo(_frameCaptureService);
+    }
+
+    private unsafe void EncoderAudioReceived(void* data, ulong len)
+    {
+        _encoder?.ConsumeAudio(data, len);
+    }
+
+    private void EncoderSampleRateChanged(uint rate)
+    {
+        _encoder?.SetAudioSampleRate((int) rate);
+    }
+
+    [RelayCommand(CanExecute = nameof(MupenIsActive))]
+    private void StopEncoder()
+    {
+        if (_encoder == null)
+            return;
+        
+        Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Stopping encoder...");
+        Mupen64Plus.Encoder_Stop(false);
+
+        Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Cleaning up audio hooks...");
+        unsafe
+        {
+            Mupen64Plus.AudioReceived -= EncoderAudioReceived;
+            Mupen64Plus.SampleRateChanged -= EncoderSampleRateChanged;
+            _frameCaptureService.OnRender -= EncoderVideoReceived;
+        }
+        
+        Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Closing file...");
+        _encoder.Finish();
+        _encoder.Dispose();
+        Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Encoder shut down");
     }
 
     #endregion

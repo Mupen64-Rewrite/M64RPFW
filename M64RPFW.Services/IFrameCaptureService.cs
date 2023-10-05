@@ -5,7 +5,7 @@ namespace M64RPFW.Services;
 /// <summary>
 /// A service for capturing output.
 /// </summary>
-public interface ICaptureService
+public unsafe interface IFrameCaptureService
 {
     public WindowSize GetWindowSize();
 
@@ -14,5 +14,7 @@ public interface ICaptureService
     /// </summary>
     /// <param name="buffer">A buffer to contain the data.</param>
     /// <param name="linesize">The size of each line, in bytes.</param>
-    public void CaptureTo(Span<byte> buffer, uint linesize);
+    public void CaptureTo(void* buffer, uint linesize);
+
+    public event Action? OnRender;
 }

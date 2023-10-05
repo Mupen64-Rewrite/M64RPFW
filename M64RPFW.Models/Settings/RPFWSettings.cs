@@ -69,6 +69,9 @@ public class RPFWSettings : ITomlMetadataProvider
         public string StopMovie { get; set; } = "Ctrl+Alt+W";
         public string RestartMovie { get; set; } = "Ctrl+Alt+R";
         public string DisableWrites { get; set; } = "Alt+Shift+R";
+
+        public string StartEncoder { get; set; } = "Shift+F10";
+        public string StopEncoder { get; set; } = "Ctrl+Shift+F10";
     }
 
     public HotkeysSection Hotkeys { get; } = new();
