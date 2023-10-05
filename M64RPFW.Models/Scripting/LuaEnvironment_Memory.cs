@@ -1,5 +1,8 @@
+using System.Diagnostics;
 using M64RPFW.Models.Emulation;
+using M64RPFW.Models.Emulation.Helpers;
 using NLua;
+using static M64RPFW.Models.Types.Mupen64PlusTypes;
 
 // ReSharper disable UnusedMember.Local
 
@@ -12,46 +15,110 @@ public partial class LuaEnvironment
     [LuaFunction("memory.readbytesigned")]
     private sbyte ReadByteSigned(uint addr)
     {
-        return (sbyte) Mupen64Plus.RDRAM_Read8(addr);
+        try
+        {
+            return (sbyte) Mupen64Plus.RDRAM_Read8(addr);
+        }
+        catch (MupenException e)
+        {
+            if (e.ErrorCode != Error.InputNotFound)
+                throw;
+            return 0;
+        }
     }
 
     [LuaFunction("memory.readbyte")]
     private byte ReadByte(uint addr)
     {
-        return Mupen64Plus.RDRAM_Read8(addr);
+        try
+        {
+            return Mupen64Plus.RDRAM_Read8(addr);
+        }
+        catch (MupenException e)
+        {
+            if (e.ErrorCode != Error.InputNotFound)
+                throw;
+            return 0;
+        }
     }
 
     [LuaFunction("memory.readwordsigned")]
     private short ReadWordSigned(uint addr)
     {
-        return (short) Mupen64Plus.RDRAM_Read16(addr);
+        try
+        {
+            return (short) Mupen64Plus.RDRAM_Read16(addr);
+        }
+        catch (MupenException e)
+        {
+            if (e.ErrorCode != Error.InputNotFound)
+                throw;
+            return 0;
+        }
     }
 
     [LuaFunction("memory.readword")]
     private ushort ReadWord(uint addr)
     {
-        return Mupen64Plus.RDRAM_Read16(addr);
+        try
+        {
+            return Mupen64Plus.RDRAM_Read16(addr);
+        }
+        catch (MupenException e)
+        {
+            if (e.ErrorCode != Error.InputNotFound)
+                throw;
+            return 0;
+        }
     }
 
     [LuaFunction("memory.readdwordsigned")]
     private int ReadDwordSigned(uint addr)
     {
-        return (int) Mupen64Plus.RDRAM_Read32(addr);
+        try
+        {
+            return (int) Mupen64Plus.RDRAM_Read32(addr);
+        }
+        catch (MupenException e)
+        {
+            if (e.ErrorCode != Error.InputNotFound)
+                throw;
+            return 0;
+        }
     }
 
     [LuaFunction("memory.readdword")]
     private uint ReadDword(uint addr)
     {
-        return Mupen64Plus.RDRAM_Read32(addr);
+        try
+        {
+            return Mupen64Plus.RDRAM_Read32(addr);
+        }
+        catch (MupenException e)
+        {
+            if (e.ErrorCode != Error.InputNotFound)
+                throw;
+            return 0;
+        }
     }
 
     [LuaFunction("memory.readqwordsigned")]
     private LuaTable ReadQwordSigned(uint addr)
     {
         var table = (LuaTable) _lua.DoString("return {}")[0];
-        var value = Mupen64Plus.RDRAM_Read64(addr);
-        table[0] = (uint) (value >> 32);
-        table[1] = (uint) value;
+        try
+        {
+            var value = Mupen64Plus.RDRAM_Read64(addr);
+            table[0] = (uint) (value >> 32);
+            table[1] = (uint) value;
+        }
+        catch (MupenException e)
+        {
+            if (e.ErrorCode != Error.InputNotFound)
+                throw;
+            table[0] = 0;
+            table[1] = 0;
+        }
         return table;
     }
 
@@ -59,28 +126,38 @@ public partial class LuaEnvironment
     private LuaTable ReadQword(uint addr)
     {
         var table = (LuaTable) _lua.DoString("return {}")[0];
-        var value = Mupen64Plus.RDRAM_Read64(addr);
-        table[0] = (uint) (value >> 32);
-        table[1] = (uint) value;
+        try
+        {
+            var value = Mupen64Plus.RDRAM_Read64(addr);
+            table[0] = (uint) (value >> 32);
+            table[1] = (uint) value;
+        }
+        catch (MupenException e)
+        {
+            if (e.ErrorCode != Error.InputNotFound)
+                throw;
+            table[0] = 0;
+            table[1] = 0;
+        }
         return table;
     }
 
     #endregion
 
     #region Integer writes
-    
+
     [LuaFunction("memory.writebyte")]
     private void WriteByte(uint addr, byte val)
     {
         Mupen64Plus.RDRAM_Write8(addr, val);
     }
-    
+
     [LuaFunction("memory.writeword")]
     private void WriteWord(uint addr, ushort val)
     {
         Mupen64Plus.RDRAM_Write16(addr, val);
     }
-    
+
     [LuaFunction("memory.writedword")]
     private void WriteDword(uint addr, uint val)
     {

@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using M64RPFW.Models.Emulation.Helpers;
 using M64RPFW.Models.Helpers;
 using M64RPFW.Models.Types;
 using Silk.NET.SDL;
@@ -83,7 +84,7 @@ public static partial class Mupen64Plus
         };
     }
 
-    private static unsafe string GetErrorMessage(Mupen64PlusTypes.Error err)
+    public static unsafe string GetErrorMessage(Mupen64PlusTypes.Error err)
     {
         byte* str = _fnCoreErrorMessage(err);
         return CHelpers.DecodeString(str);
@@ -94,24 +95,7 @@ public static partial class Mupen64Plus
         if (err == Mupen64PlusTypes.Error.Success)
             return;
 
-        var errType = err switch
-        {
-            Mupen64PlusTypes.Error.NotInit => typeof(InvalidOperationException),
-            Mupen64PlusTypes.Error.AlreadyInit => typeof(InvalidOperationException),
-            Mupen64PlusTypes.Error.InvalidState => typeof(InvalidOperationException),
-            Mupen64PlusTypes.Error.Incompatible => typeof(InvalidOperationException),
-            Mupen64PlusTypes.Error.InputAssert => typeof(ArgumentException),
-            Mupen64PlusTypes.Error.InputInvalid => typeof(ArgumentException),
-            Mupen64PlusTypes.Error.InputNotFound => typeof(ArgumentException),
-            Mupen64PlusTypes.Error.WrongType => typeof(ArgumentException),
-            Mupen64PlusTypes.Error.PluginFail => typeof(ApplicationException),
-            Mupen64PlusTypes.Error.SystemFail => typeof(ApplicationException),
-            Mupen64PlusTypes.Error.Internal => typeof(ApplicationException),
-            Mupen64PlusTypes.Error.Files => typeof(IOException),
-            Mupen64PlusTypes.Error.NoMemory => typeof(OutOfMemoryException),
-            _ => typeof(ApplicationException)
-        };
-        throw (Exception) Activator.CreateInstance(errType, $"M64+ {GetErrorMessage(err)}")!;
+        throw new MupenException(err);
     }
 
     private static void OnLogMessage(IntPtr context, Mupen64PlusTypes.MessageLevel level, string message)

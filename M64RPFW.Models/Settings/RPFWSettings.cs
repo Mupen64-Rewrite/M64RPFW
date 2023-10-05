@@ -99,7 +99,10 @@ public class RPFWSettings : ITomlMetadataProvider
         else
         {
             string text = File.ReadAllText(CfgPath, Encoding.UTF8);
-            Instance = Toml.ToModel<RPFWSettings>(text, CfgPath);
+            Instance = Toml.ToModel<RPFWSettings>(text, CfgPath, new TomlModelOptions
+            {
+                IgnoreMissingProperties = true
+            });
         }
     }
 
