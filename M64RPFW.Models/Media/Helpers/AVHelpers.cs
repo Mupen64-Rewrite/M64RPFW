@@ -204,7 +204,8 @@ internal static unsafe class AVHelpers
     {
         // I would ideally like to avoid this
         var dataCopy = new byte_ptrArray4();
-        CHelpers.memcpy(&dataCopy, &frame->data, 4);
+        for (uint i = 0; i < 4; i++)
+            dataCopy[i] = frame->data[i];
 
         var linesizeCopy = new long_array4();
         for (uint i = 0; i < 4; i++)

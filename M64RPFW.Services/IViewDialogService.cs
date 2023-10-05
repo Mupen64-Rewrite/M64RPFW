@@ -18,12 +18,18 @@ public interface IViewDialogService
     Task ShowAdvancedSettingsDialog();
 
     /// <summary>
-    /// Prompts a dialog to open a movie.
+    /// Shows a dialog to open a movie.
     /// </summary>
     /// <param name="paramsEditable">If true, allows the user to set parameters.</param>
     /// <returns>The parameters of the movie.</returns>
     Task<OpenMovieDialogResult?> ShowOpenMovieDialog(bool paramsEditable);
 
+    /// <summary>
+    /// Shows a dialog to start the encoder.
+    /// </summary>
+    /// <returns>The parameters for the encoder.</returns>
+    Task<StartEncoderDialogResult?> ShowStartEncoderDialog();
+    
     /// <summary>
     /// Shows a dialog with a message and exception stack trace.
     /// </summary>

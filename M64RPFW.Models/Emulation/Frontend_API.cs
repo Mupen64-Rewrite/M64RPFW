@@ -15,7 +15,7 @@ public static partial class Mupen64Plus
     private static readonly VCRMsgFunc _vcrMsgFunc;
     private static readonly VCRStateCallback _vcrStateCallback;
 
-    private static GCHandle[] _callbackGCHandles;
+    private static IntPtr _libHandle;
 
     // Public API
     // ========================================================
@@ -30,6 +30,8 @@ public static partial class Mupen64Plus
         ResolveVcrFunctions();
         ResolveEncoderFunctions();
         ResolveRdramFunctions();
+
+        #region Install frontend callbacks
 
         _debugCallback = (context, level, message) =>
         {
@@ -58,20 +60,24 @@ public static partial class Mupen64Plus
             Marshal.GetFunctionPointerForDelegate(_frameCallback).ToPointer());
         ThrowForError(err);
 
-        _callbackGCHandles = new[]
-        {
-            GCHandle.Alloc(_debugCallback, GCHandleType.Normal),
-            GCHandle.Alloc(_stateCallback, GCHandleType.Normal),
-            GCHandle.Alloc(_frameCallback, GCHandleType.Normal),
-            GCHandle.Alloc(_vcrMsgFunc, GCHandleType.Normal),
-        };
+        #endregion
+
+        #region Install encoder callbacks
+
+        _sampleCallback = OnSample;
+        _rateChangedCallback = OnRateChanged;
+
+        err = _encoderSetSampleCallback(_sampleCallback);
+        ThrowForError(err);
+        err = _encoderSetRateChangedCallback(_rateChangedCallback);
+        ThrowForError(err);
+
+        #endregion
 
         _pluginDict = new Dictionary<Mupen64PlusTypes.PluginType, IntPtr>();
 
         AppDomain.CurrentDomain.ProcessExit += (_, _) =>
         {
-            foreach (var handle in _callbackGCHandles)
-                handle.Free();
 
             ConfigSaveFile();
 
@@ -152,7 +158,7 @@ public static partial class Mupen64Plus
 
     private static void OnStateChange(IntPtr context, Mupen64PlusTypes.CoreParam param, int newValue)
     {
-        StateChanged?.Invoke(null, new StateChangeEventArgs
+        StateChanged?.Invoke(new StateChangeEventArgs
         {
             Param = param,
             NewValue = newValue
@@ -161,7 +167,7 @@ public static partial class Mupen64Plus
 
     private static void OnVCRStateChange(Mupen64PlusTypes.VCRParam param, int newValue)
     {
-        VCRStateChanged?.Invoke(null, new VCRStateChangeEventArgs
+        VCRStateChanged?.Invoke(new VCRStateChangeEventArgs
         {
             Param = param,
             NewValue = newValue
@@ -170,7 +176,7 @@ public static partial class Mupen64Plus
 
     private static void OnFrameComplete(int frameIndex)
     {
-        FrameComplete?.Invoke(null, frameIndex);
+        FrameComplete?.Invoke(frameIndex);
     }
 
 #pragma warning restore CS8618
@@ -187,10 +193,10 @@ public static partial class Mupen64Plus
         public int NewValue { get; init; }
     }
 
-    public static event EventHandler<StateChangeEventArgs>? StateChanged;
+    public static event Action<StateChangeEventArgs>? StateChanged;
 
-    public static event EventHandler<VCRStateChangeEventArgs>? VCRStateChanged;
-    public static event EventHandler<int>? FrameComplete;
+    public static event Action<VCRStateChangeEventArgs>? VCRStateChanged;
+    public static event Action<int>? FrameComplete;
 
     #region Core Commands
 
@@ -631,5 +637,4 @@ public static partial class Mupen64Plus
         });
     }
 
-    private static IntPtr _libHandle;
 }

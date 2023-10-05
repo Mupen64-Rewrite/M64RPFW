@@ -19,7 +19,7 @@ public unsafe partial class FFmpegEncoder
         public VideoStream(AVFormatContext* fmtCtx, AVCodec* codec, FFmpegEncodeStream? syncStream, IDictionary<string, string>? config = null) : 
             base(fmtCtx, codec, StreamConfig, config)
         {
-            _sem = new SemaphoreSlim(0, 1);
+            _sem = new SemaphoreSlim(1, 1);
             _syncStream = syncStream;
 
             _frame1 = av_frame_alloc();
@@ -82,17 +82,20 @@ public unsafe partial class FFmpegEncoder
             AVHelpers.Dispose(ref _sws);
         }
 
-        public void ConsumeFrame(int width, int height, ICaptureService capture)
+        public void ConsumeFrame(IFrameCaptureService frameCapture)
         {
             // This part has to run synchronously when the new frame arrives
             _sem.Wait();
             try
             {
+                var size = frameCapture.GetWindowSize();
+                int width = (int) size.Width;
+                int height = (int) size.Height;
                 if (width != _codecCtx->width || height != _codecCtx->height)
                     throw new Exception("INTERNAL: width/height should match");
 
-                AVHelpers.AllocVideoFrame(_frame1, width, height, AVPixelFormat.AV_PIX_FMT_RGBA);
-                capture.CaptureTo(new Span<byte>(_frame1->data[0], _frame1->linesize[0] * _frame1->height), (uint) _frame1->linesize[0]);
+                AVHelpers.AllocVideoFrame(_frame1, width, height, AVPixelFormat.AV_PIX_FMT_RGB0);
+                frameCapture.CaptureTo(_frame1->data[0], (uint) _frame1->linesize[0]);
             }
             catch
             {

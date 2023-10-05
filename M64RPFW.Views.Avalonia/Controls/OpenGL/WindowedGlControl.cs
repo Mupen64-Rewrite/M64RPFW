@@ -15,11 +15,13 @@ using Silk.NET.SDL;
 using SkiaSharp;
 using SDL = Silk.NET.SDL;
 using static M64RPFW.Views.Avalonia.Controls.Helpers.SDLHelpers;
+using PixelFormat = Silk.NET.OpenGL.PixelFormat;
+using PixelType = Silk.NET.OpenGL.PixelType;
 using SysDrawing = System.Drawing;
 
 namespace M64RPFW.Views.Avalonia.Controls.OpenGL;
 
-public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
+public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService, IFrameCaptureService
 {
 
     internal SDL.Window* _sdlWin;
@@ -136,6 +138,7 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
     public void SwapBuffers()
     {
         SkiaRenderImpl();
+        OnRender?.Invoke();
         sdl.GLSwapWindow(_sdlWin);
         
         DateTime now = DateTime.Now;
@@ -150,6 +153,31 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
     {
         return 0;
     }
+
+    #endregion
+
+    #region IFrameCaptureService
+
+    public WindowSize GetWindowSize()
+    {
+        return new WindowSize(_realSize.Width, _realSize.Height);
+    }
+
+    public void CaptureTo(void* buffer, uint linesize)
+    {
+        int oldRowLength = _gl.GetInteger(GetPName.PackRowLength);
+        try
+        {
+            _gl.PixelStore(GLEnum.PackRowLength, (int) linesize / 4);
+            _gl.ReadPixels(0, 0, (uint) _realSize.Width, (uint) _realSize.Height, PixelFormat.Rgba, PixelType.UnsignedByte, buffer);
+        }
+        finally
+        {
+            _gl.PixelStore(PixelStoreParameter.PackRowLength, oldRowLength);
+        }
+    }
+
+    public event Action? OnRender;
 
     #endregion
 

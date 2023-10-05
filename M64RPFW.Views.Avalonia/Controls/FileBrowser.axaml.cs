@@ -90,8 +90,12 @@ public partial class FileBrowser : UserControl
 
         try
         {
+            string? dirName = Path.GetDirectoryName(CurrentPath);
+            // if there is no directory, this exception will just force the fallback
+            if (dirName == null)
+                throw new NullReferenceException();
             // try to get a known path first. if this fails, fall back to a known location. 
-            suggestedStartLocation = await provider.TryGetFolderFromPathAsync(Path.GetDirectoryName(CurrentPath)!);
+            suggestedStartLocation = await provider.TryGetFolderFromPathAsync(dirName);
         }
         catch
         {
@@ -121,9 +125,11 @@ public partial class FileBrowser : UserControl
             storageFile = await provider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
                 Title = PickerTitle,
-                SuggestedStartLocation = suggestedStartLocation
+                FileTypeChoices = PickerOptions?.Select(fpo => fpo.ToFilePickerFileType()).ToArray(),
+                SuggestedStartLocation = suggestedStartLocation,
+                SuggestedFileName = Path.GetFileName(CurrentPath),
+                ShowOverwritePrompt = true
             });
-
         }
         
         if (storageFile == null)

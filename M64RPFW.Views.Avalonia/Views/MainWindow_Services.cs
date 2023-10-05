@@ -21,10 +21,8 @@ public partial class MainWindow : IViewDialogService, ILuaInterfaceService
 
     public WindowSize GetWindowSize()
     {
-        return Dispatcher.UIThread.Invoke(() =>
-        {
-            return new WindowSize(GlControl.Bounds.Width, GlControl.Bounds.Height);
-        });
+        return Dispatcher.UIThread.Invoke(() => 
+            new WindowSize((int) GlControl.Bounds.Width, (int) GlControl.Bounds.Height));
     }
 
 
@@ -101,9 +99,16 @@ public partial class MainWindow : IViewDialogService, ILuaInterfaceService
 
     public Task<OpenMovieDialogResult?> ShowOpenMovieDialog(bool paramsEditable)
     {
-        OpenMovieDialog d = new();
+        var d = new OpenMovieDialog();
         d.ViewModel.IsEditable = paramsEditable;
         return d.ShowDialog<OpenMovieDialogResult?>(this);
+    }
+
+    public Task<StartEncoderDialogResult?> ShowStartEncoderDialog()
+    {
+        var d = new StartEncoderDialog();
+        return d.ShowDialog<StartEncoderDialogResult?>(this);
+
     }
 
     public Task ShowExceptionDialog(Exception e, string? msg = null)

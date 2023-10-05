@@ -116,6 +116,12 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
         get => Mupen64Plus.ConfigGet<bool>(MupenSettings.Core, "RandomizeInterrupt");
         set => SetMupenSetting(MupenSettings.Core, "RandomizeInterrupt", value);
     }
+    
+    public bool EnableOnScreenDisplay
+    {
+        get => Mupen64Plus.ConfigGet<bool>(MupenSettings.Core, "OnScreenDisplay");
+        set => SetMupenSetting(MupenSettings.Core, "OnScreenDisplay", value);
+    }
 
     #endregion
 
@@ -237,6 +243,18 @@ public sealed partial class SettingsViewModel : ObservableObject, IRecipient<Rom
     {
         get => RPFWSettings.Instance.Hotkeys.DisableWrites;
         set => SetRPFWSetting((inst, val) => inst.Hotkeys.DisableWrites = val, value);
+    }
+
+    public string StartEncoderHotkey
+    {
+        get => RPFWSettings.Instance.Hotkeys.StartEncoder;
+        set => SetRPFWSetting((inst, val) => inst.Hotkeys.StartEncoder = val, value);
+    }
+    
+    public string StopEncoderHotkey
+    {
+        get => RPFWSettings.Instance.Hotkeys.StopEncoder;
+        set => SetRPFWSetting((inst, val) => inst.Hotkeys.StopEncoder = val, value);
     }
 
     #endregion

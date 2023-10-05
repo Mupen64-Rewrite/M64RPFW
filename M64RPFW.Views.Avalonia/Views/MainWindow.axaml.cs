@@ -33,7 +33,7 @@ public partial class MainWindow : Window
         if (EmulatorViewModel.Instance == null)
         {
             DataContext = new EmulatorViewModel(GlControl, (App)Application.Current!,
-                FilePickerService.Instance, this, this);
+                FilePickerService.Instance, this, this, GlControl);
         }
         else
         {
