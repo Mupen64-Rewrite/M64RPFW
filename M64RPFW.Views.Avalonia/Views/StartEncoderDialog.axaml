@@ -16,11 +16,17 @@
             <Button Content="{ext:Localize Cancel}" Command="{Binding ReturnFailureCommand}"/>
         </StackPanel>
         <ScrollViewer>
-            <StackPanel>
+            <StackPanel Orientation="Vertical" Spacing="10">
                 <controls:FileBrowser CurrentPath="{Binding Path}"
                                       PickerOptions="{Binding PickerOptions, Mode=OneTime}"
                                       IsOpenDialog="False"/>
-                <TextBlock>TODO: more FFmpeg settings here</TextBlock>
+                <Label Content="{ext:Localize VideoSize}"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <NumericUpDown Value="{Binding EncodeWidth}" Minimum="1" Increment="1" MinWidth="120" IsEnabled="{Binding !UseWindowSize}"/>
+                    <TextBlock Text="&#215;" VerticalAlignment="Center"/>
+                    <NumericUpDown Value="{Binding EncodeHeight}" Minimum="1" Increment="1" MinWidth="120" IsEnabled="{Binding !UseWindowSize}"/>
+                </StackPanel>
+                <CheckBox IsChecked="{Binding UseWindowSize}" Content="{ext:Localize UseCurrentWindowSize}"/>
             </StackPanel>
         </ScrollViewer>
     </DockPanel>

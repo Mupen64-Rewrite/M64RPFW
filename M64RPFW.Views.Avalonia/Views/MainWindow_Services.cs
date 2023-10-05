@@ -21,10 +21,8 @@ public partial class MainWindow : IViewDialogService, ILuaInterfaceService
 
     public WindowSize GetWindowSize()
     {
-        return Dispatcher.UIThread.Invoke(() =>
-        {
-            return new WindowSize(GlControl.Bounds.Width, GlControl.Bounds.Height);
-        });
+        return Dispatcher.UIThread.Invoke(() => 
+            new WindowSize((int) GlControl.Bounds.Width, (int) GlControl.Bounds.Height));
     }
 
 

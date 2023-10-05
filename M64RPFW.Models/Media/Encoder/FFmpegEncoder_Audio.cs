@@ -182,7 +182,7 @@ public unsafe partial class FFmpegEncoder
                 catch (AVException e)
                 {
                     // HACK: FFmpeg's own AAC encoder kinda sucks, so we ignore it
-                    Mupen64Plus.Log(Mupen64Plus.LogSources.App, Mupen64PlusTypes.MessageLevel.Warning, "Encoding failed ({})", e.Message);
+                    Mupen64Plus.Log(Mupen64Plus.LogSources.App, Mupen64PlusTypes.MessageLevel.Warning, $"Encoding failed ({e.Message})");
                 }
             }
             finally

@@ -280,8 +280,20 @@ public partial class EmulatorViewModel
         if (result == null)
             return;
 
+        FFmpegConfig config = new FFmpegConfig();
+        config.VideoOptions.Add("video_size", $"{result.EncodeSize ?? _frameCaptureService.GetWindowSize()}");
+        
+
         Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Creating encoder...");
-        _encoder = new FFmpegEncoder(result.Path, null);
+        try
+        {
+            _encoder = new FFmpegEncoder(result.Path, null);
+        }
+        catch (ArgumentException e)
+        {
+            await _viewDialogService.ShowExceptionDialog(e);
+            return;
+        }
         Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Initializing audio hooks...");
         _encoder.SetAudioSampleRate((int) Mupen64Plus.GetSampleRate());
         unsafe
@@ -297,7 +309,6 @@ public partial class EmulatorViewModel
 
     private void EncoderVideoReceived()
     {
-        
         _encoder?.ConsumeVideo(_frameCaptureService);
     }
 
