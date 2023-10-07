@@ -229,45 +229,17 @@ public partial class LuaEnvironment
     [LuaFunction("d2d.gdip_fillpolygona")]
     private void GdiPlusFillPolygonA(LuaTable pointsTable, byte alpha, byte red, byte green, byte blue)
     {
-        // NLua API isn't good enough: we need KeraLua
-        KeraLua.Lua state = _lua.State!;
-        _lua.Push(pointsTable);
-
-        // Utility functions (that restore the stack)
-        long GetLength()
+        long length = _lua.GetLength(pointsTable);
+        var points = new SKPoint[length];
+        
+        for (long i = 0; i < length; i++)
         {
-            state.PushLength(-1);
-            var res = state.ToInteger(-1);
-            state.Pop(1);
-            return res;
+            // Lua uses 1-indexed arrays, so we add 1
+            var luaPoint = pointsTable.GetTable(i + 1);
+            // also it uses doubles for points
+            points[i] = new SKPoint((float) luaPoint.GetNumber(0), (float) luaPoint.GetNumber(1));
         }
-
-        SKPoint GetPoint(long key)
-        {
-            // stack = [table, table[key]]
-            state.PushInteger(key);
-            state.GetTable(-2);
-
-            // stack = [table, table[key], table[key][1], table[key][2]]
-            state.GetInteger(-1, 1);
-            state.GetInteger(-2, 2);
-
-            var res = new SKPoint((float) state.ToNumber(-2), (float) state.ToNumber(-1));
-
-            state.Pop(3);
-            return res;
-        }
-
-        var points = new List<SKPoint>();
-
-        long len = GetLength();
-        for (long i = 1; i <= len; i++)
-        {
-            points.Add(GetPoint(i));
-        }
-        // All local functions restore the stack, so we need only pop the table 
-        state.Pop(1);
-
+        
         using var path = new SKPath();
         path.AddPoly(points.ToArray());
 

@@ -26,22 +26,45 @@ public static class LuaExtensions
         return value;
     }
 
-    public static LuaTable NewUnnamedTable(this Lua lua)
+    public static LuaTable NewUnnamedTable(this Lua nLua)
     {
-        return (LuaTable) lua.DoString("return {}")[0];
+        nLua.State.NewTable();
+        return (LuaTable) nLua.Pop();
     }
 
-    public static long GetLength(this Lua lua, LuaTable table)
+    public static long GetLength(this Lua nLua, LuaTable table)
     {
-        var luaState = lua.State;
+        var lua = nLua.State;
 
-        luaState.CheckStack(2, "Can't check table length");
+        lua.CheckStack(2, "Can't check table length");
         
-        lua.Push(table);
-        luaState.PushLength(-1);
-        long result = luaState.ToInteger(-1);
+        nLua.Push(table);
+        lua.PushLength(-1);
+        long result = lua.ToInteger(-1);
         
-        luaState.Pop(2);
+        lua.Pop(2);
         return result;
+    }
+    
+    /// <summary>
+    /// Syntax sugar to get a table from another table.
+    /// </summary>
+    /// <param name="table">The table to check</param>
+    /// <param name="key">The key to use</param>
+    /// <returns>The value at <c>table[key]</c></returns>
+    public static LuaTable GetTable(this LuaTable table, object key)
+    {
+        return (LuaTable) table[key];
+    }
+    
+    /// <summary>
+    /// Syntax sugar to get a number from a table.
+    /// </summary>
+    /// <param name="table">The table to check</param>
+    /// <param name="key">The key to use</param>
+    /// <returns>The value at <c>table[key]</c></returns>
+    public static double GetNumber(this LuaTable table, object key)
+    {
+        return (double) table[key];
     }
 }
