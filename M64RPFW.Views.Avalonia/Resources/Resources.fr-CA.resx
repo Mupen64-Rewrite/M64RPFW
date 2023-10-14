@@ -216,4 +216,22 @@
     <data name="RomBrowserRecursive" xml:space="preserve">
         <value>Recherche récursive</value>
     </data>
+    <data name="RomGoodName" xml:space="preserve">
+        <value>Nom</value>
+    </data>
+    <data name="FileName" xml:space="preserve">
+        <value>Nom de fichier</value>
+    </data>
+    <data name="OutputSize" xml:space="preserve">
+        <value>Taille de vidéo</value>
+    </data>
+    <data name="UseCurrentWindowSize" xml:space="preserve">
+        <value>Utiliser la taille actuelle de la fenêtre</value>
+    </data>
+    <data name="EnableOnScreenDisplay" xml:space="preserve">
+        <value>(Dés)activer l'affichage à l'écran</value>
+    </data>
+    <data name="CloseAllLuaInstances" xml:space="preserve">
+        <value>Fermer tout</value>
+    </data>
 </root>

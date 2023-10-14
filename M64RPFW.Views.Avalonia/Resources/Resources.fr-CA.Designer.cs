@@ -434,5 +434,41 @@ namespace M64RPFW.Views.Avalonia.Resources {
                 return ResourceManager.GetString("RomBrowserRecursive", resourceCulture);
             }
         }
+        
+        internal static string RomGoodName {
+            get {
+                return ResourceManager.GetString("RomGoodName", resourceCulture);
+            }
+        }
+        
+        internal static string FileName {
+            get {
+                return ResourceManager.GetString("FileName", resourceCulture);
+            }
+        }
+        
+        internal static string OutputSize {
+            get {
+                return ResourceManager.GetString("OutputSize", resourceCulture);
+            }
+        }
+        
+        internal static string UseCurrentWindowSize {
+            get {
+                return ResourceManager.GetString("UseCurrentWindowSize", resourceCulture);
+            }
+        }
+        
+        internal static string EnableOnScreenDisplay {
+            get {
+                return ResourceManager.GetString("EnableOnScreenDisplay", resourceCulture);
+            }
+        }
+        
+        internal static string CloseAllLuaInstances {
+            get {
+                return ResourceManager.GetString("CloseAllLuaInstances", resourceCulture);
+            }
+        }
     }
 }

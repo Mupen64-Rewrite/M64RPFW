@@ -9,7 +9,7 @@
         x:Class="M64RPFW.Views.Avalonia.Views.StartEncoderDialog"
         x:DataType="vm:StartEncoderViewModel"
         x:CompileBindings="True"
-        Title="StartEncoderDialog">
+        Title="{ext:Localize StartEncoder}">
     <DockPanel LastChildFill="True" Margin="{StaticResource ContentPadding}">
         <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right" Orientation="Horizontal" Classes="dialog-btns">
             <Button Content="{ext:Localize Ok}" IsDefault="True" Command="{Binding ReturnSuccessCommand}"/>
@@ -20,8 +20,8 @@
                 <controls:FileBrowser CurrentPath="{Binding Path}"
                                       PickerOptions="{Binding PickerOptions, Mode=OneTime}"
                                       IsOpenDialog="False"/>
-                <Label Content="{ext:Localize VideoSize}"/>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Label Content="{ext:Localize OutputSize}"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="20">
                     <NumericUpDown Value="{Binding EncodeWidth}" Minimum="1" Increment="1" MinWidth="120" IsEnabled="{Binding !UseWindowSize}"/>
                     <TextBlock Text="&#215;" VerticalAlignment="Center"/>
                     <NumericUpDown Value="{Binding EncodeHeight}" Minimum="1" Increment="1" MinWidth="120" IsEnabled="{Binding !UseWindowSize}"/>

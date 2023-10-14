@@ -227,4 +227,13 @@
     <data name="FileName" xml:space="preserve">
         <value>Filename</value>
     </data>
+    <data name="OutputSize" xml:space="preserve">
+        <value>Output Size</value>
+    </data>
+    <data name="UseCurrentWindowSize" xml:space="preserve">
+        <value>Use current window size</value>
+    </data>
+    <data name="EnableOnScreenDisplay" xml:space="preserve">
+        <value>Enable on-screen display</value>
+    </data>
 </root>
