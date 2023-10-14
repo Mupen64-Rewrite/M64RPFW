@@ -6,7 +6,7 @@ namespace M64RPFW.Models.Scripting;
 
 public partial class LuaEnvironment
 {
-    [LuaFunction("wgui.info")]
+    [LibFunction("wgui.info")]
     private LuaTable GetWindowSize()
     {
         var table = _lua.NewUnnamedTable();
@@ -16,7 +16,7 @@ public partial class LuaEnvironment
         return table;
     }
 
-    [LuaFunction("wgui.resize")]
+    [LibFunction("wgui.resize")]
     private void SetWindowSize(int width, int height)
     {
         _luaInterfaceService.SizeToFit(new WindowSize(width, height));

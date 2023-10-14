@@ -8,7 +8,7 @@ namespace M64RPFW.Models.Scripting;
 
 public partial class LuaEnvironment
 {
-    [LuaFunction("input.get")]
+    [LibFunction("input.get")]
     private LuaTable GetInput()
     {
         var table = _lua.NewUnnamedTable();

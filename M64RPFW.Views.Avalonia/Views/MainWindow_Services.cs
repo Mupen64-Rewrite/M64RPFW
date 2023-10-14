@@ -127,6 +127,8 @@ public partial class MainWindow : IViewDialogService, ILuaInterfaceService
 
     private INativeWindowMouseHandler _mouseHandler;
 
+    // This is an ugly platform-specific workaround for
+    // https://github.com/AvaloniaUI/Avalonia/issues/5256
     public WindowPoint PointerPosition => _mouseHandler.Position.ToWindowPoint();
     public MouseButtonMask PointerButtons => _mouseHandler.ButtonMask;
     public event EventHandler<SkiaRenderEventArgs>? OnSkiaRender;

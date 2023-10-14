@@ -16,9 +16,9 @@ namespace M64RPFW.Models.Scripting;
 public partial class LuaEnvironment : IDisposable
 {
     [AttributeUsage(AttributeTargets.Method)]
-    private class LuaFunctionAttribute : Attribute
+    private class LibFunctionAttribute : Attribute
     {
-        public LuaFunctionAttribute(string path)
+        public LibFunctionAttribute(string path)
         {
             Path = path;
         }
@@ -101,7 +101,7 @@ public partial class LuaEnvironment : IDisposable
     }
     
     /// <summary>
-    /// Registers all functions tagged with <see cref="LuaFunctionAttribute"/>.
+    /// Registers all functions tagged with <see cref="LibFunctionAttribute"/>.
     /// </summary>
     private void RegisterTaggedFunctions()
     {
@@ -110,7 +110,7 @@ public partial class LuaEnvironment : IDisposable
         var tables = new SortedDictionary<string, List<(string src, MethodInfo name)>>();
         foreach (var method in typeof(LuaEnvironment).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic))
         {
-            if (method.GetCustomAttribute<LuaFunctionAttribute>() is not { } attr)
+            if (method.GetCustomAttribute<LibFunctionAttribute>() is not { } attr)
                 continue;
 
             int splitPoint = attr.Path.LastIndexOf('.');
@@ -246,7 +246,7 @@ public partial class LuaEnvironment : IDisposable
     {
     }
 
-    [LuaFunction("print")]
+    [LibFunction("print")]
     private void Print(object? value)
     {
         var formatted = value switch
@@ -258,7 +258,7 @@ public partial class LuaEnvironment : IDisposable
 
         _luaWindowService.Print(formatted);
     }
-    [LuaFunction("stop")]
+    [LibFunction("stop")]
     private void Stop()
     {
         _lua.State.Error("Execution terminated via stop()");

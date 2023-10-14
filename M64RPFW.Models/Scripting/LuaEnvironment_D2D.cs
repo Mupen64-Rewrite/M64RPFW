@@ -19,7 +19,7 @@ public partial class LuaEnvironment
     private int _textAntialiasMode;
     private readonly Dictionary<string, SKImage> _imageDict = new();
     
-    [LuaFunction("d2d.fill_rectangle")]
+    [LibFunction("d2d.fill_rectangle")]
     private void FillRectangle(float x, float y, float right, float bottom, float red, float green, float blue,
         float alpha)
     {
@@ -30,7 +30,7 @@ public partial class LuaEnvironment
         _skCanvas?.DrawRect(x, y, right - x, bottom - y, paint);
     }
 
-    [LuaFunction("d2d.draw_rectangle")]
+    [LibFunction("d2d.draw_rectangle")]
     private void DrawRectangle(float x, float y, float right, float bottom, float red, float green, float blue,
         float alpha, float thickness)
     {
@@ -43,7 +43,7 @@ public partial class LuaEnvironment
         _skCanvas?.DrawRect(x, y, right - x, bottom - y, paint);
     }
 
-    [LuaFunction("d2d.fill_ellipse")]
+    [LibFunction("d2d.fill_ellipse")]
     private void FillEllipse(float x, float y, float radiusX, float radiusY, float red, float green, float blue,
         float alpha)
     {
@@ -54,7 +54,7 @@ public partial class LuaEnvironment
         _skCanvas?.DrawOval(x, y, radiusX, radiusY, skPaint);
     }
 
-    [LuaFunction("d2d.draw_ellipse")]
+    [LibFunction("d2d.draw_ellipse")]
     private void DrawEllipse(float x, float y, float radiusX, float radiusY, float red, float green, float blue,
         float alpha, float thickness)
     {
@@ -67,7 +67,7 @@ public partial class LuaEnvironment
         _skCanvas?.DrawOval(x, y, radiusX, radiusY, paint);
     }
 
-    [LuaFunction("d2d.draw_line")]
+    [LibFunction("d2d.draw_line")]
     private void DrawLine(float x0, float y0, float x1, float y1, float red, float green, float blue, float alpha,
         float thickness)
     {
@@ -81,13 +81,13 @@ public partial class LuaEnvironment
     }
 
 
-    [LuaFunction("d2d.set_text_antialias_mode")]
+    [LibFunction("d2d.set_text_antialias_mode")]
     private void SetTextAntialiasMode(int mode)
     {
         _textAntialiasMode = mode;
     }
 
-    [LuaFunction("d2d.draw_text")]
+    [LibFunction("d2d.draw_text")]
     private void DrawText(float x, float y, float right, float bottom, float red, float green, float blue,
         float alpha, string text, string fontName, float fontSize, int fontWeight, int fontStyle,
         int horizontalAlignment, int verticalAlignment, int options)
@@ -164,7 +164,7 @@ public partial class LuaEnvironment
         });
     }
 
-    [LuaFunction("d2d.get_text_size")]
+    [LibFunction("d2d.get_text_size")]
     private LuaTable GetTextSize(string text, string fontName, float fontSize, float maximumWidth, float maximumHeight)
     {
         var block = new TextBlock
@@ -184,7 +184,7 @@ public partial class LuaEnvironment
         return table;
     }
 
-    [LuaFunction("d2d.push_clip")]
+    [LibFunction("d2d.push_clip")]
     private void PushClip(float x, float y, float right, float bottom)
     {
         if (_skCanvas == null)
@@ -194,13 +194,13 @@ public partial class LuaEnvironment
         _skCanvas.ClipRect(SKRect.Create(x, y, right - x, bottom - y));
     }
 
-    [LuaFunction("d2d.pop_clip")]
+    [LibFunction("d2d.pop_clip")]
     private void PopClip()
     {
         _skCanvas?.Restore();
     }
 
-    [LuaFunction("d2d.fill_rounded_rectangle")]
+    [LibFunction("d2d.fill_rounded_rectangle")]
     private void FillRoundedRectangle(float x, float y, float right, float bottom, float radiusX, float radiusY,
         float red, float green, float blue,
         float alpha)
@@ -212,7 +212,7 @@ public partial class LuaEnvironment
         _skCanvas?.DrawRoundRect(x, y, right - x, bottom - y, radiusX, radiusY, paint);
     }
 
-    [LuaFunction("d2d.draw_rounded_rectangle")]
+    [LibFunction("d2d.draw_rounded_rectangle")]
     private void DrawRoundedRectangle(float x, float y, float right, float bottom, float radiusX, float radiusY,
         float red, float green, float blue,
         float alpha, float thickness)
@@ -226,7 +226,7 @@ public partial class LuaEnvironment
         _skCanvas?.DrawRoundRect(x, y, right - x, bottom - y, radiusX, radiusY, paint);
     }
 
-    [LuaFunction("d2d.gdip_fillpolygona")]
+    [LibFunction("d2d.gdip_fillpolygona")]
     private void GdiPlusFillPolygonA(LuaTable pointsTable, byte alpha, byte red, byte green, byte blue)
     {
         long length = _lua.GetLength(pointsTable);
@@ -252,7 +252,7 @@ public partial class LuaEnvironment
     }
 
 
-    [LuaFunction("d2d.load_image")]
+    [LibFunction("d2d.load_image")]
     private void LoadImage(string path, string identifier)
     {
         if (_imageDict.ContainsKey(identifier))
@@ -261,7 +261,7 @@ public partial class LuaEnvironment
         _imageDict.Add(identifier, image);
     }
 
-    [LuaFunction("d2d.free_image")]
+    [LibFunction("d2d.free_image")]
     private void FreeImage(string identifier)
     {
         if (!_imageDict.Remove(identifier, out var image))
@@ -270,7 +270,7 @@ public partial class LuaEnvironment
         image.Dispose();
     }
 
-    [LuaFunction("d2d.draw_image")]
+    [LibFunction("d2d.draw_image")]
     private void DrawImage(float destinationX, float destinationY, float destinationRight, float destinationBottom, float sourceX,
         float sourceY, float sourceRight, float sourceBottom,
         string identifier, float opacity, int interpolation)
@@ -291,7 +291,7 @@ public partial class LuaEnvironment
             paint);
     }
 
-    [LuaFunction("d2d.get_image_info")]
+    [LibFunction("d2d.get_image_info")]
     private LuaTable GetImageInfo(string identifier)
     {
         if (!_imageDict.TryGetValue(identifier, out var image))

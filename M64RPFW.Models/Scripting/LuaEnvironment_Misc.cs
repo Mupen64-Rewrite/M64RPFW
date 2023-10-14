@@ -7,19 +7,19 @@ namespace M64RPFW.Models.Scripting;
 
 public partial class LuaEnvironment
 {
-    [LuaFunction("savestate.savefile")]
+    [LibFunction("savestate.savefile")]
     private void SaveToFile(string path)
     {
         Mupen64Plus.SaveStateToFile(path);
     }
 
-    [LuaFunction("savestate.loadfile")]
+    [LibFunction("savestate.loadfile")]
     private void LoadFromFile(string path)
     {
         Mupen64Plus.LoadStateFromFile(path);
     }
     
-    [LuaFunction("ioHelper.filediag")]
+    [LibFunction("ioHelper.filediag")]
     private string ShowFileDialog(string filter, int type)
     {
         return type switch
