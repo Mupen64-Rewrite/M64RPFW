@@ -287,7 +287,7 @@ public partial class EmulatorViewModel
         Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Creating encoder...");
         try
         {
-            _encoder = new FFmpegEncoder(result.Path, null);
+            _encoder = new FFmpegEncoder(result.Path, null, config);
         }
         catch (ArgumentException e)
         {
@@ -343,6 +343,8 @@ public partial class EmulatorViewModel
         _encoder.Finish();
         _encoder.Dispose();
         Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Encoder shut down");
+
+        _encoder = null;
     }
 
     #endregion
