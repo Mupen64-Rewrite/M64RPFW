@@ -287,7 +287,7 @@ public partial class EmulatorViewModel
         Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Creating encoder...");
         try
         {
-            _encoder = new FFmpegEncoder(result.Path, null);
+            _encoder = new FFmpegEncoder(result.Path, null, config);
         }
         catch (ArgumentException e)
         {
