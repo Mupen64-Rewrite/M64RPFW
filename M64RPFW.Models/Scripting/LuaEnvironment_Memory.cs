@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Emulation.Helpers;
+using M64RPFW.Models.Scripting.Extensions;
 using NLua;
 using static M64RPFW.Models.Types.Mupen64PlusTypes;
 
@@ -105,7 +106,7 @@ public partial class LuaEnvironment
     [LibFunction("memory.readqwordsigned")]
     private LuaTable ReadQwordSigned(uint addr)
     {
-        var table = (LuaTable) _lua.DoString("return {}")[0];
+        var table = _lua.NewUnnamedTable();
         try
         {
             var value = Mupen64Plus.RDRAM_Read64(addr);
@@ -125,7 +126,7 @@ public partial class LuaEnvironment
     [LibFunction("memory.readqword")]
     private LuaTable ReadQword(uint addr)
     {
-        var table = (LuaTable) _lua.DoString("return {}")[0];
+        var table = _lua.NewUnnamedTable();
         try
         {
             var value = Mupen64Plus.RDRAM_Read64(addr);

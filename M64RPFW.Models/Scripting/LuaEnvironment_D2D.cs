@@ -232,16 +232,17 @@ public partial class LuaEnvironment
         long length = _lua.GetLength(pointsTable);
         var points = new SKPoint[length];
         
-        for (long i = 0; i < length; i++)
+        _lua.IteratePointList(pointsTable, (index, x, y) =>
         {
-            // Lua uses 1-indexed arrays, so we add 1
-            var luaPoint = pointsTable.GetTable(i + 1);
-            // also it uses doubles for points
-            points[i] = new SKPoint((float) luaPoint.GetNumber(0), (float) luaPoint.GetNumber(1));
-        }
+            points[index - 1] = new SKPoint
+            {
+                X = (float) x,
+                Y = (float) y
+            };
+        });
         
         using var path = new SKPath();
-        path.AddPoly(points.ToArray());
+        path.AddPoly(points);
 
         using var paint = new SKPaint
         {
