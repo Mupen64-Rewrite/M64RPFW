@@ -9,7 +9,9 @@
         x:Class="M64RPFW.Views.Avalonia.Views.StartEncoderDialog"
         x:DataType="vm:StartEncoderViewModel"
         x:CompileBindings="True"
-        Title="{ext:Localize StartEncoder}">
+        Title="{ext:Localize StartEncoder}"
+        Width="400"
+        Height="300">
     <DockPanel LastChildFill="True" Margin="{StaticResource ContentPadding}">
         <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right" Orientation="Horizontal" Classes="dialog-btns">
             <Button Content="{ext:Localize Ok}" IsDefault="True" Command="{Binding ReturnSuccessCommand}"/>

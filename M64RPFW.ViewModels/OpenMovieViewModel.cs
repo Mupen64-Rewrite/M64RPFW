@@ -25,7 +25,7 @@ public partial class OpenMovieViewModel : ObservableObject
 
     partial void OnPathChanged(string value)
     {
-        if (IsEditable)
+        if (IsEditable || !File.Exists(value))
             return;
         
         // Load existing info (this might be slow depending on disk speed, but...)

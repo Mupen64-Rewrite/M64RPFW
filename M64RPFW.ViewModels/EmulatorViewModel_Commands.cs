@@ -92,6 +92,10 @@ public partial class EmulatorViewModel
     [RelayCommand(CanExecute = nameof(MupenIsStopped))]
     private async Task OpenRomFromPath(string path)
     {
+        if (_emuThread is { IsAlive: true })
+        {
+            return;
+        }
         WeakReferenceMessenger.Default.Send(new RomLoadingMessage(path));
 
         var loadTaskSource = new TaskCompletionSource();
