@@ -14,11 +14,11 @@ namespace M64RPFW.Models.Scripting;
 public partial class LuaEnvironment
 {
     private const int TextLayoutCacheLimit = 1000;
-    
+
     private readonly ClassicLru<TextLayoutParameters, TextBlock> _textLayoutCache = new(TextLayoutCacheLimit);
     private int _textAntialiasMode;
     private readonly Dictionary<string, SKImage> _imageDict = new();
-    
+
     [LibFunction("d2d.fill_rectangle")]
     private void FillRectangle(float x, float y, float right, float bottom, float red, float green, float blue,
         float alpha)
@@ -94,7 +94,7 @@ public partial class LuaEnvironment
     {
         if (_skCanvas == null)
             return;
-        
+
         // Cache laid-out text blocks. Unfortunately, I have to key with
         // colour, though I wish I didn't need to.
         var cacheKey = new TextLayoutParameters(
@@ -108,35 +108,37 @@ public partial class LuaEnvironment
             Color: SkiaExtensions.ColorFromFloats(red, green, blue, alpha)
         );
         var block = _textLayoutCache.GetOrAdd(cacheKey, key =>
-        {
-            var block = new TextBlock
             {
-                MaxWidth = key.MaxWidth,
-                Alignment = key.HorizontalAlignment switch
+                var block = new TextBlock
                 {
-                    0 => TextAlignment.Left,
-                    1 => TextAlignment.Right,
-                    2 => TextAlignment.Center,
-                    _ => throw new ArgumentException("Invalid horizontal alignment")
-                },
-            };
-            block.AddText(text, new Style
-            {
-                FontFamily = key.FontName,
-                FontSize = key.FontSize,
-                FontWeight = key.FontWeight,
-                FontItalic = key.FontStyle switch
-                {
-                    0 => false,
-                    1 => true,
-                    2 => true, // oblique != italic sometimes, but oh well
-                    _ => throw new ArgumentException("Invalid font italic")
-                },
-                TextColor = key.Color
-            });
-            return block;
-        });
-        
+                    MaxWidth = key.MaxWidth,
+                    Alignment = key.HorizontalAlignment switch
+                    {
+                        0 => TextAlignment.Left,
+                        1 => TextAlignment.Right,
+                        2 => TextAlignment.Center,
+                        _ => throw new ArgumentException("Invalid horizontal alignment")
+                    },
+                };
+                block.AddText(text, new Style
+                    {
+                        FontFamily = key.FontName,
+                        FontSize = key.FontSize,
+                        FontWeight = key.FontWeight,
+                        FontItalic = key.FontStyle switch
+                        {
+                            0 => false,
+                            1 => true,
+                            2 => true, // oblique != italic sometimes, but oh well
+                            _ => throw new ArgumentException("Invalid font italic")
+                        },
+                        TextColor = key.Color
+                    }
+                );
+                return block;
+            }
+        );
+
         // Vertical alignment. This only changes the position I render the text
         // from, so it doesn't need to be cached.
         float realY = verticalAlignment switch
@@ -152,15 +154,16 @@ public partial class LuaEnvironment
         };
 
         block.Paint(_skCanvas, new SKPoint(x, realY), new TextPaintOptions
-        {
-            Edging = _textAntialiasMode switch
             {
-                1 => SKFontEdging.SubpixelAntialias,
-                2 => SKFontEdging.Antialias,
-                3 => SKFontEdging.Alias,
-                _ => SKFontEdging.SubpixelAntialias
+                Edging = _textAntialiasMode switch
+                {
+                    1 => SKFontEdging.SubpixelAntialias,
+                    2 => SKFontEdging.Antialias,
+                    3 => SKFontEdging.Alias,
+                    _ => SKFontEdging.SubpixelAntialias
+                }
             }
-        });
+        );
     }
 
     [LibFunction("d2d.get_text_size")]
@@ -172,10 +175,11 @@ public partial class LuaEnvironment
             MaxHeight = maximumHeight
         };
         block.AddText(text, new Style
-        {
-            FontFamily = fontName,
-            FontSize = fontSize
-        });
+            {
+                FontFamily = fontName,
+                FontSize = fontSize
+            }
+        );
 
         var table = _lua.NewUnnamedTable();
         table["width"] = block.MeasuredWidth;
@@ -230,16 +234,17 @@ public partial class LuaEnvironment
     {
         long length = _lua.GetLength(pointsTable);
         var points = new SKPoint[length];
-        
+
         _lua.IteratePointList(pointsTable, (index, x, y) =>
-        {
-            points[index - 1] = new SKPoint
             {
-                X = (float) x,
-                Y = (float) y
-            };
-        });
-        
+                points[index - 1] = new SKPoint
+                {
+                    X = (float) x,
+                    Y = (float) y
+                };
+            }
+        );
+
         using var path = new SKPath();
         path.AddPoly(points);
 
@@ -277,18 +282,24 @@ public partial class LuaEnvironment
     {
         if (!_imageDict.TryGetValue(identifier, out var image))
             throw new ArgumentException("Identifier does not exist");
-
-        // This complicated setup simply multiplies the alpha component by `opacity`.
-        // ==========================================================================
         using var paint = new SKPaint
         {
             FilterQuality = interpolation == 1 ? SKFilterQuality.Medium : SKFilterQuality.None,
-            MaskFilter = SKMaskFilter.CreateClip((byte) (opacity * byte.MaxValue), (byte) (opacity * byte.MaxValue))
+            // multiply alpha by opacity. (@formatter:off)
+            ColorFilter = SKColorFilter.CreateColorMatrix(new []
+            {
+               1.0f,  0.0f,  0.0f,  0.0f,     0.0f, 
+               0.0f,  1.0f,  0.0f,  0.0f,     0.0f, 
+               0.0f,  0.0f,  1.0f,  0.0f,     0.0f, 
+               0.0f,  0.0f,  0.0f,  opacity,  0.0f, 
+            })
+            // @formatter:on
         };
         _skCanvas?.DrawImage(image,
             source: SKRect.Create(sourceX, sourceY, sourceRight - sourceX, sourceBottom - sourceY),
             dest: SKRect.Create(destinationX, destinationY, destinationRight - destinationX, destinationBottom - destinationY),
-            paint);
+            paint
+        );
     }
 
     [LibFunction("d2d.get_image_info")]
