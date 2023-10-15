@@ -112,7 +112,6 @@ public partial class LuaEnvironment
             var block = new TextBlock
             {
                 MaxWidth = key.MaxWidth,
-                MaxHeight = key.MaxHeight,
                 Alignment = key.HorizontalAlignment switch
                 {
                     0 => TextAlignment.Left,
