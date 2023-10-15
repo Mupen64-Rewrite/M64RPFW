@@ -1,15 +1,14 @@
-using M64RPFW.Models.Scripting.Extensions;
-using M64RPFW.Services.Abstractions;
+using BitFaster.Caching.Lru;
+using M64RPFW.ViewModels.Scripting.Extensions;
+using M64RPFW.ViewModels.Scripting.Graphics;
 using NLua;
 using SkiaSharp;
-using BitFaster.Caching.Lru;
-using M64RPFW.Models.Scripting.Graphics;
 using Topten.RichTextKit;
-using SkiaExtensions = M64RPFW.Models.Scripting.Extensions.SkiaExtensions;
+using SkiaExtensions = M64RPFW.ViewModels.Scripting.Extensions.SkiaExtensions;
 
 // ReSharper disable UnusedMember.Local
 
-namespace M64RPFW.Models.Scripting;
+namespace M64RPFW.ViewModels.Scripting;
 
 public partial class LuaEnvironment
 {

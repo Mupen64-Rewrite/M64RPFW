@@ -1,13 +1,12 @@
-using System.Diagnostics;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Emulation.Helpers;
-using M64RPFW.Models.Scripting.Extensions;
+using M64RPFW.ViewModels.Scripting.Extensions;
 using NLua;
 using static M64RPFW.Models.Types.Mupen64PlusTypes;
 
 // ReSharper disable UnusedMember.Local
 
-namespace M64RPFW.Models.Scripting;
+namespace M64RPFW.ViewModels.Scripting;
 
 public partial class LuaEnvironment
 {

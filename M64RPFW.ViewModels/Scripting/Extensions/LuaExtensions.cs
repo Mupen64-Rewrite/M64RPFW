@@ -1,6 +1,6 @@
 using NLua;
 
-namespace M64RPFW.Models.Scripting.Extensions;
+namespace M64RPFW.ViewModels.Scripting.Extensions;
 
 /// <summary>
 /// A class providing extension methods and helpers for <see cref="NLua.Lua"/>

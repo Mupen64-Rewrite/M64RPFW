@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using M64RPFW.Models.Scripting;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
 using M64RPFW.ViewModels.Messages;
+using M64RPFW.ViewModels.Scripting;
 
 namespace M64RPFW.ViewModels;
 

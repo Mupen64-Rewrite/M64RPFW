@@ -4,7 +4,7 @@ using NLua;
 
 // ReSharper disable UnusedMember.Local
 
-namespace M64RPFW.Models.Scripting;
+namespace M64RPFW.ViewModels.Scripting;
 
 public partial class LuaEnvironment
 {

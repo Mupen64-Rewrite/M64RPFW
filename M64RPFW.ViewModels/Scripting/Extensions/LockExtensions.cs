@@ -1,4 +1,4 @@
-namespace M64RPFW.Models.Scripting.Extensions;
+namespace M64RPFW.ViewModels.Scripting.Extensions;
 
 public static class LockExtensions
 {
