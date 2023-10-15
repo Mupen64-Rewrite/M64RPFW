@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
@@ -124,13 +125,14 @@ public partial class MainWindow : IViewDialogService, ILuaInterfaceService
     #endregion
 
     #region ILuaInterfaceService
-
+    
     private INativeWindowMouseHandler _mouseHandler;
-
+    
     // This is an ugly platform-specific workaround for
     // https://github.com/AvaloniaUI/Avalonia/issues/5256
     public WindowPoint PointerPosition => _mouseHandler.Position.ToWindowPoint();
     public MouseButtonMask PointerButtons => _mouseHandler.ButtonMask;
+    public List<string> HeldKeys { get; } = new();
     public event EventHandler<SkiaRenderEventArgs>? OnSkiaRender;
 
     private void GlControl_OnSkiaRender(object? s, SkiaRenderEventArgs e)
@@ -140,4 +142,15 @@ public partial class MainWindow : IViewDialogService, ILuaInterfaceService
     }
 
     #endregion
+
+    private void InputElement_OnKeyDown(object? sender, KeyEventArgs e)
+    {
+        // FIXME: the tostring mapping isn't same as old mupen (e.g.: 'LeftShift' instead of 'shift'), provide a transition layer
+        HeldKeys.Add(e.Key.ToString());
+    }
+
+    private void InputElement_OnKeyUp(object? sender, KeyEventArgs e)
+    {
+        HeldKeys.Remove(e.Key.ToString());
+    }
 }

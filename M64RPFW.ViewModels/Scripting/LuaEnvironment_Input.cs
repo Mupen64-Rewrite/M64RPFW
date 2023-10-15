@@ -13,8 +13,8 @@ public partial class LuaEnvironment
     {
         var table = _lua.NewUnnamedTable();
         var winService = _luaInterfaceService;
-        table["xmouse"] = (int)winService.PointerPosition.X;
-        table["ymouse"] = (int)winService.PointerPosition.Y;
+        table["xmouse"] = winService.PointerPosition.X;
+        table["ymouse"] = winService.PointerPosition.Y;
 
         if ((winService.PointerButtons & MouseButtonMask.Primary) != 0)
         {
@@ -22,7 +22,11 @@ public partial class LuaEnvironment
             table["leftclick"] = true;
         }
 
-        // TODO: implement keys
+        foreach (var key in winService.HeldKeys)
+        {
+            table[key] = true;
+        }
+        
         return table;
     }
 }
