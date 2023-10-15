@@ -169,8 +169,8 @@
                 <MenuItem Header="{ext:Localize AboutRPFW}" Click="AboutRPFW_OnClick" />
             </MenuItem>
         </Menu>
-        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" x:Name="StatusBar">
-            <!--TODO: Status bar-->
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" x:Name="StatusBar" IsVisible="{Binding Source={x:Static vm:SettingsViewModel.Instance}, Path=IsStatusBarVisible}">
+            <ctrls:StatusbarControl/>
         </StackPanel>
         <Border Background="Black">
             <gl:WindowedGlControl
