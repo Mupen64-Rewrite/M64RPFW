@@ -59,8 +59,8 @@ public partial class LuaEnvironment : IDisposable
                     return;
                 using (env._luaLock.ReadLock())
                 {
-                    env._viCallback?.Call();
-                    env._inputCallback?.Call();
+                    env._viCallback?.GuardedCall(env._lua);
+                    env._inputCallback?.GuardedCall(env._lua);
                 }
                 if (!env._isActive)
                     env.TryDisposeLock();
@@ -185,7 +185,7 @@ public partial class LuaEnvironment : IDisposable
         {
             AtStop();
             _luaInterfaceService.OnSkiaRender -= AtUpdateScreen;
-            _stopCallback?.Call();
+            _stopCallback?.GuardedCall(_lua);
 
             _stopCallback = null;
             _viCallback = null;
@@ -229,7 +229,7 @@ public partial class LuaEnvironment : IDisposable
             try
             {
                 _skCanvas = args.Canvas;
-                _updateScreenCallback?.Call();
+                _updateScreenCallback?.GuardedCall(_lua);
             }
             finally
             {

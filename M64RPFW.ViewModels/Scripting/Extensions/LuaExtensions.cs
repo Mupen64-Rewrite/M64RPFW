@@ -1,4 +1,6 @@
+using System.Text;
 using NLua;
+using NLua.Exceptions;
 
 namespace M64RPFW.ViewModels.Scripting.Extensions;
 
@@ -120,4 +122,63 @@ public static class LuaExtensions
         
         lua.SetTop(top);
     }
+
+    /// <summary>
+    /// Adds escape sequences to a string for usage in a script 
+    /// </summary>
+    /// <param name="string">The string to be escaped</param>
+    /// <returns>A string with escape sequences</returns>
+    public static string Escape(string @string)
+    {
+        var stringBuilder = new StringBuilder();
+
+        foreach (char c in @string)
+        {
+            switch (c)
+            {
+                case '\"':
+                    stringBuilder.Append(@"\""");
+                    break;
+                case '\'':
+                    stringBuilder.Append(@"\'");
+                    break;
+                case '\\':
+                    stringBuilder.Append(@"\\");
+                    break;
+                case '\n':
+                    stringBuilder.Append(@"\n");
+                    break;
+                case '\r':
+                    stringBuilder.Append(@"\r");
+                    break;
+                case '\t':
+                    stringBuilder.Append(@"\t");
+                    break;
+                default:
+                    stringBuilder.Append(c);
+                    break;
+            }
+        }
+
+        return stringBuilder.ToString();
+    }
+
+    /// <summary>
+    /// Calls a lua function, while transforming its exception into a script-terminating error
+    /// </summary>
+    /// <param name="function">The function to be called</param>
+    /// <param name="lua">The lua associated with the function</param>
+    public static void GuardedCall(this LuaFunction function, Lua lua)
+    {
+        try
+        {
+            function.Call();
+        }
+        catch (LuaScriptException e)
+        {
+            // trying to call lua.State.Error here throws another exception lol
+            lua.DoString($"print('{Escape(e.Message)}')");
+        }
+    }
+    
 }
