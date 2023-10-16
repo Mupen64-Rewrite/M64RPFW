@@ -43,10 +43,10 @@ public partial class LuaEnvironment : IDisposable
     public event Action<bool>? StateChanged;
 
     private SKCanvas? _skCanvas;
-    private LuaFunction? _viCallback;
-    private LuaFunction? _inputCallback;
-    private LuaFunction? _stopCallback;
-    private LuaFunction? _updateScreenCallback;
+    private List<LuaFunction> _viCallbacks = new();
+    private List<LuaFunction> _inputCallbacks = new();
+    private List<LuaFunction> _stopCallbacks = new();
+    private List<LuaFunction> _updateScreenCallbacks = new();
 
     static LuaEnvironment()
     {
@@ -59,8 +59,14 @@ public partial class LuaEnvironment : IDisposable
                     return;
                 using (env._luaLock.ReadLock())
                 {
-                    env._viCallback?.GuardedCall(env._lua);
-                    env._inputCallback?.GuardedCall(env._lua);
+                    foreach (LuaFunction callback in env._viCallbacks)
+                    {
+                        callback.GuardedCall(env._lua);
+                    }
+                    foreach (LuaFunction callback in env._inputCallbacks)
+                    {
+                        callback.GuardedCall(env._lua);
+                    }
                 }
                 if (!env._isActive)
                     env.TryDisposeLock();
@@ -83,7 +89,6 @@ public partial class LuaEnvironment : IDisposable
 
     public LuaEnvironment(string path, ILuaWindowService luaWindowService, ILuaInterfaceService luaInterfaceService, IFilePickerService filePickerService)
     {
-        // might seem stupid giving model access to view services, but we've already done that once
         _luaWindowService = luaWindowService;
         _luaInterfaceService = luaInterfaceService;
         _filePickerService = filePickerService;
@@ -185,12 +190,15 @@ public partial class LuaEnvironment : IDisposable
         {
             AtStop();
             _luaInterfaceService.OnSkiaRender -= AtUpdateScreen;
-            _stopCallback?.GuardedCall(_lua);
+            foreach (var callback in _stopCallbacks)
+            {
+                callback.GuardedCall(_lua);
+            }
 
-            _stopCallback = null;
-            _viCallback = null;
-            _inputCallback = null;
-            _updateScreenCallback = null;
+            _stopCallbacks = null;
+            _viCallbacks = null;
+            _inputCallbacks = null;
+            _updateScreenCallbacks = null;
             
             _lua.Dispose();
         }
@@ -229,7 +237,10 @@ public partial class LuaEnvironment : IDisposable
             try
             {
                 _skCanvas = args.Canvas;
-                _updateScreenCallback?.GuardedCall(_lua);
+                foreach (LuaFunction callback in _updateScreenCallbacks)
+                {
+                    callback.GuardedCall(_lua);
+                }
             }
             finally
             {

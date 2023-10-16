@@ -17,7 +17,9 @@
                   SizeChanged="Window_OnSizeChanged"
                   Loaded="Window_OnLoaded"
                   x:CompileBindings="True"
-                  x:DataType="vm:EmulatorViewModel">
+                  x:DataType="vm:EmulatorViewModel"
+                  KeyDown="InputElement_OnKeyDown"
+                  KeyUp="InputElement_OnKeyUp">
     <Window.Styles>
         <Style Selector="WrapPanel.menu-header Layoutable">
             <Setter Property="VerticalAlignment" Value="Stretch" />
@@ -169,8 +171,8 @@
                 <MenuItem Header="{ext:Localize AboutRPFW}" Click="AboutRPFW_OnClick" />
             </MenuItem>
         </Menu>
-        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" x:Name="StatusBar">
-            <!--TODO: Status bar-->
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" x:Name="StatusBar" IsVisible="{Binding Source={x:Static vm:SettingsViewModel.Instance}, Path=IsStatusBarVisible}">
+            <ctrls:StatusbarControl/>
         </StackPanel>
         <Border Background="Black">
             <gl:WindowedGlControl

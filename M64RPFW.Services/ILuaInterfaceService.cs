@@ -9,5 +9,6 @@ public interface ILuaInterfaceService : IWindowAccessService
 {
     public WindowPoint PointerPosition { get; }
     public MouseButtonMask PointerButtons { get; }
+    public List<string> HeldKeys { get; }
     public event EventHandler<SkiaRenderEventArgs>? OnSkiaRender;
 }

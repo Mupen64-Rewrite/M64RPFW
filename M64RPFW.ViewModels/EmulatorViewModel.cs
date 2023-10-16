@@ -38,6 +38,7 @@ public partial class EmulatorViewModel : ObservableObject
         // Register Mupen64Plus-related listeners
         Mupen64Plus.StateChanged += OnMupenStateChange;
         Mupen64Plus.VCRStateChanged += OnVCRStateChange;
+        Mupen64Plus.FrameComplete += OnFrameComplete;
         Mupen64Plus.OverrideVidExt(this.ToVidextStruct());
     }
 
@@ -102,6 +103,9 @@ public partial class EmulatorViewModel : ObservableObject
     public bool VCRIsPlaying => Mupen64Plus.VCR_IsPlaying && MupenIsActive;
     public bool VCRDisableWrites => Mupen64Plus.VCR_DisableWrites;
 
+    [ObservableProperty]
+    private Buttons _firstControllerButtons;
+    
     private void OnVCRIsPlayingChanged()
     {
         OnPropertyChanged(nameof(VCRIsPlaying));
@@ -115,5 +119,12 @@ public partial class EmulatorViewModel : ObservableObject
         OnPropertyChanged(nameof(VCRDisableWrites));
     }
 
+    private void OnFrameComplete(int frame)
+    {
+        FirstControllerButtons = new Buttons();
+        // FIXME: VCR_GetKeys throws access violation!
+        //FirstControllerButtons = Mupen64Plus.VCR_GetKeys(1);
+    }
+    
     #endregion
 }

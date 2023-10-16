@@ -9,7 +9,8 @@
         <converters:StringToKeyGestureConverter x:Key="StringToKeyGestureConverter" />
         <converters:DefaultValueConverter x:Key="DefaultValueConverter" />
         <converters:StringSelectorConverter x:Key="StringSelectorConverter" />
-        <templates:ConfigEditingDataTemplate x:Key="ConfigKeyDataTemplate"></templates:ConfigEditingDataTemplate>
+        <converters:ButtonsToStringConverter x:Key="ButtonsToStringConverter" />
+        <templates:ConfigEditingDataTemplate x:Key="ConfigKeyDataTemplate"/>
         <Thickness x:Key="SpaceBelowThickness">0,10,0,20</Thickness>
         <Thickness x:Key="ContentPadding">5,5,5,5</Thickness>
         <x:Double x:Key="ContentSpacing">5</x:Double>
