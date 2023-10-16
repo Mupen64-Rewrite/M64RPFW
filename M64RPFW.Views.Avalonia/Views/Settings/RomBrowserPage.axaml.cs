@@ -1,12 +1,8 @@
-using System.Collections.Generic;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using CommunityToolkit.Mvvm.ComponentModel;
 using M64RPFW.ViewModels;
 using M64RPFW.ViewModels.Extensions;
-using M64RPFW.Views.Avalonia.Helpers;
 using M64RPFW.Views.Avalonia.Services;
 
 namespace M64RPFW.Views.Avalonia.Views.Settings;

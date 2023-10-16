@@ -1,24 +1,16 @@
 using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Dialogs;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
-using Avalonia.Markup.Xaml.Styling;
-using Avalonia.Styling;
-using Avalonia.Themes.Fluent;
-using Avalonia.Themes.Simple;
-using M64RPFW.Services.Abstractions;
 using M64RPFW.ViewModels;
+using M64RPFW.ViewModels.Extensions;
 using M64RPFW.Views.Avalonia.Controls.Helpers;
-using M64RPFW.Views.Avalonia.Markup;
 using M64RPFW.Views.Avalonia.Services;
-using M64RPFW.Views.Avalonia.Extensions;
 using M64RPFW.Views.Avalonia.Helpers;
 
 namespace M64RPFW.Views.Avalonia.Views;
@@ -63,7 +55,7 @@ public partial class MainWindow : Window
     {
         if (FastForwardKeyGesture.Matches(e))
         {
-            ViewModel.SetSpeedLimiterCommand.ExecuteIfPossible(false, false);
+            ViewModel.SetSpeedLimiterCommand.ExecuteIfPossible(false);
             e.Handled = true;
             return;
         }
@@ -78,7 +70,7 @@ public partial class MainWindow : Window
     {
         if (FastForwardKeyGesture.Matches(e))
         {
-            ViewModel.SetSpeedLimiterCommand.ExecuteIfPossible(true, true);
+            ViewModel.SetSpeedLimiterCommand.ExecuteIfPossible(true);
             e.Handled = true;
             return;
         }

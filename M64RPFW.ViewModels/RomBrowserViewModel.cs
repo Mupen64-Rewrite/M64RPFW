@@ -1,11 +1,9 @@
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Helpers;
 using M64RPFW.Models.Types;
-using M64RPFW.ViewModels.Helpers;
 
 namespace M64RPFW.ViewModels;
 

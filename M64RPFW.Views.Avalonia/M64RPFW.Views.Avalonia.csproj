@@ -110,6 +110,7 @@
 
     <ItemGroup>
         <Folder Include="Controls\Helpers\Platform\"/>
+        <Folder Include="Extensions\" />
     </ItemGroup>
 
 

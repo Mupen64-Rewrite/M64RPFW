@@ -2,7 +2,6 @@ using System;
 using M64RPFW.Services.Abstractions;
 using M64RPFW.Views.Avalonia.Controls.Helpers;
 using M64RPFW.Views.Avalonia.Views;
-using Silk.NET.SDL;
 using Point = Avalonia.Point;
 
 namespace M64RPFW.Views.Avalonia.Helpers.Platform;

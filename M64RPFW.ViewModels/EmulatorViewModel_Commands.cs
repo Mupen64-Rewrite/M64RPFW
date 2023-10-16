@@ -4,7 +4,6 @@ using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Helpers;
 using M64RPFW.Models.Media.Encoder;
 using M64RPFW.Models.Settings;
-using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
 using M64RPFW.ViewModels.Messages;
 using static M64RPFW.Models.Types.Mupen64PlusTypes;
@@ -195,24 +194,6 @@ public partial class EmulatorViewModel
             return;
         Mupen64Plus.SetSavestateSlot((int) CurrentSlotMenuItem);
     }
-
-    [RelayCommand(CanExecute = nameof(MupenIsActive))]
-    private async void StartMovie()
-    {
-        var result = await _viewDialogService.ShowOpenMovieDialog(false);
-
-        if (result == null)
-            return;
-        // probably want to add a warning here
-        if (!File.Exists(result.Path))
-            return;
-        
-        if (Mupen64Plus.VCR_IsPlaying)
-            Mupen64Plus.VCR_StopMovie();
-
-        Mupen64Plus.VCR_StartMovie(result.Path);
-        Mupen64Plus.VCR_DisableWrites = true;
-    }
     
     [RelayCommand(CanExecute = nameof(MupenIsActive))]
     private void SetSpeedLimiter(bool value)
@@ -229,6 +210,30 @@ public partial class EmulatorViewModel
     #endregion
     
     #region VCR/Encoder commands
+
+    [RelayCommand(CanExecute = nameof(MupenIsActive))]
+    private async void StartMovie()
+    {
+        var result = await _viewDialogService.ShowOpenMovieDialog(false);
+
+        if (result == null)
+            return;
+        // probably want to add a warning here
+        if (!File.Exists(result.Path))
+            return;
+        
+        StartMovieWithFile(result.Path);
+    }
+
+    [RelayCommand(CanExecute = nameof(MupenIsActive))]
+    private void StartMovieWithFile(string path)
+    {
+        if (Mupen64Plus.VCR_IsPlaying)
+            Mupen64Plus.VCR_StopMovie();
+
+        Mupen64Plus.VCR_StartMovie(path);
+        Mupen64Plus.VCR_DisableWrites = true;
+    }
     
     [RelayCommand(CanExecute = nameof(MupenIsActive))]
     private async void StartRecording()
@@ -282,12 +287,19 @@ public partial class EmulatorViewModel
 
         FFmpegConfig config = new FFmpegConfig();
         config.VideoOptions.Add("video_size", $"{result.EncodeSize ?? _frameCaptureService.GetWindowSize()}");
-        
 
+        await StartEncoderWithFile((result.Path, config));
+    }
+
+    [RelayCommand(CanExecute = nameof(MupenIsActive))]
+    private async Task StartEncoderWithFile((string, FFmpegConfig?) args)
+    {
+        string path = args.Item1;
+        FFmpegConfig config = args.Item2;
         Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Creating encoder...");
         try
         {
-            _encoder = new FFmpegEncoder(result.Path, null, config);
+            _encoder = new FFmpegEncoder(path, null, config);
         }
         catch (ArgumentException e)
         {
@@ -303,7 +315,7 @@ public partial class EmulatorViewModel
             _frameCaptureService.OnRender += EncoderVideoReceived;
         }
         Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Starting encoder...");
-        Mupen64Plus.Encoder_Start(result.Path, null);
+        Mupen64Plus.Encoder_Start(path, null);
         Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Encoder initialized");
     }
 
