@@ -15,6 +15,7 @@ public partial class LuaEnvironment
     [LibFunction("memory.readbytesigned")]
     private sbyte ReadByteSigned(uint addr)
     {
+        addr += 0x80000000;
         try
         {
             return (sbyte) Mupen64Plus.RDRAM_Read8(addr);
@@ -30,6 +31,7 @@ public partial class LuaEnvironment
     [LibFunction("memory.readbyte")]
     private byte ReadByte(uint addr)
     {
+        addr += 0x80000000;
         try
         {
             return Mupen64Plus.RDRAM_Read8(addr);
@@ -45,6 +47,7 @@ public partial class LuaEnvironment
     [LibFunction("memory.readwordsigned")]
     private short ReadWordSigned(uint addr)
     {
+        addr += 0x80000000;
         try
         {
             return (short) Mupen64Plus.RDRAM_Read16(addr);
@@ -60,6 +63,7 @@ public partial class LuaEnvironment
     [LibFunction("memory.readword")]
     private ushort ReadWord(uint addr)
     {
+        addr += 0x80000000;
         try
         {
             return Mupen64Plus.RDRAM_Read16(addr);
@@ -75,6 +79,7 @@ public partial class LuaEnvironment
     [LibFunction("memory.readdwordsigned")]
     private int ReadDwordSigned(uint addr)
     {
+        addr += 0x80000000;
         try
         {
             return (int) Mupen64Plus.RDRAM_Read32(addr);
@@ -90,6 +95,7 @@ public partial class LuaEnvironment
     [LibFunction("memory.readdword")]
     private uint ReadDword(uint addr)
     {
+        addr += 0x80000000;
         try
         {
             return Mupen64Plus.RDRAM_Read32(addr);
@@ -105,6 +111,7 @@ public partial class LuaEnvironment
     [LibFunction("memory.readqwordsigned")]
     private LuaTable ReadQwordSigned(uint addr)
     {
+        addr += 0x80000000;
         var table = _lua.NewUnnamedTable();
         try
         {
@@ -125,6 +132,7 @@ public partial class LuaEnvironment
     [LibFunction("memory.readqword")]
     private LuaTable ReadQword(uint addr)
     {
+        addr += 0x80000000;
         var table = _lua.NewUnnamedTable();
         try
         {
@@ -149,24 +157,28 @@ public partial class LuaEnvironment
     [LibFunction("memory.writebyte")]
     private void WriteByte(uint addr, byte val)
     {
+        addr += 0x80000000;
         Mupen64Plus.RDRAM_Write8(addr, val);
     }
 
     [LibFunction("memory.writeword")]
     private void WriteWord(uint addr, ushort val)
     {
+        addr += 0x80000000;
         Mupen64Plus.RDRAM_Write16(addr, val);
     }
 
     [LibFunction("memory.writedword")]
     private void WriteDword(uint addr, uint val)
     {
+        addr += 0x80000000;
         Mupen64Plus.RDRAM_Write32(addr, val);
     }
 
     [LibFunction("memory.writeqword")]
     private void WriteQword(uint addr, LuaTable val)
     {
+        addr += 0x80000000;
         if (val[0] is not uint hi)
             throw new ArgumentException("value must be an array of two unsigned integers");
         if (val[1] is not uint lo)
@@ -183,6 +195,7 @@ public partial class LuaEnvironment
     [LibFunction("memory.readfloat")]
     private float ReadFloat(uint addr)
     {
+        addr += 0x80000000;
         uint val = Mupen64Plus.RDRAM_Read32(addr);
         return BitConverter.UInt32BitsToSingle(val);
     }
@@ -190,6 +203,7 @@ public partial class LuaEnvironment
     [LibFunction("memory.readdouble")]
     private double ReadDouble(uint addr)
     {
+        addr += 0x80000000;
         ulong val = Mupen64Plus.RDRAM_Read64(addr);
         return BitConverter.UInt64BitsToDouble(val);
     }
@@ -197,6 +211,7 @@ public partial class LuaEnvironment
     [LibFunction("memory.writefloat")]
     private void WriteFloat(uint addr, float val)
     {
+        addr += 0x80000000;
         uint bits = BitConverter.SingleToUInt32Bits(val);
         Mupen64Plus.RDRAM_Write32(addr, bits);
     }
@@ -204,6 +219,7 @@ public partial class LuaEnvironment
     [LibFunction("memory.writedouble")]
     private void WriteDouble(uint addr, double val)
     {
+        addr += 0x80000000;
         ulong bits = BitConverter.DoubleToUInt64Bits(val);
         Mupen64Plus.RDRAM_Write64(addr, bits);
     }
