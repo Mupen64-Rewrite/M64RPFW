@@ -5,6 +5,7 @@ using M64RPFW.Models.Helpers;
 using M64RPFW.Models.Media.Encoder;
 using M64RPFW.Models.Settings;
 using M64RPFW.Services.Abstractions;
+using M64RPFW.ViewModels.Extensions;
 using M64RPFW.ViewModels.Messages;
 using static M64RPFW.Models.Types.Mupen64PlusTypes;
 
@@ -110,6 +111,8 @@ public partial class EmulatorViewModel
     [RelayCommand(CanExecute = nameof(MupenIsActive))]
     private void CloseRom()
     {
+        StopEncoderCommand.ExecuteIfPossible();
+        
         Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Stopping M64+");
         Mupen64Plus.Stop();
     }
@@ -207,6 +210,9 @@ public partial class EmulatorViewModel
 
     private FFmpegEncoder? _encoder;
 
+    public bool EncoderIsActive => _encoder != null;
+    public bool EncoderIsInactive => _encoder == null;
+
     #endregion
     
     #region VCR/Encoder commands
@@ -291,7 +297,7 @@ public partial class EmulatorViewModel
         await StartEncoderWithFile((result.Path, config));
     }
 
-    [RelayCommand(CanExecute = nameof(MupenIsActive))]
+    [RelayCommand(CanExecute = nameof(EncoderIsInactive))]
     private async Task StartEncoderWithFile((string, FFmpegConfig?) args)
     {
         string path = args.Item1;
@@ -300,6 +306,8 @@ public partial class EmulatorViewModel
         try
         {
             _encoder = new FFmpegEncoder(path, null, config);
+            OnPropertyChanged(nameof(EncoderIsActive));
+            OnPropertyChanged(nameof(EncoderIsInactive));
         }
         catch (ArgumentException e)
         {
@@ -334,7 +342,7 @@ public partial class EmulatorViewModel
         _encoder?.SetAudioSampleRate((int) rate);
     }
 
-    [RelayCommand(CanExecute = nameof(MupenIsActive))]
+    [RelayCommand(CanExecute = nameof(EncoderIsActive))]
     private void StopEncoder()
     {
         if (_encoder == null)
@@ -357,6 +365,8 @@ public partial class EmulatorViewModel
         Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Encoder shut down");
 
         _encoder = null;
+        OnPropertyChanged(nameof(EncoderIsActive));
+        OnPropertyChanged(nameof(EncoderIsInactive));
     }
 
     #endregion
