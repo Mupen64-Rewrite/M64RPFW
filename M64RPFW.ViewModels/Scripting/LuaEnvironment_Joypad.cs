@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Types;
 using M64RPFW.Services.Abstractions;
 using M64RPFW.ViewModels.Scripting.Extensions;
@@ -9,12 +10,11 @@ namespace M64RPFW.ViewModels.Scripting;
 public partial class LuaEnvironment
 {
     [LibFunction("joypad.get")]
-    private LuaTable GetJoypad(int port)
+    private LuaTable GetJoypad(uint port)
     {
         var table = _lua.NewUnnamedTable();
         
-        // TODO: GetKeys is not implemented fully in core
-        var buttons = new Mupen64PlusTypes.Buttons();
+        var buttons = Mupen64Plus.VCR_GetKeys(port);
 
         table["right"] = buttons.BtnMask.HasFlag(Mupen64PlusTypes.ButtonMask.DRight);
         table["left"] = buttons.BtnMask.HasFlag(Mupen64PlusTypes.ButtonMask.DLeft);
@@ -37,8 +37,14 @@ public partial class LuaEnvironment
     }
 
     [LibFunction("joypad.set")]
-    private void SetJoypad(int port, LuaTable table)
+    private void SetJoypad(uint port, LuaTable table)
     {
-        // TODO: SetKeys is not implemented fully in core
+        var buttons = new Mupen64PlusTypes.Buttons();
+    
+        // TODO: implement
+        // idk how to check if key is present in table, since its a pseudo-dictionary
+        //buttons.BtnMask |= (true ? Mupen64PlusTypes.ButtonMask.DRight : 0);
+        
+        Mupen64Plus.VCR_SetOverlay(buttons, port);
     }
 }
