@@ -298,14 +298,14 @@ public partial class EmulatorViewModel
         FFmpegConfig config = new FFmpegConfig();
         config.VideoOptions.Add("video_size", $"{result.EncodeSize ?? _frameCaptureService.GetWindowSize()}");
 
-        await StartEncoderWithFile((result.Path, config));
+        await StartEncoderWithFile((result.Path, null, config));
     }
 
     [RelayCommand(CanExecute = nameof(EncoderIsInactive))]
-    private async Task StartEncoderWithFile((string, FFmpegConfig?) args)
+    private async Task StartEncoderWithFile((string path, string? mimeType, FFmpegConfig? config) args)
     {
-        string path = args.Item1;
-        FFmpegConfig config = args.Item2;
+        string path = args.path;
+        FFmpegConfig? config = args.config;
         Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Creating encoder...");
         try
         {

@@ -93,7 +93,6 @@ internal static unsafe class AVHelpers
     /// </summary>
     /// <param name="ofmt">The output format</param>
     /// <param name="type">The stream type</param>
-    /// <param name="reason">If returning null, holds the reason why a fallback is needed</param>
     /// <param name="name">A codec that </param>
     /// <returns>The desired codec, or null if a fallback is required.</returns>
     public static AVCodec* CheckCodec(AVOutputFormat* ofmt, AVMediaType type, string? name = null)
@@ -123,7 +122,6 @@ internal static unsafe class AVHelpers
     /// </summary>
     /// <param name="ofmt">The output format</param>
     /// <param name="type">The stream type</param>
-    /// <param name="reason">Returns a reason if the method fails, unless it's because there is no default codec.</param>
     /// <returns>The default codec, or null if no default codec exists or is supported.</returns>
     public static AVCodec* DefaultCodec(AVOutputFormat* ofmt, AVMediaType type)
     {
