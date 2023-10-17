@@ -5,7 +5,6 @@ using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform;
-using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Types;
 using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;

@@ -1,4 +1,3 @@
-using System;
 using Avalonia;
 using M64RPFW.Services.Abstractions;
 using M64RPFW.Views.Avalonia.Helpers.Platform;

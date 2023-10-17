@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using M64RPFW.ViewModels;
-using M64RPFW.Views.Avalonia.Extensions;
+using M64RPFW.ViewModels.Extensions;
 using M64RPFW.Views.Avalonia.Helpers;
 using M64RPFW.Views.Avalonia.Services;
 

@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using M64RPFW.ViewModels;
-using M64RPFW.Views.Avalonia.Extensions;
+using M64RPFW.ViewModels.Extensions;
 
 namespace M64RPFW.Views.Avalonia.Controls;
 
@@ -45,7 +45,7 @@ public partial class RomBrowserControl : UserControl
 
     private void OpenSelectedRom(RomBrowserItemViewModel romBrowserItemViewModel)
     {
-        EmulatorViewModel!.OpenRomFromPathCommand.ExecuteIfPossible(executeParameter: romBrowserItemViewModel.Path);
+        EmulatorViewModel!.OpenRomFromPathCommand.ExecuteIfPossible(commandParam: romBrowserItemViewModel.Path);
     }
 
     private void DataGrid_OnDoubleTapped(object? sender, TappedEventArgs e)

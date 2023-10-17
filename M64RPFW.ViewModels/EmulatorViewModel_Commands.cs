@@ -4,8 +4,8 @@ using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Helpers;
 using M64RPFW.Models.Media.Encoder;
 using M64RPFW.Models.Settings;
-using M64RPFW.Services;
 using M64RPFW.Services.Abstractions;
+using M64RPFW.ViewModels.Extensions;
 using M64RPFW.ViewModels.Messages;
 using static M64RPFW.Models.Types.Mupen64PlusTypes;
 
@@ -115,6 +115,8 @@ public partial class EmulatorViewModel
     [RelayCommand(CanExecute = nameof(MupenIsActive))]
     private void CloseRom()
     {
+        StopEncoderCommand.ExecuteIfPossible();
+        
         Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Stopping M64+");
         Mupen64Plus.Stop();
     }
@@ -199,24 +201,6 @@ public partial class EmulatorViewModel
             return;
         Mupen64Plus.SetSavestateSlot((int) CurrentSlotMenuItem);
     }
-
-    [RelayCommand(CanExecute = nameof(MupenIsActive))]
-    private async void StartMovie()
-    {
-        var result = await _viewDialogService.ShowOpenMovieDialog(false);
-
-        if (result == null)
-            return;
-        // probably want to add a warning here
-        if (!File.Exists(result.Path))
-            return;
-        
-        if (Mupen64Plus.VCR_IsPlaying)
-            Mupen64Plus.VCR_StopMovie();
-
-        Mupen64Plus.VCR_StartMovie(result.Path);
-        Mupen64Plus.VCR_DisableWrites = true;
-    }
     
     [RelayCommand(CanExecute = nameof(MupenIsActive))]
     private void SetSpeedLimiter(bool value)
@@ -230,9 +214,36 @@ public partial class EmulatorViewModel
 
     private FFmpegEncoder? _encoder;
 
+    public bool EncoderIsActive => _encoder != null;
+    public bool EncoderIsInactive => _encoder == null;
+
     #endregion
     
     #region VCR/Encoder commands
+
+    [RelayCommand(CanExecute = nameof(MupenIsActive))]
+    private async void StartMovie()
+    {
+        var result = await _viewDialogService.ShowOpenMovieDialog(false);
+
+        if (result == null)
+            return;
+        // probably want to add a warning here
+        if (!File.Exists(result.Path))
+            return;
+        
+        StartMovieWithFile(result.Path);
+    }
+
+    [RelayCommand(CanExecute = nameof(MupenIsActive))]
+    private void StartMovieWithFile(string path)
+    {
+        if (Mupen64Plus.VCR_IsPlaying)
+            Mupen64Plus.VCR_StopMovie();
+
+        Mupen64Plus.VCR_StartMovie(path);
+        Mupen64Plus.VCR_DisableWrites = true;
+    }
     
     [RelayCommand(CanExecute = nameof(MupenIsActive))]
     private async void StartRecording()
@@ -286,12 +297,21 @@ public partial class EmulatorViewModel
 
         FFmpegConfig config = new FFmpegConfig();
         config.VideoOptions.Add("video_size", $"{result.EncodeSize ?? _frameCaptureService.GetWindowSize()}");
-        
 
+        await StartEncoderWithFile((result.Path, null, config));
+    }
+
+    [RelayCommand(CanExecute = nameof(EncoderIsInactive))]
+    private async Task StartEncoderWithFile((string path, string? mimeType, FFmpegConfig? config) args)
+    {
+        string path = args.path;
+        FFmpegConfig? config = args.config;
         Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Creating encoder...");
         try
         {
-            _encoder = new FFmpegEncoder(result.Path, null, config);
+            _encoder = new FFmpegEncoder(path, null, config);
+            OnPropertyChanged(nameof(EncoderIsActive));
+            OnPropertyChanged(nameof(EncoderIsInactive));
         }
         catch (ArgumentException e)
         {
@@ -307,7 +327,7 @@ public partial class EmulatorViewModel
             _frameCaptureService.OnRender += EncoderVideoReceived;
         }
         Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Starting encoder...");
-        Mupen64Plus.Encoder_Start(result.Path, null);
+        Mupen64Plus.Encoder_Start(path, null);
         Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Encoder initialized");
     }
 
@@ -326,7 +346,7 @@ public partial class EmulatorViewModel
         _encoder?.SetAudioSampleRate((int) rate);
     }
 
-    [RelayCommand(CanExecute = nameof(MupenIsActive))]
+    [RelayCommand(CanExecute = nameof(EncoderIsActive))]
     private void StopEncoder()
     {
         if (_encoder == null)
@@ -349,6 +369,8 @@ public partial class EmulatorViewModel
         Mupen64Plus.Log(LogSources.App, MessageLevel.Info, "Encoder shut down");
 
         _encoder = null;
+        OnPropertyChanged(nameof(EncoderIsActive));
+        OnPropertyChanged(nameof(EncoderIsInactive));
     }
 
     #endregion

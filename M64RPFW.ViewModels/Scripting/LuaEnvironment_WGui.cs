@@ -2,6 +2,8 @@ using M64RPFW.Services.Abstractions;
 using M64RPFW.ViewModels.Scripting.Extensions;
 using NLua;
 
+// ReSharper disable UnusedMember.Local
+
 namespace M64RPFW.ViewModels.Scripting;
 
 public partial class LuaEnvironment
@@ -11,8 +13,8 @@ public partial class LuaEnvironment
     {
         var table = _lua.NewUnnamedTable();
         var winSize = _luaInterfaceService.GetWindowSize();
-        table["width"] = (int) winSize.Width;
-        table["height"] = (int) winSize.Height;
+        table["width"] = winSize.Width;
+        table["height"] = winSize.Height;
         return table;
     }
 
