@@ -121,9 +121,7 @@ public partial class EmulatorViewModel : ObservableObject
 
     private void OnFrameComplete(int frame)
     {
-        FirstControllerButtons = new Buttons();
-        // FIXME: VCR_GetKeys throws access violation!
-        //FirstControllerButtons = Mupen64Plus.VCR_GetKeys(1);
+        FirstControllerButtons = Mupen64Plus.VCR_GetKeys(0);
     }
     
     #endregion

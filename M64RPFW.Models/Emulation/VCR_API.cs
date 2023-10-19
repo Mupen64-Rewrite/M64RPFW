@@ -14,13 +14,13 @@ public static partial class Mupen64Plus
     }
     
     /// <summary>
-    /// Sets the current VCR inputs for a given controller port.
+    /// Sets the VCR input overlay for a given controller port.
     /// </summary>
     /// <param name="keys">the inputs</param>
     /// <param name="port">which controller port to write</param>
-    public static void VCR_SetKeys(Buttons keys, uint port)
+    public static void VCR_SetOverlay(Buttons keys, uint port)
     {
-        _vcrSetKeys(keys, port);
+        _vcrSetOverlay(keys, port);
     }
 
     /// <summary>

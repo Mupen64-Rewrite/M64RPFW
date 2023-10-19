@@ -39,7 +39,7 @@ public static partial class Mupen64Plus
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
-    private delegate void DVCR_SetKeys(Buttons keys, uint port);
+    private delegate void DVCR_SetOverlay(Buttons keys, uint port);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [RuntimeDllImport]
@@ -76,7 +76,7 @@ public static partial class Mupen64Plus
         ResolveDelegate(_libHandle, out _vcrSetStateCallback);
         ResolveDelegate(_libHandle, out _vcrGetCurFrame);
         ResolveDelegate(_libHandle, out _vcrStopMovie);
-        ResolveDelegate(_libHandle, out _vcrSetKeys);
+        ResolveDelegate(_libHandle, out _vcrSetOverlay);
         ResolveDelegate(_libHandle, out _vcrGetKeys);
         ResolveDelegate(_libHandle, out _vcrIsPlaying);
         ResolveDelegate(_libHandle, out _vcrIsReadOnly);
@@ -89,7 +89,7 @@ public static partial class Mupen64Plus
     private static DVCR_SetStateCallback _vcrSetStateCallback;
     private static DVCR_GetCurFrame _vcrGetCurFrame;
     private static DVCR_StopMovie _vcrStopMovie;
-    private static DVCR_SetKeys _vcrSetKeys;
+    private static DVCR_SetOverlay _vcrSetOverlay;
     private static DVCR_GetKeys _vcrGetKeys;
     private static DVCR_IsPlaying _vcrIsPlaying;
     private static DVCR_IsReadOnly _vcrIsReadOnly;
