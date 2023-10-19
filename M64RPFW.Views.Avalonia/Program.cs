@@ -70,18 +70,20 @@ class Program
     private static void InitLibraries()
     {
         if (OperatingSystem.IsWindows())
-            return;
-        if (OperatingSystem.IsLinux())
         {
-            if (File.Exists("/lib/libavcodec.so"))
-                ffmpeg.RootPath = "/lib";
-            else if (File.Exists("/usr/lib/libavcodec.so"))
-                ffmpeg.RootPath = "/usr/lib";
-            else if (File.Exists("/lib64/libavcodec.so"))
+            // we don't need to do anything because FFmpeg
+            // is bundled in
+        }
+        else if (OperatingSystem.IsLinux())
+        {
+            if (File.Exists("/lib64/libavcodec.so"))
                 ffmpeg.RootPath = "/lib64";
             else if (File.Exists("/usr/lib64/libavcodec.so"))
                 ffmpeg.RootPath = "/usr/lib64";
-            return;
+            else if (File.Exists("/lib/libavcodec.so"))
+                ffmpeg.RootPath = "/lib";
+            else if (File.Exists("/usr/lib/libavcodec.so"))
+                ffmpeg.RootPath = "/usr/lib";
         }
         if (OperatingSystem.IsMacOS())
         {
