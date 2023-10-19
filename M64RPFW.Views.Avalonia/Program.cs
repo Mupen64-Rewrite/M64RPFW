@@ -4,6 +4,10 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Avalonia;
 using FFmpeg.AutoGen;
+using M64RPFW.Models.Emulation;
+using M64RPFW.Models.Types;
+using Silk.NET.SDL;
+using Version = Silk.NET.SDL.Version;
 
 namespace M64RPFW.Views.Avalonia;
 
@@ -16,7 +20,7 @@ class Program
     public static void Main(string[] args)
     {
         SetupConsole();
-        InitFFmpeg();
+        InitLibraries();
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }
 
@@ -63,7 +67,7 @@ class Program
             throw new Win32Exception(err);
     }
 
-    private static void InitFFmpeg()
+    private static void InitLibraries()
     {
         if (OperatingSystem.IsWindows())
             return;
@@ -82,6 +86,13 @@ class Program
         if (OperatingSystem.IsMacOS())
         {
             throw new PlatformNotSupportedException("Can't autodetect FFmpeg install!");
+        }
+
+        var sdlVersion = new Version();
+        Sdl.GetApi().GetVersion(ref sdlVersion);
+        if (sdlVersion.Major != 2 || sdlVersion.Minor < 22)
+        {
+            throw new PlatformNotSupportedException("SDL 2.22 required, but not found");
         }
     }
 }
