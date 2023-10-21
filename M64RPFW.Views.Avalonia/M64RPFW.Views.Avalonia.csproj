@@ -130,7 +130,9 @@
         </ItemGroup>
         <Error Condition="!Exists('Libraries\$(OSLibraryDir)')" Text="No platform libraries found!"/>
         <Message Text="Copying $(OSLibraryDir) libraries"/>
-        <Copy SourceFiles="@(LibraryList)" DestinationFolder="$(OutDir)/Libraries" SkipUnchangedFiles="true"/>
+        <Copy SourceFiles="@(LibraryList)" DestinationFolder="$(OutDir)Libraries" SkipUnchangedFiles="true"/>
+        <!--make sure resulting TinCan.NET is executable-->
+        <Exec Condition="!$([MSBuild]::IsOSPlatform('Windows'))" Command="chmod +x &quot;$(OutDir)Libraries/TinCan.NET&quot;"/>
     </Target>
 
     <Target Name="CopyCustomLibrariesPublish" AfterTargets="AfterPublish">
