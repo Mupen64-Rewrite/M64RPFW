@@ -57,6 +57,9 @@ public partial class LuaEnvironment
     private void DrawEllipse(float x, float y, float radiusX, float radiusY, float red, float green, float blue,
         float alpha, float thickness)
     {
+        // FIXME: this needs a workaround, as stroke-only ovals are seemingly not supported?
+        // maybe use a path
+        #if false
         using var paint = new SKPaint
         {
             Color = SkiaExtensions.ColorFromFloats(red, green, blue, alpha),
@@ -64,6 +67,7 @@ public partial class LuaEnvironment
             StrokeWidth = thickness
         };
         _skCanvas?.DrawOval(x, y, radiusX, radiusY, paint);
+        #endif
     }
 
     [LibFunction("d2d.draw_line")]

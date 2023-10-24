@@ -177,7 +177,7 @@ public static class LuaExtensions
         catch (LuaScriptException e)
         {
             // trying to call lua.State.Error here throws another exception lol
-            lua.DoString($"print('{Escape(e.Message)}')");
+            lua.DoString($"print('{Escape($"{e.Source} {e.Message}")}')");
         }
     }
     
