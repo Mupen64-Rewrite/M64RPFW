@@ -90,11 +90,14 @@ class Program
             throw new PlatformNotSupportedException("Can't autodetect FFmpeg install!");
         }
 
-        var sdlVersion = new Version();
-        Sdl.GetApi().GetVersion(ref sdlVersion);
-        if (sdlVersion.Major != 2 || sdlVersion.Minor < 22)
+        if (OperatingSystem.IsLinux())
         {
-            throw new PlatformNotSupportedException("SDL 2.22 required, but not found");
+            var sdlVersion = new Version();
+            Sdl.GetApi().GetVersion(ref sdlVersion);
+            if (sdlVersion.Major != 2 || sdlVersion.Minor < 22)
+            {
+                throw new PlatformNotSupportedException("SDL 2.22 required, but not found");
+            }
         }
     }
 }
