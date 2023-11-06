@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using M64RPFW.Models.Emulation;
 using M64RPFW.Services;
+using M64RPFW.ViewModels.Extensions;
 using static M64RPFW.Models.Types.Mupen64PlusTypes;
 
 namespace M64RPFW.ViewModels;
@@ -67,6 +68,8 @@ public partial class EmulatorViewModel : ObservableObject
 
     public void OnWindowClosed()
     {
+        if (EncoderIsActive)
+            StopEncoderCommand.ExecuteIfPossible();
         if (MupenIsActive)
             Mupen64Plus.Stop();
     }
