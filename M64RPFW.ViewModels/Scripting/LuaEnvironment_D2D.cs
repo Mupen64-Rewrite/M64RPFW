@@ -100,6 +100,7 @@ public partial class LuaEnvironment
 
         // Cache laid-out text blocks. Unfortunately, I have to key with
         // colour, though I wish I didn't need to.
+        // FIXME: Caching produced collisions, so it was disabled
         var cacheKey = new TextLayoutParameters(
             MaxWidth: right - x,
             MaxHeight: bottom - y,
@@ -110,35 +111,31 @@ public partial class LuaEnvironment
             HorizontalAlignment: horizontalAlignment,
             Color: SkiaExtensions.ColorFromFloats(red, green, blue, alpha)
         );
-        var block = _textLayoutCache.GetOrAdd(cacheKey, key =>
+        
+        var block = new TextBlock
+        {
+            MaxWidth = cacheKey.MaxWidth,
+            Alignment = cacheKey.HorizontalAlignment switch
             {
-                var block = new TextBlock
+                0 => TextAlignment.Left,
+                1 => TextAlignment.Right,
+                2 => TextAlignment.Center,
+                _ => throw new ArgumentException("Invalid horizontal alignment")
+            },
+        };
+        block.AddText(text, new Style
+            {
+                FontFamily = cacheKey.FontName,
+                FontSize = cacheKey.FontSize,
+                FontWeight = cacheKey.FontWeight,
+                FontItalic = cacheKey.FontStyle switch
                 {
-                    MaxWidth = key.MaxWidth,
-                    Alignment = key.HorizontalAlignment switch
-                    {
-                        0 => TextAlignment.Left,
-                        1 => TextAlignment.Right,
-                        2 => TextAlignment.Center,
-                        _ => throw new ArgumentException("Invalid horizontal alignment")
-                    },
-                };
-                block.AddText(text, new Style
-                    {
-                        FontFamily = key.FontName,
-                        FontSize = key.FontSize,
-                        FontWeight = key.FontWeight,
-                        FontItalic = key.FontStyle switch
-                        {
-                            0 => false,
-                            1 => true,
-                            2 => true, // oblique != italic sometimes, but oh well
-                            _ => throw new ArgumentException("Invalid font italic")
-                        },
-                        TextColor = key.Color
-                    }
-                );
-                return block;
+                    0 => false,
+                    1 => true,
+                    2 => true, // oblique != italic sometimes, but oh well
+                    _ => throw new ArgumentException("Invalid font italic")
+                },
+                TextColor = cacheKey.Color
             }
         );
 
