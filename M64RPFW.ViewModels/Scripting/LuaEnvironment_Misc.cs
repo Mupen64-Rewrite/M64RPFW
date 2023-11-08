@@ -26,12 +26,12 @@ public partial class LuaEnvironment
         {
             0 => _filePickerService.ShowOpenFilePickerAsync(options: new[]
                 {
-                    new FilePickerOption("Supported files", filter.Split(";"))
+                    new FilePickerOption("Supported files", Patterns: filter.Split(";"))
                 }, allowMultiple: false)
                 .Result![0],
             1 => _filePickerService.ShowSaveFilePickerAsync(options: new[]
                 {
-                    new FilePickerOption("Supported files", filter.Split(";"))
+                    new FilePickerOption("Supported files", Patterns: filter.Split(";"))
                 })
                 .Result!,
             _ => throw new ArgumentException("Invalid file dialog type")
