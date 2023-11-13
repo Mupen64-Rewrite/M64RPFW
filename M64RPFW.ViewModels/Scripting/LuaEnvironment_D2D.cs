@@ -19,7 +19,7 @@ public partial class LuaEnvironment
     private readonly Dictionary<string, SKImage> _imageDict = new();
 
     [LibFunction("d2d.fill_rectangle")]
-    private void FillRectangle(float x, float y, float right, float bottom, float red, float green, float blue,
+    private void D2D_FillRectangle(float x, float y, float right, float bottom, float red, float green, float blue,
         float alpha)
     {
         using var paint = new SKPaint
@@ -30,7 +30,7 @@ public partial class LuaEnvironment
     }
 
     [LibFunction("d2d.draw_rectangle")]
-    private void DrawRectangle(float x, float y, float right, float bottom, float red, float green, float blue,
+    private void D2D_DrawRectangle(float x, float y, float right, float bottom, float red, float green, float blue,
         float alpha, float thickness)
     {
         using var paint = new SKPaint
@@ -43,7 +43,7 @@ public partial class LuaEnvironment
     }
 
     [LibFunction("d2d.fill_ellipse")]
-    private void FillEllipse(float x, float y, float radiusX, float radiusY, float red, float green, float blue,
+    private void D2D_FillEllipse(float x, float y, float radiusX, float radiusY, float red, float green, float blue,
         float alpha)
     {
         using var skPaint = new SKPaint
@@ -54,7 +54,7 @@ public partial class LuaEnvironment
     }
 
     [LibFunction("d2d.draw_ellipse")]
-    private void DrawEllipse(float x, float y, float radiusX, float radiusY, float red, float green, float blue,
+    private void D2D_DrawEllipse(float x, float y, float radiusX, float radiusY, float red, float green, float blue,
         float alpha, float thickness)
     {
         // FIXME: this needs a workaround, as stroke-only ovals are seemingly not supported?
@@ -71,7 +71,7 @@ public partial class LuaEnvironment
     }
 
     [LibFunction("d2d.draw_line")]
-    private void DrawLine(float x0, float y0, float x1, float y1, float red, float green, float blue, float alpha,
+    private void D2D_DrawLine(float x0, float y0, float x1, float y1, float red, float green, float blue, float alpha,
         float thickness)
     {
         using var paint = new SKPaint
@@ -85,13 +85,13 @@ public partial class LuaEnvironment
 
 
     [LibFunction("d2d.set_text_antialias_mode")]
-    private void SetTextAntialiasMode(int mode)
+    private void D2D_SetTextAntialiasMode(int mode)
     {
         _textAntialiasMode = mode;
     }
 
     [LibFunction("d2d.draw_text")]
-    private void DrawText(float x, float y, float right, float bottom, float red, float green, float blue,
+    private void D2D_DrawText(float x, float y, float right, float bottom, float red, float green, float blue,
         float alpha, string text, string fontName, float fontSize, int fontWeight, int fontStyle,
         int horizontalAlignment, int verticalAlignment, int options)
     {
@@ -167,7 +167,7 @@ public partial class LuaEnvironment
     }
 
     [LibFunction("d2d.get_text_size")]
-    private LuaTable GetTextSize(string text, string fontName, float fontSize, float maximumWidth, float maximumHeight)
+    private LuaTable D2D_GetTextSize(string text, string fontName, float fontSize, float maximumWidth, float maximumHeight)
     {
         var block = new TextBlock
         {
@@ -188,7 +188,7 @@ public partial class LuaEnvironment
     }
 
     [LibFunction("d2d.push_clip")]
-    private void PushClip(float x, float y, float right, float bottom)
+    private void D2D_PushClip(float x, float y, float right, float bottom)
     {
         if (_skCanvas == null)
             return;
@@ -204,7 +204,7 @@ public partial class LuaEnvironment
     }
 
     [LibFunction("d2d.fill_rounded_rectangle")]
-    private void FillRoundedRectangle(float x, float y, float right, float bottom, float radiusX, float radiusY,
+    private void D2D_FillRoundedRectangle(float x, float y, float right, float bottom, float radiusX, float radiusY,
         float red, float green, float blue,
         float alpha)
     {
@@ -216,7 +216,7 @@ public partial class LuaEnvironment
     }
 
     [LibFunction("d2d.draw_rounded_rectangle")]
-    private void DrawRoundedRectangle(float x, float y, float right, float bottom, float radiusX, float radiusY,
+    private void D2D_DrawRoundedRectangle(float x, float y, float right, float bottom, float radiusX, float radiusY,
         float red, float green, float blue,
         float alpha, float thickness)
     {
@@ -230,7 +230,7 @@ public partial class LuaEnvironment
     }
 
     [LibFunction("d2d.gdip_fillpolygona")]
-    private void GdiPlusFillPolygonA(LuaTable pointsTable, byte alpha, byte red, byte green, byte blue)
+    private void D2D_GdiPlusFillPolygonA(LuaTable pointsTable, byte alpha, byte red, byte green, byte blue)
     {
         long length = _lua.GetLength(pointsTable);
         var points = new SKPoint[length];
@@ -258,7 +258,7 @@ public partial class LuaEnvironment
 
 
     [LibFunction("d2d.load_image")]
-    private void LoadImage(string path, string identifier)
+    private void D2D_LoadImage(string path, string identifier)
     {
         if (_imageDict.ContainsKey(identifier))
             throw new InvalidOperationException($"{identifier} already exists");
@@ -267,7 +267,7 @@ public partial class LuaEnvironment
     }
 
     [LibFunction("d2d.free_image")]
-    private void FreeImage(string identifier)
+    private void D2D_FreeImage(string identifier)
     {
         if (!_imageDict.Remove(identifier, out var image))
             return;
@@ -276,7 +276,7 @@ public partial class LuaEnvironment
     }
 
     [LibFunction("d2d.draw_image")]
-    private void DrawImage(float destinationX, float destinationY, float destinationRight, float destinationBottom, float sourceX,
+    private void D2D_DrawImage(float destinationX, float destinationY, float destinationRight, float destinationBottom, float sourceX,
         float sourceY, float sourceRight, float sourceBottom,
         string identifier, float opacity, int interpolation)
     {
@@ -303,7 +303,7 @@ public partial class LuaEnvironment
     }
 
     [LibFunction("d2d.get_image_info")]
-    private LuaTable GetImageInfo(string identifier)
+    private LuaTable D2D_GetImageInfo(string identifier)
     {
         if (!_imageDict.TryGetValue(identifier, out var image))
             throw new ArgumentException("Identifier does not exist");
@@ -313,5 +313,4 @@ public partial class LuaEnvironment
         table["height"] = image.Height;
         return table;
     }
-
 }
