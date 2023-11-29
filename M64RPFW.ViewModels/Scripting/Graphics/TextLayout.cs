@@ -60,6 +60,7 @@ public static class TextLayout
         }
         StartNewLine(text.Length);
 
-        return builder.Build();
+        var blob = builder.Build();
+        return blob;
     }
 }

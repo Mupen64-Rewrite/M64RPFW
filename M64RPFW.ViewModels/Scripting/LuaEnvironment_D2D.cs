@@ -11,17 +11,23 @@ namespace M64RPFW.ViewModels.Scripting;
 
 public partial class LuaEnvironment
 {
+    private const int CACHE_LIMIT = 100;
+
     private int _textAntialiasMode;
     private readonly Dictionary<string, SKImage> _imageDict = new();
+
+    private readonly ClassicLru<TextPaintParams, SKPaint> _textPaintCache = new(CACHE_LIMIT);
+    private readonly ClassicLru<FillPaintParams, SKPaint> _fillPaintCache = new(CACHE_LIMIT);
+    private readonly ClassicLru<StrokePaintParams, SKPaint> _strokePaintCache = new(CACHE_LIMIT);
 
     [LibFunction("d2d.fill_rectangle")]
     private void D2D_FillRectangle(float x, float y, float right, float bottom, float red, float green, float blue,
         float alpha)
     {
-        using var paint = new SKPaint
-        {
-            Color = SkiaExtensions.ColorFromFloats(red, green, blue, alpha)
-        };
+        var paint = _fillPaintCache.GetOrAdd(
+            new FillPaintParams(red, green, blue, alpha),
+            PaintFactories.MakeFillPaint
+        );
         _skCanvas?.DrawRect(x, y, right - x, bottom - y, paint);
     }
 
@@ -29,12 +35,10 @@ public partial class LuaEnvironment
     private void D2D_DrawRectangle(float x, float y, float right, float bottom, float red, float green, float blue,
         float alpha, float thickness)
     {
-        using var paint = new SKPaint
-        {
-            Color = SkiaExtensions.ColorFromFloats(red, green, blue, alpha),
-            Style = SKPaintStyle.Stroke,
-            StrokeWidth = thickness
-        };
+        var paint = _strokePaintCache.GetOrAdd(
+            new StrokePaintParams(thickness, red, green, blue, alpha),
+            PaintFactories.MakeStrokePaint
+        );
         _skCanvas?.DrawRect(x, y, right - x, bottom - y, paint);
     }
 
@@ -42,11 +46,11 @@ public partial class LuaEnvironment
     private void D2D_FillEllipse(float x, float y, float radiusX, float radiusY, float red, float green, float blue,
         float alpha)
     {
-        using var skPaint = new SKPaint
-        {
-            Color = SkiaExtensions.ColorFromFloats(red, green, blue, alpha)
-        };
-        _skCanvas?.DrawOval(x, y, radiusX, radiusY, skPaint);
+        var paint = _fillPaintCache.GetOrAdd(
+            new FillPaintParams(red, green, blue, alpha),
+            PaintFactories.MakeFillPaint
+        );
+        _skCanvas?.DrawOval(x, y, radiusX, radiusY, paint);
     }
 
     [LibFunction("d2d.draw_ellipse")]
@@ -55,27 +59,21 @@ public partial class LuaEnvironment
     {
         // FIXME: this needs a workaround, as stroke-only ovals are seemingly not supported?
         // maybe use a path
-        #if false
-        using var paint = new SKPaint
-        {
-            Color = SkiaExtensions.ColorFromFloats(red, green, blue, alpha),
-            Style = SKPaintStyle.Stroke,
-            StrokeWidth = thickness
-        };
-        _skCanvas?.DrawOval(x, y, radiusX, radiusY, paint);
-        #endif
+        var paint = _strokePaintCache.GetOrAdd(
+            new StrokePaintParams(thickness, red, green, blue, alpha),
+            PaintFactories.MakeStrokePaint
+        );
+        _skCanvas?.DrawRect(x, y, radiusX, radiusY, paint);
     }
 
     [LibFunction("d2d.draw_line")]
     private void D2D_DrawLine(float x0, float y0, float x1, float y1, float red, float green, float blue, float alpha,
         float thickness)
     {
-        using var paint = new SKPaint
-        {
-            Color = SkiaExtensions.ColorFromFloats(red, green, blue, alpha),
-            Style = SKPaintStyle.Stroke,
-            StrokeWidth = thickness
-        };
+        var paint = _strokePaintCache.GetOrAdd(
+            new StrokePaintParams(thickness, red, green, blue, alpha),
+            PaintFactories.MakeStrokePaint
+        );
         _skCanvas?.DrawLine(x0, y0, x1, y1, paint);
     }
 
@@ -93,39 +91,26 @@ public partial class LuaEnvironment
     {
         if (_skCanvas == null)
             return;
-
-        using SKFont font = new SKFont(SKTypeface.FromFamilyName(
-                familyName: fontName,
-                weight: (SKFontStyleWeight) fontWeight,
-                width: SKFontStyleWidth.Normal,
-                slant: fontStyle switch
-                {
-                    0 => SKFontStyleSlant.Upright,
-                    1 => SKFontStyleSlant.Oblique,
-                    2 => SKFontStyleSlant.Italic,
-                    _ => throw new ArgumentException($"Invalid style value {fontStyle}")
-                }
-            ), fontSize
+        
+        var paint = _textPaintCache.GetOrAdd(new TextPaintParams(
+                fontName, fontSize, fontWeight, fontStyle, red, green, blue, alpha
+            ), PaintFactories.MakeTextPaint);
+        var blob = TextLayout.LayoutText(text, paint.ToFont(), right - x, horizontalAlignment switch
+            {
+                0 => SKTextAlign.Left,
+                1 => SKTextAlign.Right,
+                2 => SKTextAlign.Center,
+                3 => SKTextAlign.Left, // supposed to be "justified", but CBA rn
+                _ => SKTextAlign.Left
+            }
         );
-        var blob = TextLayout.LayoutText(text, font, right - x, horizontalAlignment switch
-        {
-            0 => SKTextAlign.Left,
-            1 => SKTextAlign.Right,
-            2 => SKTextAlign.Center,
-            3 => SKTextAlign.Left, // supposed to be "justified", but CBA rn
-            _ => SKTextAlign.Left
-        });
 
         var yPos = verticalAlignment switch
         {
             0 => y, // top
             1 => bottom - blob.Bounds.Height, // bottom
             2 => (y + bottom - blob.Bounds.Height) / 2, // center
-        };
-
-        using var paint = new SKPaint(font)
-        {
-            Color = SkiaExtensions.ColorFromFloats(red, green, blue, alpha)
+            _ => y
         };
         
         _skCanvas?.DrawText(blob, x, yPos, paint);
@@ -136,10 +121,10 @@ public partial class LuaEnvironment
     {
         using SKFont font = new SKFont(SKTypeface.FromFamilyName(familyName: fontName), fontSize);
         var blob = TextLayout.LayoutText(text, font, maximumWidth, SKTextAlign.Left);
-        
+
         var table = _lua.NewUnnamedTable();
-        table["width"] = blob.Bounds.Width;
-        table["height"] = blob.Bounds.Height;
+        table["width"] = blob?.Bounds.Width ?? 0;
+        table["height"] = blob?.Bounds.Height ?? 0;
         return table;
     }
 
@@ -164,10 +149,10 @@ public partial class LuaEnvironment
         float red, float green, float blue,
         float alpha)
     {
-        using var paint = new SKPaint
-        {
-            Color = SkiaExtensions.ColorFromFloats(red, green, blue, alpha)
-        };
+        var paint = _fillPaintCache.GetOrAdd(
+            new FillPaintParams(red, green, blue, alpha),
+            PaintFactories.MakeFillPaint
+        );
         _skCanvas?.DrawRoundRect(x, y, right - x, bottom - y, radiusX, radiusY, paint);
     }
 
@@ -176,12 +161,10 @@ public partial class LuaEnvironment
         float red, float green, float blue,
         float alpha, float thickness)
     {
-        using var paint = new SKPaint
-        {
-            Color = SkiaExtensions.ColorFromFloats(red, green, blue, alpha),
-            Style = SKPaintStyle.Stroke,
-            StrokeWidth = thickness
-        };
+        var paint = _strokePaintCache.GetOrAdd(
+            new StrokePaintParams(thickness, red, green, blue, alpha),
+            PaintFactories.MakeStrokePaint
+        );
         _skCanvas?.DrawRoundRect(x, y, right - x, bottom - y, radiusX, radiusY, paint);
     }
 
@@ -203,11 +186,12 @@ public partial class LuaEnvironment
 
         using var path = new SKPath();
         path.AddPoly(points);
+        path.Close();
 
-        using var paint = new SKPaint
-        {
-            Color = new SKColor(red, green, blue, alpha)
-        };
+        var paint = _fillPaintCache.GetOrAdd(
+            new FillPaintParams(red, green, blue, alpha),
+            PaintFactories.MakeFillPaint
+        );
 
         _skCanvas?.DrawPath(path, paint);
     }
