@@ -3,7 +3,6 @@ using M64RPFW.ViewModels.Scripting.Extensions;
 using M64RPFW.ViewModels.Scripting.Graphics;
 using NLua;
 using SkiaSharp;
-using Topten.RichTextKit;
 using SkiaExtensions = M64RPFW.ViewModels.Scripting.Extensions.SkiaExtensions;
 
 // ReSharper disable UnusedMember.Local
@@ -12,9 +11,6 @@ namespace M64RPFW.ViewModels.Scripting;
 
 public partial class LuaEnvironment
 {
-    private const int TextLayoutCacheLimit = 1000;
-
-    private readonly ClassicLru<TextLayoutParameters, TextBlock> _textLayoutCache = new(TextLayoutCacheLimit);
     private int _textAntialiasMode;
     private readonly Dictionary<string, SKImage> _imageDict = new();
 
@@ -98,92 +94,52 @@ public partial class LuaEnvironment
         if (_skCanvas == null)
             return;
 
-        // Cache laid-out text blocks. Unfortunately, I have to key with
-        // colour, though I wish I didn't need to.
-        // FIXME: Caching produced collisions, so it was disabled
-        var cacheKey = new TextLayoutParameters(
-            MaxWidth: right - x,
-            MaxHeight: bottom - y,
-            FontName: fontName,
-            FontSize: fontSize,
-            FontWeight: fontWeight,
-            FontStyle: fontStyle,
-            HorizontalAlignment: horizontalAlignment,
-            Color: SkiaExtensions.ColorFromFloats(red, green, blue, alpha)
-        );
-        
-        var block = new TextBlock
-        {
-            MaxWidth = cacheKey.MaxWidth,
-            Alignment = cacheKey.HorizontalAlignment switch
-            {
-                0 => TextAlignment.Left,
-                1 => TextAlignment.Right,
-                2 => TextAlignment.Center,
-                _ => throw new ArgumentException("Invalid horizontal alignment")
-            },
-        };
-        block.AddText(text, new Style
-            {
-                FontFamily = cacheKey.FontName,
-                FontSize = cacheKey.FontSize,
-                FontWeight = cacheKey.FontWeight,
-                FontItalic = cacheKey.FontStyle switch
+        using SKFont font = new SKFont(SKTypeface.FromFamilyName(
+                familyName: fontName,
+                weight: (SKFontStyleWeight) fontWeight,
+                width: SKFontStyleWidth.Normal,
+                slant: fontStyle switch
                 {
-                    0 => false,
-                    1 => true,
-                    2 => true, // oblique != italic sometimes, but oh well
-                    _ => throw new ArgumentException("Invalid font italic")
-                },
-                TextColor = cacheKey.Color
-            }
-        );
-
-        // Vertical alignment. This only changes the position I render the text
-        // from, so it doesn't need to be cached.
-        float realY = verticalAlignment switch
-        {
-            // Top-aligned
-            0 => y,
-            // Bottom-aligned
-            1 => bottom - block.MeasuredHeight,
-            // Center-aligned
-            2 => (y + bottom - block.MeasuredHeight) / 2,
-            // Unknown
-            _ => throw new ArgumentException("Invalid vertical alignment")
-        };
-
-        block.Paint(_skCanvas, new SKPoint(x, realY), new TextPaintOptions
-            {
-                Edging = _textAntialiasMode switch
-                {
-                    1 => SKFontEdging.SubpixelAntialias,
-                    2 => SKFontEdging.Antialias,
-                    3 => SKFontEdging.Alias,
-                    _ => SKFontEdging.SubpixelAntialias
+                    0 => SKFontStyleSlant.Upright,
+                    1 => SKFontStyleSlant.Oblique,
+                    2 => SKFontStyleSlant.Italic,
+                    _ => throw new ArgumentException($"Invalid style value {fontStyle}")
                 }
-            }
+            ), fontSize
         );
+        var blob = TextLayout.LayoutText(text, font, right - x, horizontalAlignment switch
+        {
+            0 => SKTextAlign.Left,
+            1 => SKTextAlign.Right,
+            2 => SKTextAlign.Center,
+            3 => SKTextAlign.Left, // supposed to be "justified", but CBA rn
+            _ => SKTextAlign.Left
+        });
+
+        var yPos = verticalAlignment switch
+        {
+            0 => y, // top
+            1 => bottom - blob.Bounds.Height, // bottom
+            2 => (y + bottom - blob.Bounds.Height) / 2, // center
+        };
+
+        using var paint = new SKPaint(font)
+        {
+            Color = SkiaExtensions.ColorFromFloats(red, green, blue, alpha)
+        };
+        
+        _skCanvas?.DrawText(blob, x, yPos, paint);
     }
 
     [LibFunction("d2d.get_text_size")]
     private LuaTable D2D_GetTextSize(string text, string fontName, float fontSize, float maximumWidth, float maximumHeight)
     {
-        var block = new TextBlock
-        {
-            MaxWidth = maximumWidth,
-            MaxHeight = maximumHeight
-        };
-        block.AddText(text, new Style
-            {
-                FontFamily = fontName,
-                FontSize = fontSize
-            }
-        );
-
+        using SKFont font = new SKFont(SKTypeface.FromFamilyName(familyName: fontName), fontSize);
+        var blob = TextLayout.LayoutText(text, font, maximumWidth, SKTextAlign.Left);
+        
         var table = _lua.NewUnnamedTable();
-        table["width"] = block.MeasuredWidth;
-        table["height"] = block.MeasuredHeight;
+        table["width"] = blob.Bounds.Width;
+        table["height"] = blob.Bounds.Height;
         return table;
     }
 

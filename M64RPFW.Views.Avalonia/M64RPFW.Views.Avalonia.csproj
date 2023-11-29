@@ -15,23 +15,23 @@
 
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.0.0"/>
-        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.0"/>
-        <PackageReference Include="Avalonia.Desktop" Version="11.0.0"/>
-        <PackageReference Include="Avalonia.Svg" Version="11.0.0"/>
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0"/>
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.0"/>
+        <PackageReference Include="Avalonia" Version="11.0.5" />
+        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.5" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.0.5" />
+        <PackageReference Include="Avalonia.Svg" Version="11.0.0.6" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.5" />
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.5" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.0"/>
-        <PackageReference Include="Avalonia.Themes.Simple" Version="11.0.0"/>
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.5" />
+        <PackageReference Include="Avalonia.Themes.Simple" Version="11.0.5" />
         <PackageReference Include="Material.Icons.Avalonia" Version="2.0.1"/>
         <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.18-beta">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Silk.NET.OpenGL" Version="2.17.1"/>
-        <PackageReference Include="Silk.NET.SDL" Version="2.17.1"/>
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1"/>
+        <PackageReference Include="Silk.NET.OpenGL" Version="2.19.0" />
+        <PackageReference Include="Silk.NET.SDL" Version="2.19.0" />
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
         <PackageReference Include="System.Reactive" Version="6.0.0"/>
     </ItemGroup>
     <ItemGroup>
