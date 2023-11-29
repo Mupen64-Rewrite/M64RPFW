@@ -102,7 +102,7 @@ public partial class LuaEnvironment : IDisposable
         {
             _lua = new Lua();
             LuaRegisterTaggedFunctions();
-            
+            LoadDotnetClasses();
         }
     }
     
@@ -147,31 +147,17 @@ public partial class LuaEnvironment : IDisposable
     }
 
     /// <summary>
-    /// Loads some relevant C# classes
+    /// Loads SkiaSharp's API into Lua.
     /// </summary>
     private void LoadDotnetClasses()
     {
-        const string script = 
+        const string code =
             """
             luanet.load_assembly("SkiaSharp")
-            skia = {
-            # Classes
-            SKPaint = luanet.import_type("SkiaSharp.SKPaint"),
-            SKFont = luanet.import_type("SkiaSharp.SKFont"),
-            SKImage = luanet.import_type("SkiaSharp.SKImage"),
-            SKTypeface = luanet.import_type("SkiaSharp.SKTypeface"),
-            SKPoint = luanet.import_type("SkiaSharp.SKPoint"),
-            SKRect = luanet.import_type("SkiaSharp.SKRect"),
-            SKPath = luanet.import_type("SkiaSharp.SKPath"),
-            SKTextBlob = luanet.import_type("SkiaSharp.SKTextBlob"),
-            SKTextBlobBuilder = luanet.import_type("SkiaSharp.SKTextBlobBuilder),
-            # Enums
-            SK
-            }
-            
-            import = function() end
+            skia = luanet.SkiaSharp
+            import = function () end
             """;
-        _lua.DoString(script);
+        _lua.DoString(code);
     }
     
     /// <summary>
