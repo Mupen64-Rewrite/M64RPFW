@@ -95,6 +95,18 @@ public partial class LuaEnvironment
         var paint = _textPaintCache.GetOrAdd(new TextPaintParams(
                 fontName, fontSize, fontWeight, fontStyle, red, green, blue, alpha
             ), PaintFactories.MakeTextPaint);
+        // set antialiasing mode
+        (paint.IsAntialias, paint.LcdRenderText) = _textAntialiasMode switch
+        {
+            0 => (true, true), // default: ClearType
+            1 => (true, true), // ClearType (subpixel antialiasing)
+            2 => (true, false), // Grayscale (normal antialiasing)
+            3 => (false, false), // no antialiasing
+            _ => (true, false)
+        };
+        // subpixel text
+        paint.SubpixelText = (options & 0x01) != 0;
+        
         var blob = TextLayout.LayoutText(text, paint.ToFont(), right - x, horizontalAlignment switch
             {
                 0 => SKTextAlign.Left,
@@ -112,8 +124,19 @@ public partial class LuaEnvironment
             2 => (y + bottom - blob.Bounds.Height) / 2, // center
             _ => y
         };
-        
-        _skCanvas?.DrawText(blob, x, yPos, paint);
+        var doClip = (options & 0x02) != 0;
+
+        if (doClip)
+        {
+            _skCanvas.Save();
+            _skCanvas.ClipRect(new SKRect(x, y, right, bottom));
+            _skCanvas.DrawText(blob, x, yPos, paint);
+            _skCanvas.Restore();
+        }
+        else
+        {
+            _skCanvas.DrawText(blob, x, yPos, paint);
+        }
     }
 
     [LibFunction("d2d.get_text_size")]

@@ -101,14 +101,15 @@ public partial class LuaEnvironment : IDisposable
         using (_luaLock.WriteLock())
         {
             _lua = new Lua();
-            RegisterTaggedFunctions();
+            LuaRegisterTaggedFunctions();
+            
         }
     }
     
     /// <summary>
     /// Registers all functions tagged with <see cref="LibFunctionAttribute"/>.
     /// </summary>
-    private void RegisterTaggedFunctions()
+    private void LuaRegisterTaggedFunctions()
     {
         // Register global functions and save the ones that belong in tables.
         // ====================================================================
@@ -145,6 +146,34 @@ public partial class LuaEnvironment : IDisposable
         }
     }
 
+    /// <summary>
+    /// Loads some relevant C# classes
+    /// </summary>
+    private void LoadDotnetClasses()
+    {
+        const string script = 
+            """
+            luanet.load_assembly("SkiaSharp")
+            skia = {
+            # Classes
+            SKPaint = luanet.import_type("SkiaSharp.SKPaint"),
+            SKFont = luanet.import_type("SkiaSharp.SKFont"),
+            SKImage = luanet.import_type("SkiaSharp.SKImage"),
+            SKTypeface = luanet.import_type("SkiaSharp.SKTypeface"),
+            SKPoint = luanet.import_type("SkiaSharp.SKPoint"),
+            SKRect = luanet.import_type("SkiaSharp.SKRect"),
+            SKPath = luanet.import_type("SkiaSharp.SKPath"),
+            SKTextBlob = luanet.import_type("SkiaSharp.SKTextBlob"),
+            SKTextBlobBuilder = luanet.import_type("SkiaSharp.SKTextBlobBuilder),
+            # Enums
+            SK
+            }
+            
+            import = function() end
+            """;
+        _lua.DoString(script);
+    }
+    
     /// <summary>
     ///     Runs the Lua script from the current path
     /// </summary>

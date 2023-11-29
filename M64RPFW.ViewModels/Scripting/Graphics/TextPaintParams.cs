@@ -47,7 +47,8 @@ public static class PaintFactories
             )
         )
         {
-            ColorF = new SKColorF(key.Red, key.Green, key.Blue, key.Alpha)
+            ColorF = new SKColorF(key.Red, key.Green, key.Blue, key.Alpha),
+            
         };
     }
 }
