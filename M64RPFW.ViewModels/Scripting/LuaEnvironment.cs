@@ -101,8 +101,8 @@ public partial class LuaEnvironment : IDisposable
         using (_luaLock.WriteLock())
         {
             _lua = new Lua();
+            LuaLoadDotnetClasses();
             LuaRegisterTaggedFunctions();
-            LoadDotnetClasses();
         }
     }
     
@@ -149,7 +149,7 @@ public partial class LuaEnvironment : IDisposable
     /// <summary>
     /// Loads SkiaSharp's API into Lua.
     /// </summary>
-    private void LoadDotnetClasses()
+    private void LuaLoadDotnetClasses()
     {
         const string code =
             """
