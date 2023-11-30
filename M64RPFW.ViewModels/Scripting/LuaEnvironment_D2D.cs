@@ -19,6 +19,7 @@ public partial class LuaEnvironment
     private readonly ClassicLru<TextPaintParams, SKPaint> _textPaintCache = new(CACHE_LIMIT);
     private readonly ClassicLru<FillPaintParams, SKPaint> _fillPaintCache = new(CACHE_LIMIT);
     private readonly ClassicLru<StrokePaintParams, SKPaint> _strokePaintCache = new(CACHE_LIMIT);
+    private readonly ClassicLru<ImagePaintParams, SKPaint> _imagePaintCache = new(CACHE_LIMIT);
 
     [LibFunction("d2d.fill_rectangle")]
     private void D2D_FillRectangle(float x, float y, float right, float bottom, float red, float green, float blue,
@@ -245,19 +246,10 @@ public partial class LuaEnvironment
     {
         if (!_imageDict.TryGetValue(identifier, out var image))
             throw new ArgumentException("Identifier does not exist");
-        using var paint = new SKPaint
-        {
-            FilterQuality = interpolation == 1 ? SKFilterQuality.Medium : SKFilterQuality.None,
-            // multiply alpha by opacity. (@formatter:off)
-            ColorFilter = SKColorFilter.CreateColorMatrix(new []
-            {
-               1.0f,  0.0f,  0.0f,  0.0f,     0.0f, 
-               0.0f,  1.0f,  0.0f,  0.0f,     0.0f, 
-               0.0f,  0.0f,  1.0f,  0.0f,     0.0f, 
-               0.0f,  0.0f,  0.0f,  opacity,  0.0f, 
-            })
-            // @formatter:on
-        };
+        var paint = _imagePaintCache.GetOrAdd(
+            new ImagePaintParams(interpolation, opacity),
+            PaintFactories.MakeImagePaint
+        );
         _skCanvas?.DrawImage(image,
             source: SKRect.Create(sourceX, sourceY, sourceRight - sourceX, sourceBottom - sourceY),
             dest: SKRect.Create(destinationX, destinationY, destinationRight - destinationX, destinationBottom - destinationY),
