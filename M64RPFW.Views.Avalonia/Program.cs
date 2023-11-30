@@ -4,8 +4,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Avalonia;
 using FFmpeg.AutoGen;
-using M64RPFW.Models.Emulation;
-using M64RPFW.Models.Types;
 using Silk.NET.SDL;
 using Version = Silk.NET.SDL.Version;
 

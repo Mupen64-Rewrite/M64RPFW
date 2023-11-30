@@ -1,6 +1,4 @@
-using System.Text;
 using SkiaSharp;
-using SkiaSharp.HarfBuzz;
 
 namespace M64RPFW.ViewModels.Scripting.Graphics;
 

@@ -1,11 +1,8 @@
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using BitFaster.Caching.Lru;
 using M64RPFW.ViewModels.Scripting.Extensions;
 using M64RPFW.ViewModels.Scripting.Graphics;
 using NLua;
 using SkiaSharp;
-using SkiaExtensions = M64RPFW.ViewModels.Scripting.Extensions.SkiaExtensions;
 
 // ReSharper disable UnusedMember.Local
 

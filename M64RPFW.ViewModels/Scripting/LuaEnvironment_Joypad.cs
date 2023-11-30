@@ -1,7 +1,5 @@
-﻿using System.Diagnostics;
-using M64RPFW.Models.Emulation;
+﻿using M64RPFW.Models.Emulation;
 using M64RPFW.Models.Types;
-using M64RPFW.Services.Abstractions;
 using M64RPFW.ViewModels.Scripting.Extensions;
 using NLua;
 

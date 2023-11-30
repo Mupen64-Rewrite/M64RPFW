@@ -6,7 +6,6 @@ using M64RPFW.Services.Abstractions;
 using M64RPFW.ViewModels.Scripting.Extensions;
 using NLua;
 using NLua.Exceptions;
-using SkiaSharp;
 
 namespace M64RPFW.ViewModels.Scripting;
 

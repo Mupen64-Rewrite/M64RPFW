@@ -1,7 +1,4 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using M64RPFW.ViewModels;
+﻿using Avalonia.Controls;
 
 namespace M64RPFW.Views.Avalonia.Controls;
 
