@@ -138,7 +138,8 @@ public partial class LuaEnvironment : IDisposable
         foreach ((string ns, var entries) in tables)
         {
             // We have to create the tables explicitly.
-            _lua.NewTable(ns);
+            if (_lua.GetObjectFromPath(ns) == null)
+                _lua.NewTable(ns);
             foreach ((string src, MethodInfo func) in entries)
             {
                 _lua.RegisterFunction($"{ns}.{src}", this, func);
@@ -153,8 +154,10 @@ public partial class LuaEnvironment : IDisposable
     {
         const string code =
             """
+            # Load SkiaSharp
             luanet.load_assembly("SkiaSharp")
-            skia = luanet.SkiaSharp
+            skiasharp = luanet.SkiaSharp
+            # disable CLR importing (safety)
             import = function () end
             """;
         _lua.DoString(code);
