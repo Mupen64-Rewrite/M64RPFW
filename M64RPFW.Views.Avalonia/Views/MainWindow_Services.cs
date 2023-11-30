@@ -137,7 +137,6 @@ public partial class MainWindow : IViewDialogService, ILuaInterfaceService
 
     private void GlControl_OnSkiaRender(object? s, SkiaRenderEventArgs e)
     {
-        var canvas = e.Canvas;
         OnSkiaRender?.Invoke(s, e);
     }
 

@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using BitFaster.Caching.Lru;
 using M64RPFW.ViewModels.Scripting.Extensions;
 using M64RPFW.ViewModels.Scripting.Graphics;
@@ -13,13 +15,27 @@ public partial class LuaEnvironment
 {
     private const int CACHE_LIMIT = 100;
 
+    private SKCanvas? CurrentCanvas => _renderStack.TryPeek(out var canvas) ? 
+        canvas : _skiaSurfaceManagerService?.PrimaryCanvas;
+
     private int _textAntialiasMode;
-    private readonly Dictionary<string, SKImage> _imageDict = new();
+    private readonly Dictionary<string, SKImage> _images = new();
+    private readonly Dictionary<string, SKSurface> _offscreenSurfaces = new();
+    private readonly Stack<SKCanvas> _renderStack = new();
 
     private readonly ClassicLru<TextPaintParams, SKPaint> _textPaintCache = new(CACHE_LIMIT);
     private readonly ClassicLru<FillPaintParams, SKPaint> _fillPaintCache = new(CACHE_LIMIT);
     private readonly ClassicLru<StrokePaintParams, SKPaint> _strokePaintCache = new(CACHE_LIMIT);
     private readonly ClassicLru<ImagePaintParams, SKPaint> _imagePaintCache = new(CACHE_LIMIT);
+
+    private SKImage? D2DPrivate_FindImage(string key)
+    {
+        if (_images.TryGetValue(key, out var image))
+            return image;
+        if (_offscreenSurfaces.TryGetValue(key, out var surface))
+            return surface.Snapshot();
+        return null;
+    }
 
     [LibFunction("d2d.fill_rectangle")]
     private void D2D_FillRectangle(float x, float y, float right, float bottom, float red, float green, float blue,
@@ -29,7 +45,7 @@ public partial class LuaEnvironment
             new FillPaintParams(red, green, blue, alpha),
             PaintFactories.MakeFillPaint
         );
-        _skCanvas?.DrawRect(x, y, right - x, bottom - y, paint);
+        CurrentCanvas?.DrawRect(x, y, right - x, bottom - y, paint);
     }
 
     [LibFunction("d2d.draw_rectangle")]
@@ -40,7 +56,7 @@ public partial class LuaEnvironment
             new StrokePaintParams(thickness, red, green, blue, alpha),
             PaintFactories.MakeStrokePaint
         );
-        _skCanvas?.DrawRect(x, y, right - x, bottom - y, paint);
+        CurrentCanvas?.DrawRect(x, y, right - x, bottom - y, paint);
     }
 
     [LibFunction("d2d.fill_ellipse")]
@@ -51,7 +67,7 @@ public partial class LuaEnvironment
             new FillPaintParams(red, green, blue, alpha),
             PaintFactories.MakeFillPaint
         );
-        _skCanvas?.DrawOval(x, y, radiusX, radiusY, paint);
+        CurrentCanvas?.DrawOval(x, y, radiusX, radiusY, paint);
     }
 
     [LibFunction("d2d.draw_ellipse")]
@@ -64,7 +80,7 @@ public partial class LuaEnvironment
             new StrokePaintParams(thickness, red, green, blue, alpha),
             PaintFactories.MakeStrokePaint
         );
-        _skCanvas?.DrawRect(x, y, radiusX, radiusY, paint);
+        CurrentCanvas?.DrawRect(x, y, radiusX, radiusY, paint);
     }
 
     [LibFunction("d2d.draw_line")]
@@ -75,7 +91,7 @@ public partial class LuaEnvironment
             new StrokePaintParams(thickness, red, green, blue, alpha),
             PaintFactories.MakeStrokePaint
         );
-        _skCanvas?.DrawLine(x0, y0, x1, y1, paint);
+        CurrentCanvas?.DrawLine(x0, y0, x1, y1, paint);
     }
 
 
@@ -90,7 +106,7 @@ public partial class LuaEnvironment
         float alpha, string text, string fontName, float fontSize, int fontWeight, int fontStyle,
         int horizontalAlignment, int verticalAlignment, int options)
     {
-        if (_skCanvas == null)
+        if (CurrentCanvas == null)
             return;
         
         var paint = _textPaintCache.GetOrAdd(new TextPaintParams(
@@ -129,14 +145,14 @@ public partial class LuaEnvironment
 
         if (doClip)
         {
-            _skCanvas.Save();
-            _skCanvas.ClipRect(new SKRect(x, y, right, bottom));
-            _skCanvas.DrawText(blob, x, yPos, paint);
-            _skCanvas.Restore();
+            CurrentCanvas.Save();
+            CurrentCanvas.ClipRect(new SKRect(x, y, right, bottom));
+            CurrentCanvas.DrawText(blob, x, yPos, paint);
+            CurrentCanvas.Restore();
         }
         else
         {
-            _skCanvas.DrawText(blob, x, yPos, paint);
+            CurrentCanvas.DrawText(blob, x, yPos, paint);
         }
     }
 
@@ -155,17 +171,17 @@ public partial class LuaEnvironment
     [LibFunction("d2d.push_clip")]
     private void D2D_PushClip(float x, float y, float right, float bottom)
     {
-        if (_skCanvas == null)
+        if (CurrentCanvas == null)
             return;
 
-        _skCanvas.Save();
-        _skCanvas.ClipRect(SKRect.Create(x, y, right - x, bottom - y));
+        CurrentCanvas.Save();
+        CurrentCanvas.ClipRect(SKRect.Create(x, y, right - x, bottom - y));
     }
 
     [LibFunction("d2d.pop_clip")]
     private void PopClip()
     {
-        _skCanvas?.Restore();
+        CurrentCanvas?.Restore();
     }
 
     [LibFunction("d2d.fill_rounded_rectangle")]
@@ -177,7 +193,7 @@ public partial class LuaEnvironment
             new FillPaintParams(red, green, blue, alpha),
             PaintFactories.MakeFillPaint
         );
-        _skCanvas?.DrawRoundRect(x, y, right - x, bottom - y, radiusX, radiusY, paint);
+        CurrentCanvas?.DrawRoundRect(x, y, right - x, bottom - y, radiusX, radiusY, paint);
     }
 
     [LibFunction("d2d.draw_rounded_rectangle")]
@@ -189,7 +205,7 @@ public partial class LuaEnvironment
             new StrokePaintParams(thickness, red, green, blue, alpha),
             PaintFactories.MakeStrokePaint
         );
-        _skCanvas?.DrawRoundRect(x, y, right - x, bottom - y, radiusX, radiusY, paint);
+        CurrentCanvas?.DrawRoundRect(x, y, right - x, bottom - y, radiusX, radiusY, paint);
     }
 
     [LibFunction("d2d.gdip_fillpolygona")]
@@ -217,23 +233,23 @@ public partial class LuaEnvironment
             PaintFactories.MakeFillPaint
         );
 
-        _skCanvas?.DrawPath(path, paint);
+        CurrentCanvas?.DrawPath(path, paint);
     }
 
 
     [LibFunction("d2d.load_image")]
     private void D2D_LoadImage(string path, string identifier)
     {
-        if (_imageDict.ContainsKey(identifier))
+        if (_images.ContainsKey(identifier))
             throw new InvalidOperationException($"{identifier} already exists");
         var image = SKImage.FromEncodedData(path);
-        _imageDict.Add(identifier, image);
+        _images.Add(identifier, image);
     }
 
     [LibFunction("d2d.free_image")]
     private void D2D_FreeImage(string identifier)
     {
-        if (!_imageDict.Remove(identifier, out var image))
+        if (!_images.Remove(identifier, out var image))
             return;
 
         image.Dispose();
@@ -244,13 +260,14 @@ public partial class LuaEnvironment
         float sourceY, float sourceRight, float sourceBottom,
         string identifier, float opacity, int interpolation)
     {
-        if (!_imageDict.TryGetValue(identifier, out var image))
+        SKImage? image;
+        if ((image = D2DPrivate_FindImage(identifier)) == null)
             throw new ArgumentException("Identifier does not exist");
         var paint = _imagePaintCache.GetOrAdd(
             new ImagePaintParams(interpolation, opacity),
             PaintFactories.MakeImagePaint
         );
-        _skCanvas?.DrawImage(image,
+        CurrentCanvas?.DrawImage(image,
             source: SKRect.Create(sourceX, sourceY, sourceRight - sourceX, sourceBottom - sourceY),
             dest: SKRect.Create(destinationX, destinationY, destinationRight - destinationX, destinationBottom - destinationY),
             paint
@@ -260,12 +277,54 @@ public partial class LuaEnvironment
     [LibFunction("d2d.get_image_info")]
     private LuaTable D2D_GetImageInfo(string identifier)
     {
-        if (!_imageDict.TryGetValue(identifier, out var image))
+        SKImage? image;
+        if ((image = D2DPrivate_FindImage(identifier)) == null)
             throw new ArgumentException("Identifier does not exist");
 
         var table = _lua.NewUnnamedTable();
         table["width"] = image.Width;
         table["height"] = image.Height;
         return table;
+    }
+
+    [LibFunction("d2d.create_render_target")]
+    private string? D2D_CreateRenderTarget(int width, int height)
+    {
+        var surface = _skiaSurfaceManagerService?.CreateOffscreenBuffer(width, height);
+        if (surface == null)
+            return null;
+        
+        string key;
+        do
+        {
+            key = $"__sksurface_{Guid.NewGuid():N}";
+        } while (!_offscreenSurfaces.TryAdd(key, surface));
+
+        return key;
+    }
+
+    [LibFunction("d2d.destroy_render_target")]
+    private void D2D_DestroyRenderTarget(string key)
+    {
+        if (_offscreenSurfaces.Remove(key, out var surface))
+            surface.Dispose();
+    }
+
+    [LibFunction("d2d.begin_render_target")]
+    private void D2D_BeginRenderTarget(string key)
+    {
+        if (!_offscreenSurfaces.TryGetValue(key, out var surface))
+            return;
+        var canvas = surface.Canvas;
+        canvas.Clear(SKColors.Transparent);
+        _renderStack.Push(canvas);
+    }
+
+    [LibFunction("d2d.end_render_target")]
+    private void D2D_EndRenderTarget(string key)
+    {
+        if (!_renderStack.TryPop(out var canvas))
+            return;
+        canvas.Flush();
     }
 }

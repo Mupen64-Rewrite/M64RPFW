@@ -4,5 +4,5 @@ namespace M64RPFW.Services.Abstractions;
 
 public class SkiaRenderEventArgs : EventArgs
 {
-    public SKCanvas Canvas { get; init; }
+    public ISkiaSurfaceManagerService SkiaSurfaceManager { get; init; }
 }

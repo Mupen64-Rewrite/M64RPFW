@@ -42,7 +42,8 @@ public partial class LuaEnvironment : IDisposable
 
     public event Action<bool>? StateChanged;
 
-    private SKCanvas? _skCanvas;
+    private ISkiaSurfaceManagerService? _skiaSurfaceManagerService;
+    
     private List<LuaFunction> _viCallbacks = new();
     private List<LuaFunction> _inputCallbacks = new();
     private List<LuaFunction> _stopCallbacks = new();
@@ -154,13 +155,13 @@ public partial class LuaEnvironment : IDisposable
     {
         const string code =
             """
-            # Load SkiaSharp
+            -- Load SkiaSharp
             luanet.load_assembly("SkiaSharp")
             skiasharp = {}
             for k, v in pairs(luanet.SkiaSharp) do
                 skiasharp[k] = v
             end
-            # disable CLR importing (safety)
+            -- disable CLR importing (safety)
             import = function () end
             """;
         _lua.DoString(code);
@@ -257,7 +258,7 @@ public partial class LuaEnvironment : IDisposable
         {
             try
             {
-                _skCanvas = args.Canvas;
+                _skiaSurfaceManagerService = args.SkiaSurfaceManager;
                 foreach (LuaFunction callback in _updateScreenCallbacks)
                 {
                     callback.GuardedCall(_lua);
@@ -265,7 +266,7 @@ public partial class LuaEnvironment : IDisposable
             }
             finally
             {
-                _skCanvas = null;
+                _skiaSurfaceManagerService = null;
             }
         }
         if (!_isActive)

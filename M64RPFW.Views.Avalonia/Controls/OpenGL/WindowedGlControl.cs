@@ -20,7 +20,7 @@ using SysDrawing = System.Drawing;
 
 namespace M64RPFW.Views.Avalonia.Controls.OpenGL;
 
-public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService, IFrameCaptureService
+public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService, IFrameCaptureService, ISkiaSurfaceManagerService
 {
 
     internal SDL.Window* _sdlWin;
@@ -268,7 +268,7 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
             _grContext.ResetContext();
             SkiaRender(this, new SkiaRenderEventArgs
             {
-                Canvas = _skSurface!.Canvas
+                SkiaSurfaceManager = this
             });
             
             
@@ -285,4 +285,9 @@ public unsafe class WindowedGlControl : NativeControlHost, IOpenGLContextService
     }
 
     #endregion
+    public SKCanvas PrimaryCanvas => _skSurface!.Canvas;
+    public SKSurface CreateOffscreenBuffer(int width, int height)
+    {
+        return SKSurface.Create(_grContext, false, new SKImageInfo(width, height));
+    }
 }
