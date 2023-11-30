@@ -156,7 +156,10 @@ public partial class LuaEnvironment : IDisposable
             """
             # Load SkiaSharp
             luanet.load_assembly("SkiaSharp")
-            skiasharp = luanet.SkiaSharp
+            skiasharp = {}
+            for k, v in pairs(luanet.SkiaSharp) do
+                skiasharp[k] = v
+            end
             # disable CLR importing (safety)
             import = function () end
             """;
